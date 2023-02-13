@@ -1,0 +1,104 @@
+<script>
+window.currentStage = -1
+
+function startLoading() {
+  document.getElementById("loader").style.display = "block"
+}
+
+function endLoading() {
+  document.getElementById("loader").style.display = "none"
+}
+
+function runServerScript(name, arguments, showLoadingScreen, successHandler, failureHandler) {
+  if (showLoadingScreen) startLoading()
+  google.script.run.withSuccessHandler(function (result) {
+    if (showLoadingScreen) endLoading()
+    if (successHandler) successHandler(result)
+  }).withFailureHandler(function (error) {
+    if (failureHandler) failureHandler(error)
+  })[name].apply(null, arguments)
+}
+function submitNumberPlayers(form) {
+  runServerScript("setNumberPlayers", [form], true)
+}
+function submitNumberGames(form) {
+  runServerScript("setNumberGames", [form], true)
+}
+
+function submitStart(form) {
+  runServerScript("startCompetition", [form], true)
+}
+
+function playersFromSheet() {
+  runServerScript("getPlayerNames", [window.currentStage], true, function(names) {
+    setPlayerNames(names)
+  })
+}
+
+function setPlayerNames(names) {
+  var parent = document.querySelector("#playersSort>.playersSortSortable")
+  var children = parent.children
+  for (var i = 0; i < 8; i++) { children[i].innerText = names[i] }
+}
+
+function playersToSheet() {
+  var parent = document.querySelector("#playersSort>.playersSortSortable")
+  var children = parent.children
+  var names = []
+  for (var i = 0; i < 8; i++) { names.push(children[i].innerText) }
+  runServerScript("doneSortPlayers", [window.currentStage, names], true, function () {
+    setTimer()
+  })
+}
+
+function setTimer() {
+  runServerScript("setTimer", [window.currentStage], true)
+}
+
+function setResult() {
+  runServerScript("setResult", [window.currentStage, false], true)
+}
+
+function setNext() {
+  runServerScript("setNext", [window.currentStage], true)
+}
+
+function prevStage() {
+  if (window.currentStage == 0) {
+    document.getElementById("page1").style.display = "none"
+    document.getElementById("page0").style.display = "block"
+    document.getElementById("stageName").innerText = "ホーム"
+    window.currentStage = -1
+  } else if (window.currentStage > 0) {
+    runServerScript("getStageInfo", [window.currentStage - 1], true, function (result) {
+      if (result != null) {
+        applyStageInfo(result)
+        window.currentStage -= 1
+      }
+    })
+  }
+}
+
+function nextStage() {
+  if (window.currentStage == -1) {
+    document.getElementById("page0").style.display = "none"
+    document.getElementById("page1").style.display = "block"
+  }
+  runServerScript("getStageInfo", [window.currentStage + 1], true, function (result) {
+    if (result != null) {
+      applyStageInfo(result)
+      window.currentStage += 1
+    }
+  })
+}
+
+function applyStageInfo(result) {
+  document.getElementById("stageName").innerText = result.stageName
+  setPlayerNames(result.players)
+}
+
+Sortable.create(document.querySelector("#playersSort>.playersSortSortable"));
+
+</script>
+
+

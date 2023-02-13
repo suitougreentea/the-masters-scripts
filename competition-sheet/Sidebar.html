@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+  <?!= include("SidebarStyle") ?>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+</head>
+
+<body>
+  <div class="sidebar branding-below">
+    <div class="block">
+      <button onclick="prevStage()">←</button>
+      <span id="stageName">ホーム</span>
+      <button onclick="nextStage()">→</button>
+    </div>
+
+    <div id="page0" class="block">
+      <div class="block">
+        <form id="numberPlayers" onsubmit="submitNumberPlayers(this)">
+          <input type="number" name="numberPlayers" min="5" max="40" value="<?!= getCurrentNumberPlayersFromSheet() ?>">
+          <button type="submit">人数を設定</button>
+        </form>
+      </div>
+      <hr>
+      <div class="block" style="display:none">
+        <form id="presets" onsubmit="submitStart(this)">
+          <select name="preset" size="12">
+            <!--<option value="5-8">1回戦1組と決勝のみ (5～8人, 計2戦)</option>-->
+            <!--<option value="9">1回戦2組 (特殊WC), 敗者復活1戦 (9人, 計6戦)</option>-->
+            <option value="10-12">1回戦2組, 敗者復活1戦 (10～12人, 計6戦)</option>
+            <option value="13-16">1回戦2組, 敗者復活2戦 (13～16人, 計7戦)</option>
+            <option value="17-20">1回戦3組, 敗者復活1戦2組 (17～20人, 計8戦)</option>
+            <option value="21-24">1回戦3組, 2回戦2組, 敗者復活なし (21～24人, 計7戦)</option>
+            <!--<option value="25-32">1回戦4組, 2回戦2組, 敗者復活なし (25～32人, 計8戦)</option>-->
+            <!--<option value="33-40">1回戦5組, 2回戦2組, 敗者復活なし (33～40人, 計9戦)</option>-->
+          </select>
+          <button type="submit">スタート</button>
+        </form>
+      </div>
+      <div class="block">
+        <form id="numberGames" onsubmit="submitNumberGames(this)">
+          <input type="number" name="numberGames" min="1" max="20" value="<?!= getCurrentNumberGamesFromSheet() ?>">
+          <button type="submit">ゲーム数を設定</button>
+        </form>
+      </div>
+    </div>
+    <hr>
+    <div id="page1" class="block" style="display: none">
+      <button onclick="playersFromSheet()">名前をシートから更新</button>
+      <button onclick="playersToSheet()">並び替えをシートとタイマーに反映</button>
+      <div id="playersSort">
+        <div class="playersSortNumbers">
+          <div>1</div>
+          <div>2</div>
+          <div>3</div>
+          <div>4</div>
+          <div>5</div>
+          <div>6</div>
+          <div>7</div>
+          <div>8</div>
+        </div>
+        <div class="playersSortSortable">
+          <div class="item">placeholder1</div>
+          <div class="item">placeholder2</div>
+          <div class="item">placeholder3</div>
+          <div class="item">placeholder4</div>
+          <div class="item">placeholder5</div>
+          <div class="item">placeholder6</div>
+          <div class="item">placeholder7</div>
+          <div class="item">placeholder8</div>
+        </div>
+        <div style="clear: both">
+        </div>
+        <!--<button onclick="setTimer()">タイマー適用</button>-->
+        <hr>
+        <button onclick="setResult()">結果表示</button>
+        <!--<button onclick="setNext()">結果適用</button>-->
+      </div>
+    </div>
+    <div id="loader" style="display: none">
+      <div class="loader"></div>
+    </div>
+    <?!= include("SidebarScript") ?>
+</body>
+
+</html>
