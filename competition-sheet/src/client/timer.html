@@ -4,7 +4,7 @@
     <base target="_top">
     <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tinycolor/1.4.1/tinycolor.min.js"></script>
-    <?!= include("TimerStyle") ?>
+    <style>@import url("./timer.css");</style>
   </head>
   <body>
     <div>
@@ -61,7 +61,7 @@
         <div class="gauge"></div>
       </div>
     </div>
-    <?!= include("TimerScript") ?>
+    <script type="module">import "./timer.ts";</script>
   </body>
 </html>
 

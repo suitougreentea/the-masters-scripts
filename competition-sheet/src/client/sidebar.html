@@ -4,7 +4,7 @@
 <head>
   <base target="_top">
   <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
-  <?!= include("SidebarStyle") ?>
+  <style>@import url("./sidebar.css");</style>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 </head>
 
@@ -17,13 +17,6 @@
     </div>
 
     <div id="page0" class="block">
-      <div class="block">
-        <form id="numberPlayers" onsubmit="submitNumberPlayers(this)">
-          <input type="number" name="numberPlayers" min="5" max="40" value="<?!= getCurrentNumberPlayersFromSheet() ?>">
-          <button type="submit">人数を設定</button>
-        </form>
-      </div>
-      <hr>
       <div class="block" style="display:none">
         <form id="presets" onsubmit="submitStart(this)">
           <select name="preset" size="12">
@@ -82,7 +75,8 @@
     <div id="loader" style="display: none">
       <div class="loader"></div>
     </div>
-    <?!= include("SidebarScript") ?>
+  </div>
+  <script type="module">import "./sidebar.ts";</script>
 </body>
 
 </html>

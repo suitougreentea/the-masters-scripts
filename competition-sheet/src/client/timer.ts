@@ -1,4 +1,3 @@
-<script>
 // TODO: 何番目スタートかを表示
 function startTimer() {
   window.startTime = performance.now()
@@ -70,5 +69,3 @@ window.initialTimes = new Array(8)
 
 window.setInterval(updateData, 10000)
 updateData()
-
-</script>

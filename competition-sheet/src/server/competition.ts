@@ -1,5 +1,5 @@
-var grades = ["S4", "S5", "S6", "S7", "S8", "S9", "GM"]
-var gmGrade = grades.indexOf("GM")
+var gradesTable = ["S4", "S5", "S6", "S7", "S8", "S9", "GM"]
+var gmGrade = gradesTable.indexOf("GM")
 var widths = [16, 80, 70, 40, 70, 24, 70, 70, 70, 30, 16, 80, 40, 70, 70, 70, 70]
 
 /*
@@ -319,7 +319,7 @@ function setResult(index) {
       if (!isNaN(_level)) {
         level = _level
       } else {
-        var _grade = grades.indexOf(score)
+        var _grade = gradesTable.indexOf(score)
         if (_grade >= 0) {
           grade = _grade
         } else {
@@ -347,7 +347,7 @@ function setResult(index) {
     var prev = combinedResult[i-1]
     var score = null
     if (e.level != null) score = e.level
-    if (e.grade != null) score = grades[e.grade]
+    if (e.grade != null) score = gradesTable[e.grade]
     var topDiff = null
     if (e.grade == gmGrade) topDiff = e.calcTime - top.calcTime
     var prevDiff = null
@@ -444,7 +444,7 @@ function getCurrentPreset() {
 }
   
 function parseTimeFromString(str) {
-  var match = str.match(/^(\d?\d):([0-5]\d)\.(\d\d?)$/)
+  var match = str.match(/^(\d?\d):([0-5]\d)[:\.](\d\d?)$/)
   if (!match) return null
   return Number(match[1]) * 60000 + Number(match[2]) * 1000 + Number(match[3].padEnd(3, "0"))
 }
@@ -459,6 +459,10 @@ function timeToSpreadsheet(time) {
 function timeFromSpreadsheet(sstime) {
   if (sstime == null || sstime == "") return null
   return sstime * 24 * 60 * 60 * 1000
+}
+function timeFromSpreadsheetNative(sstime) {
+  if (!(sstime instanceof Date)) return null
+  return sstime.getTime() + 2209194000000
 }
 function timeToString(time) {
   if (time == null) return null

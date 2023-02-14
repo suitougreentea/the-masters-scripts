@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.json",
+  "files": [
+    "competition.ts",
+    "definitions.ts",
+    "entry.ts",
+    "functions.ts",
+    "players.ts",
+    "presets.ts",
+    "test.ts",
+  ],
+  "compilerOptions": {
+    "lib": ["ES2019"],
+    "experimentalDecorators": true,
+  },
+}

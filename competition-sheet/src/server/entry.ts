@@ -13,9 +13,9 @@
 
 function onOpen() {
   var ui = SpreadsheetApp.getUi()
-  ui.createMenu("Masters v2")
-      .addItem("Export", "confirmExport")
-      .addItem("Initialize", "confirmInitialize")
+  ui.createMenu("Masters")
+      // .addItem("Export", "confirmExport")
+      // .addItem("Initialize", "confirmInitialize")
       .addSeparator()
       .addItem("Show Sidebar", "showSidebar")
       .addToUi()

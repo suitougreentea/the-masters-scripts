@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "deploy": "node deploy.js"
+  },
+  "dependencies": {
+    "parcel": "^2.8.3"
+  },
+  "devDependencies": {
+    "@tsconfig/recommended": "^1.0.2",
+    "@types/google-apps-script": "^1.0.57"
+  }
+}

@@ -1,4 +1,3 @@
-<script>
 window.currentStage = -1
 
 function startLoading() {
@@ -17,9 +16,6 @@ function runServerScript(name, arguments, showLoadingScreen, successHandler, fai
   }).withFailureHandler(function (error) {
     if (failureHandler) failureHandler(error)
   })[name].apply(null, arguments)
-}
-function submitNumberPlayers(form) {
-  runServerScript("setNumberPlayers", [form], true)
 }
 function submitNumberGames(form) {
   runServerScript("setNumberGames", [form], true)
@@ -98,7 +94,3 @@ function applyStageInfo(result) {
 }
 
 Sortable.create(document.querySelector("#playersSort>.playersSortSortable"));
-
-</script>
-
-
