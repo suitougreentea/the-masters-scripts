@@ -1,96 +1,121 @@
-window.currentStage = -1
+import { runServerScript, StageInfo } from "./common";
 
-function startLoading() {
-  document.getElementById("loader").style.display = "block"
-}
+let currentStageIndex = -1;
 
-function endLoading() {
-  document.getElementById("loader").style.display = "none"
-}
+const loader = document.querySelector<HTMLDivElement>("#loader")!;
 
-function runServerScript(name, arguments, showLoadingScreen, successHandler, failureHandler) {
-  if (showLoadingScreen) startLoading()
-  google.script.run.withSuccessHandler(function (result) {
-    if (showLoadingScreen) endLoading()
-    if (successHandler) successHandler(result)
-  }).withFailureHandler(function (error) {
-    if (failureHandler) failureHandler(error)
-  })[name].apply(null, arguments)
-}
-function submitNumberGames(form) {
-  runServerScript("setNumberGames", [form], true)
+async function runServerScriptWithLoader(name: string, args: unknown[]): Promise<unknown> {
+  loader.style.display = "block";
+  try {
+    const result = await runServerScript(name, args);
+    return result;
+  } finally {
+    loader.style.display = "none";
+  }
 }
 
-function submitStart(form) {
-  runServerScript("startCompetition", [form], true)
+const page0Container = document.querySelector<HTMLDivElement>("#page0")!;
+const page1Container = document.querySelector<HTMLDivElement>("#page1")!;
+
+const competitionSettingsForm = document.querySelector<HTMLFormElement>("#competition-settings")!;
+competitionSettingsForm.onsubmit = (_) => {
+  runServerScriptWithLoader("setupCompetition", [competitionSettingsForm]);
+};
+
+const presetNameSelect = competitionSettingsForm.querySelector<HTMLSelectElement>("select[name=presetName]")!;
+const manualNumberOfGamesInput = competitionSettingsForm.querySelector<HTMLInputElement>("input[name=manualNumberOfGames]")!;
+presetNameSelect.onchange = (_) => {
+  manualNumberOfGamesInput.disabled = presetNameSelect.selectedIndex > 0;
+};
+
+competitionSettingsForm.querySelector<HTMLOptionElement>("option[value=manual]")!.selected = true;
+
+const prevStageButton = document.querySelector<HTMLButtonElement>("#prev-stage")!;
+const nextStageButton = document.querySelector<HTMLButtonElement>("#next-stage")!;
+const stageNameSpan = document.querySelector<HTMLSpanElement>("#stage-name")!;
+
+const refreshPlayersButton = document.querySelector<HTMLButtonElement>("#refresh-players")!;
+const applyPlayersOrderButton = document.querySelector<HTMLButtonElement>("#apply-players-order")!;
+
+async function getAndApplyStageInfo(stageIndex: number): Promise<boolean> {
+  try {
+    const result = await runServerScriptWithLoader("getStageInfo", [stageIndex]);
+    if (result != null) {
+      applyStageInfo(result as StageInfo);
+      return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
 }
 
-function playersFromSheet() {
-  runServerScript("getPlayerNames", [window.currentStage], true, function(names) {
-    setPlayerNames(names)
-  })
+prevStageButton.onclick = async (ev) => {
+  if (currentStageIndex == 0) {
+    page0Container.style.display = "block";
+    page1Container.style.display = "none";
+    stageNameSpan.innerText = "ホーム";
+    currentStageIndex = -1;
+  } else if (currentStageIndex > 0) {
+    if (await getAndApplyStageInfo(currentStageIndex - 1)) {
+      currentStageIndex -= 1;
+    }
+  }
+};
+
+nextStageButton.onclick = async (ev) => {
+  if (currentStageIndex == -1) {
+    page0Container.style.display = "none";
+    page1Container.style.display = "block";
+  }
+  if (await getAndApplyStageInfo(currentStageIndex + 1)) {
+    currentStageIndex += 1;
+  }
+};
+
+function applyStageInfo(result: StageInfo) {
+  stageNameSpan.innerText = result.stageName;
+  setPlayerNames(result.players.map(e => e != null ? e.name : null));
 }
 
-function setPlayerNames(names) {
-  var parent = document.querySelector("#playersSort>.playersSortSortable")
-  var children = parent.children
-  for (var i = 0; i < 8; i++) { children[i].innerText = names[i] }
+Sortable.create(document.querySelector("#players-sort>.players-sort-sortable")!);
+
+// 並べ替えた順番になったノードを毎回取得する
+function getPlayersSortableItems(): HTMLDivElement[] {
+  return Array.from(document.querySelectorAll<HTMLDivElement>("#players-sort>.players-sort-sortable>.item"));
 }
 
-function playersToSheet() {
-  var parent = document.querySelector("#playersSort>.playersSortSortable")
-  var children = parent.children
-  var names = []
-  for (var i = 0; i < 8; i++) { names.push(children[i].innerText) }
-  runServerScript("doneSortPlayers", [window.currentStage, names], true, function () {
-    setTimer()
-  })
+function setPlayerNames(names: (string | null)[]) {
+  const playersSortableItems = getPlayersSortableItems();
+  for (let i = 0; i < 8; i++) {
+    const name = names[i];
+    playersSortableItems[i].innerText = name != null ? name : "";
+  }
 }
+
+refreshPlayersButton.onclick = async (ev) => {
+  await getAndApplyStageInfo(currentStageIndex);
+};
+
+applyPlayersOrderButton.onclick = async (ev) => {
+  const playersSortableItems = getPlayersSortableItems();
+  const names: (string | null)[] = [];
+  for (let i = 0; i < 8; i++) {
+    const name = playersSortableItems[i].innerText;
+    names.push(name != "" ? name : null);
+  }
+  runServerScriptWithLoader("reorderPlayers", [currentStageIndex, names]);
+};
 
 function setTimer() {
-  runServerScript("setTimer", [window.currentStage], true)
+  runServerScriptWithLoader("setTimer", [currentStageIndex]);
 }
 
 function setResult() {
-  runServerScript("setResult", [window.currentStage, false], true)
+  runServerScriptWithLoader("setResult", [currentStageIndex, false]);
 }
 
 function setNext() {
-  runServerScript("setNext", [window.currentStage], true)
+  runServerScriptWithLoader("setNext", [currentStageIndex]);
 }
 
-function prevStage() {
-  if (window.currentStage == 0) {
-    document.getElementById("page1").style.display = "none"
-    document.getElementById("page0").style.display = "block"
-    document.getElementById("stageName").innerText = "ホーム"
-    window.currentStage = -1
-  } else if (window.currentStage > 0) {
-    runServerScript("getStageInfo", [window.currentStage - 1], true, function (result) {
-      if (result != null) {
-        applyStageInfo(result)
-        window.currentStage -= 1
-      }
-    })
-  }
-}
-
-function nextStage() {
-  if (window.currentStage == -1) {
-    document.getElementById("page0").style.display = "none"
-    document.getElementById("page1").style.display = "block"
-  }
-  runServerScript("getStageInfo", [window.currentStage + 1], true, function (result) {
-    if (result != null) {
-      applyStageInfo(result)
-      window.currentStage += 1
-    }
-  })
-}
-
-function applyStageInfo(result) {
-  document.getElementById("stageName").innerText = result.stageName
-  setPlayerNames(result.players)
-}
-
-Sortable.create(document.querySelector("#playersSort>.playersSortSortable"));

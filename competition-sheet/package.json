@@ -7,6 +7,9 @@
   },
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.2",
-    "@types/google-apps-script": "^1.0.57"
+    "@types/google-apps-script": "^1.0.57",
+    "@typescript-eslint/eslint-plugin": "^5.52.0",
+    "@typescript-eslint/parser": "^5.52.0",
+    "eslint": "^8.34.0"
   }
 }

@@ -7,19 +7,19 @@
   height: 100%;
 }
 
-.playersSortNumbers {
+.players-sort-numbers {
   float: left;
   margin-right: 16px;
 }
-.playersSortNumbers>div {
+.players-sort-numbers>div {
   height: 24px;
   line-height: 24px;
 }
 
-.playersSortSortable {
+.players-sort-sortable {
   float: left;
 }
-.playersSortSortable>div {
+.players-sort-sortable>div {
   height: 24px;
   line-height: 24px;
   border: 1px dotted lightgray;
@@ -28,7 +28,7 @@
   padding: 0px 5px;
 }
 
-.playersSortSortable>.item {
+.players-sort-sortable>.item {
   user-select: none;
 }
 

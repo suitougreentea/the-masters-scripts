@@ -8,13 +8,17 @@ fs.mkdirSync("./dist");
 
 const serverSources = [
   "appsscript.json",
+  "api.ts",
   "competition.ts",
-  "definitions.ts",
+  "competition_sheet.ts",
+  "definition.ts",
   "entry.ts",
-  "functions.ts",
-  "players.ts",
-  "presets.ts",
-  "test.ts",
+  "exporter.ts",
+  "function.ts",
+  "grade.ts",
+  "preset.ts",
+  "time.ts",
+  "util.ts",
 ];
 
 serverSources.forEach(filename => {

@@ -11,86 +11,53 @@
 // * スコア欄もっと狭くて良い/Align
 // * タイマーにハンデをうまく表示する
 
+function doGet() {
+  return HtmlService.createTemplateFromFile("timer").evaluate();
+}
+
 function onOpen() {
-  var ui = SpreadsheetApp.getUi()
+  const ui = SpreadsheetApp.getUi();
   ui.createMenu("Masters")
-      // .addItem("Export", "confirmExport")
-      // .addItem("Initialize", "confirmInitialize")
-      .addSeparator()
-      .addItem("Show Sidebar", "showSidebar")
-      .addToUi()
+    .addItem("Export", "confirmExport")
+    .addSeparator()
+    .addItem("Show Sidebar", "showSidebar")
+    .addToUi();
 }
 
 function confirmExport() {
-  var ui = SpreadsheetApp.getUi()
-  var response = ui.alert("Confirm", "Export the result to " + undefined + "?", ui.ButtonSet.YES_NO)
-  
+  const ui = SpreadsheetApp.getUi();
+  const response = ui.alert("Confirm", "Export the result to " + undefined + "?", ui.ButtonSet.YES_NO);
   if (response == ui.Button.YES) {
-    exportResult()
+    Exporter.exportResult();
+    ui.alert("Export", "Done!", ui.ButtonSet.OK);
   }
-}
-
-function exportResult() {
-  var ui = SpreadsheetApp.getUi()
-  var response = ui.alert("Export", "Done!", ui.ButtonSet.OK)
-}
-
-function confirmInitialize() {
-  var ui = SpreadsheetApp.getUi()
-  var response = ui.alert("Confirm", "Do you really want to initialize the sheet? All information will be lost.", ui.ButtonSet.YES_NO)
-  
-  if (response == ui.Button.YES) {
-    initialize()
-  }
-}
-
-function initialize() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet()
-  var competitionSheet = ss.getSheetByName("Competition")
-  ss.deleteSheet(competitionSheet)
-  ss.insertSheet("Competition")
-  var entrySheet = ss.getSheetByName("Entry")
-  entrySheet.getRange(2, 1, entrySheet.getLastRow() - 1, 1).clear()
-  entrySheet.getRange(2, 3, entrySheet.getLastRow() - 1, 1).clear()
-  var ui = SpreadsheetApp.getUi()
-  var response = ui.alert("Initialize", "Done!", ui.ButtonSet.OK)
 }
 
 function showSidebar() {
-  var html = HtmlService.createTemplateFromFile("Sidebar").evaluate()
-      .setTitle("Masters")
-      .setWidth(400)
-  
+  const html = HtmlService.createTemplateFromFile("sidebar").evaluate()
+    .setTitle("Masters")
+    .setWidth(400);
+
   SpreadsheetApp.getUi()
-      .showSidebar(html)
+    .showSidebar(html);
 }
 
-function include(filename) {
-  return HtmlService.createHtmlOutputFromFile(filename).getContent()
-}
+// test
 
-function resizeSheet(sheet, rows, columns) {
-  var oldRows = sheet.getMaxRows()
-  var oldColumns = sheet.getMaxColumns()
-  
-  if (rows > oldRows) {
-    sheet.insertRowsAfter(oldRows, rows - oldRows)
-  } else if (rows < oldRows) {
-    sheet.deleteRows(rows + 1, oldRows - rows)
+function resetValidation() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  {
+    const playersSheet = ss.getSheetByName(Definition.sheetNames.players);
+    if (playersSheet == null) throw new Error();
+    const nameValidationBuilder = SpreadsheetApp.newDataValidation();
+    nameValidationBuilder.requireFormulaSatisfied("=COUNTIF(A$2:A2, A2)=1");
+    playersSheet.getRange("A2:A").setDataValidation(nameValidationBuilder.build());
   }
-  if (columns > oldColumns) {
-    sheet.insertColumnsAfter(oldColumns, columns - oldColumns)
-  } else if (columns < oldColumns) {
-    sheet.deleteColumns(columns + 1, oldColumns - columns)
+  {
+    const entrySheet = ss.getSheetByName(Definition.sheetNames.entry);
+    if (entrySheet == null) throw new Error();
+    const nameValidationBuilder = SpreadsheetApp.newDataValidation();
+    nameValidationBuilder.requireFormulaSatisfied("=COUNTIF(A$3:A3, A3)=1");
+    entrySheet.getRange("A3:A").setDataValidation(nameValidationBuilder.build());
   }
-}
-
-function addConditionalFormatRule(sh, rule) {
-  var rules = sh.getConditionalFormatRules()
-  rules.push(rule)
-  sh.setConditionalFormatRules(rules)
-}
-
-function doGet() {
-  return HtmlService.createTemplateFromFile("Timer").evaluate()
 }

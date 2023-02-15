@@ -1,13 +1,17 @@
 {
   "extends": "../../tsconfig.json",
   "files": [
+    "api.ts",
     "competition.ts",
-    "definitions.ts",
+    "competition_sheet.ts",
+    "definition.ts",
     "entry.ts",
-    "functions.ts",
-    "players.ts",
-    "presets.ts",
-    "test.ts",
+    "exporter.ts",
+    "grade.ts",
+    "function.ts",
+    "preset.ts",
+    "time.ts",
+    "util.ts",
   ],
   "compilerOptions": {
     "lib": ["ES2019"],
