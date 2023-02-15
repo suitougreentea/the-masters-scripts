@@ -298,6 +298,7 @@ namespace CompetitionSheet {
     return result;
   }
 
+  // TODO: 計算部分をCompetitionに移動
   export function applyResult(ss: Spreadsheet, sh: Sheet, stageIndex: number) {
     const preset = getCurrentPreset(sh);
     if (preset == null) throw new Error("マニュアルモードでは使用できません");
@@ -327,7 +328,7 @@ namespace CompetitionSheet {
       let handicap = 0;
       const oldHandicap = playerEntry.handicap;
       let diff = i == 0 ? -10 : i == 1 ? -5 : 0;
-      if (stage.consolation) diff = i == 0 ? 5 : 10;
+      if (stage.consolation) diff = 5; // 昔は1着+5, 2着以降+10だったが、現在は+5に統一
       if (stage.wildcard) diff = 0;
       if (oldHandicap < 0) {
         handicap = diff;

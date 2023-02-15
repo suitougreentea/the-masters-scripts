@@ -9,6 +9,8 @@ const competitionSettingsForm = document.querySelector<HTMLFormElement>("#compet
 competitionSettingsForm.onsubmit = (_) => {
   withLoader(async () => {
     await runServerScript("setupCompetition", [competitionSettingsForm]);
+    currentStageIndex += 1;
+    await getAndApplyStageInfo(currentStageIndex);
   });
 };
 
