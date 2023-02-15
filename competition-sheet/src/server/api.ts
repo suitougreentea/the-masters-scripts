@@ -1,4 +1,4 @@
-function setupCompetition(form: { presetName: string, manualNumberOfGames: number }) {
+function setupCompetition(form: { manual: boolean, manualNumberOfGames: number }) {
   try {
     const entrySheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(Definition.sheetNames.entry)!;
     const values = entrySheet.getRange("R3C1:C3").getValues();
@@ -30,9 +30,9 @@ function setupCompetition(form: { presetName: string, manualNumberOfGames: numbe
       });
     });
 
-    const { presetName, manualNumberOfGames } = form;
+    const { manual, manualNumberOfGames } = form;
 
-    const setupResult = Competition.setupCompetition(presetName, manualNumberOfGames, entries);
+    const setupResult = Competition.setupCompetition(manual, manualNumberOfGames, entries);
 
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     let competitionSheet = ss.getSheetByName(Definition.sheetNames.competition);
@@ -50,7 +50,7 @@ function setupCompetition(form: { presetName: string, manualNumberOfGames: numbe
   }
 }
 
-function getStageInfo(stageIndex: number) {
+function getStageInfo(stageIndex: number): Competition.StageInfo {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const competitionSheet = ss.getSheetByName(Definition.sheetNames.competition);
@@ -77,14 +77,9 @@ function reorderPlayers(stageIndex: number, names: (string | null)[]) {
   }
 }
 
-type TimerData = { name: string, time: number }[];
-
-function getTimerData(): TimerData {
-  const propertyData = PropertiesService.getDocumentProperties().getProperty("timerData");
-  if (propertyData == null) return [];
-  return JSON.parse(propertyData) as TimerData;
-}
-
-function setTimerData(data: TimerData) {
-  return PropertiesService.getDocumentProperties().setProperty("timerData", JSON.stringify(data));
+function getTimerInfo(stageIndex: number): Competition.TimerInfo {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const competitionSheet = ss.getSheetByName(Definition.sheetNames.competition);
+  if (competitionSheet == null) throw new Error("Competitionシートがありません");
+  return CompetitionSheet.getTimerInfo(ss, competitionSheet, stageIndex);
 }

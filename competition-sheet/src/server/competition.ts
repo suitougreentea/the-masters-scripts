@@ -10,6 +10,11 @@ namespace Competition {
     firstRoundGroups: string[][];
   };
 
+  export type StageInfo = { stageName: string, players: (PlayerData | null)[], wildcard: boolean };
+  export type PlayerData = { name: string, handicap: number, gradeOrLevel: string | null, time: string | null };
+  export type TimerInfo = { stageName: string, players: (TimerPlayerData | null)[], wildcard: boolean };
+  export type TimerPlayerData = { name: string, rawBestTime: number, handicap: number, bestTime: number, startOrder: number, startTime: number };
+
   export type FinishedPlayerScore = {
     name: string;
     grade: Grade.Grade;
@@ -45,18 +50,15 @@ namespace Competition {
     return index;
   }
 
-  export function setupCompetition(presetName: string, manualNumberOfGames: number, entries: PlayerEntry[]): CompetitionSetupResult {
-    if (presetName == Preset.manualPresetName) {
+  export function setupCompetition(manual: boolean, manualNumberOfGames: number, entries: PlayerEntry[]): CompetitionSetupResult {
+    if (manual) {
       return {
         preset: null,
         manualNumberOfGames,
         firstRoundGroups: [],
       };
     } else {
-      if (!(presetName in Preset.presets)) {
-        throw new Error("存在しないプリセットです");
-      }
-
+      const presetName = Preset.getAppropriatePresetName(entries.length);
       const preset = Preset.presets[presetName];
 
       if (!(preset.supportedNumberOfPlayers[0] <= entries.length && entries.length <= preset.supportedNumberOfPlayers[1])) {

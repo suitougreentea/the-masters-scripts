@@ -1,6 +1,9 @@
+@import url("./loader.css");
+
 body {
   background: black;
   color: white;
+  padding: 8px;
 }
 .player {
   font-size: 0;
@@ -13,20 +16,21 @@ body {
   font-size: 18px;
 }
 .id {
-  margin-right: 12px;
-  width: 20px;
+  margin-right: 10px;
+  width: 15px;
 }
 .name {
-  margin-right: 12px;
-  width: 80px;
+  margin-right: 10px;
+  width: 85px;
   overflow: hidden;
   vertical-align: top;
 }
 .time {
-  width: 80px;
+  width: 65px;
+  margin-right: 10px;
 }
 .gauge {
-  margin-right: 12px;
+  margin-right: 10px;
   position: relative;
   vertical-align: top;
   height: 16px;

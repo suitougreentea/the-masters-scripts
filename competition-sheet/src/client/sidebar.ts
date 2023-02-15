@@ -1,82 +1,78 @@
-import { runServerScript, StageInfo } from "./common";
+import { runServerScript, StageInfo, withLoader } from "./common";
 
 let currentStageIndex = -1;
-
-const loader = document.querySelector<HTMLDivElement>("#loader")!;
-
-async function runServerScriptWithLoader(name: string, args: unknown[]): Promise<unknown> {
-  loader.style.display = "block";
-  try {
-    const result = await runServerScript(name, args);
-    return result;
-  } finally {
-    loader.style.display = "none";
-  }
-}
 
 const page0Container = document.querySelector<HTMLDivElement>("#page0")!;
 const page1Container = document.querySelector<HTMLDivElement>("#page1")!;
 
 const competitionSettingsForm = document.querySelector<HTMLFormElement>("#competition-settings")!;
 competitionSettingsForm.onsubmit = (_) => {
-  runServerScriptWithLoader("setupCompetition", [competitionSettingsForm]);
+  withLoader(async () => {
+    await runServerScript("setupCompetition", [competitionSettingsForm]);
+  });
 };
 
-const presetNameSelect = competitionSettingsForm.querySelector<HTMLSelectElement>("select[name=presetName]")!;
+const manualCheckbox = competitionSettingsForm.querySelector<HTMLInputElement>("input[name=manual]")!;
 const manualNumberOfGamesInput = competitionSettingsForm.querySelector<HTMLInputElement>("input[name=manualNumberOfGames]")!;
-presetNameSelect.onchange = (_) => {
-  manualNumberOfGamesInput.disabled = presetNameSelect.selectedIndex > 0;
+manualCheckbox.onchange = (_) => {
+  manualNumberOfGamesInput.disabled = !manualCheckbox.checked;
 };
 
-competitionSettingsForm.querySelector<HTMLOptionElement>("option[value=manual]")!.selected = true;
-
+const stageNameSpan = document.querySelector<HTMLSpanElement>("#stage-name")!;
 const prevStageButton = document.querySelector<HTMLButtonElement>("#prev-stage")!;
 const nextStageButton = document.querySelector<HTMLButtonElement>("#next-stage")!;
-const stageNameSpan = document.querySelector<HTMLSpanElement>("#stage-name")!;
+const refreshStageButton = document.querySelector<HTMLButtonElement>("#refresh-stage")!;
 
-const refreshPlayersButton = document.querySelector<HTMLButtonElement>("#refresh-players")!;
 const applyPlayersOrderButton = document.querySelector<HTMLButtonElement>("#apply-players-order")!;
+const applyResultButton = document.querySelector<HTMLButtonElement>("#apply-result")!;
 
-async function getAndApplyStageInfo(stageIndex: number): Promise<boolean> {
+async function getAndApplyStageInfo(stageIndex: number) {
   try {
-    const result = await runServerScriptWithLoader("getStageInfo", [stageIndex]);
-    if (result != null) {
-      applyStageInfo(result as StageInfo);
-      return true;
-    }
-    return false;
+    const result = await runServerScript("getStageInfo", [stageIndex]) as StageInfo | null;
+    if (result == null) throw new Error();
+
+    stageNameSpan.innerText = `[${stageIndex + 1}] ${result.stageName}`;
+    setPlayerNames(result.players.map(e => e != null ? e.name : null));
+    applyPlayersOrderButton.disabled = result.wildcard;
+    applyResultButton.disabled = false;
   } catch {
-    return false;
+    stageNameSpan.innerText = `[${stageIndex + 1}] -`;
+    setPlayerNames([null, null, null, null, null, null, null, null]);
+    applyPlayersOrderButton.disabled = true;
+    applyResultButton.disabled = true;
   }
 }
 
-prevStageButton.onclick = async (ev) => {
-  if (currentStageIndex == 0) {
-    page0Container.style.display = "block";
-    page1Container.style.display = "none";
-    stageNameSpan.innerText = "ホーム";
-    currentStageIndex = -1;
-  } else if (currentStageIndex > 0) {
-    if (await getAndApplyStageInfo(currentStageIndex - 1)) {
+prevStageButton.onclick = (_) => {
+  withLoader(async () => {
+    if (currentStageIndex == 0) {
+      page0Container.style.display = "block";
+      page1Container.style.display = "none";
+      stageNameSpan.innerText = "[0] ホーム";
+      currentStageIndex = -1;
+    } else if (currentStageIndex > 0) {
       currentStageIndex -= 1;
+      await getAndApplyStageInfo(currentStageIndex);
     }
-  }
+  });
 };
 
-nextStageButton.onclick = async (ev) => {
-  if (currentStageIndex == -1) {
-    page0Container.style.display = "none";
-    page1Container.style.display = "block";
-  }
-  if (await getAndApplyStageInfo(currentStageIndex + 1)) {
+nextStageButton.onclick = (_) => {
+  withLoader(async () => {
+    if (currentStageIndex == -1) {
+      page0Container.style.display = "none";
+      page1Container.style.display = "block";
+    }
     currentStageIndex += 1;
-  }
+    await getAndApplyStageInfo(currentStageIndex);
+  });
 };
 
-function applyStageInfo(result: StageInfo) {
-  stageNameSpan.innerText = result.stageName;
-  setPlayerNames(result.players.map(e => e != null ? e.name : null));
-}
+refreshStageButton.onclick = (_) => {
+  withLoader(async () => {
+    await getAndApplyStageInfo(currentStageIndex);
+  });
+};
 
 Sortable.create(document.querySelector("#players-sort>.players-sort-sortable")!);
 
@@ -93,29 +89,20 @@ function setPlayerNames(names: (string | null)[]) {
   }
 }
 
-refreshPlayersButton.onclick = async (ev) => {
-  await getAndApplyStageInfo(currentStageIndex);
+applyPlayersOrderButton.onclick = (_) => {
+  withLoader(async () => {
+    const playersSortableItems = getPlayersSortableItems();
+    const names: (string | null)[] = [];
+    for (let i = 0; i < 8; i++) {
+      const name = playersSortableItems[i].innerText;
+      names.push(name != "" ? name : null);
+    }
+    runServerScript("reorderPlayers", [currentStageIndex, names]);
+  });
 };
 
-applyPlayersOrderButton.onclick = async (ev) => {
-  const playersSortableItems = getPlayersSortableItems();
-  const names: (string | null)[] = [];
-  for (let i = 0; i < 8; i++) {
-    const name = playersSortableItems[i].innerText;
-    names.push(name != "" ? name : null);
-  }
-  runServerScriptWithLoader("reorderPlayers", [currentStageIndex, names]);
+applyResultButton.onclick = (_) => {
+  withLoader(async () => {
+    runServerScript("setNext", [currentStageIndex]);
+  });
 };
-
-function setTimer() {
-  runServerScriptWithLoader("setTimer", [currentStageIndex]);
-}
-
-function setResult() {
-  runServerScriptWithLoader("setResult", [currentStageIndex, false]);
-}
-
-function setNext() {
-  runServerScriptWithLoader("setNext", [currentStageIndex]);
-}
-

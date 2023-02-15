@@ -121,5 +121,13 @@ namespace Preset {
     }
   };
 
+  export function getAppropriatePresetName(numPlayers: number) {
+    if (10 <= numPlayers && numPlayers <= 12) return "10-12";
+    if (13 <= numPlayers && numPlayers <= 16) return "13-16";
+    if (17 <= numPlayers && numPlayers <= 20) return "17-20";
+    if (21 <= numPlayers && numPlayers <= 24) return "21-24";
+    throw new Error(`${numPlayers}人に対応するプリセットが見つかりませんでした`);
+  }
+
   export const manualPresetName = "manual";
 }
