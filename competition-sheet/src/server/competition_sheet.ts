@@ -6,9 +6,11 @@ namespace CompetitionSheet {
   type StageInfo = { stageName: string, players: (PlayerData | null)[] };
   type PlayerData = { name: string, handicap: number, gradeOrLevel: string | null, time: string | null };
 
+  const columnWidths = [16, 80, 70, 40, 70, 24, 70, 40, 70, 30, 16, 80, 40, 70, 70, 70, 70];
+
   export function initializeCompetitionSheet(ss: Spreadsheet, sh: Sheet, setupResult: Competition.CompetitionSetupResult) {
-    const { preset, presetName } = setupResult;
-    sh.addDeveloperMetadata(Definition.metadataKeys.presetName, presetName);
+    const { preset } = setupResult;
+    sh.addDeveloperMetadata(Definition.metadataKeys.presetName, preset != null ? preset.name : Preset.manualPresetName);
 
     let numStages: number;
     if (preset != null) {
@@ -18,97 +20,23 @@ namespace CompetitionSheet {
       numStages = setupResult.manualNumberOfGames;
     }
 
+    const template = ss.getSheetByName(Definition.sheetNames.templates);
+    if (template == null) throw new Error("Template not found");
+
     let row = 1;
     for (let index = 0; index < numStages; index++) {
       const stage = preset != null ? preset.stages[index] : null;
-      const name = stage != null ? stage.name : String(index + 1);
-      sh.getRange(row, 1).setValue(name);
-      sh.getRange(row, 1, 1, 9).setBackground("#C9DAF8").setFontWeight("bold").setBorder(true, true, true, true, null, null);
+      const name = stage != null ? stage.name : null;
+
+      applyFormatInternal(sh, template, row, stage, true);
+
       ss.setNamedRange("Stage" + index, sh.getRange(row, 1));
-
-      const headers = ["#", "プレイヤー名", "(ベスト)", "Hdcp", "(調整)", "(順)", "(スタート)", "段/Lv", "タイム"];
-      sh.getRange(row + 1, 1, 1, 9).setValues([headers]).setFontWeight("bold").setHorizontalAlignment("center").setBorder(true, true, true, true, null, null);
-
-      const contentStartRow = row + 2;
-      const contentEndRow = row + 9;
-      sh.getRange(contentStartRow, 1, 8, 1).setValues([[1], [2], [3], [4], [5], [6], [7], [8]]);
-
-      const positionAndNameRange = sh.getRange(contentStartRow, 1, 8, 2);
-      const rule1 = SpreadsheetApp.newConditionalFormatRule()
-        .whenFormulaSatisfied(`=AND(1 <= $F${contentStartRow}, $F${contentStartRow} <= 4)`)
-        .setBackground("#B7E1CD")
-        .setRanges([positionAndNameRange])
-        .build();
-      addConditionalFormatRule(sh, rule1);
-      const rule2 = SpreadsheetApp.newConditionalFormatRule()
-        .whenFormulaSatisfied(`=AND(5 <= $F${contentStartRow}, $F${contentStartRow} <= 8)`)
-        .setBackground("#FCE8B2")
-        .setRanges([positionAndNameRange])
-        .build();
-      addConditionalFormatRule(sh, rule2);
-
-      const nameRange = sh.getRange(contentStartRow, 2, 8, 1);
-      nameRange.setNumberFormat("@");
-
-      const handicapRange = sh.getRange(contentStartRow, 4, 8, 1);
-      handicapRange.setNumberFormat("+0;-0");
-      const handPositiveRule = SpreadsheetApp.newConditionalFormatRule()
-        .whenNumberLessThan(0)
-        .setFontColor("#0B8043")
-        .setRanges([handicapRange])
-        .build();
-      const handNegativeRule = SpreadsheetApp.newConditionalFormatRule()
-        .whenNumberGreaterThan(0)
-        .setFontColor("#C53929")
-        .setRanges([handicapRange])
-        .build();
-      addConditionalFormatRule(sh, handPositiveRule);
-      addConditionalFormatRule(sh, handNegativeRule);
-
-      sh.getRange(contentStartRow, 3).setFormulaR1C1(`=MAP(R${contentStartRow}C2:R${contentEndRow}C2, MASTERS_GETBESTFROMENTRY)`);
-      sh.getRange(contentStartRow, 5).setFormulaR1C1(`=MAP(R${contentStartRow}C3:R${contentEndRow}C3, R${contentStartRow}C4:R${contentEndRow}C4, MASTERS_GETHANDICAPPEDBEST)`);
-      sh.getRange(contentStartRow, 6).setFormulaR1C1(`=MAP(R${contentStartRow}C5:R${contentEndRow}C5, LAMBDA(e, MASTERS_GETSTARTORDER(e, R${contentStartRow}C5:R${contentEndRow}C5)))`);
-      sh.getRange(contentStartRow, 7).setFormulaR1C1(`=MAP(R${contentStartRow}C5:R${contentEndRow}C5, LAMBDA(e, MASTERS_GETSTARTTIME(e, R${contentStartRow}C5:R${contentEndRow}C5)))`);
-
-      const startOrderRange = sh.getRange(contentStartRow, 6, 8, 1);
-      startOrderRange.setFontWeight("bold");
-
-      const resultInputGradeOrLevelRange = sh.getRange(contentStartRow, 8, 8, 1);
-      resultInputGradeOrLevelRange.setHorizontalAlignment("right");
-
-      const resultInputTimeRange = sh.getRange(contentStartRow, 9, 8, 1);
-      resultInputTimeRange.setNumberFormat("@");
-      resultInputTimeRange.setHorizontalAlignment("right");
-
-      sh.getRange(contentStartRow, 1, 8, 9).setBorder(true, true, true, true, null, null);
-
-      sh.getRange(row, 11).setValue("結果");
-      sh.getRange(row, 11, 1, 7).setBackground("#F9CB9C").setFontWeight("bold").setBorder(true, true, true, true, null, null);
-      ss.setNamedRange("Result" + index, sh.getRange(row, 11));
-
-      const resultHeaders = ["#", "プレイヤー名", "段/Lv", "タイム", "(調整)", "トップとの差", "上位との差"];
-      sh.getRange(row + 1, 11, 1, 7).setValues([resultHeaders]).setFontWeight("bold").setHorizontalAlignment("center").setBorder(true, true, true, true, null, null);
-
-      sh.getRange(contentStartRow, 11).setFormulaR1C1(`=MASTERS_GETRESULT(R${contentStartRow}C2:R${contentEndRow}C2, R${contentStartRow}C5:R${contentEndRow}C5, R${contentStartRow}C8:R${contentEndRow}C8, R${contentStartRow}C9:R${contentEndRow}C9)`);
-      // sh.getRange(contentStartRow, 11, 8, 1).setValues([[1], [2], [3], [4], [5], [6], [7], [8]]);
-
-      sh.getRange(contentStartRow, 12, 8, 1).setNumberFormat("@");
-
-      sh.getRange(contentStartRow, 13, 8, 1).setHorizontalAlignment("right");
-
-      sh.getRange(contentStartRow, 14, 8, 4).setNumberFormat("[mm]:ss.00");
-
-      if (stage != null) {
-        sh.getRange(row + 1 + stage.winners.length, 11, 1, 7).setBorder(null, null, true, null, null, null);
-        if (stage.wildcards) sh.getRange(row + 1 + stage.winners.length + stage.wildcards.length, 11, 1, 7).setBorder(null, null, true, null, null, null);
-      }
-
-      sh.getRange(contentStartRow, 11, 8, 7).setBorder(true, true, true, true, null, null);
+      sh.getRange(row, 1).setValue(name);
 
       row += 11;
     }
     resizeSheet(sh, row - 2, 17);
-    for (let i = 0; i < 17; i++) sh.setColumnWidth(i + 1, widths[i]);
+    for (let i = 0; i < 17; i++) sh.setColumnWidth(i + 1, columnWidths[i]);
   }
 
   function readPresetName(sh: Sheet): string | null {
@@ -124,7 +52,39 @@ namespace CompetitionSheet {
   export function getCurrentPreset(sh: Sheet): Preset.Preset | null {
     const name = readPresetName(sh);
     if (name == null) return null;
+    if (name == Preset.manualPresetName) return null;
     return Preset.presets[name];
+  }
+
+  export function applyFormat(ss: Spreadsheet, sh: Sheet, stageIndex: number) {
+    const template = ss.getSheetByName(Definition.sheetNames.templates);
+    if (template == null) throw new Error("Template not found");
+
+    const preset = getCurrentPreset(sh);
+    const stage = preset != null ? preset.stages[stageIndex] : null;
+    const stageRange = getStageRange(ss, stageIndex);
+    const row = stageRange.getRow();
+
+    applyFormatInternal(sh, template, row, stage, false);
+  }
+
+  function applyFormatInternal(sh: Sheet, template: Sheet, row: number, stage: Preset.StageDefinition | null, all: boolean) {
+    const wildcard = stage != null ? stage.wildcard : false;
+
+    const templateRow = wildcard ? 12 : 1;
+    const templateRange = template.getRange(templateRow, 1, 10, 17);
+    const destRange = sh.getRange(row, 1, 10, 17);
+    if (all) {
+      templateRange.copyTo(destRange, SpreadsheetApp.CopyPasteType.PASTE_NORMAL, false);
+    } else {
+      templateRange.copyTo(destRange, SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
+      // templateRange.copyTo(destRange, SpreadsheetApp.CopyPasteType.PASTE_FORMULA, false);
+    }
+
+    if (stage != null) {
+      sh.getRange(row + 1 + stage.winners.length, 11, 1, 7).setBorder(null, null, true, null, null, null);
+      if (stage.wildcards) sh.getRange(row + 1 + stage.winners.length + stage.wildcards.length, 11, 1, 7).setBorder(null, null, true, null, null, null);
+    }
   }
 
   function getStageRange(ss: Spreadsheet, stageIndex: number): Range {

@@ -9,6 +9,7 @@ namespace Preset {
   }
 
   export type Preset = {
+    name: string;
     supportedNumberOfPlayers: [number, number];
     numFirstRoundGroups: number;
     stages: StageDefinition[];
@@ -61,6 +62,7 @@ namespace Preset {
 
   export const presets: Record<string, Preset> = {
     "10-12": {
+      name: "10-12",
       supportedNumberOfPlayers: [10, 12],
       numFirstRoundGroups: 2,
       stages: [
@@ -73,6 +75,7 @@ namespace Preset {
       ]
     },
     "13-16": {
+      name: "13-16",
       supportedNumberOfPlayers: [13, 16],
       numFirstRoundGroups: 2,
       stages: [
@@ -86,6 +89,7 @@ namespace Preset {
       ]
     },
     "17-20": {
+      name: "17-20",
       supportedNumberOfPlayers: [17, 20],
       numFirstRoundGroups: 3,
       stages: [
@@ -101,6 +105,7 @@ namespace Preset {
       ]
     },
     "21-24": {
+      name: "21-24",
       supportedNumberOfPlayers: [21, 24],
       numFirstRoundGroups: 3,
       stages: [

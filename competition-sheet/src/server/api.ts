@@ -55,7 +55,9 @@ function getStageInfo(stageIndex: number) {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const competitionSheet = ss.getSheetByName(Definition.sheetNames.competition);
     if (competitionSheet == null) throw new Error("Competitionシートがありません");
-    return CompetitionSheet.getStageInfo(ss, competitionSheet, stageIndex);
+    const result = CompetitionSheet.getStageInfo(ss, competitionSheet, stageIndex);
+    CompetitionSheet.applyFormat(ss, competitionSheet, stageIndex);
+    return result;
   } catch (e) {
     SpreadsheetApp.getUi().alert(String(e));
     throw e;
@@ -68,6 +70,7 @@ function reorderPlayers(stageIndex: number, names: (string | null)[]) {
     const competitionSheet = ss.getSheetByName(Definition.sheetNames.competition);
     if (competitionSheet == null) throw new Error("Competitionシートがありません");
     CompetitionSheet.reorderPlayers(ss, competitionSheet, stageIndex, names);
+    CompetitionSheet.applyFormat(ss, competitionSheet, stageIndex);
   } catch (e) {
     SpreadsheetApp.getUi().alert(String(e));
     throw e;

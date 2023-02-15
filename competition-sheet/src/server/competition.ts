@@ -1,5 +1,3 @@
-const widths = [16, 80, 70, 40, 70, 24, 70, 70, 70, 30, 16, 80, 40, 70, 70, 70, 70];
-
 namespace Competition {
   export type PlayerEntry = {
     name: string;
@@ -8,7 +6,6 @@ namespace Competition {
 
   export type CompetitionSetupResult = {
     preset: Preset.Preset | null;
-    presetName: string;
     manualNumberOfGames: number | null;
     firstRoundGroups: string[][];
   };
@@ -52,7 +49,6 @@ namespace Competition {
     if (presetName == Preset.manualPresetName) {
       return {
         preset: null,
-        presetName,
         manualNumberOfGames,
         firstRoundGroups: [],
       };
@@ -98,7 +94,6 @@ namespace Competition {
 
       return {
         preset,
-        presetName,
         manualNumberOfGames: null,
         firstRoundGroups: firstRoundGroups.map(e => e.map(f => f.name)),
       };
