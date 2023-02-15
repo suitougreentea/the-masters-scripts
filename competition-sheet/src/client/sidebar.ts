@@ -33,7 +33,7 @@ async function getAndApplyStageInfo(stageIndex: number) {
 
     stageNameSpan.innerText = `[${stageIndex + 1}] ${result.stageName}`;
     setPlayerNames(result.players.map(e => e != null ? e.name : null));
-    applyPlayersOrderButton.disabled = result.wildcard;
+    applyPlayersOrderButton.disabled = result.manual || result.wildcard;
     applyResultButton.disabled = false;
   } catch {
     stageNameSpan.innerText = `[${stageIndex + 1}] -`;
@@ -97,12 +97,14 @@ applyPlayersOrderButton.onclick = (_) => {
       const name = playersSortableItems[i].innerText;
       names.push(name != "" ? name : null);
     }
-    runServerScript("reorderPlayers", [currentStageIndex, names]);
+    await runServerScript("reorderPlayers", [currentStageIndex, names]);
   });
 };
 
 applyResultButton.onclick = (_) => {
   withLoader(async () => {
-    runServerScript("setNext", [currentStageIndex]);
+    await runServerScript("applyResult", [currentStageIndex]);
+    currentStageIndex += 1;
+    await getAndApplyStageInfo(currentStageIndex);
   });
 };

@@ -77,6 +77,19 @@ function reorderPlayers(stageIndex: number, names: (string | null)[]) {
   }
 }
 
+function applyResult(stageIndex: number) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const competitionSheet = ss.getSheetByName(Definition.sheetNames.competition);
+    if (competitionSheet == null) throw new Error("Competitionシートがありません");
+    CompetitionSheet.applyResult(ss, competitionSheet, stageIndex);
+    CompetitionSheet.applyFormat(ss, competitionSheet, stageIndex);
+  } catch (e) {
+    SpreadsheetApp.getUi().alert(String(e));
+    throw e;
+  }
+}
+
 function getTimerInfo(stageIndex: number): Competition.TimerInfo {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const competitionSheet = ss.getSheetByName(Definition.sheetNames.competition);

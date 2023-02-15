@@ -101,6 +101,7 @@ namespace CompetitionSheet {
     return {
       stageName: getStageNameFromSpreadsheet(ss, stageIndex),
       players: getPlayerData(ss, sh, stageIndex),
+      manual: preset == null,
       wildcard,
     };
   }
@@ -274,56 +275,96 @@ namespace CompetitionSheet {
     return result;
   }
 
-  /*
-  function setNext(index) {
-    const ss = SpreadsheetApp.getActiveSpreadsheet()
-    const sh = ss.getSheetByName("Competition")
-    const nr = ss.getRangeByName("Stage" + index)
-    const row = nr.getRow()
-    const players = getPlayerNamesAndHandicaps(index)
-    const result = sh.getRange(row + 2, 12, 8, 3).getValues().map(function (row) { return { name: row[0], score: row[1], time: parseTimeFromDate(row[2]) } })
-    const resultNames = result.map(function (p) { return p.name })
-    const preset = getCurrentPreset()
-    const stage = preset.stages[index]
-    const winnersLength = stage.winners.length
-    const wildcardLength = stage.wildcards ? stage.wildcards.length : 0
-    const losersLength = stage.losers.length
-    const winners = resultNames.slice(0, winnersLength)
-    const wildcard = resultNames.slice(winnersLength, winnersLength + wildcardLength)
-    const losers = resultNames.slice(winnersLength + wildcardLength)
+  // bestTimeは0の場合あり
+  function getResultFromSpreadsheetValues(ss: Spreadsheet, sh: Sheet, stageIndex: number): Competition.PlayerResult[] {
+    const row = getStageRange(ss, stageIndex).getRow();
 
-    winners.forEach(function (e, i) {
-      const to = stage.winners[i]
-      if (to == null) return
-      const newHandicap = 0
-      const player = players.filter(function (p) { return p.name == e })[0]
-      const oldHandicap = player.handicap
-      const adv = i == 0 ? -10 : i == 1 ? -5 : 0
-      if (stage.consolation) adv = i == 0 ? 5 : 10
-      if (stage.wildcard) adv = 0
-      if (player.handicap < 0) newHandicap = adv
-      else newHandicap = oldHandicap + adv
-      const data = [{ name: e, handicap: newHandicap }]
-      setPlayerNamesAndHandicaps(to, data, true, false)
-    })
+    const range = sh.getRange(row + 2, 11, 8, 7);
+    const values = range.getValues();
 
-    wildcard.forEach(function (e, i) {
-      const to = stage.wildcards[i]
-      if (to == null) return
-      const player = players.filter(function (p) { return p.name == e })[0]
-      const playerResult = result.filter(function (p) { return p.name == e })[0]
-      const data = [{ name: e, handicap: player.handicap, score: playerResult.score, time: playerResult.time }]
-      setPlayerNamesAndHandicaps(to, data, true, true)
-    })
-
-    losers.forEach(function (e, i) {
-      const to = stage.losers[i]
-      if (to == null) return
-      const data = [{ name: e, handicap: 0 }]
-      setPlayerNamesAndHandicaps(to, data, true, false)
-    })
+    const result: Competition.PlayerResult[] = [];
+    values.forEach(row => {
+      if (Util.isNullOrEmptyString(row[0])) return;
+      const rank = Number(row[0]);
+      const name = String(row[1]);
+      const { grade, level } = Util.spreadsheetValueToGradeOrLevel(row[2]);
+      const time = Time.spreadsheetValueToTime(row[3]);
+      const timeDiffBest = Time.spreadsheetValueToTime(row[4]);
+      const timeDiffTop = Time.spreadsheetValueToTime(row[5]);
+      const timeDiffPrev = Time.spreadsheetValueToTime(row[6]);
+      const bestTime = (time != null && timeDiffBest != null) ? time - timeDiffBest : 0;
+      result.push({ name, grade, time, level, bestTime, rank, timeDiffBest, timeDiffTop, timeDiffPrev } as Competition.PlayerResult);
+    });
+    return result;
   }
-  */
+
+  export function applyResult(ss: Spreadsheet, sh: Sheet, stageIndex: number) {
+    const preset = getCurrentPreset(sh);
+    if (preset == null) throw new Error("マニュアルモードでは使用できません");
+    const stage = preset.stages[stageIndex];
+
+    const playerData = getPlayerData(ss, sh, stageIndex);
+    const result = getResultFromSpreadsheetValues(ss, sh, stageIndex);
+
+    const winnersLength = stage.winners.length;
+    const wildcardLength = stage.wildcards ? stage.wildcards.length : 0;
+    const losersLength = stage.losers.length;
+
+    if (result.length < winnersLength + wildcardLength) throw new Error(`人数が足りません。勝ち${winnersLength}人, ワイルドカード${wildcardLength}人, 負け${losersLength}人; リザルト${result.length}人`);
+
+    for (let i = 0; i < winnersLength; i++) {
+      const resultIndex = i;
+      const resultEntry = result[resultIndex];
+      const playerEntry = playerData.find(e => e != null && e.name == resultEntry.name);
+      if (playerEntry == null) throw new Error();
+
+      const destStageIndex = stage.winners[i];
+      if (destStageIndex == null) continue;
+      const name = playerEntry.name;
+      const gradeOrLevel = null;
+      const time = null;
+
+      let handicap = 0;
+      const oldHandicap = playerEntry.handicap;
+      let diff = i == 0 ? -10 : i == 1 ? -5 : 0;
+      if (stage.consolation) diff = i == 0 ? 5 : 10;
+      if (stage.wildcard) diff = 0;
+      if (oldHandicap < 0) {
+        handicap = diff;
+      } else {
+        handicap = oldHandicap + diff;
+      }
+
+      setPlayerData(ss, sh, destStageIndex, [{ name, handicap, gradeOrLevel, time }], true);
+    }
+
+    for (let i = 0; i < wildcardLength; i++) {
+      const resultIndex = winnersLength + i;
+      const resultEntry = result[resultIndex];
+      const playerEntry = playerData.find(e => e != null && e.name == resultEntry.name);
+      if (playerEntry == null) throw new Error();
+
+      const destStageIndex = stage.wildcards![i];
+      if (destStageIndex == null) throw new Error();
+      setPlayerData(ss, sh, destStageIndex, [playerEntry], true);
+    }
+
+    for (let i = 0; i < losersLength; i++) {
+      const resultIndex = winnersLength + wildcardLength + i;
+      const resultEntry = result[resultIndex];
+      if (resultEntry == null) continue;
+      const playerEntry = playerData.find(e => e != null && e.name == resultEntry.name);
+      if (playerEntry == null) throw new Error();
+
+      const destStageIndex = stage.losers[i];
+      if (destStageIndex == null) continue;
+      const name = playerEntry.name;
+      const handicap = 0;
+      const gradeOrLevel = null;
+      const time = null;
+      setPlayerData(ss, sh, destStageIndex, [{ name, handicap, gradeOrLevel, time }], true);
+    }
+  }
 
   function resizeSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet, rows: number, columns: number) {
     const oldRows = sheet.getMaxRows();
