@@ -5,6 +5,22 @@ body {
   color: white;
   padding: 8px;
 }
+
+#toolbar {
+  margin-bottom: 12px;
+}
+
+#prev-stage, #next-stage {
+  width: 32px;
+  min-width: unset;
+}
+
+#stage-name {
+  display: inline-block;
+  width: 150px;
+  text-align: center;
+}
+
 .player {
   font-size: 0;
   height: 24px;

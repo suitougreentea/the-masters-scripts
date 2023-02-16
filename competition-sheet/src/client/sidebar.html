@@ -1,77 +1,74 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-  <base target="_top">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yegor256/tacit@gh-pages/tacit-css-1.5.5.min.css"/>
-  <style>@import url("./sidebar.css");</style>
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-</head>
-
-<body>
-  <div class="sidebar branding-below">
-    <div class="block">
-      <button id="prev-stage">←</button>
-      <span id="stage-name">ホーム</span>
-      <button id="next-stage">→</button>
-      <button id="refresh-stage">更新</button>
-    </div>
-
-    <hr>
-
-    <div id="page0" class="block">
-      <div class="block">
-        <form id="competition-settings">
-          <div>
-            <label>
-              <input type="checkbox" name="manual">
-              <span>マニュアル進行</span>
-            </label>
-          </div>
-          <div>
-            <label>ゲーム数:</label>
-            <input type="number" name="manualNumberOfGames" min="1" max="20" value="10" disabled>
-          </div>
-          <div>
-            <button type="submit">スタート</button>
-          </div>
-        </form>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <style>@import url("./sidebar.css");</style>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+  </head>
+  <body>
+    <div class="sidebar branding-below">
+      <div id="header">
+        <button id="prev-stage">←</button>
+        <span id="stage-name">ホーム</span>
+        <button id="next-stage">→</button>
+        <button id="refresh-stage">↻</button>
       </div>
-    </div>
 
-    <div id="page1" class="block" style="display: none">
-      <div id="players-sort">
-        <div class="players-sort-numbers">
-          <div>1</div>
-          <div>2</div>
-          <div>3</div>
-          <div>4</div>
-          <div>5</div>
-          <div>6</div>
-          <div>7</div>
-          <div>8</div>
+      <hr>
+
+      <div id="page0" class="block">
+        <div class="block">
+          <form id="competition-settings">
+            <div id="competition-settings-manual">
+              <div>
+                <input type="checkbox" name="manual">
+                <label>マニュアル進行</label>
+              </div>
+              <div>
+                <label>ゲーム数:</label>
+                <input type="number" name="manualNumberOfGames" min="1" max="20" value="10" disabled>
+              </div>
+            </div>
+            <div>
+              <button type="submit" class="action">スタート</button>
+            </div>
+          </form>
         </div>
-        <div class="players-sort-sortable">
-          <div class="item"></div>
-          <div class="item"></div>
-          <div class="item"></div>
-          <div class="item"></div>
-          <div class="item"></div>
-          <div class="item"></div>
-          <div class="item"></div>
-          <div class="item"></div>
+      </div>
+
+      <div id="page1" class="block" style="display: none">
+        <div id="players-sort">
+          <div id="players-sort-list">
+            <div id="players-sort-numbers">
+              <div>1</div>
+              <div>2</div>
+              <div>3</div>
+              <div>4</div>
+              <div>5</div>
+              <div>6</div>
+              <div>7</div>
+              <div>8</div>
+            </div>
+            <div id="players-sort-sortable">
+              <div class="item"></div>
+              <div class="item"></div>
+              <div class="item"></div>
+              <div class="item"></div>
+              <div class="item"></div>
+              <div class="item"></div>
+              <div class="item"></div>
+              <div class="item"></div>
+            </div>
+          </div>
+          <button id="apply-players-order" class="action">並び替え完了</button>
         </div>
-        <div style="clear: both">
-        </div>
-        <button id="apply-players-order">並び替え完了</button>
         <button id="apply-result">リザルト反映</button>
       </div>
+      <div id="loader" style="display: none">
+        <div class="loader"></div>
+      </div>
     </div>
-    <div id="loader" style="display: none">
-      <div class="loader"></div>
-    </div>
-  </div>
-  <script type="module">import "./sidebar.ts";</script>
-</body>
-
+    <script type="module">import "./sidebar.ts";</script>
+  </body>
 </html>

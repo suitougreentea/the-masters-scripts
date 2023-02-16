@@ -1,30 +1,77 @@
 @import url("./loader.css");
 
-body {
-  padding: 8px;
+label + label {
+  margin-left: 12px;
 }
 
-.players-sort-numbers {
+input[type="number"]:disabled {
+  color: gray;
+}
+
+#header {
+  display: flex;
+  align-items: center;
+}
+
+#prev-stage, #next-stage, #refresh-stage {
+  width: 32px;
+  min-width: unset;
+}
+
+#stage-name {
+  flex-grow: 1;
+  text-align: center;
+}
+
+#competition-settings-manual {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+#competition-settings button[type=submit] {
+  width: 100%;
+}
+
+#players-sort {
+  margin-bottom: 12px;
+}
+
+#players-sort-list {
+  display: flex;
+}
+
+#players-sort-numbers {
   float: left;
   margin-right: 16px;
 }
-.players-sort-numbers>div {
+
+#players-sort-numbers>div {
   height: 24px;
   line-height: 24px;
 }
 
-.players-sort-sortable {
+#players-sort-sortable {
   float: left;
+  flex-grow: 1;
 }
-.players-sort-sortable>div {
+
+#players-sort-sortable>div {
   height: 24px;
   line-height: 24px;
   border: 1px dotted lightgray;
   box-sizing: border-box;
-  min-width: 100px;
   padding: 0px 5px;
 }
 
-.players-sort-sortable>.item {
+#players-sort-sortable>.item {
   user-select: none;
+}
+
+#apply-players-order {
+  width: 100%;
+}
+
+#apply-result {
+  width: 100%;
 }
