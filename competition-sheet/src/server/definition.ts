@@ -21,9 +21,11 @@ namespace Definition {
     scoreTable9: { row: 70, column: 1, numRows: 10, numColumns: 11 },
     scoreTable10: { row: 82, column: 1, numRows: 11, numColumns: 12 },
     scoreTable11: { row: 95, column: 1, numRows: 12, numColumns: 13 },
-    scoreResult8: { row: 58, column: 15, numRows: 10, numColumns: 6 },
-    scoreResult9: { row: 69, column: 15, numRows: 10, numColumns: 6 },
-    scoreResult10: { row: 81, column: 15, numRows: 10, numColumns: 6 },
-    scoreResult11: { row: 94, column: 15, numRows: 10, numColumns: 6 },
+    scoreTable12: { row: 109, column: 1, numRows: 13, numColumns: 11 },
+    scoreResult8: { row: 58, column: 16, numRows: 10, numColumns: 6 },
+    scoreResult9: { row: 69, column: 16, numRows: 11, numColumns: 6 },
+    scoreResult10: { row: 81, column: 16, numRows: 12, numColumns: 6 },
+    scoreResult11: { row: 94, column: 16, numRows: 13, numColumns: 6 },
+    scoreResult12: { row: 108, column: 16, numRows: 14, numColumns: 6 },
   };
 }

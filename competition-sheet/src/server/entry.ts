@@ -39,23 +39,3 @@ function showSidebar() {
   SpreadsheetApp.getUi()
     .showSidebar(html);
 }
-
-// test
-
-function resetValidation() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  {
-    const playersSheet = ss.getSheetByName(Definition.sheetNames.players);
-    if (playersSheet == null) throw new Error();
-    const nameValidationBuilder = SpreadsheetApp.newDataValidation();
-    nameValidationBuilder.requireFormulaSatisfied("=COUNTIF(A$2:A2, A2)=1");
-    playersSheet.getRange("A2:A").setDataValidation(nameValidationBuilder.build());
-  }
-  {
-    const entrySheet = ss.getSheetByName(Definition.sheetNames.entry);
-    if (entrySheet == null) throw new Error();
-    const nameValidationBuilder = SpreadsheetApp.newDataValidation();
-    nameValidationBuilder.requireFormulaSatisfied("=COUNTIF(A$3:A3, A3)=1");
-    entrySheet.getRange("A3:A").setDataValidation(nameValidationBuilder.build());
-  }
-}
