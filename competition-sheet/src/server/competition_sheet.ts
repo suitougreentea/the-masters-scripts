@@ -68,8 +68,8 @@ namespace CompetitionSheet {
   function applyFormatInternal(sh: Sheet, template: Sheet, row: number, stage: Preset.StageDefinition | null, all: boolean) {
     const wildcard = stage != null ? stage.wildcard : false;
 
-    const templateRow = wildcard ? 12 : 1;
-    const templateRange = template.getRange(templateRow, 1, 10, 17);
+    const templateData = wildcard ? Definition.templates.competitionStageWildcard : Definition.templates.competitionStage;
+    const templateRange = template.getRange(templateData.row, templateData.column, templateData.numRows, templateData.numColumns);
     const destRange = sh.getRange(row, 1, 10, 17);
     if (all) {
       templateRange.copyTo(destRange, SpreadsheetApp.CopyPasteType.PASTE_NORMAL, false);
