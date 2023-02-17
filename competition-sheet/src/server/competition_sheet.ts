@@ -32,7 +32,7 @@ namespace CompetitionSheet {
 
       row += 11;
     }
-    resizeSheet(sh, row - 2, 17);
+    Util.resizeSheet(sh, row - 2, 17);
     for (let i = 0; i < 17; i++) sh.setColumnWidth(i + 1, columnWidths[i]);
   }
 
@@ -276,24 +276,24 @@ namespace CompetitionSheet {
   }
 
   // bestTimeは0の場合あり
-  function getResultFromSpreadsheetValues(ss: Spreadsheet, sh: Sheet, stageIndex: number): Competition.PlayerResult[] {
+  function getResultFromSpreadsheetValues(ss: Spreadsheet, sh: Sheet, stageIndex: number): Competition.StagePlayerResult[] {
     const row = getStageRange(ss, stageIndex).getRow();
 
     const range = sh.getRange(row + 2, 11, 8, 7);
     const values = range.getValues();
 
-    const result: Competition.PlayerResult[] = [];
+    const result: Competition.StagePlayerResult[] = [];
     values.forEach(row => {
       if (Util.isNullOrEmptyString(row[0])) return;
       const rank = Number(row[0]);
       const name = String(row[1]);
-      const { grade, level } = Util.spreadsheetValueToGradeOrLevel(row[2]);
+      const { grade, level } = Grade.spreadsheetValueToGradeOrLevel(row[2]);
       const time = Time.spreadsheetValueToTime(row[3]);
       const timeDiffBest = Time.spreadsheetValueToTime(row[4]);
       const timeDiffTop = Time.spreadsheetValueToTime(row[5]);
       const timeDiffPrev = Time.spreadsheetValueToTime(row[6]);
       const bestTime = (time != null && timeDiffBest != null) ? time - timeDiffBest : 0;
-      result.push({ name, grade, time, level, bestTime, rank, timeDiffBest, timeDiffTop, timeDiffPrev } as Competition.PlayerResult);
+      result.push({ name, grade, time, level, bestTime, rank, timeDiffBest, timeDiffTop, timeDiffPrev } as Competition.StagePlayerResult);
     });
     return result;
   }
@@ -365,27 +365,5 @@ namespace CompetitionSheet {
       const time = null;
       setPlayerData(ss, sh, destStageIndex, [{ name, handicap, gradeOrLevel, time }], true);
     }
-  }
-
-  function resizeSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet, rows: number, columns: number) {
-    const oldRows = sheet.getMaxRows();
-    const oldColumns = sheet.getMaxColumns();
-
-    if (rows > oldRows) {
-      sheet.insertRowsAfter(oldRows, rows - oldRows);
-    } else if (rows < oldRows) {
-      sheet.deleteRows(rows + 1, oldRows - rows);
-    }
-    if (columns > oldColumns) {
-      sheet.insertColumnsAfter(oldColumns, columns - oldColumns);
-    } else if (columns < oldColumns) {
-      sheet.deleteColumns(columns + 1, oldColumns - columns);
-    }
-  }
-
-  function addConditionalFormatRule(sh: GoogleAppsScript.Spreadsheet.Sheet, rule: GoogleAppsScript.Spreadsheet.ConditionalFormatRule) {
-    const rules = sh.getConditionalFormatRules();
-    rules.push(rule);
-    sh.setConditionalFormatRules(rules);
   }
 }

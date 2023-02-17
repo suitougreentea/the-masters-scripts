@@ -15,6 +15,8 @@ function onOpen() {
     .addItem("結果をエクスポート", "confirmExport")
     .addSeparator()
     .addItem("サイドバーを表示", "showSidebar")
+    .addSeparator()
+    .addItem("Debug", "debugEval")
     .addToUi();
 }
 
@@ -38,4 +40,16 @@ function showSidebar() {
 
   SpreadsheetApp.getUi()
     .showSidebar(html);
+}
+
+function debugEval() {
+  const ui = SpreadsheetApp.getUi();
+  const input = ui.prompt("", ui.ButtonSet.OK_CANCEL);
+  if (input.getSelectedButton() == ui.Button.OK) {
+    console.log(eval(input.getResponseText()));
+  }
+}
+
+function testEntryPoint() {
+  console.log(Competition.setupCompetition(20, null));
 }

@@ -3,24 +3,45 @@ namespace Util {
     return string == null || string == "";
   }
 
-  export function spreadsheetValueToGradeOrLevel(gradeOrLevel: unknown): { grade: Grade.Grade, level: 999 } | { grade: null, level: number } {
-    // GMの場合は何も入力されない
-    if (isNullOrEmptyString(gradeOrLevel)) return { grade: Grade.grades.GM, level: 999 };
+  export function resizeSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet, rows: number, columns: number) {
+    const oldRows = sheet.getMaxRows();
+    const oldColumns = sheet.getMaxColumns();
 
-    // 一度stringに
-    const stringified = String(gradeOrLevel);
-
-    const parsedLevel = Number(stringified);
-    if (!isNaN(parsedLevel)) return { grade: null, level: parsedLevel };
-
-    const parsedGrade = Grade.stringToGrade(stringified);
-    if (parsedGrade != null) return { grade: parsedGrade, level: 999 };
-
-    throw new Error("Unknown Grade/Level: " + gradeOrLevel);
+    if (rows > oldRows) {
+      sheet.insertRowsAfter(oldRows, rows - oldRows);
+    } else if (rows < oldRows) {
+      sheet.deleteRows(rows + 1, oldRows - rows);
+    }
+    if (columns > oldColumns) {
+      sheet.insertColumnsAfter(oldColumns, columns - oldColumns);
+    } else if (columns < oldColumns) {
+      sheet.deleteColumns(columns + 1, oldColumns - columns);
+    }
   }
 
-  export function gradeOrLevelToSpreadsheetValue(gradeOrLevel: { grade: Grade.Grade, level: 999 } | { grade: null, level: number }): string | number {
-    if (gradeOrLevel.grade != null) return Grade.gradeToString(gradeOrLevel.grade);
-    return gradeOrLevel.level;
+  export function addConditionalFormatRule(sh: GoogleAppsScript.Spreadsheet.Sheet, rule: GoogleAppsScript.Spreadsheet.ConditionalFormatRule) {
+    const rules = sh.getConditionalFormatRules();
+    rules.push(rule);
+    sh.setConditionalFormatRules(rules);
+  }
+
+  export function setSheetMetadata(sh: GoogleAppsScript.Spreadsheet.Sheet, key: string, obj: unknown) {
+    const findArray = sh.createDeveloperMetadataFinder().withKey(key).find();
+    if (findArray.length > 0) {
+      findArray[0].setValue(JSON.stringify(obj));
+    } else {
+      sh.addDeveloperMetadata(key, JSON.stringify(obj));
+    }
+  }
+
+  export function getSheetMetadata(sh: GoogleAppsScript.Spreadsheet.Sheet, key: string): unknown {
+    const findArray = sh.createDeveloperMetadataFinder().withKey(key).find();
+    if (findArray.length > 0) {
+      const value = findArray[0].getValue();
+      if (Util.isNullOrEmptyString(value)) return undefined;
+      return JSON.parse(value);
+    } else {
+      return undefined;
+    }
   }
 }
