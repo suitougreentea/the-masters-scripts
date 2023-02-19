@@ -51,5 +51,7 @@ function debugEval() {
 }
 
 function testEntryPoint() {
-  console.log(Competition.setupCompetition(20, null));
+  for (let i = 8; i <= 24; i++) {
+    console.log(Competition.setupCompetition(i, null));
+  }
 }

@@ -3,84 +3,126 @@ namespace CompetitionSheet {
   type Sheet = GoogleAppsScript.Spreadsheet.Sheet;
   type Range = GoogleAppsScript.Spreadsheet.Range;
 
-  const columnWidths = [16, 80, 70, 40, 70, 24, 70, 40, 70, 30, 16, 80, 40, 70, 70, 70, 70];
 
-  export function initializeCompetitionSheet(ss: Spreadsheet, sh: Sheet, setupResult: Competition.CompetitionSetupResult) {
-    const { preset } = setupResult;
-    sh.addDeveloperMetadata(Definition.metadataKeys.presetName, preset != null ? preset.name : Preset.manualPresetName);
-
-    let numStages: number;
-    if (preset != null) {
-      numStages = preset.stages.length;
-    } else {
-      if (setupResult.manualNumberOfGames == null) throw new Error();
-      numStages = setupResult.manualNumberOfGames;
+  export function initializeCompetitionSheet(ss: Spreadsheet, setupResult: Competition.CompetitionSetupResult): { competitionSheet: Sheet, detailSheet: Sheet | null } {
+    let competitionSheet = ss.getSheetByName(Definition.sheetNames.competition);
+    if (competitionSheet != null) {
+      ss.deleteSheet(competitionSheet);
+      competitionSheet = null;
     }
+    let detailSheet = ss.getSheetByName(Definition.sheetNames.competitionDetail);
+    if (detailSheet != null) {
+      ss.deleteSheet(detailSheet);
+      detailSheet = null;
+    }
+
+    const { preset, numPlayers, stages, supplementComparisons } = setupResult;
+
+    competitionSheet = ss.insertSheet(Definition.sheetNames.competition, ss.getSheets().length);
 
     const template = ss.getSheetByName(Definition.sheetNames.templates);
     if (template == null) throw new Error("Template not found");
 
-    let row = 1;
-    for (let index = 0; index < numStages; index++) {
-      const stage = preset != null ? preset.stages[index] : null;
-      const name = stage != null ? stage.name : null;
+    let competitionSheetRow = 1;
+    stages.forEach((stage, stageIndex) => {
+      applyStageFormatInternal(competitionSheet!, template, competitionSheetRow, stage, true);
 
-      applyFormatInternal(sh, template, row, stage, true);
+      ss.setNamedRange("Stage" + stageIndex, competitionSheet!.getRange(competitionSheetRow, 1));
+      competitionSheet!.getRange(competitionSheetRow, 1).setValue(stage.name);
 
-      ss.setNamedRange("Stage" + index, sh.getRange(row, 1));
-      sh.getRange(row, 1).setValue(name);
+      competitionSheetRow += Definition.templates.competitionStage.numRows + 1;
+    });
+    Util.resizeSheet(competitionSheet, competitionSheetRow - 2, 17);
 
-      row += 11;
+    const competitionSheetColumnWidths = [16, 80, 70, 40, 70, 24, 70, 40, 70, 30, 16, 80, 40, 70, 70, 70, 70];
+    for (let i = 0; i < 17; i++) competitionSheet.setColumnWidth(i + 1, competitionSheetColumnWidths[i]);
+
+    Util.setSheetMetadata(competitionSheet, Definition.metadataKeys.setupResult, setupResult);
+
+    if (preset != null && (preset.hasQualifierRound || supplementComparisons.length > 0)) {
+      detailSheet = ss.insertSheet(Definition.sheetNames.competitionDetail, ss.getSheets().length);
+
+      if (preset.hasQualifierRound) {
+        if (supplementComparisons.length > 0) throw new Error();
+        if (numPlayers! < 8 || 12 < numPlayers!) throw new Error();
+
+        const tableTemplateName = `scoreTable${numPlayers!}` as keyof typeof Definition.templates;
+        const resultTemplateName = `scoreResult${numPlayers!}` as keyof typeof Definition.templates;
+
+        let detailSheetColumn = 1;
+
+        pasteTemplate(detailSheet, 2, detailSheetColumn, template, tableTemplateName, SpreadsheetApp.CopyPasteType.PASTE_NORMAL);
+        detailSheetColumn += Definition.templates[tableTemplateName].numColumns + 1;
+
+        pasteTemplate(detailSheet, 1, detailSheetColumn, template, resultTemplateName, SpreadsheetApp.CopyPasteType.PASTE_NORMAL);
+        detailSheetColumn += Definition.templates[resultTemplateName].numColumns;
+
+        Util.resizeSheet(detailSheet, Definition.templates[resultTemplateName].numRows, detailSheetColumn - 1);
+
+        const detailSheetColumnWidths: number[] = [];
+        detailSheetColumnWidths.push(80, 24);
+        for (let i = 0; i < preset.rounds[0].qualifierPlayerIndices!.length; i++) detailSheetColumnWidths.push(16);
+        detailSheetColumnWidths.push(30);
+        detailSheetColumnWidths.push(16, 80, 24, 24, 24, 24, 24, 70, 70);
+        for (let i = 0; i < detailSheetColumn - 1; i++) detailSheet.setColumnWidth(i + 1, detailSheetColumnWidths[i]);
+      } else {
+        let detailSheetRow = 1;
+        supplementComparisons.forEach(supplementComparison => {
+          const comparisonNumPlayers = supplementComparison.numPlayers;
+          if (comparisonNumPlayers < 2 || 6 < comparisonNumPlayers) throw new Error();
+          const templateName = `supplementComparison${comparisonNumPlayers}` as keyof typeof Definition.templates;
+
+          pasteTemplate(detailSheet!, detailSheetRow, 1, template, templateName, SpreadsheetApp.CopyPasteType.PASTE_NORMAL);
+          detailSheet!.getRange(detailSheetRow, 1).setValue(supplementComparison.name);
+          detailSheetRow += Definition.templates[templateName].numRows + 1;
+        });
+        Util.resizeSheet(detailSheet, detailSheetRow - 2, 6);
+
+        const detailSheetColumnWidths = [16, 80, 40, 70, 70, 70];
+        for (let i = 0; i < 6; i++) detailSheet.setColumnWidth(i + 1, detailSheetColumnWidths[i]);
+      }
     }
-    Util.resizeSheet(sh, row - 2, 17);
-    for (let i = 0; i < 17; i++) sh.setColumnWidth(i + 1, columnWidths[i]);
+
+    return { competitionSheet, detailSheet };
   }
 
-  function readPresetName(sh: Sheet): string | null {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
+  function getCurrentSetupResult(ss: Spreadsheet): Competition.CompetitionSetupResult | null {
     const competitionSheet = ss.getSheetByName(Definition.sheetNames.competition);
     if (competitionSheet == null) return null;
-    const data = competitionSheet.createDeveloperMetadataFinder().withKey(Definition.metadataKeys.presetName).find()[0];
-    if (data == null) return null;
-    const name = data.getValue();
-    return name;
+
+    const metadata = Util.getSheetMetadata(competitionSheet, Definition.metadataKeys.setupResult);
+    if (metadata == null) return null;
+    return metadata as Competition.CompetitionSetupResult;
   }
 
-  export function getCurrentPreset(sh: Sheet): Preset.Preset | null {
-    const name = readPresetName(sh);
-    if (name == null) return null;
-    if (name == Preset.manualPresetName) return null;
-    return Preset.presets[name];
-  }
-
-  export function applyFormat(ss: Spreadsheet, sh: Sheet, stageIndex: number) {
+  export function reapplyFormat(ss: Spreadsheet, sh: Sheet, stageIndex: number) {
     const template = ss.getSheetByName(Definition.sheetNames.templates);
     if (template == null) throw new Error("Template not found");
 
-    const preset = getCurrentPreset(sh);
-    const stage = preset != null ? preset.stages[stageIndex] : null;
+    const setupResult = getCurrentSetupResult(ss);
+    if (setupResult == null) throw new Error("セットアップが行われていません");
+    const stage = setupResult.stages[stageIndex];
     const stageRange = getStageRange(ss, stageIndex);
     const row = stageRange.getRow();
 
-    applyFormatInternal(sh, template, row, stage, false);
+    applyStageFormatInternal(sh, template, row, stage, false);
   }
 
-  function applyFormatInternal(sh: Sheet, template: Sheet, row: number, stage: Preset.StageDefinition | null, all: boolean) {
-    const wildcard = stage != null ? stage.wildcard : false;
+  function pasteTemplate(destSheet: Sheet, row: number, column: number, templateSheet: Sheet, templateName: keyof typeof Definition.templates, type: GoogleAppsScript.Spreadsheet.CopyPasteType) {
+    const templateData = Definition.templates[templateName];
+    const templateRange = templateSheet.getRange(templateData.row, templateData.column, templateData.numRows, templateData.numColumns);
 
-    const templateData = wildcard ? Definition.templates.competitionStageWildcard : Definition.templates.competitionStage;
-    const templateRange = template.getRange(templateData.row, templateData.column, templateData.numRows, templateData.numColumns);
-    const destRange = sh.getRange(row, 1, 10, 17);
-    if (all) {
-      templateRange.copyTo(destRange, SpreadsheetApp.CopyPasteType.PASTE_NORMAL, false);
-    } else {
-      templateRange.copyTo(destRange, SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
-      // templateRange.copyTo(destRange, SpreadsheetApp.CopyPasteType.PASTE_FORMULA, false);
-    }
+    const destRange = destSheet.getRange(row, column, templateData.numRows, templateData.numColumns);
+    templateRange.copyTo(destRange, type, false);
+  }
+
+  function applyStageFormatInternal(sh: Sheet, template: Sheet, row: number, stage: Competition.StageSetupResult | null, all: boolean) {
+    const type = all ? SpreadsheetApp.CopyPasteType.PASTE_NORMAL : SpreadsheetApp.CopyPasteType.PASTE_FORMAT;
+    pasteTemplate(sh, row, 1, template, "competitionStage", type);
 
     if (stage != null) {
-      sh.getRange(row + 1 + stage.winners.length, 11, 1, 7).setBorder(null, null, true, null, null, null);
-      if (stage.wildcards) sh.getRange(row + 1 + stage.winners.length + stage.wildcards.length, 11, 1, 7).setBorder(null, null, true, null, null, null);
+      if (stage.numWinners > 0) sh.getRange(row + 1 + stage.numWinners, 11, 1, 7).setBorder(null, null, true, null, null, null);
+      if (stage.hasWildcard) sh.getRange(row + 1 + stage.numWinners + 1, 11, 1, 7).setBorder(null, null, true, null, null, null);
     }
   }
 

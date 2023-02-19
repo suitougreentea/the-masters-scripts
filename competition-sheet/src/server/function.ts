@@ -1,6 +1,7 @@
 type SpreadsheetCell = string | number | Date | null;
 type SpreadsheetArg = SpreadsheetCell | SpreadsheetCell[][]
 
+// TODO: S9でタイムがないときにバグる
 function MASTERS_GETRESULT(names: SpreadsheetArg, bestTimes: SpreadsheetArg, gradeOrLevels: SpreadsheetArg, clearTimes: SpreadsheetArg) {
   if (!Array.isArray(names) || !Array.isArray(bestTimes) || !Array.isArray(gradeOrLevels) || !Array.isArray(clearTimes)) throw new Error();
 

@@ -5,21 +5,23 @@ namespace Competition {
   };
 
   export type CompetitionSetupResult = {
-    preset: Preset.Preset | null;
+    preset: Preset.Preset | null; // マニュアルモードのときnull
+    numPlayers: number | null; // マニュアルモードのときnull
     stages: StageSetupResult[];
-    hasQualifierRound: boolean;
     supplementComparisons: SupplementComparisonSetupResult[];
   };
   export type StageSetupResult = { roundIndex: number, groupIndex: number, name: string, numPlayers: number, numWinners: number, hasWildcard: boolean, numLosers: number };
-  export type SupplementComparisonSetupResult = { roundIndex: number, rankIndex: number, name: string, numPlayers: number };
+  // rankId: T{number}: 上位から (>=0), B{number}: 下位から (>0), W: ワイルドカード
+  export type SupplementComparisonSetupResult = { roundIndex: number, rankId: string, name: string, numPlayers: number };
 
   export type CompetitionIO = {
     readEntries(): PlayerEntry[];
+    readQualifierTable(): QualifierTableEntry[];
     readStageEntry(roundIndex: number, groupIndex: number): StagePlayerEntry[];
     readStageResult(roundIndex: number, groupIndex: number): StagePlayerResult[];
     writeQualifierResult(result: QualifierPlayerResult[]): void;
-    readSupplementComparison(roundIndex: number, rankIndex: number): StagePlayerResult[];
-    writeSupplementComparison(roundIndex: number, rankIndex: number, result: StagePlayerResult[]): void;
+    // readSupplementComparison(roundIndex: number, rankId: string): StagePlayerResult[];
+    writeSupplementComparison(roundIndex: number, rankId: string, result: StagePlayerResult[]): void;
   }
 
   export type RoundSetupResult = {
@@ -36,7 +38,7 @@ namespace Competition {
   export type StagePlayerEntry = {
     name: string;
     handicap: number;
-  }
+  };
 
   export type StagePlayerScore = {
     name: string;
@@ -53,18 +55,24 @@ namespace Competition {
     timeDiffPrev: Time.Time | null;
   };
 
+  export type QualifierTableEntry = {
+    name: string;
+    totalPoints: number;
+    stageResults: { stageIndex: number, rankIndex: number, points: number }[];
+  };
+
   export type QualifierPlayerScore = {
     name: string;
     points: number;
-    numPlaces: [number, number, number, number];
-    bestGameGrade: Grade.Grade;
+    numPlaces: number[];
+    bestGameGrade: Grade.Grade | null;
     bestGameTimeDiffBest: Time.Time | null;
     bestGameLevel: number;
-  }
+  };
 
   export type QualifierPlayerResult = QualifierPlayerScore & {
     rank: number;
-  }
+  };
 
   const groupNames = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
 
@@ -78,306 +86,603 @@ namespace Competition {
     return index;
   }
 
-  export function setupCompetition(numEntryPlayers: number, manualNumberOfGames: number | null): CompetitionSetupResult {
+  export function setupCompetition(numPlayers: number, manualNumberOfGames: number | null): CompetitionSetupResult {
     if (manualNumberOfGames != null) {
-      const stages = new Array(manualNumberOfGames).fill(null).map((_, i) => ({
-        roundIndex: 0,
-        groupIndex: i,
-        name: String(i + 1),
-        numPlayers: 8,
-        numWinners: 0,
-        hasWildcard: false,
-        numLosers: 0,
-      }));
-
-      return {
-        preset: null,
-        stages,
-        hasQualifierRound: false,
-        supplementComparisons: [],
-      };
+      return setupCompetitionManual(manualNumberOfGames);
     } else {
-      const presetName = Preset.getAppropriatePresetName(numEntryPlayers);
-      if (presetName == null) throw new Error(`${numEntryPlayers}人に適切なプリセットが見つかりませんでした`);
+      const presetName = Preset.getAppropriatePresetName(numPlayers);
+      if (presetName == null) throw new Error(`${numPlayers}人に適切なプリセットが見つかりませんでした`);
       const preset = Preset.getPreset(presetName);
 
-      if (!(preset.supportedNumberOfPlayers[0] <= numEntryPlayers && numEntryPlayers <= preset.supportedNumberOfPlayers[1])) {
+      if (!(preset.supportedNumberOfPlayers[0] <= numPlayers && numPlayers <= preset.supportedNumberOfPlayers[1])) {
         throw new Error();
       }
 
-      const firstRound = preset.rounds[0];
-      if (firstRound.qualifierPlayerIndices != null) {
-        // ポイント制予選
-        if (preset.rounds.length != 2) throw new Error();
-
-        const stages: StageSetupResult[] = [];
-        // 予選
-        firstRound.qualifierPlayerIndices.forEach((_, i) => stages.push({
-          roundIndex: 0,
-          groupIndex: i,
-          name: `${firstRound.name}Heat${i + 1}`,
-          numPlayers: 4,
-          numWinners: 0,
-          hasWildcard: false,
-          numLosers: 0,
-        }));
-        // 決勝
-        stages.push({
-          roundIndex: 1,
-          groupIndex: 0,
-          name: preset.rounds[1].name,
-          numPlayers: 4,
-          numWinners: 1,
-          hasWildcard: false,
-          numLosers: 3,
-        });
-
-        return {
-          preset,
-          stages,
-          hasQualifierRound: true,
-          supplementComparisons: [],
-        };
-      } else if (firstRound.numGroups != null) {
-        // トーナメント
-        const stages: StageSetupResult[] = [];
-        const supplementComparisons: SupplementComparisonSetupResult[] = [];
-
-        preset.rounds.forEach((round, roundIndex) => {
-          // 人数割り出し
-          const stageNumPlayers = new Array(round.numGroups!).fill(0);
-          if (roundIndex == 0) {
-            const quotient = Math.floor(numEntryPlayers / round.numGroups!);
-            const remainder = numEntryPlayers % round.numGroups!;
-            for (let i = 0; i < round.numGroups!; i++) {
-              stageNumPlayers[i] = quotient + (i < remainder ? 1 : 0);
-            }
-          } else {
-            const sendPlayersNone = (num: number) => {
-              if (stageNumPlayers.length != 1) throw new Error();
-              stageNumPlayers[0] += num;
-            };
-            const sendPlayersSnake = (num: number) => {
-              const startSnakeIndex = getNextSnakeIndex(stageNumPlayers);
-              for (let i = 0; i < num; i++) {
-                const snakeIndex = (startSnakeIndex + i) % (stageNumPlayers.length * 2);
-                stageNumPlayers[resolveSnakeIndex(snakeIndex, stageNumPlayers.length)]++;
-              }
-            };
-            const sendPlayers = (dependentRoundIndex: number, winner: boolean) => {
-              const dependentRound = preset.rounds[dependentRoundIndex];
-              const destinationMethod = winner ? dependentRound.winners!.destinationMethod : dependentRound.losers!.destinationMethod;
-
-              let numSend = 0;
-              for (let i = 0; i < dependentRound.numGroups!; i++) {
-                const dependentStage = getStageSetupResult(stages, dependentRoundIndex, i);
-                if (dependentStage == null) throw new Error();
-                const dependentStageNumWinners = dependentStage.numWinners;
-                const dependentStageNumLosers = dependentStage.numLosers;
-                numSend += winner ? dependentStageNumWinners : dependentStageNumLosers;
-              }
-              if (winner) {
-                numSend += dependentRound.winners!.numWildcard;
-              }
-
-              if (destinationMethod == "none") {
-                sendPlayersNone(numSend);
-              } else if (destinationMethod == "rankSnake" || destinationMethod == "rankSortedSnake") {
-                sendPlayersSnake(numSend);
-              }
-            };
-
-            const dependents = getRoundDependents(preset, roundIndex);
-            dependents.forEach(dependentRoundIndex => {
-              const dependentRound = preset.rounds[dependentRoundIndex];
-              if (dependentRound.winners != null && dependentRound.winners.destinationRoundIndex == roundIndex) {
-                sendPlayers(dependentRoundIndex, true);
-              }
-              if (dependentRound.losers != null && dependentRound.losers.destinationRoundIndex == roundIndex) {
-                sendPlayers(dependentRoundIndex, false);
-              }
-            });
-          }
-
-          // ステージ情報を埋める
-          const stagesToAdd: StageSetupResult[] = [];
-          for (let i = 0; i < round.numGroups!; i++) {
-            const name = round.numGroups == 1 ? round.name : `${round.name}${groupNames[i]}`;
-            const numPlayers = stageNumPlayers[i];
-            const numWinners = round.winners != null ? round.winners.numPerGroup : -1;
-            const numLosers = round.losers != null ? round.losers.numPerGroup : -1;
-            const hasWildcard = round.winners != null ? round.winners.numWildcard > 0 : false;
-            const numWildcard = hasWildcard ? 1 : 0;
-            let resolvedNumWinners: number;
-            let resolvedNumLosers: number;
-            if (numWinners == -1 && numLosers == -1) {
-              // 決勝のみ許す
-              if (roundIndex != preset.rounds.length - 1) throw new Error();
-              resolvedNumWinners = 1;
-              resolvedNumLosers = numPlayers - 1;
-            } else if (numWinners > 0 && numLosers == -1) {
-              resolvedNumWinners = numWinners;
-              resolvedNumLosers = numPlayers - numWildcard - numWinners;
-            } else if (numWinners == -1 && numLosers > 0) {
-              resolvedNumWinners = numPlayers - numWildcard - numLosers;
-              resolvedNumLosers = numLosers;
-            } else if (numWinners > 0 && numLosers > 0) {
-              if (numWinners + numWildcard + numLosers != numPlayers) throw new Error();
-              resolvedNumWinners = numWinners;
-              resolvedNumLosers = numLosers;
-            } else {
-              throw new Error();
-            }
-
-            stagesToAdd.push({
-              roundIndex,
-              groupIndex: i,
-              name,
-              numPlayers,
-              numWinners: resolvedNumWinners,
-              hasWildcard,
-              numLosers: resolvedNumLosers,
-            });
-          }
-
-          // 補足情報を埋める
-          const supplementComparisonsToAdd: SupplementComparisonSetupResult[] = [];
-          if (round.winners != null) {
-            const numWinners = stagesToAdd[0].numWinners;
-            if (round.winners.destinationMethod == "rankSortedSnake") {
-              for (let i = 0; i < numWinners; i++) {
-                const numRankPlayers = stagesToAdd.filter(e => e.numWinners > i).length;
-                if (numRankPlayers == 1) continue;
-                supplementComparisonsToAdd.push({
-                  roundIndex,
-                  rankIndex: i,
-                  name: `${round.name}${i + 1}位`,
-                  numPlayers: numRankPlayers,
-                });
-              }
-            }
-            const hasWildcard = stagesToAdd[0].hasWildcard;
-            if (stagesToAdd.some(e => e.hasWildcard != hasWildcard)) throw new Error(); // ワイルドカード有無が揃ってない場合は未対応
-            const numWildcard = hasWildcard ? 1 : 0;
-            if (numWildcard > 0) {
-              if (stagesToAdd.some(e => e.numWinners != numWinners)) throw new Error(); // 勝ち数が揃ってない場合は未対応
-              supplementComparisonsToAdd.push({
-                roundIndex,
-                rankIndex: numWinners,
-                name: `${round.name}${numWinners + 1}位 (ワイルドカード)`,
-                numPlayers: round.numGroups!,
-              });
-            }
-          }
-          if (round.losers != null) {
-            if (round.losers.destinationMethod == "rankSortedSnake") {
-              const numWinners = stagesToAdd[0].numWinners;
-              if (stagesToAdd.some(e => e.numWinners != numWinners)) throw new Error(); // 勝ち数が揃ってない場合は未対応
-              const hasWildcard = stagesToAdd[0].hasWildcard;
-              if (stagesToAdd.some(e => e.hasWildcard != hasWildcard)) throw new Error(); // ワイルドカード有無が揃ってない場合は未対応
-              const numWildcard = hasWildcard ? 1 : 0;
-              const startRankIndex = numWinners + numWildcard;
-              const numLosers = Math.max(...stagesToAdd.map(e => e.numLosers));
-              for (let i = 0; i < numLosers; i++) {
-                const rankIndex = startRankIndex + i;
-                const numRankPlayers = stagesToAdd.filter(e => e.numPlayers > rankIndex).length;
-                if (numRankPlayers == 1) continue;
-                supplementComparisonsToAdd.push({
-                  roundIndex,
-                  rankIndex,
-                  name: `${round.name}${rankIndex + 1}位`,
-                  numPlayers: numRankPlayers,
-                });
-              }
-            }
-          }
-
-          stages.push(...stagesToAdd);
-          supplementComparisons.push(...supplementComparisonsToAdd);
-        });
-
-        return {
-          preset,
-          stages,
-          hasQualifierRound: false,
-          supplementComparisons,
-        };
+      if (preset.hasQualifierRound) {
+        return setupCompetitionWithQualifier(preset, numPlayers);
       } else {
-        throw new Error();
+        return setupCompetitionWithTournament(preset, numPlayers);
       }
     }
   }
 
-  export function setupRound(preset: Preset.Preset, roundIndex: number, io: CompetitionIO): RoundSetupResult {
-    if (roundIndex == 0) {
-      const firstRound = preset.rounds[0];
-      if (firstRound.qualifierPlayerIndices != null) {
-        // ポイント制予選
-        const result: RoundSetupResult = {
-          groups: new Array(firstRound.qualifierPlayerIndices.length).fill(null).map(_ => ({ entries: [] })),
-        };
+  function setupCompetitionManual(numGames: number): CompetitionSetupResult {
+    const stages = new Array(numGames).fill(null).map((_, i) => ({
+      roundIndex: 0,
+      groupIndex: i,
+      name: String(i + 1),
+      numPlayers: 8,
+      numWinners: 0,
+      hasWildcard: false,
+      numLosers: 0,
+    }));
 
-        // TODO
-        return result;
-      } else if (firstRound.numGroups != null) {
-        // トーナメント
-        const result: RoundSetupResult = {
-          groups: new Array(firstRound.numGroups).fill(null).map(_ => ({ entries: [] })),
-        };
+    return {
+      preset: null,
+      numPlayers: null,
+      stages,
+      supplementComparisons: [],
+    };
+  }
 
-        const firstRoundGroups: PlayerEntry[][] = new Array(firstRound.numGroups);
-        for (let i = 0; i < firstRound.numGroups; i++) {
-          firstRoundGroups[i] = [];
+  function setupCompetitionWithQualifier(preset: Preset.Preset, numPlayers: number): CompetitionSetupResult {
+    // ポイント制予選
+    if (preset.rounds.length != 2) throw new Error();
+
+    const firstRound = preset.rounds[0];
+    if (firstRound.qualifierPlayerIndices == null) throw new Error();
+    const stages: StageSetupResult[] = [];
+    // 予選
+    firstRound.qualifierPlayerIndices.forEach((_, i) => stages.push({
+      roundIndex: 0,
+      groupIndex: i,
+      name: `${firstRound.name}Heat${i + 1}`,
+      numPlayers: 4,
+      numWinners: 0,
+      hasWildcard: false,
+      numLosers: 0,
+    }));
+    // 決勝
+    stages.push({
+      roundIndex: 1,
+      groupIndex: 0,
+      name: preset.rounds[1].name,
+      numPlayers: 4,
+      numWinners: 1,
+      hasWildcard: false,
+      numLosers: 3,
+    });
+
+    return {
+      preset,
+      numPlayers,
+      stages,
+      supplementComparisons: [],
+    };
+  }
+
+  function setupCompetitionWithTournament(preset: Preset.Preset, numOverallPlayers: number): CompetitionSetupResult {
+    // トーナメント
+    const stages: StageSetupResult[] = [];
+    const supplementComparisons: SupplementComparisonSetupResult[] = [];
+
+    preset.rounds.forEach((round, roundIndex) => {
+      // 各ステージの人数割り出し
+      const stageNumPlayers = new Array(round.numGroups!).fill(0);
+      if (roundIndex == 0) {
+        // 開始ラウンドはエントリー数とグループ数から計算
+        const quotient = Math.floor(numOverallPlayers / round.numGroups!);
+        const remainder = numOverallPlayers % round.numGroups!;
+        for (let i = 0; i < round.numGroups!; i++) {
+          stageNumPlayers[i] = quotient + (i < remainder ? 1 : 0);
         }
+      } else {
+        // 以降のラウンドは前のラウンドの結果から計算
+        const sendPlayers = (dependentRoundIndex: number, winner: boolean) => {
+          const dependentRound = preset.rounds[dependentRoundIndex];
+          const destinationMethod = winner ? dependentRound.winners!.destinationMethod : dependentRound.losers!.destinationMethod;
 
-        entries.forEach((e) => {
-          if (e.firstRoundGroupIndex == null) {
-            throw new Error("1回戦組が設定されていないプレイヤーがいます: " + e.name);
+          let numSend = 0;
+          for (let i = 0; i < dependentRound.numGroups!; i++) {
+            const dependentStage = getStageSetupResult(stages, dependentRoundIndex, i);
+            if (dependentStage == null) throw new Error();
+            const dependentStageNumWinners = dependentStage.numWinners;
+            const dependentStageNumLosers = dependentStage.numLosers;
+            numSend += winner ? dependentStageNumWinners : dependentStageNumLosers;
           }
-          if (e.firstRoundGroupIndex == -1 || e.firstRoundGroupIndex >= firstRoundGroups.length) {
-            throw new Error("範囲外の1回戦組があります: " + groupNames[e.firstRoundGroupIndex]);
+          if (winner) {
+            numSend += dependentRound.winners!.numWildcard;
           }
-          firstRoundGroups[e.firstRoundGroupIndex].push(e);
+
+          if (destinationMethod == "standard") {
+            const startSnakeIndex = getNextSnakeIndex(stageNumPlayers);
+            for (let i = 0; i < numSend; i++) {
+              const snakeIndex = (startSnakeIndex + i) % (stageNumPlayers.length * 2);
+              stageNumPlayers[resolveSnakeIndex(snakeIndex, stageNumPlayers.length)]++;
+            }
+          }
+        };
+
+        const dependents = getRoundDependents(preset, roundIndex);
+        dependents.forEach(dependentRoundIndex => {
+          const dependentRound = preset.rounds[dependentRoundIndex];
+          if (dependentRound.winners != null && dependentRound.winners.destinationRoundIndex == roundIndex) {
+            sendPlayers(dependentRoundIndex, true);
+          }
+          if (dependentRound.losers != null && dependentRound.losers.destinationRoundIndex == roundIndex) {
+            sendPlayers(dependentRoundIndex, false);
+          }
         });
-
-        const firstRoundGroupNumPlayers = firstRoundGroups.map((e) => e.length);
-        let failed = false;
-        let diff = 0;
-        for (let i = 1; i < firstRoundGroupNumPlayers.length; i++) {
-          const prev = firstRoundGroupNumPlayers[i - 1];
-          const curr = firstRoundGroupNumPlayers[i];
-          if (prev < curr) failed = true;
-          diff += prev - curr;
-          if (diff >= 2) failed = true;
-        }
-        if (failed) {
-          throw new Error("1回戦組の振り分けが正しくありません。各グループの人数差は1以内で、かつ先のグループの方が人数が多くなっている必要があります: " + firstRoundGroupNumPlayers);
-        }
-        // TODO
-        return result;
       }
-      throw new Error();
+
+      // ステージ情報を埋める
+      const stagesToAdd: StageSetupResult[] = [];
+      for (let i = 0; i < round.numGroups!; i++) {
+        const name = round.numGroups == 1 ? round.name : `${round.name}${groupIndexToString(i)}`;
+        const numPlayers = stageNumPlayers[i];
+        const numWinners = round.winners != null ? round.winners.numPerGroup : -1;
+        const numLosers = round.losers != null ? round.losers.numPerGroup : -1;
+        const hasWildcard = round.winners != null ? round.winners.numWildcard > 0 : false;
+        const numWildcard = hasWildcard ? 1 : 0;
+        let resolvedNumWinners: number;
+        let resolvedNumLosers: number;
+        if (numWinners == -1 && numLosers == -1) {
+          // 決勝のみ許す
+          if (roundIndex != preset.rounds.length - 1) throw new Error();
+          resolvedNumWinners = 1;
+          resolvedNumLosers = numPlayers - 1;
+        } else if (numWinners > 0 && numLosers == -1) {
+          resolvedNumWinners = numWinners;
+          resolvedNumLosers = numPlayers - numWildcard - numWinners;
+        } else if (numWinners == -1 && numLosers > 0) {
+          resolvedNumWinners = numPlayers - numWildcard - numLosers;
+          resolvedNumLosers = numLosers;
+        } else if (numWinners > 0 && numLosers > 0) {
+          if (numWinners + numWildcard + numLosers != numPlayers) throw new Error();
+          resolvedNumWinners = numWinners;
+          resolvedNumLosers = numLosers;
+        } else {
+          throw new Error();
+        }
+
+        stagesToAdd.push({
+          roundIndex,
+          groupIndex: i,
+          name,
+          numPlayers,
+          numWinners: resolvedNumWinners,
+          hasWildcard,
+          numLosers: resolvedNumLosers,
+        });
+      }
+
+      // 補足情報の定義を埋める
+      const supplementComparisonsToAdd: SupplementComparisonSetupResult[] = [];
+      if (round.winners != null) {
+        const numMaxWinners = Math.max(...stagesToAdd.map(e => e.numWinners));
+        if (round.winners.destinationMethod == "standard") {
+          // グループ数が1の場合は順位内比較を行う必要がないので補足情報も不要
+          if (round.numGroups! > 1) {
+            for (let i = 0; i < numMaxWinners; i++) {
+              const numRankPlayers = stagesToAdd.filter(e => e.numWinners > i).length;
+              if (numRankPlayers == 1) continue;
+              supplementComparisonsToAdd.push({
+                roundIndex,
+                rankId: `T${i}`,
+                name: `${round.name}${i + 1}位`,
+                numPlayers: numRankPlayers,
+              });
+            }
+          }
+        }
+        const hasWildcard = round.winners.numWildcard > 0;
+        if (stagesToAdd.some(e => e.hasWildcard != hasWildcard)) throw new Error(); // ワイルドカード有無が揃ってない場合は未対応
+        const numWildcard = hasWildcard ? 1 : 0;
+        if (numWildcard > 0) {
+          const unevenNumWinners = stagesToAdd.some(e => e.numWinners != numMaxWinners);
+          const name = unevenNumWinners ? `${round.name}ワイルドカード` : `${round.name}${numMaxWinners + 1}位 (ワイルドカード)`;
+          supplementComparisonsToAdd.push({
+            roundIndex,
+            rankId: "W",
+            name,
+            numPlayers: round.numGroups!,
+          });
+        }
+      }
+      if (round.losers != null) {
+        if (round.losers.destinationMethod == "standard") {
+          // グループ数が1の場合は順位内比較を行う必要がないので補足情報も不要
+          if (round.numGroups! > 1) {
+            const numWinners = stagesToAdd[0].numWinners;
+            const unevenNumWinners = stagesToAdd.some(e => e.numWinners != numWinners);
+            const hasWildcard = stagesToAdd[0].hasWildcard;
+            if (stagesToAdd.some(e => e.hasWildcard != hasWildcard)) throw new Error(); // 負けを並べるとき、ワイルドカード有無が揃ってない場合は未対応
+            const numWildcard = hasWildcard ? 1 : 0;
+            const numMaxLosers = Math.max(...stagesToAdd.map(e => e.numLosers));
+            const unevenNumLosers = stagesToAdd.some(e => e.numLosers != numMaxLosers);
+            if (!unevenNumWinners) {
+              for (let i = 0; i < numMaxLosers; i++) {
+                const rankIndex = numWinners + numWildcard + i;
+                const numRankPlayers = stagesToAdd.filter(e => e.numPlayers > rankIndex).length;
+                if (numRankPlayers == 1) continue;
+                supplementComparisonsToAdd.push({
+                  roundIndex,
+                  rankId: `T${rankIndex}`,
+                  name: `${round.name}${rankIndex + 1}位`,
+                  numPlayers: numRankPlayers,
+                });
+              }
+            } else if (!unevenNumLosers) {
+              for (let i = 0; i < numMaxLosers; i++) {
+                const numRankPlayers = stagesToAdd.length;
+                if (numRankPlayers == 1) continue;
+                const name = i == numMaxLosers - 1 ? `${round.name}最下位` : `${round.name} 下から${numMaxLosers - i}位`;
+                supplementComparisonsToAdd.push({
+                  roundIndex,
+                  rankId: `B${numMaxLosers - i}`,
+                  name,
+                  numPlayers: numRankPlayers,
+                });
+              }
+            } else {
+              throw new Error(); // 勝ち数も負け数も揃ってないことはないはず
+            }
+          }
+        }
+      }
+
+      stages.push(...stagesToAdd);
+      supplementComparisons.push(...supplementComparisonsToAdd);
+    });
+
+    return {
+      preset,
+      numPlayers: numOverallPlayers,
+      stages,
+      supplementComparisons,
+    };
+  }
+
+  export function setupRound(preset: Preset.Preset, numPlayers: number, stages: StageSetupResult[], roundIndex: number, io: CompetitionIO): RoundSetupResult {
+    if (roundIndex == 0) {
+      if (preset.hasQualifierRound) {
+        return setupFirstRoundWithQualifier(preset, numPlayers, stages, io);
+      } else {
+        return setupFirstRoundWithTournament(preset, stages, io);
+      }
     } else {
-      const round = preset.rounds[roundIndex];
-      const numGroups = round.numGroups;
-      if (numGroups == null) throw new Error();
-
-      const result: RoundSetupResult = {
-        groups: new Array(numGroups).fill(null).map(_ => ({ entries: [] })),
-      };
-
-      const dependents = getRoundDependents(preset, roundIndex);
-
-      // TODO
-      return result;
+      if (preset.hasQualifierRound) {
+        if (roundIndex != 1) throw new Error();
+        return setupFinalRoundWithQualifier(preset, numPlayers, stages, io);
+      } else {
+        return setupSubsequentRoundWithTournament(preset, stages, roundIndex, io);
+      }
     }
+  }
+
+  function setupFirstRoundWithQualifier(preset: Preset.Preset, numPlayers: number, stages: StageSetupResult[], io: CompetitionIO): RoundSetupResult {
+    // ポイント制予選
+    const firstRound = preset.rounds[0];
+    if (firstRound.qualifierPlayerIndices == null) throw new Error();
+
+    const groups: RoundSetupResult["groups"] = new Array(firstRound.qualifierPlayerIndices.length).fill(null).map(_ => ({ entries: [] }));
+
+    const entries = io.readEntries();
+    entries.forEach((e) => {
+      if (e.firstRoundGroupIndex == null) {
+        throw new Error("1回戦組が設定されていないプレイヤーがいます: " + e.name);
+      }
+      if (e.firstRoundGroupIndex == -1 || e.firstRoundGroupIndex >= numPlayers) {
+        throw new Error("範囲外の1回戦組があります: " + groupIndexToString(e.firstRoundGroupIndex));
+      }
+      if (entries.filter(f => e.firstRoundGroupIndex == f.firstRoundGroupIndex).length != 1) {
+        throw new Error("1回戦組に重複があります: " + groupIndexToString(e.firstRoundGroupIndex));
+      }
+    });
+
+    groups.forEach((_, groupIndex) => {
+      groups[groupIndex].entries = firstRound.qualifierPlayerIndices![groupIndex].map(i => {
+        const foundEntry = entries.find(e => e.firstRoundGroupIndex == i);
+        if (foundEntry == null) throw new Error();
+        return {
+          name: foundEntry.name,
+          handicap: 0,
+        };
+      });
+    });
+
+    return {
+      groups,
+    };
+  }
+
+  function setupFinalRoundWithQualifier(preset: Preset.Preset, numPlayers: number, stages: StageSetupResult[], io: CompetitionIO): RoundSetupResult {
+    // ポイント戦決勝
+    const round = preset.rounds[1];
+    const numGroups = round.numGroups;
+    if (numGroups == null) throw new Error();
+    if (numGroups != 1) throw new Error();
+    const groups: RoundSetupResult["groups"] = new Array(numGroups).fill(null).map(_ => ({ entries: [] }));
+
+    const qualifierRound = preset.rounds[0];
+    if (qualifierRound.qualifierPlayerIndices == null) throw new Error();
+    const numPlayersPerGroup = qualifierRound.qualifierPlayerIndices[0].length;
+    if (qualifierRound.qualifierPlayerIndices.some(e => e.length != numPlayersPerGroup)) throw new Error();
+
+    const qualifierTable = io.readQualifierTable();
+    if (qualifierTable.length != numPlayers) throw new Error();
+    const qualifierRoundResults = qualifierRound.qualifierPlayerIndices.map((_, i) => io.readStageResult(0, i));
+
+    const qualifierScores: QualifierPlayerScore[] = [];
+    qualifierTable.forEach(entry => {
+      const stageResults = entry.stageResults.map(stageResult => {
+        const found = qualifierRoundResults[stageResult.stageIndex].find(e => e.name == entry.name);
+        if (found == null) throw new Error();
+        return found;
+      });
+      stageResults.sort(compareStageScore);
+      const bestResult = stageResults[stageResults.length - 1];
+
+      const numPlaces: number[] = new Array(numPlayersPerGroup).fill(0);
+      entry.stageResults.forEach(stageResult => {
+        numPlaces[stageResult.rankIndex]++;
+      });
+
+      qualifierScores.push({
+        name: entry.name,
+        bestGameGrade: bestResult.grade,
+        bestGameLevel: bestResult.level,
+        bestGameTimeDiffBest: bestResult.timeDiffBest,
+        numPlaces,
+        points: entry.totalPoints,
+      });
+    });
+
+    const qualifierResults = getQualifierResult(qualifierScores);
+
+    io.writeQualifierResult(qualifierResults);
+
+    const assignHandicap = (rankIndex: number): number => {
+      if (rankIndex == 0) return -10;
+      if (rankIndex == 1) return -5;
+      return 0;
+    };
+    for (let i = 0; i < 4; i++) {
+      const qualifierResult = qualifierResults[0];
+      groups[0].entries.push({ name: qualifierResult.name, handicap: assignHandicap(i) });
+    }
+
+    return {
+      groups,
+    };
+  }
+
+  function setupFirstRoundWithTournament(preset: Preset.Preset, stages: StageSetupResult[], io: CompetitionIO): RoundSetupResult {
+    // トーナメント
+    const firstRound = preset.rounds[0];
+    const groups: RoundSetupResult["groups"] = new Array(firstRound.numGroups).fill(null).map(_ => ({ entries: [] }));
+
+    const entries = io.readEntries();
+    entries.forEach((e) => {
+      if (e.firstRoundGroupIndex == null) {
+        throw new Error("1回戦組が設定されていないプレイヤーがいます: " + e.name);
+      }
+      if (e.firstRoundGroupIndex == -1 || e.firstRoundGroupIndex >= groups.length) {
+        throw new Error("範囲外の1回戦組があります: " + groupIndexToString(e.firstRoundGroupIndex));
+      }
+      const stagePlayerEntry = {
+        name: e.name,
+        handicap: 0,
+      };
+      groups[e.firstRoundGroupIndex].entries.push(stagePlayerEntry);
+    });
+
+    const firstRoundGroupNumPlayers = groups.map((e) => e.entries.length);
+    let failed = false;
+    let diff = 0;
+    for (let i = 1; i < firstRoundGroupNumPlayers.length; i++) {
+      const prev = firstRoundGroupNumPlayers[i - 1];
+      const curr = firstRoundGroupNumPlayers[i];
+      if (prev < curr) failed = true;
+      diff += prev - curr;
+      if (diff >= 2) failed = true;
+    }
+    if (failed) {
+      throw new Error("1回戦組の振り分けが正しくありません。各グループの人数差は1以内で、かつ先のグループの方が人数が多くなっている必要があります: " + firstRoundGroupNumPlayers);
+    }
+
+    return {
+      groups,
+    };
+  }
+
+  function setupSubsequentRoundWithTournament(preset: Preset.Preset, stages: StageSetupResult[], roundIndex: number, io: CompetitionIO): RoundSetupResult {
+    if (roundIndex == 0) throw new Error;
+    const round = preset.rounds[roundIndex];
+    const numGroups = round.numGroups;
+    if (numGroups == null) throw new Error();
+
+    type StagePlayerEntryStub = { name: string, previousRoundRankIndex: number, previousRoundHandicapMethod: Preset.HandicapMethod };
+    const groupStubs: StagePlayerEntryStub[][] = [];
+
+    const sendPlayers = (dependentRoundIndex: number, winner: boolean) => {
+      const dependentRound = preset.rounds[dependentRoundIndex];
+      const destinationMethod = winner ? dependentRound.winners!.destinationMethod : dependentRound.losers!.destinationMethod;
+
+      const dependentStages: StageSetupResult[] = [];
+      const dependentStageResults: StagePlayerResult[][] = [];
+      for (let i = 0; i < dependentRound.numGroups!; i++) {
+        const stage = stages.find(e => e.roundIndex == dependentRoundIndex && e.groupIndex == i);
+        if (stage == null) throw new Error;
+        dependentStages.push(stage);
+
+        const stageResult = io.readStageResult(dependentRoundIndex, i);
+        dependentStageResults.push(stageResult);
+      }
+
+      // 全部のリザルトが揃っていることを確認
+      dependentStages.forEach((dependentStage, dependentStageIndex) => {
+        const dependentStageResult = dependentStageResults[dependentStageIndex];
+        if (dependentStageResult.length != dependentStage.numPlayers) throw new NotReadyError();
+      });
+
+      if (destinationMethod == "standard") {
+        const sortedStubsToPut: StagePlayerEntryStub[] = [];
+
+        if (winner) {
+          const numMaxWinners = Math.max(...dependentStages.map(e => e.numWinners));
+
+          for (let i = 0; i < numMaxWinners; i++) {
+            const rankIndex = i;
+
+            const resultsPerRank: StagePlayerResult[] = [];
+            dependentStages.forEach((dependentStage, dependentStageIndex) => {
+              if (rankIndex >= dependentStage.numWinners) return;
+              const dependentStageResult = dependentStageResults[dependentStageIndex][rankIndex];
+              resultsPerRank.push(dependentStageResult);
+            });
+
+            resultsPerRank.sort(compareStageScore).reverse();
+
+            io.writeSupplementComparison(dependentRoundIndex, `T${rankIndex}`, resultsPerRank);
+
+            resultsPerRank.forEach(result => {
+              sortedStubsToPut.push({
+                name: result.name,
+                previousRoundHandicapMethod: dependentRound.winners!.handicapMethod,
+                previousRoundRankIndex: rankIndex,
+              });
+            });
+          }
+
+          const hasWildcard = dependentRound.winners!.numWildcard > 0;
+          if (dependentStages.some(e => e.hasWildcard != hasWildcard)) throw new Error(); // ワイルドカード有無が揃ってない場合は未対応
+          if (hasWildcard) {
+            const wildcardResults: (StagePlayerResult & { rankIndex: number })[] = [];
+            dependentStages.forEach((dependentStage, dependentStageIndex) => {
+              const rankIndex = dependentStage.numWinners;
+              const dependentStageResult = dependentStageResults[dependentStageIndex][rankIndex];
+              wildcardResults.push({ ...dependentStageResult, rankIndex });
+            });
+
+            wildcardResults.sort(compareStageScore).reverse();
+
+            io.writeSupplementComparison(dependentRoundIndex, "W", wildcardResults);
+
+            wildcardResults.forEach(result => {
+              sortedStubsToPut.push({
+                name: result.name,
+                previousRoundHandicapMethod: dependentRound.winners!.handicapMethod,
+                previousRoundRankIndex: result.rankIndex,
+              });
+            });
+          }
+        } else {
+          const numWinners = dependentStages[0].numWinners;
+          const unevenNumWinners = dependentStages.some(e => e.numWinners != numWinners);
+          const hasWildcard = dependentStages[0].hasWildcard;
+          if (dependentStages.some(e => e.hasWildcard != hasWildcard)) throw new Error(); // 負けを並べるとき、ワイルドカード有無が揃ってない場合は未対応
+          const numWildcard = hasWildcard ? 1 : 0;
+          const numMaxLosers = Math.max(...dependentStages.map(e => e.numLosers));
+          const unevenNumLosers = dependentStages.some(e => e.numLosers != numMaxLosers);
+          for (let i = 0; i < numMaxLosers; i++) {
+            const resultsPerRank: (StagePlayerResult & { rankIndex: number })[] = [];
+            dependentStages.forEach((dependentStage, dependentStageIndex) => {
+              const rankIndex = dependentStage.numLosers + numWildcard + i;
+              if (rankIndex >= dependentStage.numPlayers) return;
+              const dependentStageResult = dependentStageResults[dependentStageIndex][rankIndex];
+              resultsPerRank.push({ ...dependentStageResult, rankIndex });
+            });
+
+            resultsPerRank.sort(compareStageScore).reverse();
+
+            let rankId: string;
+            if (!unevenNumWinners) {
+              rankId = `T${numWinners + numWildcard + i}`;
+            } else if (!unevenNumLosers) {
+              rankId = `B${numMaxLosers - i}`;
+            } else {
+              throw new Error(); // 勝ち数も負け数も揃ってないことはないはず
+            }
+            io.writeSupplementComparison(dependentRoundIndex, rankId, resultsPerRank);
+
+            resultsPerRank.forEach(result => {
+              sortedStubsToPut.push({
+                name: result.name,
+                previousRoundHandicapMethod: "none",
+                previousRoundRankIndex: result.rankIndex,
+              });
+            });
+          }
+        }
+
+        const startSnakeIndex = getNextSnakeIndex(groups.map(e => e.entries.length));
+        sortedStubsToPut.forEach((stub, i) => {
+          const snakeIndex = (startSnakeIndex + i) % (groups.length * 2);
+          groupStubs[resolveSnakeIndex(snakeIndex, groups.length)].push(stub);
+        });
+      }
+    };
+
+    const dependents = getRoundDependents(preset, roundIndex);
+    dependents.forEach(dependentRoundIndex => {
+      const dependentRound = preset.rounds[dependentRoundIndex];
+      if (dependentRound.winners != null && dependentRound.winners.destinationRoundIndex == roundIndex) {
+        sendPlayers(dependentRoundIndex, true);
+      }
+      if (dependentRound.losers != null && dependentRound.losers.destinationRoundIndex == roundIndex) {
+        sendPlayers(dependentRoundIndex, false);
+      }
+    });
+
+    // ハンディキャップを計算
+    const assignHandicap = (playerIndex: number, entry: StagePlayerEntryStub): number => {
+      switch (entry.previousRoundHandicapMethod) {
+        case "none":
+          return 0;
+        case "winnersPure":
+          if (entry.previousRoundRankIndex == 0) return -10;
+          if (entry.previousRoundRankIndex == 1) return -5;
+          return 0;
+        case "winnersDest":
+          if (playerIndex == 0) return -10;
+          if (playerIndex == 1) return -5;
+          return 0;
+        case "winnersDest2":
+          if (entry.previousRoundRankIndex == 0) {
+            if (playerIndex == 0) return -10;
+            if (playerIndex == 1) return -5;
+          }
+          return 0;
+        case "losers":
+          return 5;
+        default:
+          throw new Error();
+      }
+    };
+    const groups: RoundSetupResult["groups"] = groupStubs.map(group => {
+      const entries: StagePlayerEntry[] = group.map((entry, playerIndex) => {
+        return {
+          name: entry.name,
+          handicap: assignHandicap(playerIndex, entry),
+        };
+      });
+
+      return {
+        entries,
+      };
+    });
+
+    return {
+      groups,
+    };
   }
 
   export function stageToRoundGroup(preset: Preset.Preset, stageIndex: number): { roundIndex: number, groupIndex: number } | null {
     let startIndex = 0;
     for (let i = 0; i < preset.rounds.length; i++) {
       const round = preset.rounds[i];
-      const numGroups = round.numGroups != null ? round.numGroups : round.qualifierPlayerIndices != null ? round.qualifierPlayerIndices.length : 0;
+      const numGroups = round.numGroups != null ? round.numGroups : preset.hasQualifierRound ? round.qualifierPlayerIndices!.length : 0;
       if (startIndex <= stageIndex && stageIndex < startIndex + numGroups) {
         return { roundIndex: i, groupIndex: stageIndex - startIndex };
       }
@@ -393,7 +698,7 @@ namespace Competition {
     let startIndex = 0;
     for (let i = 0; i < roundIndex - 1; i++) {
       const round = preset.rounds[i];
-      const numGroups = round.numGroups != null ? round.numGroups : round.qualifierPlayerIndices != null ? round.qualifierPlayerIndices.length : 0;
+      const numGroups = round.numGroups != null ? round.numGroups : preset.hasQualifierRound ? round.qualifierPlayerIndices!.length : 0;
       startIndex += numGroups;
     }
     return startIndex + groupIndex;
@@ -545,4 +850,6 @@ namespace Competition {
 
     return result;
   }
+
+  export class NotReadyError extends Error {}
 }

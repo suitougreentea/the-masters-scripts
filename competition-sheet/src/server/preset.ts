@@ -1,29 +1,32 @@
 namespace Preset {
   // [numPerGroup] -1の場合は残りが全員入る (winners, losersの中で1回だけ使用可能)
   // [destinationMethod]
-  // none: 進出後のラウンドが1グループなので特に考慮する必要がない
-  // rankSnake: 順位の順番でスネーク状に埋める (ラウンドのグループ数が1の場合のみ)
-  // rankSortedSnake: 同順位内で結果をソートしてスネーク状に埋める
+  // standard: 順位で並べて、同順位内は結果をソートしてスネーク状に埋める
   // ※ 複数のラウンドからプレイヤーが来る場合、先のラウンドの分が先に埋まる
   // 「スネーク状」とは以下のような埋め方
   // 試合1: 1 6 7 12
   // 試合2: 2 5 8 11
   // 試合3: 3 4 9 10
   // [handicapMethod]
-  // winnersPure: 1位-10、2位-5 もともと-の場合は上書き、+の場合は上乗せ
-  // winnersDest: 進出後のグループで1番埋まりの場合は-10、2番埋まりの場合は-5 もともと-の場合は上書き、+の場合は上乗せ
-  // winnersDest2: 1着かつ、進出後のグループで1番埋まりの場合は-10、2番埋まりの場合は-5 もともと-の場合は上書き、+の場合は上乗せ
+  // none: 順位にかかわらず0 (内部で使っているだけ)
+  // winnersPure: 1位-10、2位-5
+  // winnersDest: 進出後のグループで1番埋まりの場合は-10、2番埋まりの場合は-5
+  // winnersDest2: 1着かつ、進出後のグループで1番埋まりの場合は-10、2番埋まりの場合は-5
   // losers: 一律+5
+
+  export type HandicapMethod = "none" | "winnersPure" | "winnersDest" | "winnersDest2" | "losers";
+  export type DestinationMethod = "standard";
 
   export type Preset = {
     name: string;
     supportedNumberOfPlayers: [number, number];
+    hasQualifierRound: boolean;
     rounds: {
       name: string;
       numGroups?: number;
       qualifierPlayerIndices?: number[][];
-      winners?: { numPerGroup: number, numWildcard: number, destinationRoundIndex: number, destinationMethod: "none" | "rankSnake" | "rankSortedSnake", handicapMethod: "winnersPure" | "winnersDest" | "winnersDest2" | "losers" }
-      losers?: { numPerGroup: number, destinationRoundIndex: number, destinationMethod: "none" | "rankSnake" | "rankSortedSnake" };
+      winners?: { numPerGroup: number, numWildcard: number, destinationRoundIndex: number, destinationMethod: DestinationMethod, handicapMethod: HandicapMethod }
+      losers?: { numPerGroup: number, destinationRoundIndex: number, destinationMethod: DestinationMethod };
     }[];
   };
 
@@ -32,6 +35,7 @@ namespace Preset {
     {
       name: "8",
       supportedNumberOfPlayers: [8, 8],
+      hasQualifierRound: true,
       rounds: [
         { // 0
           name: "予選",
@@ -57,6 +61,7 @@ namespace Preset {
     {
       name: "9",
       supportedNumberOfPlayers: [9, 9],
+      hasQualifierRound: true,
       rounds: [
         { // 0
           name: "予選",
@@ -83,6 +88,7 @@ namespace Preset {
     {
       name: "10",
       supportedNumberOfPlayers: [10, 10],
+      hasQualifierRound: true,
       rounds: [
         { // 0
           name: "予選",
@@ -110,6 +116,7 @@ namespace Preset {
     {
       name: "11",
       supportedNumberOfPlayers: [11, 11],
+      hasQualifierRound: true,
       rounds: [
         { // 0
           name: "予選",
@@ -138,6 +145,7 @@ namespace Preset {
     {
       name: "12",
       supportedNumberOfPlayers: [12, 12],
+      hasQualifierRound: true,
       rounds: [
         { // 0
           name: "予選",
@@ -166,27 +174,28 @@ namespace Preset {
     {
       name: "13",
       supportedNumberOfPlayers: [13, 13],
+      hasQualifierRound: false,
       rounds: [
         { // 0
           name: "1回戦",
           numGroups: 4,
-          winners: { numPerGroup: -1, numWildcard: 0, destinationRoundIndex: 2, destinationMethod: "rankSortedSnake", handicapMethod: "winnersDest" },
-          losers: { numPerGroup: 1, destinationRoundIndex: 1, destinationMethod: "none" },
+          winners: { numPerGroup: -1, numWildcard: 0, destinationRoundIndex: 2, destinationMethod: "standard", handicapMethod: "winnersDest" },
+          losers: { numPerGroup: 1, destinationRoundIndex: 1, destinationMethod: "standard" },
         },
         { // 1
           name: "敗者復活",
           numGroups: 1,
-          winners: { numPerGroup: 3, numWildcard: 0, destinationRoundIndex: 2, destinationMethod: "rankSnake", handicapMethod: "losers" },
+          winners: { numPerGroup: 3, numWildcard: 0, destinationRoundIndex: 2, destinationMethod: "standard", handicapMethod: "losers" },
         },
         { // 2
           name: "2回戦",
           numGroups: 3,
-          winners: { numPerGroup: 2, numWildcard: 2, destinationRoundIndex: 3, destinationMethod: "rankSortedSnake", handicapMethod: "winnersPure" }
+          winners: { numPerGroup: 2, numWildcard: 2, destinationRoundIndex: 3, destinationMethod: "standard", handicapMethod: "winnersPure" }
         },
         { // 3
           name: "準決勝",
           numGroups: 2,
-          winners: { numPerGroup: 2, numWildcard: 0, destinationRoundIndex: 4, destinationMethod: "none", handicapMethod: "winnersDest" }
+          winners: { numPerGroup: 2, numWildcard: 0, destinationRoundIndex: 4, destinationMethod: "standard", handicapMethod: "winnersDest" }
         },
         { // 4
           name: "決勝",
@@ -200,27 +209,28 @@ namespace Preset {
     {
       name: "14",
       supportedNumberOfPlayers: [14, 14],
+      hasQualifierRound: false,
       rounds: [
         { // 0
           name: "1回戦",
           numGroups: 4,
-          winners: { numPerGroup: -1, numWildcard: 0, destinationRoundIndex: 2, destinationMethod: "rankSortedSnake", handicapMethod: "winnersDest" },
-          losers: { numPerGroup: 1, destinationRoundIndex: 1, destinationMethod: "none" },
+          winners: { numPerGroup: -1, numWildcard: 0, destinationRoundIndex: 2, destinationMethod: "standard", handicapMethod: "winnersDest" },
+          losers: { numPerGroup: 1, destinationRoundIndex: 1, destinationMethod: "standard" },
         },
         { // 1
           name: "敗者復活",
           numGroups: 1,
-          winners: { numPerGroup: 2, numWildcard: 0, destinationRoundIndex: 2, destinationMethod: "rankSnake", handicapMethod: "losers" },
+          winners: { numPerGroup: 2, numWildcard: 0, destinationRoundIndex: 2, destinationMethod: "standard", handicapMethod: "losers" },
         },
         { // 2
           name: "2回戦",
           numGroups: 3,
-          winners: { numPerGroup: 2, numWildcard: 2, destinationRoundIndex: 3, destinationMethod: "rankSortedSnake", handicapMethod: "winnersPure" }
+          winners: { numPerGroup: 2, numWildcard: 2, destinationRoundIndex: 3, destinationMethod: "standard", handicapMethod: "winnersPure" }
         },
         { // 3
           name: "準決勝",
           numGroups: 2,
-          winners: { numPerGroup: 2, numWildcard: 0, destinationRoundIndex: 4, destinationMethod: "none", handicapMethod: "winnersDest" }
+          winners: { numPerGroup: 2, numWildcard: 0, destinationRoundIndex: 4, destinationMethod: "standard", handicapMethod: "winnersDest" }
         },
         { // 4
           name: "決勝",
@@ -234,27 +244,28 @@ namespace Preset {
     {
       name: "15",
       supportedNumberOfPlayers: [15, 15],
+      hasQualifierRound: false,
       rounds: [
         { // 0
           name: "1回戦",
           numGroups: 4,
-          winners: { numPerGroup: -1, numWildcard: 0, destinationRoundIndex: 2, destinationMethod: "rankSortedSnake", handicapMethod: "winnersDest" },
-          losers: { numPerGroup: 1, destinationRoundIndex: 1, destinationMethod: "none" },
+          winners: { numPerGroup: -1, numWildcard: 0, destinationRoundIndex: 2, destinationMethod: "standard", handicapMethod: "winnersDest" },
+          losers: { numPerGroup: 1, destinationRoundIndex: 1, destinationMethod: "standard" },
         },
         { // 1
           name: "敗者復活",
           numGroups: 1,
-          winners: { numPerGroup: 1, numWildcard: 0, destinationRoundIndex: 2, destinationMethod: "rankSnake", handicapMethod: "losers" },
+          winners: { numPerGroup: 1, numWildcard: 0, destinationRoundIndex: 2, destinationMethod: "standard", handicapMethod: "losers" },
         },
         { // 2
           name: "2回戦",
           numGroups: 3,
-          winners: { numPerGroup: 2, numWildcard: 2, destinationRoundIndex: 3, destinationMethod: "rankSortedSnake", handicapMethod: "winnersPure" }
+          winners: { numPerGroup: 2, numWildcard: 2, destinationRoundIndex: 3, destinationMethod: "standard", handicapMethod: "winnersPure" }
         },
         { // 3
           name: "準決勝",
           numGroups: 2,
-          winners: { numPerGroup: 2, numWildcard: 0, destinationRoundIndex: 4, destinationMethod: "none", handicapMethod: "winnersDest" }
+          winners: { numPerGroup: 2, numWildcard: 0, destinationRoundIndex: 4, destinationMethod: "standard", handicapMethod: "winnersDest" }
         },
         { // 4
           name: "決勝",
@@ -268,21 +279,22 @@ namespace Preset {
     {
       name: "16",
       supportedNumberOfPlayers: [16, 16],
+      hasQualifierRound: false,
       rounds: [
         { // 0
           name: "1回戦",
           numGroups: 4,
-          winners: { numPerGroup: 3, numWildcard: 0, destinationRoundIndex: 1, destinationMethod: "rankSortedSnake", handicapMethod: "winnersPure" },
+          winners: { numPerGroup: 3, numWildcard: 0, destinationRoundIndex: 1, destinationMethod: "standard", handicapMethod: "winnersPure" },
         },
         { // 1
           name: "2回戦",
           numGroups: 3,
-          winners: { numPerGroup: 2, numWildcard: 2, destinationRoundIndex: 2, destinationMethod: "rankSortedSnake", handicapMethod: "winnersPure" }
+          winners: { numPerGroup: 2, numWildcard: 2, destinationRoundIndex: 2, destinationMethod: "standard", handicapMethod: "winnersPure" }
         },
         { // 2
           name: "準決勝",
           numGroups: 2,
-          winners: { numPerGroup: 2, numWildcard: 0, destinationRoundIndex: 3, destinationMethod: "none", handicapMethod: "winnersDest" }
+          winners: { numPerGroup: 2, numWildcard: 0, destinationRoundIndex: 3, destinationMethod: "standard", handicapMethod: "winnersDest" }
         },
         { // 3
           name: "決勝",
@@ -299,27 +311,28 @@ namespace Preset {
     {
       name: "20",
       supportedNumberOfPlayers: [17, 20],
+      hasQualifierRound: false,
       rounds: [
         { // 0
           name: "1回戦",
           numGroups: 3,
-          winners: { numPerGroup: 4, numWildcard: 0, destinationRoundIndex: 2, destinationMethod: "rankSortedSnake", handicapMethod: "winnersPure" },
-          losers: { numPerGroup: -1, destinationRoundIndex: 1, destinationMethod: "rankSortedSnake" },
+          winners: { numPerGroup: 4, numWildcard: 0, destinationRoundIndex: 2, destinationMethod: "standard", handicapMethod: "winnersPure" },
+          losers: { numPerGroup: -1, destinationRoundIndex: 1, destinationMethod: "standard" },
         },
         { // 1
           name: "敗者復活",
           numGroups: 1,
-          winners: { numPerGroup: 4, numWildcard: 0, destinationRoundIndex: 2, destinationMethod: "rankSnake", handicapMethod: "losers" },
+          winners: { numPerGroup: 4, numWildcard: 0, destinationRoundIndex: 2, destinationMethod: "standard", handicapMethod: "losers" },
         },
         { // 2
           name: "2回戦",
           numGroups: 2,
-          winners: { numPerGroup: 4, numWildcard: 0, destinationRoundIndex: 3, destinationMethod: "none", handicapMethod: "winnersPure" }
+          winners: { numPerGroup: 4, numWildcard: 0, destinationRoundIndex: 3, destinationMethod: "standard", handicapMethod: "winnersPure" }
         },
         { // 3
           name: "準決勝",
           numGroups: 1,
-          winners: { numPerGroup: 4, numWildcard: 0, destinationRoundIndex: 4, destinationMethod: "none", handicapMethod: "winnersPure" }
+          winners: { numPerGroup: 4, numWildcard: 0, destinationRoundIndex: 4, destinationMethod: "standard", handicapMethod: "winnersPure" }
         },
         { // 4
           name: "決勝",
@@ -336,27 +349,28 @@ namespace Preset {
     {
       name: "24",
       supportedNumberOfPlayers: [21, 24],
+      hasQualifierRound: false, // trueの場合、rounds.length == 2
       rounds: [
         { // 0
           name: "1回戦",
           numGroups: 3,
-          winners: { numPerGroup: 4, numWildcard: 0, destinationRoundIndex: 2, destinationMethod: "rankSortedSnake", handicapMethod: "winnersPure" },
-          losers: { numPerGroup: -1, destinationRoundIndex: 1, destinationMethod: "rankSortedSnake" },
+          winners: { numPerGroup: 4, numWildcard: 0, destinationRoundIndex: 2, destinationMethod: "standard", handicapMethod: "winnersPure" },
+          losers: { numPerGroup: -1, destinationRoundIndex: 1, destinationMethod: "standard" },
         },
         { // 1
           name: "敗者復活",
           numGroups: 2,
-          winners: { numPerGroup: 2, numWildcard: 0, destinationRoundIndex: 2, destinationMethod: "rankSortedSnake", handicapMethod: "losers" },
+          winners: { numPerGroup: 2, numWildcard: 0, destinationRoundIndex: 2, destinationMethod: "standard", handicapMethod: "losers" },
         },
         { // 2
           name: "2回戦",
           numGroups: 2,
-          winners: { numPerGroup: 4, numWildcard: 0, destinationRoundIndex: 3, destinationMethod: "none", handicapMethod: "winnersPure" }
+          winners: { numPerGroup: 4, numWildcard: 0, destinationRoundIndex: 3, destinationMethod: "standard", handicapMethod: "winnersPure" }
         },
         { // 3
           name: "準決勝",
           numGroups: 1,
-          winners: { numPerGroup: 4, numWildcard: 0, destinationRoundIndex: 4, destinationMethod: "none", handicapMethod: "winnersPure" }
+          winners: { numPerGroup: 4, numWildcard: 0, destinationRoundIndex: 4, destinationMethod: "standard", handicapMethod: "winnersPure" }
         },
         { // 4
           name: "決勝",

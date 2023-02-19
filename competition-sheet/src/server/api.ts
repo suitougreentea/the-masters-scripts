@@ -32,17 +32,11 @@ function setupCompetition(form: { manual: boolean, manualNumberOfGames: number }
 
     const { manual, manualNumberOfGames } = form;
 
-    const setupResult = Competition.setupCompetition(manual, manualNumberOfGames, entries);
+    const setupResult = Competition.setupCompetition(entries.length, manual ? manualNumberOfGames : null);
 
     const ss = SpreadsheetApp.getActiveSpreadsheet();
-    let competitionSheet = ss.getSheetByName(Definition.sheetNames.competition);
-    if (competitionSheet != null) {
-      ss.deleteSheet(competitionSheet);
-    }
-    competitionSheet = ss.insertSheet(Definition.sheetNames.competition, ss.getSheets().length);
 
-    CompetitionSheet.initializeCompetitionSheet(ss, competitionSheet, setupResult);
-    CompetitionSheet.setFirstRoundPlayers(ss, competitionSheet, setupResult.firstRoundGroups);
+    const { competitionSheet } = CompetitionSheet.initializeCompetitionSheet(ss, setupResult);
     competitionSheet.activate();
   } catch (e) {
     SpreadsheetApp.getUi().alert(String(e));
@@ -56,7 +50,7 @@ function getStageInfo(stageIndex: number): Competition.StageInfo {
     const competitionSheet = ss.getSheetByName(Definition.sheetNames.competition);
     if (competitionSheet == null) throw new Error("Competitionシートがありません");
     const result = CompetitionSheet.getStageInfo(ss, competitionSheet, stageIndex);
-    CompetitionSheet.applyFormat(ss, competitionSheet, stageIndex);
+    CompetitionSheet.reapplyFormat(ss, competitionSheet, stageIndex);
     return result;
   } catch (e) {
     SpreadsheetApp.getUi().alert(String(e));
@@ -70,7 +64,7 @@ function reorderPlayers(stageIndex: number, names: (string | null)[]) {
     const competitionSheet = ss.getSheetByName(Definition.sheetNames.competition);
     if (competitionSheet == null) throw new Error("Competitionシートがありません");
     CompetitionSheet.reorderPlayers(ss, competitionSheet, stageIndex, names);
-    CompetitionSheet.applyFormat(ss, competitionSheet, stageIndex);
+    CompetitionSheet.reapplyFormat(ss, competitionSheet, stageIndex);
   } catch (e) {
     SpreadsheetApp.getUi().alert(String(e));
     throw e;
@@ -83,7 +77,7 @@ function applyResult(stageIndex: number) {
     const competitionSheet = ss.getSheetByName(Definition.sheetNames.competition);
     if (competitionSheet == null) throw new Error("Competitionシートがありません");
     CompetitionSheet.applyResult(ss, competitionSheet, stageIndex);
-    CompetitionSheet.applyFormat(ss, competitionSheet, stageIndex);
+    CompetitionSheet.reapplyFormat(ss, competitionSheet, stageIndex);
   } catch (e) {
     SpreadsheetApp.getUi().alert(String(e));
     throw e;
