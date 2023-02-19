@@ -3,14 +3,68 @@ namespace CompetitionSheet {
   type Sheet = GoogleAppsScript.Spreadsheet.Sheet;
   type Range = GoogleAppsScript.Spreadsheet.Range;
 
+  type StagePlayerEntryWithSpreadsheetScore = Competition.StagePlayerEntry & { gradeOrLevel: string | null, time: string | null };
 
-  export function initializeCompetitionSheet(ss: Spreadsheet, setupResult: Competition.CompetitionSetupResult): { competitionSheet: Sheet, detailSheet: Sheet | null } {
-    let competitionSheet = ss.getSheetByName(Definition.sheetNames.competition);
+  function constructStageRangeName(roundIndex: number, groupIndex: number) { return `Stage_${roundIndex}_${groupIndex}`; }
+
+  export function getCompetitionSheet(ss: Spreadsheet): Sheet | null {
+    return ss.getSheetByName(Definition.sheetNames.competition);
+  }
+  export function getCompetitionSheetOrError(ss: Spreadsheet): Sheet {
+    const sheet = getCompetitionSheet(ss);
+    if (sheet == null) throw new Error("Competitionシートがありません");
+    return sheet;
+  }
+  export function getCompetitionDetailSheet(ss: Spreadsheet): Sheet | null {
+    return ss.getSheetByName(Definition.sheetNames.competitionDetail);
+  }
+  export function getTemplatesSheetOrError(ss: Spreadsheet): Sheet {
+    const sheet = ss.getSheetByName(Definition.sheetNames.templates);
+    if (sheet == null) throw new Error();
+    return sheet;
+  }
+
+  export function getPlayerEntries(ss: Spreadsheet): Competition.PlayerEntry[] {
+    const entrySheet = ss.getSheetByName(Definition.sheetNames.entry)!;
+    const values = entrySheet.getRange("R3C1:C3").getValues();
+
+    const entries: Competition.PlayerEntry[] = [];
+
+    values.forEach(e => {
+      // TODO: duplicate check
+      const [nameInput, firstRoundGroupInput, bestTimeInput] = e;
+
+      if (Util.isNullOrEmptyString(nameInput)) return;
+      const name = String(nameInput);
+
+      let firstRoundGroupIndex: number | null;
+      if (Util.isNullOrEmptyString(firstRoundGroupInput)) {
+        firstRoundGroupIndex = null;
+      } else {
+        const parsed = Competition.stringToGroupIndex(String(firstRoundGroupInput));
+        if (parsed == null) throw new Error("不正な1回戦組があります: " + firstRoundGroupInput);
+        firstRoundGroupIndex = parsed;
+      }
+
+      const bestTime = Time.spreadsheetValueToTime(bestTimeInput);
+      if (bestTime == null) throw new Error("自己ベストの無いプレイヤーがいます");
+
+      entries.push({
+        name,
+        firstRoundGroupIndex,
+      });
+    });
+
+    return entries;
+  }
+
+  export function setupCompetitionSheet(ss: Spreadsheet, setupResult: Competition.CompetitionSetupResult): { competitionSheet: Sheet, detailSheet: Sheet | null } {
+    let competitionSheet = getCompetitionSheet(ss);
     if (competitionSheet != null) {
       ss.deleteSheet(competitionSheet);
       competitionSheet = null;
     }
-    let detailSheet = ss.getSheetByName(Definition.sheetNames.competitionDetail);
+    let detailSheet = getCompetitionDetailSheet(ss);
     if (detailSheet != null) {
       ss.deleteSheet(detailSheet);
       detailSheet = null;
@@ -20,14 +74,13 @@ namespace CompetitionSheet {
 
     competitionSheet = ss.insertSheet(Definition.sheetNames.competition, ss.getSheets().length);
 
-    const template = ss.getSheetByName(Definition.sheetNames.templates);
-    if (template == null) throw new Error("Template not found");
+    const templatesSheet = getTemplatesSheetOrError(ss);
 
     let competitionSheetRow = 1;
     stages.forEach((stage, stageIndex) => {
-      applyStageFormatInternal(competitionSheet!, template, competitionSheetRow, stage, true);
+      applyStageFormatInternal(competitionSheet!, templatesSheet, competitionSheetRow, stage, true);
 
-      ss.setNamedRange("Stage" + stageIndex, competitionSheet!.getRange(competitionSheetRow, 1));
+      ss.setNamedRange(constructStageRangeName(stage.roundIndex, stage.groupIndex), competitionSheet!.getRange(competitionSheetRow, 1));
       competitionSheet!.getRange(competitionSheetRow, 1).setValue(stage.name);
 
       competitionSheetRow += Definition.templates.competitionStage.numRows + 1;
@@ -51,10 +104,10 @@ namespace CompetitionSheet {
 
         let detailSheetColumn = 1;
 
-        pasteTemplate(detailSheet, 2, detailSheetColumn, template, tableTemplateName, SpreadsheetApp.CopyPasteType.PASTE_NORMAL);
+        pasteTemplate(detailSheet, 2, detailSheetColumn, templatesSheet, tableTemplateName, SpreadsheetApp.CopyPasteType.PASTE_NORMAL);
         detailSheetColumn += Definition.templates[tableTemplateName].numColumns + 1;
 
-        pasteTemplate(detailSheet, 1, detailSheetColumn, template, resultTemplateName, SpreadsheetApp.CopyPasteType.PASTE_NORMAL);
+        pasteTemplate(detailSheet, 1, detailSheetColumn, templatesSheet, resultTemplateName, SpreadsheetApp.CopyPasteType.PASTE_NORMAL);
         detailSheetColumn += Definition.templates[resultTemplateName].numColumns;
 
         Util.resizeSheet(detailSheet, Definition.templates[resultTemplateName].numRows, detailSheetColumn - 1);
@@ -72,7 +125,7 @@ namespace CompetitionSheet {
           if (comparisonNumPlayers < 2 || 6 < comparisonNumPlayers) throw new Error();
           const templateName = `supplementComparison${comparisonNumPlayers}` as keyof typeof Definition.templates;
 
-          pasteTemplate(detailSheet!, detailSheetRow, 1, template, templateName, SpreadsheetApp.CopyPasteType.PASTE_NORMAL);
+          pasteTemplate(detailSheet!, detailSheetRow, 1, templatesSheet, templateName, SpreadsheetApp.CopyPasteType.PASTE_NORMAL);
           detailSheet!.getRange(detailSheetRow, 1).setValue(supplementComparison.name);
           detailSheetRow += Definition.templates[templateName].numRows + 1;
         });
@@ -86,31 +139,35 @@ namespace CompetitionSheet {
     return { competitionSheet, detailSheet };
   }
 
-  function getCurrentSetupResult(ss: Spreadsheet): Competition.CompetitionSetupResult | null {
-    const competitionSheet = ss.getSheetByName(Definition.sheetNames.competition);
+  export function getCurrentSetupResult(ss: Spreadsheet): Competition.CompetitionSetupResult | null {
+    const competitionSheet = getCompetitionSheet(ss);
     if (competitionSheet == null) return null;
 
     const metadata = Util.getSheetMetadata(competitionSheet, Definition.metadataKeys.setupResult);
     if (metadata == null) return null;
     return metadata as Competition.CompetitionSetupResult;
   }
-
-  export function reapplyFormat(ss: Spreadsheet, sh: Sheet, stageIndex: number) {
-    const template = ss.getSheetByName(Definition.sheetNames.templates);
-    if (template == null) throw new Error("Template not found");
-
-    const setupResult = getCurrentSetupResult(ss);
-    if (setupResult == null) throw new Error("セットアップが行われていません");
-    const stage = setupResult.stages[stageIndex];
-    const stageRange = getStageRange(ss, stageIndex);
-    const row = stageRange.getRow();
-
-    applyStageFormatInternal(sh, template, row, stage, false);
+  export function getCurrentSetupResultOrError(ss: Spreadsheet): Competition.CompetitionSetupResult {
+    const result = getCurrentSetupResult(ss);
+    if (result == null) throw new Error("セットアップが行われていません");
+    return result;
   }
 
-  function pasteTemplate(destSheet: Sheet, row: number, column: number, templateSheet: Sheet, templateName: keyof typeof Definition.templates, type: GoogleAppsScript.Spreadsheet.CopyPasteType) {
+  export function reapplyFormat(ss: Spreadsheet, roundIndex: number, groupIndex: number) {
+    const competitionSheet = getCompetitionSheetOrError(ss);
+    const templatesSheet = getTemplatesSheetOrError(ss);
+
+    const setupResult = getCurrentSetupResultOrError(ss);
+    const stage = Competition.getStageSetupResult(setupResult.stages, roundIndex, groupIndex);
+    const stageRange = getStageRange(ss, roundIndex, groupIndex);
+    const row = stageRange.getRow();
+
+    applyStageFormatInternal(competitionSheet, templatesSheet, row, stage, false);
+  }
+
+  function pasteTemplate(destSheet: Sheet, row: number, column: number, templatesSheet: Sheet, templateName: keyof typeof Definition.templates, type: GoogleAppsScript.Spreadsheet.CopyPasteType) {
     const templateData = Definition.templates[templateName];
-    const templateRange = templateSheet.getRange(templateData.row, templateData.column, templateData.numRows, templateData.numColumns);
+    const templateRange = templatesSheet.getRange(templateData.row, templateData.column, templateData.numRows, templateData.numColumns);
 
     const destRange = destSheet.getRange(row, column, templateData.numRows, templateData.numColumns);
     templateRange.copyTo(destRange, type, false);
@@ -126,91 +183,94 @@ namespace CompetitionSheet {
     }
   }
 
-  function getStageRange(ss: Spreadsheet, stageIndex: number): Range {
-    const result = ss.getRangeByName("Stage" + stageIndex);
-    if (result == null) throw new Error(`Stage ${stageIndex + 1}が範囲外です`);
+  function getStageRange(ss: Spreadsheet, roundIndex: number, groupIndex: number): Range {
+    const result = ss.getRangeByName(constructStageRangeName(roundIndex, groupIndex));
+    if (result == null) throw new Error(`${constructStageRangeName(roundIndex, groupIndex)}が見つかりません`);
     return result;
   }
 
-  function getStageNameFromSpreadsheet(ss: Spreadsheet, stageIndex: number): string {
-    return String(getStageRange(ss, stageIndex).getValue());
-  }
+  export function getStageInfo(ss: Spreadsheet, roundIndex: number, groupIndex: number): Competition.StageInfo {
+    const setupResult = getCurrentSetupResultOrError(ss);
+    const { stages } = setupResult;
 
-  export function getStageInfo(ss: Spreadsheet, sh: Sheet, stageIndex: number): Competition.StageInfo {
-    const preset = getCurrentPreset(sh);
-    const stage = preset != null ? preset.stages[stageIndex] : null;
-    const wildcard = stage != null ? (stage.wildcard ? true : false) : false;
+    let ready = false;
+    let players = getStageEntries(ss, roundIndex, groupIndex);
+    if (players.some(e => e != null)) ready = true;
+    if (!ready) {
+      setupRound(ss, setupResult, roundIndex);
+      players = getStageEntries(ss, roundIndex, groupIndex);
+    }
+
+    const stage = Competition.getStageSetupResult(stages, roundIndex, groupIndex)!;
     return {
-      stageName: getStageNameFromSpreadsheet(ss, stageIndex),
-      players: getPlayerData(ss, sh, stageIndex),
-      manual: preset == null,
-      wildcard,
+      setupResult: stage,
+      ready,
+      players,
     };
   }
 
-  export function getTimerInfo(ss: Spreadsheet, sh: Sheet, stageIndex: number): Competition.TimerInfo {
-    const preset = getCurrentPreset(sh);
-    const stage = preset != null ? preset.stages[stageIndex] : null;
-    const wildcard = stage != null ? stage.wildcard : false;
-    if (wildcard) {
-      return {
-        stageName: getStageNameFromSpreadsheet(ss, stageIndex),
-        players: [],
-        wildcard: true,
-      };
-    } else {
-      return {
-        stageName: getStageNameFromSpreadsheet(ss, stageIndex),
-        players: getTimerPlayerData(ss, sh, stageIndex),
-        wildcard: false,
-      };
-    }
+  export function getTimerInfo(ss: Spreadsheet, roundIndex: number, groupIndex: number): Competition.StageTimerInfo {
+    const setupResult = getCurrentSetupResultOrError(ss);
+    const { stages } = setupResult;
+
+    let ready = false;
+    const players = getTimerPlayerData(ss, roundIndex, groupIndex);
+    if (players.some(e => e != null)) ready = true;
+
+    const stage = Competition.getStageSetupResult(stages, roundIndex, groupIndex)!;
+    return {
+      stageResult: stage,
+      ready,
+      players,
+    };
   }
 
-  export function setFirstRoundPlayers(ss: Spreadsheet, sh: Sheet, firstRoundGroups: string[][]) {
-    firstRoundGroups.forEach((names, stageIndex) => {
-      const playerData: (Competition.PlayerData | null)[] = [];
-      for (let i = 0; i < 8; i++) {
-        if (i < names.length) {
-          playerData.push({ name: names[i], handicap: 0, gradeOrLevel: null, time: null });
-        } else {
-          playerData.push(null);
-        }
-      }
-      setPlayerData(ss, sh, stageIndex, playerData, false);
+  function getIO(ss: Spreadsheet): Competition.CompetitionIO {
+    return {
+      readEntries: () => {
+        return getPlayerEntries(ss);
+      },
+      readQualifierTable: () => {
+        return getQualifierTable(ss);
+      },
+      readStageResult: (roundIndex: number, groupIndex: number) => {
+        return getStageResult(ss, roundIndex, groupIndex);
+      },
+      writeQualifierResult: (result: Competition.QualifierPlayerResult[]) => {
+        setQualifierResult(ss, result);
+      },
+      writeSupplementComparison: (roundIndex: number, rankId: string, result: Competition.StagePlayerResult[]) => {
+        setSupplementComparison(ss, roundIndex, rankId, result);
+      },
+    };
+  }
+
+  function setupRound(ss: Spreadsheet, setupResult: Competition.CompetitionSetupResult, roundIndex: number) {
+    if (setupResult.preset == null) return; // マニュアル
+    const result = Competition.setupRound(setupResult.preset, setupResult.numPlayers!, setupResult.stages, roundIndex, getIO(ss));
+
+    const competitionSheet = getCompetitionSheetOrError(ss);
+
+    result.groups.forEach((group, groupIndex) => {
+      const row = getStageRange(ss, roundIndex, groupIndex).getRow();
+
+      const numEntries = group.entries.length;
+      const nameRange = competitionSheet.getRange(row + 2, 2, numEntries, 1);
+      const handicapRange = competitionSheet.getRange(row + 2, 4, numEntries, 1);
+
+      const nameValues = group.entries.map(e => [e.name]);
+      const handicapValues = group.entries.map(e => [e.handicap != 0 ? e.handicap : null]);
+
+      nameRange.setValues(nameValues);
+      handicapRange.setValues(handicapValues);
     });
   }
 
-  function getPlayerData(ss: Spreadsheet, sh: Sheet, stageIndex: number): (Competition.PlayerData | null)[] {
-    const row = getStageRange(ss, stageIndex).getRow();
-
-    const nameRange = sh.getRange(row + 2, 2, 8, 1);
-    const handicapRange = sh.getRange(row + 2, 4, 8, 1);
-    const scoreRange = sh.getRange(row + 2, 8, 8, 2);
-
-    const nameValues = nameRange.getValues();
-    const handicapValues = handicapRange.getValues();
-    const scoreValues = scoreRange.getValues();
-
-    const result: (Competition.PlayerData | null)[] = [];
-    for (let i = 0; i < 8; i++) {
-      if (Util.isNullOrEmptyString(nameValues[i][0])) {
-        result.push(null);
-      } else {
-        const name = String(nameValues[i][0]);
-        const handicap = Util.isNullOrEmptyString(handicapValues[i][0]) ? 0 : Number(handicapValues[i][0]);
-        const gradeOrLevel = Util.isNullOrEmptyString(scoreValues[i][0]) ? null : String(scoreValues[i][0]);
-        const time = Util.isNullOrEmptyString(scoreValues[i][1]) ? null : String(scoreValues[i][1]);
-        result.push({ name, handicap, gradeOrLevel, time });
-      }
-    }
-    return result;
-  }
-
-  function setPlayerData(ss: Spreadsheet, sh: Sheet, stageIndex: number, data: (Competition.PlayerData | null)[], append: boolean) {
+  /*
+  function setPlayerData(ss: Spreadsheet, sh: Sheet, roundIndex: number, groupIndex: number, data: (StagePlayerEntryWithSpreadsheetScore | null)[], append: boolean) {
     if (!append && data.length != 8) throw new Error();
 
-    const row = getStageRange(ss, stageIndex).getRow();
+    const row = getStageRange(ss, roundIndex, groupIndex).getRow();
 
     const nameRange = sh.getRange(row + 2, 2, 8, 1);
     const handicapRange = sh.getRange(row + 2, 4, 8, 1);
@@ -253,15 +313,18 @@ namespace CompetitionSheet {
     handicapRange.setValues(handicapValues);
     scoreRange.setValues(scoreValues);
   }
+  */
 
-  export function reorderPlayers(ss: Spreadsheet, sh: Sheet, stageIndex: number, newPlayerNames: (string | null)[]) {
+  export function reorderPlayers(ss: Spreadsheet, roundIndex: number, groupIndex: number, newPlayerNames: (string | null)[]) {
+    const competitionSheet = getCompetitionSheetOrError(ss);
+
     if (newPlayerNames.length != 8) throw new Error();
 
-    const row = getStageRange(ss, stageIndex).getRow();
+    const row = getStageRange(ss, roundIndex, groupIndex).getRow();
 
-    const nameRange = sh.getRange(row + 2, 2, 8, 1);
-    const handicapRange = sh.getRange(row + 2, 4, 8, 1);
-    const scoreRange = sh.getRange(row + 2, 8, 8, 2);
+    const nameRange = competitionSheet.getRange(row + 2, 2, 8, 1);
+    const handicapRange = competitionSheet.getRange(row + 2, 4, 8, 1);
+    const scoreRange = competitionSheet.getRange(row + 2, 8, 8, 2);
 
     const oldNameValues = nameRange.getValues();
     const oldHandicapValues = handicapRange.getValues();
@@ -290,13 +353,15 @@ namespace CompetitionSheet {
     scoreRange.setValues(newScoreValues);
   }
 
-  function getTimerPlayerData(ss: Spreadsheet, sh: Sheet, stageIndex: number): (Competition.TimerPlayerData | null)[] {
-    const row = getStageRange(ss, stageIndex).getRow();
+  function getTimerPlayerData(ss: Spreadsheet, roundIndex: number, groupIndex: number): (Competition.StageTimerPlayerData | null)[] {
+    const competitionSheet = getCompetitionSheetOrError(ss);
 
-    const range = sh.getRange(row + 2, 2, 8, 6);
+    const row = getStageRange(ss, roundIndex, groupIndex).getRow();
+
+    const range = competitionSheet.getRange(row + 2, 2, 8, 6);
     const values = range.getValues();
 
-    const result: (Competition.TimerPlayerData | null)[] = [];
+    const result: (Competition.StageTimerPlayerData | null)[] = [];
     for (let i = 0; i < 8; i++) {
       if (Util.isNullOrEmptyString(values[i][0])) {
         result.push(null);
@@ -317,23 +382,49 @@ namespace CompetitionSheet {
     return result;
   }
 
-  // bestTimeは0の場合あり
-  function getResultFromSpreadsheetValues(ss: Spreadsheet, sh: Sheet, stageIndex: number): Competition.StagePlayerResult[] {
-    const row = getStageRange(ss, stageIndex).getRow();
+  function getStageEntries(ss: Spreadsheet, roundIndex: number, groupIndex: number): (Competition.StagePlayerEntry | null)[] {
+    const competitionSheet = getCompetitionSheetOrError(ss);
 
-    const range = sh.getRange(row + 2, 11, 8, 7);
+    const row = getStageRange(ss, roundIndex, groupIndex).getRow();
+
+    const nameRange = competitionSheet.getRange(row + 2, 2, 8, 1);
+    const handicapRange = competitionSheet.getRange(row + 2, 4, 8, 1);
+
+    const nameValues = nameRange.getValues();
+    const handicapValues = handicapRange.getValues();
+
+    const result: (Competition.StagePlayerEntry | null)[] = [];
+    for (let i = 0; i < 8; i++) {
+      if (Util.isNullOrEmptyString(nameValues[i][0])) {
+        result.push(null);
+      } else {
+        const name = String(nameValues[i][0]);
+        const handicap = Util.isNullOrEmptyString(handicapValues[i][0]) ? 0 : Number(handicapValues[i][0]);
+        result.push({ name, handicap });
+      }
+    }
+    return result;
+  }
+
+  // bestTimeは0の場合あり
+  function getStageResult(ss: Spreadsheet, roundIndex: number, groupIndex: number): Competition.StagePlayerResult[] {
+    const competitionSheet = getCompetitionSheetOrError(ss);
+
+    const row = getStageRange(ss, roundIndex, groupIndex).getRow();
+
+    const range = competitionSheet.getRange(row + 2, 11, 8, 7);
     const values = range.getValues();
 
     const result: Competition.StagePlayerResult[] = [];
-    values.forEach(row => {
-      if (Util.isNullOrEmptyString(row[0])) return;
-      const rank = Number(row[0]);
-      const name = String(row[1]);
-      const { grade, level } = Grade.spreadsheetValueToGradeOrLevel(row[2]);
-      const time = Time.spreadsheetValueToTime(row[3]);
-      const timeDiffBest = Time.spreadsheetValueToTime(row[4]);
-      const timeDiffTop = Time.spreadsheetValueToTime(row[5]);
-      const timeDiffPrev = Time.spreadsheetValueToTime(row[6]);
+    values.forEach(rowValues => {
+      if (Util.isNullOrEmptyString(rowValues[0])) return;
+      const rank = Number(rowValues[0]);
+      const name = String(rowValues[1]);
+      const { grade, level } = Grade.spreadsheetValueToGradeOrLevel(rowValues[2]);
+      const time = Time.spreadsheetValueToTime(rowValues[3]);
+      const timeDiffBest = Time.spreadsheetValueToTime(rowValues[4]);
+      const timeDiffTop = Time.spreadsheetValueToTime(rowValues[5]);
+      const timeDiffPrev = Time.spreadsheetValueToTime(rowValues[6]);
       const bestTime = (time != null && timeDiffBest != null) ? time - timeDiffBest : 0;
       result.push({ name, grade, time, level, bestTime, rank, timeDiffBest, timeDiffTop, timeDiffPrev } as Competition.StagePlayerResult);
     });
@@ -341,12 +432,13 @@ namespace CompetitionSheet {
   }
 
   // TODO: 計算部分をCompetitionに移動
-  export function applyResult(ss: Spreadsheet, sh: Sheet, stageIndex: number) {
+  /*
+  export function applyResult(ss: Spreadsheet, sh: Sheet, roundIndex: number, groupIndex: number) {
     const preset = getCurrentPreset(sh);
     if (preset == null) throw new Error("マニュアルモードでは使用できません");
     const stage = preset.stages[stageIndex];
 
-    const playerData = getPlayerData(ss, sh, stageIndex);
+    const playerData = getPlayerData(ss, sh, roundIndex, groupIndex);
     const result = getResultFromSpreadsheetValues(ss, sh, stageIndex);
 
     const winnersLength = stage.winners.length;
@@ -407,5 +499,30 @@ namespace CompetitionSheet {
       const time = null;
       setPlayerData(ss, sh, destStageIndex, [{ name, handicap, gradeOrLevel, time }], true);
     }
+  }
+  */
+
+  export function leaveStage(ss: Spreadsheet, roundIndex: number, groupIndex: number) {
+    const setupResult = getCurrentSetupResultOrError(ss);
+
+    // ポイント制予選の各ステージを抜けるときのみ処理が必要
+    if (setupResult.preset == null) return;
+    if (!setupResult.preset.hasQualifierRound) return;
+    if (roundIndex != 0) return;
+
+    const result = getStageResult(ss, roundIndex, groupIndex);
+    throw new Error("not implemented");
+  }
+
+  export function getQualifierTable(ss: Spreadsheet): Competition.QualifierTableEntry[] {
+    throw new Error("not implemented");
+  }
+
+  export function setQualifierResult(ss: Spreadsheet, result: Competition.QualifierPlayerResult[]) {
+    throw new Error("not implemented");
+  }
+
+  export function setSupplementComparison(ss: Spreadsheet, roundIndex: number, rankId: string, result: Competition.StagePlayerResult[]) {
+    throw new Error("not implemented");
   }
 }

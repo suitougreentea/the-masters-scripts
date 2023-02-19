@@ -17,7 +17,7 @@ namespace Competition {
   export type CompetitionIO = {
     readEntries(): PlayerEntry[];
     readQualifierTable(): QualifierTableEntry[];
-    readStageEntry(roundIndex: number, groupIndex: number): StagePlayerEntry[];
+    // readStageEntries(roundIndex: number, groupIndex: number): (StagePlayerEntry | null)[];
     readStageResult(roundIndex: number, groupIndex: number): StagePlayerResult[];
     writeQualifierResult(result: QualifierPlayerResult[]): void;
     // readSupplementComparison(roundIndex: number, rankId: string): StagePlayerResult[];
@@ -30,15 +30,10 @@ namespace Competition {
     }[];
   }
 
-  export type StageInfo = { stageName: string, players: (PlayerData | null)[], manual: boolean, wildcard: boolean };
-  export type PlayerData = { name: string, handicap: number, gradeOrLevel: string | null, time: string | null };
-  export type TimerInfo = { stageName: string, players: (TimerPlayerData | null)[], wildcard: boolean };
-  export type TimerPlayerData = { name: string, rawBestTime: number, handicap: number, bestTime: number, startOrder: number, startTime: number };
-
-  export type StagePlayerEntry = {
-    name: string;
-    handicap: number;
-  };
+  export type StagePlayerEntry = { name: string, handicap: number };
+  export type StageInfo = { setupResult: StageSetupResult, ready: boolean, players: (StagePlayerEntry | null)[] };
+  export type StageTimerInfo = { stageResult: StageSetupResult, ready: boolean, players: (StageTimerPlayerData | null)[] };
+  export type StageTimerPlayerData = { name: string, rawBestTime: number, handicap: number, bestTime: number, startOrder: number, startTime: number };
 
   export type StagePlayerScore = {
     name: string;
@@ -512,7 +507,7 @@ namespace Competition {
       const dependentStages: StageSetupResult[] = [];
       const dependentStageResults: StagePlayerResult[][] = [];
       for (let i = 0; i < dependentRound.numGroups!; i++) {
-        const stage = stages.find(e => e.roundIndex == dependentRoundIndex && e.groupIndex == i);
+        const stage = getStageSetupResult(stages, dependentRoundIndex, i);
         if (stage == null) throw new Error;
         dependentStages.push(stage);
 
@@ -704,7 +699,7 @@ namespace Competition {
     return startIndex + groupIndex;
   }
 
-  function getStageSetupResult(stages: StageSetupResult[], roundIndex: number, groupIndex: number): StageSetupResult | null {
+  export function getStageSetupResult(stages: StageSetupResult[], roundIndex: number, groupIndex: number): StageSetupResult | null {
     const found = stages.find(e => e.roundIndex == roundIndex && e.groupIndex == groupIndex);
     if (found == null) return null;
     return found;

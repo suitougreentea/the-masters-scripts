@@ -18,19 +18,24 @@ async function getAndApplyStageInfo(stageIndex: number) {
     const result = await runServerScript("getStageInfo", [stageIndex]) as StageInfo | null;
     if (result == null) throw new Error();
 
-    stageNameSpan.innerText = `[${stageIndex + 1}] ${result.stageName}`;
+    stageNameSpan.innerText = `[${stageIndex + 1}] ${result.setupResult.name}`;
     setPlayerNames(result.players.map(e => e != null ? e.name : null));
-    applyPlayersOrderButton.disabled = result.wildcard;
-    applyResultButton.disabled = result.manual;
   } catch {
     stageNameSpan.innerText = `[${stageIndex + 1}] -`;
     setPlayerNames([null, null, null, null, null, null, null, null]);
-    applyPlayersOrderButton.disabled = true;
-    applyResultButton.disabled = true;
+  }
+}
+
+async function leaveStage(stageIndex: number) {
+  try {
+    await runServerScript("leaveStage", [stageIndex]);
+  } catch (e) {
+    console.error(e);
   }
 }
 
 async function changeStage(newIndex: number) {
+  if (currentStageIndex >= 0) await leaveStage(currentStageIndex);
   currentStageIndex = newIndex;
   if (currentStageIndex == -1) {
     stageNameSpan.innerText = "[0] ホーム";

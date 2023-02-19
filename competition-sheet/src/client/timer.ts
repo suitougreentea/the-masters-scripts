@@ -1,4 +1,4 @@
-import { runServerScript, TimerInfo, withLoader } from "./common";
+import { runServerScript, StageTimerInfo, withLoader } from "./common";
 
 let currentStageIndex = 0;
 
@@ -17,10 +17,10 @@ const refreshStageButton = document.querySelector<HTMLButtonElement>("#refresh-s
 
 async function getAndApplyData(stageIndex: number) {
   try {
-    const result = await runServerScript("getTimerInfo", [stageIndex]) as TimerInfo | null;
+    const result = await runServerScript("getTimerInfo", [stageIndex]) as StageTimerInfo | null;
     if (result == null) throw new Error();
 
-    stageNameSpan.innerText = `[${stageIndex + 1}] ${result.stageName}`;
+    stageNameSpan.innerText = `[${stageIndex + 1}] ${result.stageResult.name}`;
     for (let i = 0; i < 8; i++) {
       const e = result.players[i];
       (timerContainer.children[i].children[1] as HTMLDivElement).innerText = e != null ? e.name : "";

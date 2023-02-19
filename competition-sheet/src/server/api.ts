@@ -1,42 +1,13 @@
 function setupCompetition(form: { manual: boolean, manualNumberOfGames: number }) {
   try {
-    const entrySheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(Definition.sheetNames.entry)!;
-    const values = entrySheet.getRange("R3C1:C3").getValues();
-
-    const entries: Competition.PlayerEntry[] = [];
-
-    values.forEach(e => {
-      // TODO: duplicate check
-      const [nameInput, firstRoundGroupInput, bestTimeInput] = e;
-
-      if (Util.isNullOrEmptyString(nameInput)) return;
-      const name = String(nameInput);
-
-      let firstRoundGroupIndex: number | null;
-      if (Util.isNullOrEmptyString(firstRoundGroupInput)) {
-        firstRoundGroupIndex = null;
-      } else {
-        const parsed = Competition.stringToGroupIndex(String(firstRoundGroupInput));
-        if (parsed == null) throw new Error("不正な1回戦組があります: " + firstRoundGroupInput);
-        firstRoundGroupIndex = parsed;
-      }
-
-      const bestTime = Time.spreadsheetValueToTime(bestTimeInput);
-      if (bestTime == null) throw new Error("自己ベストの無いプレイヤーがいます");
-
-      entries.push({
-        name,
-        firstRoundGroupIndex,
-      });
-    });
-
     const { manual, manualNumberOfGames } = form;
+
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const entries = CompetitionSheet.getPlayerEntries(ss);
 
     const setupResult = Competition.setupCompetition(entries.length, manual ? manualNumberOfGames : null);
 
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-
-    const { competitionSheet } = CompetitionSheet.initializeCompetitionSheet(ss, setupResult);
+    const { competitionSheet } = CompetitionSheet.setupCompetitionSheet(ss, setupResult);
     competitionSheet.activate();
   } catch (e) {
     SpreadsheetApp.getUi().alert(String(e));
@@ -47,10 +18,15 @@ function setupCompetition(form: { manual: boolean, manualNumberOfGames: number }
 function getStageInfo(stageIndex: number): Competition.StageInfo {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const competitionSheet = ss.getSheetByName(Definition.sheetNames.competition);
-    if (competitionSheet == null) throw new Error("Competitionシートがありません");
-    const result = CompetitionSheet.getStageInfo(ss, competitionSheet, stageIndex);
-    CompetitionSheet.reapplyFormat(ss, competitionSheet, stageIndex);
+
+    const setupResult = CompetitionSheet.getCurrentSetupResultOrError(ss);
+    const { stages } = setupResult;
+
+    if (stageIndex < 0 || stages.length <= stageIndex) throw new Error("範囲外のステージです: " + stageIndex + 1);
+    const { roundIndex, groupIndex } = stages[stageIndex];
+    const result = CompetitionSheet.getStageInfo(ss, roundIndex, groupIndex);
+
+    CompetitionSheet.reapplyFormat(ss, roundIndex, groupIndex);
     return result;
   } catch (e) {
     SpreadsheetApp.getUi().alert(String(e));
@@ -61,32 +37,48 @@ function getStageInfo(stageIndex: number): Competition.StageInfo {
 function reorderPlayers(stageIndex: number, names: (string | null)[]) {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const competitionSheet = ss.getSheetByName(Definition.sheetNames.competition);
-    if (competitionSheet == null) throw new Error("Competitionシートがありません");
-    CompetitionSheet.reorderPlayers(ss, competitionSheet, stageIndex, names);
-    CompetitionSheet.reapplyFormat(ss, competitionSheet, stageIndex);
+
+    const setupResult = CompetitionSheet.getCurrentSetupResultOrError(ss);
+    const { stages } = setupResult;
+
+    if (stageIndex < 0 || stages.length <= stageIndex) throw new Error("範囲外のステージです: " + stageIndex + 1);
+    const { roundIndex, groupIndex } = setupResult.stages[stageIndex];
+
+    CompetitionSheet.reorderPlayers(ss, roundIndex, groupIndex, names);
+    CompetitionSheet.reapplyFormat(ss, roundIndex, groupIndex);
   } catch (e) {
     SpreadsheetApp.getUi().alert(String(e));
     throw e;
   }
 }
 
-function applyResult(stageIndex: number) {
+function leaveStage(stageIndex: number) {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const competitionSheet = ss.getSheetByName(Definition.sheetNames.competition);
-    if (competitionSheet == null) throw new Error("Competitionシートがありません");
-    CompetitionSheet.applyResult(ss, competitionSheet, stageIndex);
-    CompetitionSheet.reapplyFormat(ss, competitionSheet, stageIndex);
+
+    const setupResult = CompetitionSheet.getCurrentSetupResultOrError(ss);
+    const { stages } = setupResult;
+
+    if (stageIndex < 0 || stages.length <= stageIndex) throw new Error("範囲外のステージです: " + stageIndex + 1);
+    const { roundIndex, groupIndex } = setupResult.stages[stageIndex];
+
+    CompetitionSheet.reapplyFormat(ss, roundIndex, groupIndex);
+    return CompetitionSheet.leaveStage(ss, roundIndex, groupIndex);
   } catch (e) {
     SpreadsheetApp.getUi().alert(String(e));
     throw e;
   }
 }
 
-function getTimerInfo(stageIndex: number): Competition.TimerInfo {
+// タイマーから
+function getTimerInfo(stageIndex: number): Competition.StageTimerInfo {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const competitionSheet = ss.getSheetByName(Definition.sheetNames.competition);
-  if (competitionSheet == null) throw new Error("Competitionシートがありません");
-  return CompetitionSheet.getTimerInfo(ss, competitionSheet, stageIndex);
+
+  const setupResult = CompetitionSheet.getCurrentSetupResultOrError(ss);
+  const { stages } = setupResult;
+
+  if (stageIndex < 0 || stages.length <= stageIndex) throw new Error("範囲外のステージです: " + stageIndex + 1);
+  const { roundIndex, groupIndex } = setupResult.stages[stageIndex];
+
+  return CompetitionSheet.getTimerInfo(ss, roundIndex, groupIndex);
 }
