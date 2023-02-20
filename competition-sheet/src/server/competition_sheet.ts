@@ -280,7 +280,7 @@ namespace CompetitionSheet {
       writeQualifierResult: (result: Competition.QualifierPlayerResult[]) => {
         setQualifierResult(ss, result);
       },
-      writeSupplementComparison: (roundIndex: number, rankId: string, result: Competition.StagePlayerResult[]) => {
+      writeSupplementComparison: (roundIndex: number, rankId: string, result: Competition.SupplementComparisonResult[]) => {
         setSupplementComparison(ss, roundIndex, rankId, result);
       },
     };
@@ -320,55 +320,6 @@ namespace CompetitionSheet {
 
     return true;
   }
-
-  /*
-  function setPlayerData(ss: Spreadsheet, sh: Sheet, roundIndex: number, groupIndex: number, data: (StagePlayerEntryWithSpreadsheetScore | null)[], append: boolean) {
-    if (!append && data.length != 8) throw new Error();
-
-    const row = getStageRange(ss, roundIndex, groupIndex).getRow();
-
-    const nameRange = sh.getRange(row + 2, 2, 8, 1);
-    const handicapRange = sh.getRange(row + 2, 4, 8, 1);
-    const scoreRange = sh.getRange(row + 2, 8, 8, 2);
-
-    let nameValues: unknown[][];
-    let handicapValues: unknown[][];
-    let scoreValues: unknown[][];
-    let startIndex = 0;
-
-    if (append) {
-      nameValues = nameRange.getValues();
-      handicapValues = handicapRange.getValues();
-      scoreValues = scoreRange.getValues();
-      for (let i = 0; i < nameValues.length; i++) {
-        if (!Util.isNullOrEmptyString(nameValues[i][0])) startIndex = i + 1;
-      }
-    } else {
-      nameValues = new Array(8).fill(null).map(_ => [null]);
-      handicapValues = new Array(8).fill(null).map(_ => [null]);
-      scoreValues = new Array(8).fill(null).map(_ => [null, null]);
-      // トランスパイル結果がだめ
-      // nameValues = [...new Array(8)].map(_ => [null]);
-      // handicapValues = [...new Array(8)].map(_ => [null]);
-      // scoreValues = [...new Array(8)].map(_ => [null, null]);
-    }
-
-    if (startIndex + data.length > nameValues.length) throw new Error("Players overflow");
-
-    data.forEach((e, i) => {
-      if (e == null) return;
-      const destIndex = startIndex + i;
-      nameValues[destIndex][0] = e.name;
-      handicapValues[destIndex][0] = e.handicap != 0 ? e.handicap : null;
-      scoreValues[destIndex][0] = e.gradeOrLevel;
-      scoreValues[destIndex][1] = e.time;
-    });
-
-    nameRange.setValues(nameValues);
-    handicapRange.setValues(handicapValues);
-    scoreRange.setValues(scoreValues);
-  }
-  */
 
   export function reorderPlayers(ss: Spreadsheet, roundIndex: number, groupIndex: number, newPlayerNames: (string | null)[]) {
     const competitionSheet = getCompetitionSheetOrError(ss);
@@ -485,77 +436,6 @@ namespace CompetitionSheet {
     });
     return result;
   }
-
-  // TODO: 計算部分をCompetitionに移動
-  /*
-  export function applyResult(ss: Spreadsheet, sh: Sheet, roundIndex: number, groupIndex: number) {
-    const preset = getCurrentPreset(sh);
-    if (preset == null) throw new Error("マニュアルモードでは使用できません");
-    const stage = preset.stages[stageIndex];
-
-    const playerData = getPlayerData(ss, sh, roundIndex, groupIndex);
-    const result = getResultFromSpreadsheetValues(ss, sh, stageIndex);
-
-    const winnersLength = stage.winners.length;
-    const wildcardLength = stage.wildcards ? stage.wildcards.length : 0;
-    const losersLength = stage.losers.length;
-
-    if (result.length < winnersLength + wildcardLength) throw new Error(`人数が足りません。勝ち${winnersLength}人, ワイルドカード${wildcardLength}人, 負け${losersLength}人; リザルト${result.length}人`);
-
-    for (let i = 0; i < winnersLength; i++) {
-      const resultIndex = i;
-      const resultEntry = result[resultIndex];
-      const playerEntry = playerData.find(e => e != null && e.name == resultEntry.name);
-      if (playerEntry == null) throw new Error();
-
-      const destStageIndex = stage.winners[i];
-      if (destStageIndex == null) continue;
-      const name = playerEntry.name;
-      const gradeOrLevel = null;
-      const time = null;
-
-      let handicap = 0;
-      const oldHandicap = playerEntry.handicap;
-      let diff = i == 0 ? -10 : i == 1 ? -5 : 0;
-      if (stage.consolation) diff = 5; // 昔は1着+5, 2着以降+10だったが、現在は+5に統一
-      if (stage.wildcard) diff = 0;
-      if (oldHandicap < 0) {
-        handicap = diff;
-      } else {
-        handicap = oldHandicap + diff;
-      }
-
-      setPlayerData(ss, sh, destStageIndex, [{ name, handicap, gradeOrLevel, time }], true);
-    }
-
-    for (let i = 0; i < wildcardLength; i++) {
-      const resultIndex = winnersLength + i;
-      const resultEntry = result[resultIndex];
-      const playerEntry = playerData.find(e => e != null && e.name == resultEntry.name);
-      if (playerEntry == null) throw new Error();
-
-      const destStageIndex = stage.wildcards![i];
-      if (destStageIndex == null) throw new Error();
-      setPlayerData(ss, sh, destStageIndex, [playerEntry], true);
-    }
-
-    for (let i = 0; i < losersLength; i++) {
-      const resultIndex = winnersLength + wildcardLength + i;
-      const resultEntry = result[resultIndex];
-      if (resultEntry == null) continue;
-      const playerEntry = playerData.find(e => e != null && e.name == resultEntry.name);
-      if (playerEntry == null) throw new Error();
-
-      const destStageIndex = stage.losers[i];
-      if (destStageIndex == null) continue;
-      const name = playerEntry.name;
-      const handicap = 0;
-      const gradeOrLevel = null;
-      const time = null;
-      setPlayerData(ss, sh, destStageIndex, [{ name, handicap, gradeOrLevel, time }], true);
-    }
-  }
-  */
 
   export function leaveStage(ss: Spreadsheet, roundIndex: number, groupIndex: number) {
     const setupResult = getCurrentSetupResultOrError(ss);
@@ -675,7 +555,25 @@ namespace CompetitionSheet {
     }
   }
 
-  export function setSupplementComparison(ss: Spreadsheet, roundIndex: number, rankId: string, result: Competition.StagePlayerResult[]) {
-    throw new Error("not implemented");
+  export function setSupplementComparison(ss: Spreadsheet, roundIndex: number, rankId: string, result: Competition.SupplementComparisonResult[]) {
+    const detailSheet = getCompetitionDetailSheetOrError(ss);
+    // const setupResult = getCurrentSetupResultOrError(ss);
+
+    const range = getSupplementComparisonRange(ss, roundIndex, rankId);
+    const row = range.getRow();
+    const column = range.getColumn();
+
+    const resultValues: unknown[][] = [];
+    result.forEach(e => {
+      resultValues.push([
+        e.rank,
+        e.name,
+        Grade.gradeOrLevelToSpreadsheetValue({ grade: e.grade, level: e.level }),
+        Time.timeToSpreadsheetValue(e.time),
+        Time.timeToSpreadsheetValue(e.timeDiffBest),
+        Time.timeToSpreadsheetValue(e.timeDiffPrev),
+      ]);
+    });
+    detailSheet.getRange(row + 2, column, resultValues.length, 6).setValues(resultValues);
   }
 }

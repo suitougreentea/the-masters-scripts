@@ -21,7 +21,7 @@ namespace Competition {
     readStageResult(roundIndex: number, groupIndex: number): StagePlayerResult[];
     writeQualifierResult(result: QualifierPlayerResult[]): void;
     // readSupplementComparison(roundIndex: number, rankId: string): StagePlayerResult[];
-    writeSupplementComparison(roundIndex: number, rankId: string, result: StagePlayerResult[]): void;
+    writeSupplementComparison(roundIndex: number, rankId: string, result: SupplementComparisonResult[]): void;
   }
 
   export type RoundSetupResult = {
@@ -49,6 +49,16 @@ namespace Competition {
     timeDiffTop: Time.Time | null;
     timeDiffPrev: Time.Time | null;
   };
+
+  export type SupplementComparisonEntry = StagePlayerScore & {
+    originalRankIndex: number;
+  }
+
+  export type SupplementComparisonResult = SupplementComparisonEntry & {
+    rank: number;
+    timeDiffBest: Time.Time | null;
+    timeDiffPrev: Time.Time | null;
+  }
 
   export type QualifierTableEntry = {
     name: string;
@@ -513,7 +523,7 @@ namespace Competition {
     if (numGroups == null) throw new Error();
 
     type StagePlayerEntryStub = { name: string, previousRoundRankIndex: number, previousRoundHandicapMethod: Preset.HandicapMethod };
-    const groupStubs: StagePlayerEntryStub[][] = [];
+    const groupStubs: StagePlayerEntryStub[][] = new Array(numGroups).fill(null).map(_ => []);
 
     const sendPlayers = (dependentRoundIndex: number, winner: boolean) => {
       const dependentRound = preset.rounds[dependentRoundIndex];
@@ -545,22 +555,25 @@ namespace Competition {
           for (let i = 0; i < numMaxWinners; i++) {
             const rankIndex = i;
 
-            const resultsPerRank: StagePlayerResult[] = [];
+            const resultsPerRank: SupplementComparisonEntry[] = [];
             dependentStages.forEach((dependentStage, dependentStageIndex) => {
               if (rankIndex >= dependentStage.numWinners) return;
               const dependentStageResult = dependentStageResults[dependentStageIndex][rankIndex];
-              resultsPerRank.push(dependentStageResult);
+              resultsPerRank.push({ ...dependentStageResult, originalRankIndex: rankIndex });
             });
 
-            resultsPerRank.sort(compareStageScore).reverse();
+            const comparisonResult = getSupplementComparison(resultsPerRank);
 
-            io.writeSupplementComparison(dependentRoundIndex, `T${rankIndex}`, resultsPerRank);
+            // グループ数が1の場合は順位内比較を行う必要がないので補足情報も不要
+            if (dependentRound.numGroups! > 1) {
+              io.writeSupplementComparison(dependentRoundIndex, `T${rankIndex}`, comparisonResult);
+            }
 
-            resultsPerRank.forEach(result => {
+            comparisonResult.forEach(result => {
               sortedStubsToPut.push({
                 name: result.name,
                 previousRoundHandicapMethod: dependentRound.winners!.handicapMethod,
-                previousRoundRankIndex: rankIndex,
+                previousRoundRankIndex: result.originalRankIndex,
               });
             });
           }
@@ -568,22 +581,23 @@ namespace Competition {
           const hasWildcard = dependentRound.winners!.numWildcard > 0;
           if (dependentStages.some(e => e.hasWildcard != hasWildcard)) throw new Error(); // ワイルドカード有無が揃ってない場合は未対応
           if (hasWildcard) {
-            const wildcardResults: (StagePlayerResult & { rankIndex: number })[] = [];
+            const wildcardResults: SupplementComparisonEntry[] = [];
             dependentStages.forEach((dependentStage, dependentStageIndex) => {
-              const rankIndex = dependentStage.numWinners;
-              const dependentStageResult = dependentStageResults[dependentStageIndex][rankIndex];
-              wildcardResults.push({ ...dependentStageResult, rankIndex });
+              const originalRankIndex = dependentStage.numWinners;
+              const dependentStageResult = dependentStageResults[dependentStageIndex][originalRankIndex];
+              wildcardResults.push({ ...dependentStageResult, originalRankIndex });
             });
 
-            wildcardResults.sort(compareStageScore).reverse();
+            const comparisonResult = getSupplementComparison(wildcardResults);
 
-            io.writeSupplementComparison(dependentRoundIndex, "W", wildcardResults);
+            io.writeSupplementComparison(dependentRoundIndex, "W", comparisonResult);
 
-            wildcardResults.forEach(result => {
+            comparisonResult.forEach((result, i) => {
+              if (i >= dependentRound.winners!.numWildcard) return;
               sortedStubsToPut.push({
                 name: result.name,
                 previousRoundHandicapMethod: dependentRound.winners!.handicapMethod,
-                previousRoundRankIndex: result.rankIndex,
+                previousRoundRankIndex: result.originalRankIndex,
               });
             });
           }
@@ -596,40 +610,43 @@ namespace Competition {
           const numMaxLosers = Math.max(...dependentStages.map(e => e.numLosers));
           const unevenNumLosers = dependentStages.some(e => e.numLosers != numMaxLosers);
           for (let i = 0; i < numMaxLosers; i++) {
-            const resultsPerRank: (StagePlayerResult & { rankIndex: number })[] = [];
+            const resultsPerRank: SupplementComparisonEntry[] = [];
             dependentStages.forEach((dependentStage, dependentStageIndex) => {
-              const rankIndex = dependentStage.numLosers + numWildcard + i;
-              if (rankIndex >= dependentStage.numPlayers) return;
-              const dependentStageResult = dependentStageResults[dependentStageIndex][rankIndex];
-              resultsPerRank.push({ ...dependentStageResult, rankIndex });
+              const originalRankIndex = dependentStage.numWinners + numWildcard + i;
+              if (originalRankIndex >= dependentStage.numPlayers) return;
+              const dependentStageResult = dependentStageResults[dependentStageIndex][originalRankIndex];
+              resultsPerRank.push({ ...dependentStageResult, originalRankIndex });
             });
 
-            resultsPerRank.sort(compareStageScore).reverse();
+            const comparisonResult = getSupplementComparison(resultsPerRank);
 
-            let rankId: string;
-            if (!unevenNumWinners) {
-              rankId = `T${numWinners + numWildcard + i}`;
-            } else if (!unevenNumLosers) {
-              rankId = `B${numMaxLosers - i}`;
-            } else {
-              throw new Error(); // 勝ち数も負け数も揃ってないことはないはず
+            // グループ数が1の場合は順位内比較を行う必要がないので補足情報も不要
+            if (dependentRound.numGroups! > 1) {
+              let rankId: string;
+              if (!unevenNumWinners) {
+                rankId = `T${numWinners + numWildcard + i}`;
+              } else if (!unevenNumLosers) {
+                rankId = `B${numMaxLosers - i}`;
+              } else {
+                throw new Error(); // 勝ち数も負け数も揃ってないことはないはず
+              }
+              io.writeSupplementComparison(dependentRoundIndex, rankId, comparisonResult);
             }
-            io.writeSupplementComparison(dependentRoundIndex, rankId, resultsPerRank);
 
-            resultsPerRank.forEach(result => {
+            comparisonResult.forEach(result => {
               sortedStubsToPut.push({
                 name: result.name,
                 previousRoundHandicapMethod: "none",
-                previousRoundRankIndex: result.rankIndex,
+                previousRoundRankIndex: result.originalRankIndex,
               });
             });
           }
         }
 
-        const startSnakeIndex = getNextSnakeIndex(groups.map(e => e.entries.length));
+        const startSnakeIndex = getNextSnakeIndex(groupStubs.map(e => e.entries.length));
         sortedStubsToPut.forEach((stub, i) => {
-          const snakeIndex = (startSnakeIndex + i) % (groups.length * 2);
-          groupStubs[resolveSnakeIndex(snakeIndex, groups.length)].push(stub);
+          const snakeIndex = (startSnakeIndex + i) % (groupStubs.length * 2);
+          groupStubs[resolveSnakeIndex(snakeIndex, groupStubs.length)].push(stub);
         });
       }
     };
@@ -834,6 +851,37 @@ namespace Competition {
       }
 
       result.push({ ...currentScore, rank, timeDiffBest, timeDiffTop, timeDiffPrev });
+    }
+
+    return result;
+  }
+
+  export function getSupplementComparison(scores: SupplementComparisonEntry[]): SupplementComparisonResult[] {
+    const sorted = [...scores];
+    sorted.sort(compareStageScore).reverse();
+
+    const result: SupplementComparisonResult[] = [];
+    for (let i = 0; i < sorted.length; i++) {
+      const currentScore = sorted[i];
+      const prevScore = i > 0 ? sorted[i - 1] : null;
+
+      const timeDiffBest = currentScore.time != null ? currentScore.time - currentScore.bestTime : null;
+
+      // 段位が同じときのみ比較する
+      let timeDiffPrev: Time.Time | null = null;
+      if (prevScore != null && (currentScore.grade != null && currentScore.grade == prevScore.grade)) {
+        if (currentScore.time == null || prevScore.time == null) throw new Error();
+        timeDiffPrev = (currentScore.time - currentScore.bestTime) - (prevScore.time - prevScore.bestTime);
+      }
+
+      let rank: number;
+      if (prevScore != null && compareStageScore(currentScore, prevScore) == 0) {
+        rank = result[i - 1].rank;
+      } else {
+        rank = i + 1;
+      }
+
+      result.push({ ...currentScore, rank, timeDiffBest, timeDiffPrev });
     }
 
     return result;
