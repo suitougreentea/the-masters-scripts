@@ -11,7 +11,6 @@ const nextStageButton = document.querySelector<HTMLButtonElement>("#next-stage")
 const refreshStageButton = document.querySelector<HTMLButtonElement>("#refresh-stage")!;
 
 const applyPlayersOrderButton = document.querySelector<HTMLButtonElement>("#apply-players-order")!;
-const applyResultButton = document.querySelector<HTMLButtonElement>("#apply-result")!;
 
 async function getAndApplyStageInfo(stageIndex: number) {
   try {
@@ -110,14 +109,6 @@ applyPlayersOrderButton.onclick = (_) => {
       names.push(name != "" ? name : null);
     }
     await runServerScript("reorderPlayers", [currentStageIndex, names]);
-  });
-};
-
-applyResultButton.onclick = (_) => {
-  withLoader(async () => {
-    await runServerScript("applyResult", [currentStageIndex]);
-    currentStageIndex += 1;
-    await getAndApplyStageInfo(currentStageIndex);
   });
 };
 

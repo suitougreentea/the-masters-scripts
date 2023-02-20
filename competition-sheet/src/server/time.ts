@@ -1,4 +1,5 @@
 namespace Time {
+  /* eslint no-shadow: off */
   export type Time = number;
   export type SpreadsheetTime = number;
 
@@ -16,7 +17,8 @@ namespace Time {
   }
 
   export function dateToTime(date: Date): Time {
-    return date.getMinutes() * 60000 + date.getSeconds() * 1000 + date.getMilliseconds();
+    // 時で正負判定 (ちゃんとやるなら1899/12/30との差を取る)
+    return date.getMinutes() * 60000 + date.getSeconds() * 1000 + date.getMilliseconds() - (date.getHours() < 12 ? 0 : 60 * 60 * 1000);
   }
 
   export function timeToSpreadsheetValue(time: Time | null): SpreadsheetTime | null {

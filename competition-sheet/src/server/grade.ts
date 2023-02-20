@@ -11,6 +11,7 @@ namespace Grade {
 
   const gradeTable = ["S4", "S5", "S6", "S7", "S8", "S9", "GM"];
 
+  /* eslint no-shadow: off */
   export type Grade = typeof grades[keyof typeof grades];
 
   export function gradeToString(grade: Grade): string {

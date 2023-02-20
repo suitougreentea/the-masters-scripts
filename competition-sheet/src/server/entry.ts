@@ -1,8 +1,5 @@
 // TODO List:
-// * ハンデ計算が変なので直す（presetsのwinnersに直接書く？）
-// * デザインもう少し良く
 // * 拡張するときに前の行の書式受け継がれる問題
-// * フロントのデザインを良い感じに
 // * タイマーにハンデをうまく表示する
 
 function doGet() {
@@ -16,7 +13,7 @@ function onOpen() {
     .addSeparator()
     .addItem("サイドバーを表示", "showSidebar")
     .addSeparator()
-    .addItem("Debug", "debugEval")
+    .addItem("Debug", "debugCommand")
     .addToUi();
 }
 
@@ -42,16 +39,23 @@ function showSidebar() {
     .showSidebar(html);
 }
 
-function debugEval() {
+function debugCommand() {
   const ui = SpreadsheetApp.getUi();
   const input = ui.prompt("", ui.ButtonSet.OK_CANCEL);
   if (input.getSelectedButton() == ui.Button.OK) {
-    console.log(eval(input.getResponseText()));
-  }
-}
-
-function testEntryPoint() {
-  for (let i = 8; i <= 24; i++) {
-    console.log(Competition.setupCompetition(i, null));
+    const command = input.getResponseText();
+    if (command.startsWith("@")) {
+      switch (command.slice(1)) {
+        case "listSetup":
+          for (let i = 8; i <= 24; i++) {
+            console.log(Competition.setupCompetition(i, null));
+          }
+          break;
+        default:
+          throw new Error("unknown command");
+      }
+    } else {
+      console.log(eval(input.getResponseText()));
+    }
   }
 }

@@ -17,6 +17,7 @@ namespace Preset {
   export type HandicapMethod = "none" | "winnersPure" | "winnersDest" | "winnersDest2" | "losers";
   export type DestinationMethod = "standard";
 
+  /* eslint no-shadow: off */
   export type Preset = {
     name: string;
     supportedNumberOfPlayers: [number, number];

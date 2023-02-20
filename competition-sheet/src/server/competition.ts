@@ -128,11 +128,11 @@ namespace Competition {
     if (firstRound.qualifierPlayerIndices == null) throw new Error();
     const stages: StageSetupResult[] = [];
     // 予選
-    firstRound.qualifierPlayerIndices.forEach((_, i) => stages.push({
+    firstRound.qualifierPlayerIndices.forEach((indices, i) => stages.push({
       roundIndex: 0,
       groupIndex: i,
       name: `${firstRound.name}Heat${i + 1}`,
-      numPlayers: 4,
+      numPlayers: indices.length,
       numWinners: 0,
       hasWildcard: false,
       numLosers: 0,
@@ -355,14 +355,7 @@ namespace Competition {
     }
   }
 
-  function setupFirstRoundWithQualifier(preset: Preset.Preset, numPlayers: number, stages: StageSetupResult[], io: CompetitionIO): RoundSetupResult {
-    // ポイント制予選
-    const firstRound = preset.rounds[0];
-    if (firstRound.qualifierPlayerIndices == null) throw new Error();
-
-    const groups: RoundSetupResult["groups"] = new Array(firstRound.qualifierPlayerIndices.length).fill(null).map(_ => ({ entries: [] }));
-
-    const entries = io.readEntries();
+  export function validateEntriesWithQualifier(entries: PlayerEntry[], numPlayers: number) {
     entries.forEach((e) => {
       if (e.firstRoundGroupIndex == null) {
         throw new Error("1回戦組が設定されていないプレイヤーがいます: " + e.name);
@@ -374,6 +367,17 @@ namespace Competition {
         throw new Error("1回戦組に重複があります: " + groupIndexToString(e.firstRoundGroupIndex));
       }
     });
+  }
+
+  function setupFirstRoundWithQualifier(preset: Preset.Preset, numPlayers: number, stages: StageSetupResult[], io: CompetitionIO): RoundSetupResult {
+    // ポイント制予選
+    const firstRound = preset.rounds[0];
+    if (firstRound.qualifierPlayerIndices == null) throw new Error();
+
+    const groups: RoundSetupResult["groups"] = new Array(firstRound.qualifierPlayerIndices.length).fill(null).map(_ => ({ entries: [] }));
+
+    const entries = io.readEntries();
+    validateEntriesWithQualifier(entries, numPlayers);
 
     groups.forEach((_, groupIndex) => {
       groups[groupIndex].entries = firstRound.qualifierPlayerIndices![groupIndex].map(i => {
@@ -406,6 +410,11 @@ namespace Competition {
 
     const qualifierTable = io.readQualifierTable();
     if (qualifierTable.length != numPlayers) throw new Error();
+
+    // 全員のポイントが揃っていることを確認
+    const numStagesPerPlayer = qualifierRound.qualifierPlayerIndices.length * numPlayersPerGroup / numPlayers;
+    if (qualifierTable.some(e => e.stageResults.length != numStagesPerPlayer)) throw new NotReadyError();
+
     const qualifierRoundResults = qualifierRound.qualifierPlayerIndices.map((_, i) => io.readStageResult(0, i));
 
     const qualifierScores: QualifierPlayerScore[] = [];
@@ -443,7 +452,7 @@ namespace Competition {
       return 0;
     };
     for (let i = 0; i < 4; i++) {
-      const qualifierResult = qualifierResults[0];
+      const qualifierResult = qualifierResults[i];
       groups[0].entries.push({ name: qualifierResult.name, handicap: assignHandicap(i) });
     }
 
@@ -452,24 +461,30 @@ namespace Competition {
     };
   }
 
+  export function validateEntriesWithTournament(entries: PlayerEntry[], numGroups: number) {
+    entries.forEach((e) => {
+      if (e.firstRoundGroupIndex == null) {
+        throw new Error("1回戦組が設定されていないプレイヤーがいます: " + e.name);
+      }
+      if (e.firstRoundGroupIndex == -1 || e.firstRoundGroupIndex >= numGroups) {
+        throw new Error("範囲外の1回戦組があります: " + groupIndexToString(e.firstRoundGroupIndex));
+      }
+    });
+  }
+
   function setupFirstRoundWithTournament(preset: Preset.Preset, stages: StageSetupResult[], io: CompetitionIO): RoundSetupResult {
     // トーナメント
     const firstRound = preset.rounds[0];
     const groups: RoundSetupResult["groups"] = new Array(firstRound.numGroups).fill(null).map(_ => ({ entries: [] }));
 
     const entries = io.readEntries();
+    validateEntriesWithTournament(entries, groups.length);
     entries.forEach((e) => {
-      if (e.firstRoundGroupIndex == null) {
-        throw new Error("1回戦組が設定されていないプレイヤーがいます: " + e.name);
-      }
-      if (e.firstRoundGroupIndex == -1 || e.firstRoundGroupIndex >= groups.length) {
-        throw new Error("範囲外の1回戦組があります: " + groupIndexToString(e.firstRoundGroupIndex));
-      }
       const stagePlayerEntry = {
         name: e.name,
         handicap: 0,
       };
-      groups[e.firstRoundGroupIndex].entries.push(stagePlayerEntry);
+      groups[e.firstRoundGroupIndex!].entries.push(stagePlayerEntry);
     });
 
     const firstRoundGroupNumPlayers = groups.map((e) => e.entries.length);
@@ -780,7 +795,7 @@ namespace Competition {
     if (a.bestGameGrade != null && b.bestGameGrade != null && a.bestGameTimeDiffBest != null && b.bestGameTimeDiffBest != null) {
       // grade-time sort
       if (a.bestGameGrade != b.bestGameGrade) return a.bestGameGrade - b.bestGameGrade;
-      return - a.bestGameTimeDiffBest - b.bestGameTimeDiffBest;
+      return - (a.bestGameTimeDiffBest - b.bestGameTimeDiffBest);
     }
     // level sort
     return a.bestGameLevel - b.bestGameLevel;
@@ -846,5 +861,11 @@ namespace Competition {
     return result;
   }
 
-  export class NotReadyError extends Error {}
+  export class NotReadyError extends Error {
+    constructor() {
+      super();
+      this.name = "NotReadyError";
+      Object.setPrototypeOf(this, NotReadyError.prototype);
+    }
+  }
 }
