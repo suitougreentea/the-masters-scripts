@@ -10,30 +10,52 @@ namespace Competition {
     stages: StageSetupResult[];
     supplementComparisons: SupplementComparisonSetupResult[];
   };
-  export type StageSetupResult = { roundIndex: number, groupIndex: number, name: string, numPlayers: number, numWinners: number, hasWildcard: boolean, numLosers: number };
+  export type StageSetupResult = {
+    roundIndex: number;
+    groupIndex: number;
+    name: string;
+    numPlayers: number;
+    numWinners: number;
+    hasWildcard: boolean;
+    numLosers: number;
+  };
   // rankId: T{number}: 上位から (>=0), B{number}: 下位から (>0), W: ワイルドカード
-  export type SupplementComparisonSetupResult = { roundIndex: number, rankId: string, name: string, numPlayers: number };
-
-  export type CompetitionIO = {
-    readEntries(): PlayerEntry[];
-    readQualifierTable(): QualifierTableEntry[];
-    // readStageEntries(roundIndex: number, groupIndex: number): (StagePlayerEntry | null)[];
-    readStageResult(roundIndex: number, groupIndex: number): StagePlayerResult[];
-    writeQualifierResult(result: QualifierPlayerResult[]): void;
-    // readSupplementComparison(roundIndex: number, rankId: string): StagePlayerResult[];
-    writeSupplementComparison(roundIndex: number, rankId: string, result: SupplementComparisonResult[]): void;
-  }
+  export type SupplementComparisonSetupResult = {
+    roundIndex: number;
+    rankId: string;
+    name: string;
+    numPlayers: number;
+  };
 
   export type RoundSetupResult = {
     groups: {
       entries: StagePlayerEntry[];
     }[];
-  }
+  };
 
-  export type StagePlayerEntry = { name: string, handicap: number };
-  export type StageInfo = { setupResult: StageSetupResult, ready: boolean, players: (StagePlayerEntry | null)[] };
-  export type StageTimerInfo = { stageResult: StageSetupResult, ready: boolean, players: (StageTimerPlayerData | null)[] };
-  export type StageTimerPlayerData = { name: string, rawBestTime: number, handicap: number, bestTime: number, startOrder: number, startTime: number };
+  export type StageInfo = {
+    setupResult: StageSetupResult;
+    ready: boolean;
+    players: (StagePlayerEntry | null)[];
+  };
+  export type StagePlayerEntry = {
+    name: string;
+    handicap: number;
+  };
+
+  export type StageTimerInfo = {
+    stageResult: StageSetupResult;
+    ready: boolean;
+    players: (StageTimerPlayerData | null)[];
+  };
+  export type StageTimerPlayerData = {
+    name: string;
+    rawBestTime: number;
+    handicap: number;
+    bestTime: number;
+    startOrder: number;
+    startTime: number;
+  };
 
   export type StagePlayerScore = {
     name: string;
@@ -42,7 +64,6 @@ namespace Competition {
     level: number;
     bestTime: Time.Time;
   };
-
   export type StagePlayerResult = StagePlayerScore & {
     rank: number;
     timeDiffBest: Time.Time | null;
@@ -52,13 +73,12 @@ namespace Competition {
 
   export type SupplementComparisonEntry = StagePlayerScore & {
     originalRankIndex: number;
-  }
-
+  };
   export type SupplementComparisonResult = SupplementComparisonEntry & {
     rank: number;
     timeDiffBest: Time.Time | null;
     timeDiffPrev: Time.Time | null;
-  }
+  };
 
   export type QualifierTableEntry = {
     name: string;
@@ -74,9 +94,18 @@ namespace Competition {
     bestGameTimeDiffBest: Time.Time | null;
     bestGameLevel: number;
   };
-
   export type QualifierPlayerResult = QualifierPlayerScore & {
     rank: number;
+  };
+
+  export type CompetitionIO = {
+    readEntries(): PlayerEntry[];
+    readQualifierTable(): QualifierTableEntry[];
+    // readStageEntries(roundIndex: number, groupIndex: number): (StagePlayerEntry | null)[];
+    readStageResult(roundIndex: number, groupIndex: number): StagePlayerResult[];
+    writeQualifierResult(result: QualifierPlayerResult[]): void;
+    // readSupplementComparison(roundIndex: number, rankId: string): StagePlayerResult[];
+    writeSupplementComparison(roundIndex: number, rankId: string, result: SupplementComparisonResult[]): void;
   };
 
   const groupNames = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];

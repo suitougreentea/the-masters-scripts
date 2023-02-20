@@ -14,13 +14,16 @@ const applyPlayersOrderButton = document.querySelector<HTMLButtonElement>("#appl
 
 async function getAndApplyStageInfo(stageIndex: number) {
   try {
-    const result = await runServerScript("getStageInfo", [stageIndex]) as StageInfo | null;
-    if (result == null) throw new Error();
+    const result = await runServerScript("getStageInfo", [stageIndex]) as { stageInfo: StageInfo, isLast: boolean };
 
-    stageNameSpan.innerText = `[${stageIndex + 1}] ${result.setupResult.name}`;
-    setPlayerNames(result.players.map(e => e != null ? e.name : null));
+    stageNameSpan.innerText = `[${stageIndex + 1}] ${result.stageInfo.setupResult.name}`;
+    prevStageButton.disabled = false;
+    nextStageButton.disabled = result.isLast;
+    setPlayerNames(result.stageInfo.players.map(e => e != null ? e.name : null));
   } catch {
     stageNameSpan.innerText = `[${stageIndex + 1}] -`;
+    prevStageButton.disabled = false;
+    nextStageButton.disabled = false;
     setPlayerNames([null, null, null, null, null, null, null, null]);
   }
 }
@@ -38,6 +41,8 @@ async function changeStage(newIndex: number) {
   currentStageIndex = newIndex;
   if (currentStageIndex == -1) {
     stageNameSpan.innerText = "[0] ホーム";
+    prevStageButton.disabled = true;
+    nextStageButton.disabled = false;
     page0Container.style.display = "block";
     page1Container.style.display = "none";
     refreshStageButton.disabled = true;

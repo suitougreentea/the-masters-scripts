@@ -17,17 +17,18 @@ const refreshStageButton = document.querySelector<HTMLButtonElement>("#refresh-s
 
 async function getAndApplyData(stageIndex: number) {
   try {
-    const result = await runServerScript("getTimerInfo", [stageIndex]) as StageTimerInfo | null;
-    if (result == null) throw new Error();
+    const result = await runServerScript("getTimerInfo", [stageIndex]) as { stageTimerInfo: StageTimerInfo, isLast: boolean };
 
-    stageNameSpan.innerText = `[${stageIndex + 1}] ${result.stageResult.name}`;
+    stageNameSpan.innerText = `[${stageIndex + 1}] ${result.stageTimerInfo.stageResult.name}`;
     for (let i = 0; i < 8; i++) {
-      const e = result.players[i];
+      const e = result.stageTimerInfo.players[i];
       (timerContainer.children[i].children[1] as HTMLDivElement).innerText = e != null ? e.name : "";
       initialTimes[i] = e != null ? e.startTime : null;
       setPlayerTime(i, e != null ? e.startTime : null);
     }
     startButton.disabled = false;
+    prevStageButton.disabled = stageIndex == 0;
+    nextStageButton.disabled = result.isLast;
   } catch {
     stageNameSpan.innerText = `[${stageIndex + 1}] -`;
     for (let i = 0; i < 8; i++) {
@@ -36,6 +37,8 @@ async function getAndApplyData(stageIndex: number) {
       setPlayerTime(i, null);
     }
     startButton.disabled = true;
+    prevStageButton.disabled = false;
+    nextStageButton.disabled = false;
   }
 }
 

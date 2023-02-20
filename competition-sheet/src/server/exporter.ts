@@ -23,7 +23,7 @@ namespace Exporter {
 
   export function exportResult() {
     const ssSrc = SpreadsheetApp.getActiveSpreadsheet();
-    const ssDest = SpreadsheetApp.create("Masters Result");
+    const ssDest = SpreadsheetApp.create("The Masters Result");
     const defaultSheet = ssDest.getSheets()[0];
 
     const moveSheet = (ss: Spreadsheet, sh: Sheet, pos: number) => {

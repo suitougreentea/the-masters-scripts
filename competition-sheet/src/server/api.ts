@@ -1,11 +1,11 @@
-function setupCompetition(form: { manual: boolean, manualNumberOfGames: number }) {
+function setupCompetition(form: { manual?: "on", manualNumberOfGames: string }) {
   try {
     const { manual, manualNumberOfGames } = form;
 
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const entries = CompetitionSheet.getPlayerEntries(ss);
 
-    const setupResult = Competition.setupCompetition(entries.length, manual ? manualNumberOfGames : null);
+    const setupResult = Competition.setupCompetition(entries.length, manual ? Number(manualNumberOfGames) : null);
 
     const { competitionSheet } = CompetitionSheet.setupCompetitionSheet(ss, setupResult);
     competitionSheet.activate();
@@ -15,7 +15,7 @@ function setupCompetition(form: { manual: boolean, manualNumberOfGames: number }
   }
 }
 
-function getStageInfo(stageIndex: number): Competition.StageInfo {
+function getStageInfo(stageIndex: number): { stageInfo: Competition.StageInfo, isLast: boolean } {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
 
@@ -27,7 +27,7 @@ function getStageInfo(stageIndex: number): Competition.StageInfo {
     const result = CompetitionSheet.getStageInfo(ss, roundIndex, groupIndex);
 
     CompetitionSheet.reapplyFormat(ss, roundIndex, groupIndex);
-    return result;
+    return { stageInfo: result, isLast: stageIndex == stages.length - 1 };
   } catch (e) {
     SpreadsheetApp.getUi().alert(String(e));
     throw e;
@@ -71,7 +71,7 @@ function leaveStage(stageIndex: number) {
 }
 
 // タイマーから
-function getTimerInfo(stageIndex: number): Competition.StageTimerInfo {
+function getTimerInfo(stageIndex: number): { stageTimerInfo: Competition.StageTimerInfo, isLast: boolean } {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
   const setupResult = CompetitionSheet.getCurrentSetupResultOrError(ss);
@@ -80,5 +80,6 @@ function getTimerInfo(stageIndex: number): Competition.StageTimerInfo {
   if (stageIndex < 0 || stages.length <= stageIndex) throw new Error("範囲外のステージです: " + stageIndex + 1);
   const { roundIndex, groupIndex } = setupResult.stages[stageIndex];
 
-  return CompetitionSheet.getTimerInfo(ss, roundIndex, groupIndex);
+  const result = CompetitionSheet.getTimerInfo(ss, roundIndex, groupIndex);
+  return { stageTimerInfo: result, isLast: stageIndex == stages.length - 1 };
 }
