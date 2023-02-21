@@ -14,61 +14,23 @@
       <span id="stage-name"></span>
       <button id="next-stage">→</button>
     </div>
-    <div id="timer">
+
+    <template id="timer-player">
       <div class="player">
-        <div class="id">1</div>
+        <div class="id"></div>
         <div class="name"></div>
         <div class="time"></div>
         <div class="gauge"></div>
+        <div class="start-order"></div>
+        <div class="diff-time"></div>
       </div>
-      <div class="player">
-        <div class="id">2</div>
-        <div class="name"></div>
-        <div class="time"></div>
-        <div class="gauge"></div>
-      </div>
-      <div class="player">
-        <div class="id">3</div>
-        <div class="name"></div>
-        <div class="time"></div>
-        <div class="gauge"></div>
-      </div>
-      <div class="player">
-        <div class="id">4</div>
-        <div class="name"></div>
-        <div class="time"></div>
-        <div class="gauge"></div>
-      </div>
-      <div class="player">
-        <div class="id">5</div>
-        <div class="name"></div>
-        <div class="time"></div>
-        <div class="gauge"></div>
-      </div>
-      <div class="player">
-        <div class="id">6</div>
-        <div class="name"></div>
-        <div class="time"></div>
-        <div class="gauge"></div>
-      </div>
-      <div class="player">
-        <div class="id">7</div>
-        <div class="name"></div>
-        <div class="time"></div>
-        <div class="gauge"></div>
-      </div>
-      <div class="player">
-        <div class="id">8</div>
-        <div class="name"></div>
-        <div class="time"></div>
-        <div class="gauge"></div>
-      </div>
-    </div>
+    </template>
+    <div id="timer"></div>
+
     <div id="loader" style="display: none">
       <div class="loader"></div>
     </div>
     <script type="module">import "./timer.ts";</script>
   </body>
 </html>
-
 

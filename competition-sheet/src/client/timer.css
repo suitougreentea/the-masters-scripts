@@ -4,6 +4,7 @@ body {
   background: black;
   color: white;
   padding: 8px;
+  overflow-x: scroll;
 }
 
 #toolbar {
@@ -22,34 +23,58 @@ body {
 }
 
 .player {
-  font-size: 0;
+  display: grid;
+  align-items: end;
+  grid-template-columns: 16px 85px 65px 16px auto;
   height: 24px;
-  line-height: 24px;
-  white-space: nowrap;
+  line-height: 16px;
+  border-bottom: 1px solid #444;
+  box-sizing: border-box;
 }
-.id, .name, .time, .gauge {
-  display: inline-block;
-  font-size: 18px;
+
+.player .id {
+  grid-row: 1;
+  grid-column: 1;
+  font-size: 12px;
 }
-.id {
-  margin-right: 10px;
-  width: 15px;
-}
-.name {
-  margin-right: 10px;
-  width: 85px;
+
+.player .name {
+  grid-row: 1;
+  grid-column: 2;
+  font-size: 16px;
   overflow: hidden;
-  vertical-align: top;
+  white-space: nowrap;
+  margin-right: 8px;
+
+  /* つぶす */
+  width: 107%;
+  transform: scaleX(85%);
+  transform-origin: left;
 }
-.time {
-  width: 65px;
-  margin-right: 10px;
+
+.player .time {
+  grid-row: 1;
+  grid-column: 3;
+  font-size: 16px;
 }
-.gauge {
-  margin-right: 10px;
-  position: relative;
-  vertical-align: top;
-  height: 16px;
-  top: 4px;
-  background-color: gray;
+
+.player .gauge {
+  grid-row: 1;
+  grid-column: 4 / span 2;
+  height: 18px;
+}
+
+.player .start-order {
+  grid-row: 1;
+  grid-column: 4;
+  font-size: 12px;
+  text-shadow: 0 0 5px black;
+  margin-left: 2px;
+}
+
+.player .diff-time {
+  grid-row: 1;
+  grid-column: 5;
+  font-size: 12px;
+  text-shadow: 0 0 5px black;
 }
