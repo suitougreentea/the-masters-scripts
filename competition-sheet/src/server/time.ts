@@ -1,14 +1,27 @@
+/**
+ * 時間の数値表現として、符号付きのミリ秒を使用
+ */
 namespace Time {
   /* eslint no-shadow: off */
   export type Time = number;
   export type SpreadsheetTime = number;
 
+  /**
+   * 時間の文字列をパース
+   * @param time 0:00.00 または 0:00:00 形式の文字列
+   * @returns
+   */
   export function stringToTime(str: string): Time | null {
     const match = str.match(/^(\d?\d):([0-5]\d)[:.](\d\d?)$/);
     if (!match) return null;
     return Number(match[1]) * 60000 + Number(match[2]) * 1000 + Number(match[3].padEnd(3, "0"));
   }
 
+  /**
+   * 時間を 0:00.00 形式の文字列に変換
+   * @param time
+   * @returns
+   */
   export function timeToString(time: Time) {
     const min = Math.floor(time / 60000);
     const sec = Math.floor(time / 1000) % 60;

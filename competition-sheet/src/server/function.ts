@@ -1,8 +1,16 @@
 type SpreadsheetCell = string | number | Date | null;
 type SpreadsheetArg = SpreadsheetCell | SpreadsheetCell[][]
 
-// TODO: S9でタイムがないときにバグる
+/**
+ * ステージリザルトを計算するスプレッドシート関数。配列で渡すこと。
+ * @param names
+ * @param bestTimes ハンデ調整後の自己ベスト
+ * @param gradeOrLevels
+ * @param clearTimes
+ * @returns リザルトを表に展開したもの
+ */
 function MASTERS_GETRESULT(names: SpreadsheetArg, bestTimes: SpreadsheetArg, gradeOrLevels: SpreadsheetArg, clearTimes: SpreadsheetArg) {
+  // TODO: S9でタイムがないときにバグる
   if (!Array.isArray(names) || !Array.isArray(bestTimes) || !Array.isArray(gradeOrLevels) || !Array.isArray(clearTimes)) throw new Error();
 
   const numRows = Math.min(names.length, bestTimes.length, gradeOrLevels.length, clearTimes.length);
@@ -30,7 +38,7 @@ function MASTERS_GETRESULT(names: SpreadsheetArg, bestTimes: SpreadsheetArg, gra
       time,
       level,
       bestTime,
-    } as Competition.StagePlayerResult); // TODO: 型チェック
+    });
   }
 
   const result = Competition.getStageResult(scores);

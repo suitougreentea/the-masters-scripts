@@ -21,6 +21,9 @@ namespace Exporter {
     return shDest;
   }
 
+  /**
+   * 大会リザルトをマイドライブ直下にエクスポート
+   */
   export function exportResult() {
     const ssSrc = SpreadsheetApp.getActiveSpreadsheet();
     const ssDest = SpreadsheetApp.create("The Masters Result");

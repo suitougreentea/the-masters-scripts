@@ -1,3 +1,17 @@
+/**
+ * [用語]
+ * * Round: "1回戦", "敗者復活", "決勝"などの単位
+ * * Group: 1回戦の中の "A組", "B組", あるいは予選の中の "Heat1" という単位
+ * * Stage: 実際に行われる1試合。(Round, Group) の組で Stage が定まる。
+ * * Qualifier: ポイント式の予選
+ * * Tournament: ポイント式の予選→決勝ではなく、1回戦→2回戦→…と勝ち上がっていく形式のこと
+ * * Wildcard: 同着順の成績比較によって進出あるいは敗退が決まる着順のこと。
+ *             例えば3グループから8人が次のラウンドに進出する場合、1, 2位の計6名はそのまま進出するが、
+ *             3位は3名の中から成績の良い2名が進出する。
+ * * Supplement comparison: 同着順の成績比較情報。
+ *
+ * 実際の試合処理の流れについてはcompetition_sheet.tsを参照
+ */
 namespace Competition {
   export type PlayerEntry = {
     name: string;
@@ -98,6 +112,9 @@ namespace Competition {
     rank: number;
   };
 
+  /**
+   * setupRound中にデータの読み書きを行うためのインターフェース
+   */
   export type CompetitionIO = {
     readEntries(): PlayerEntry[];
     readQualifierTable(): QualifierTableEntry[];
@@ -120,6 +137,12 @@ namespace Competition {
     return index;
   }
 
+  /**
+   * 人数に応じて大会をセットアップ。ステージやsupplement comparisonの情報を割り出す。
+   * @param numPlayers 参加人数
+   * @param manualNumberOfGames プリセットモードの場合はnull, マニュアルモードの場合はゲーム数
+   * @returns セットアップ結果
+   */
   export function setupCompetition(numPlayers: number, manualNumberOfGames: number | null): CompetitionSetupResult {
     if (manualNumberOfGames != null) {
       return setupCompetitionManual(manualNumberOfGames);
@@ -377,6 +400,16 @@ namespace Competition {
     };
   }
 
+  /**
+   * 指定したラウンドをセットアップ。以前のラウンドの結果から参加プレイヤーを割り出す。
+   * @param preset プリセット
+   * @param numPlayers 参加人数
+   * @param stages ステージ情報
+   * @param roundIndex ラウンド番号
+   * @param io ステージリザルトを読む。補足情報としてsupplement comparisonや予選リザルトを書き込む
+   * @returns セットアップ結果 (参加プレイヤー)
+   * @throws 以前のラウンドの結果が不十分な場合、NotReadyError
+   */
   export function setupRound(preset: Preset.Preset, numPlayers: number, stages: StageSetupResult[], roundIndex: number, io: CompetitionIO): RoundSetupResult {
     if (roundIndex == 0) {
       if (preset.hasQualifierRound) {
@@ -394,6 +427,11 @@ namespace Competition {
     }
   }
 
+  /**
+   * 予選形式の大会の参加プレイヤーをバリデーション
+   * @param entries 参加プレイヤー
+   * @param numPlayers 現在の大会で想定されている参加人数
+   */
   export function validateEntriesWithQualifier(entries: PlayerEntry[], numPlayers: number) {
     entries.forEach((e) => {
       if (e.firstRoundGroupIndex == null) {
@@ -500,6 +538,11 @@ namespace Competition {
     };
   }
 
+  /**
+   * トーナメント形式の大会の参加プレイヤーをバリデーション
+   * @param entries 参加プレイヤー
+   * @param numPlayers 現在の大会で想定されている参加人数
+   */
   export function validateEntriesWithTournament(entries: PlayerEntry[], numGroups: number) {
     entries.forEach((e) => {
       if (e.firstRoundGroupIndex == null) {
@@ -760,6 +803,13 @@ namespace Competition {
     return startIndex + groupIndex;
   }
 
+  /**
+   * StageSetupResultの配列から、roundIndex, groupIndexに合致するステージを見つける
+   * @param stages
+   * @param roundIndex
+   * @param groupIndex
+   * @returns 見つからない場合null
+   */
   export function getStageSetupResult(stages: StageSetupResult[], roundIndex: number, groupIndex: number): StageSetupResult | null {
     const found = stages.find(e => e.roundIndex == roundIndex && e.groupIndex == groupIndex);
     if (found == null) return null;
@@ -847,6 +897,11 @@ namespace Competition {
     return a.bestGameLevel - b.bestGameLevel;
   }
 
+  /**
+   * ステージのスコアをソートしてリザルトとして出力
+   * @param scores
+   * @returns
+   */
   export function getStageResult(scores: StagePlayerScore[]): StagePlayerResult[] {
     const sorted = [...scores];
     sorted.sort(compareStageScore).reverse();
@@ -885,7 +940,7 @@ namespace Competition {
     return result;
   }
 
-  export function getSupplementComparison(scores: SupplementComparisonEntry[]): SupplementComparisonResult[] {
+  function getSupplementComparison(scores: SupplementComparisonEntry[]): SupplementComparisonResult[] {
     const sorted = [...scores];
     sorted.sort(compareStageScore).reverse();
 
@@ -938,6 +993,9 @@ namespace Competition {
     return result;
   }
 
+  /**
+   * 以前のラウンドの結果が揃っていないのでセットアップが続けられない
+   */
   export class NotReadyError extends Error {
     constructor() {
       super();

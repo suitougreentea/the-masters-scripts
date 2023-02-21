@@ -1,20 +1,28 @@
 namespace Preset {
   // [numPerGroup] -1の場合は残りが全員入る (winners, losersの中で1回だけ使用可能)
   // [destinationMethod]
-  // standard: 順位で並べて、同順位内は結果をソートしてスネーク状に埋める
-  // ※ 複数のラウンドからプレイヤーが来る場合、先のラウンドの分が先に埋まる
-  // 「スネーク状」とは以下のような埋め方
-  // 試合1: 1 6 7 12
-  // 試合2: 2 5 8 11
-  // 試合3: 3 4 9 10
   // [handicapMethod]
-  // none: 順位にかかわらず0 (内部で使っているだけ)
-  // winnersPure: 1位-10、2位-5
-  // winnersDest: 進出後のグループで1番埋まりの場合は-10、2番埋まりの場合は-5
-  // winnersDest2: 1着かつ、進出後のグループで1番埋まりの場合は-10、2番埋まりの場合は-5
-  // losers: 一律+5
 
+  /**
+   * * none: 順位にかかわらず0 (内部で使っているだけ)
+   * * winnersPure: 1位-10、2位-5
+   * * winnersDest: 進出後のグループで1番埋まりの場合は-10、2番埋まりの場合は-5
+   * * winnersDest2: 1着かつ、進出後のグループで1番埋まりの場合は-10、2番埋まりの場合は-5
+   * * losers: 一律+5
+   */
   export type HandicapMethod = "none" | "winnersPure" | "winnersDest" | "winnersDest2" | "losers";
+
+  /**
+   * * standard: 順位で並べて、同順位内は結果をソートしてスネーク状に埋める
+   *             ※ 複数のラウンドからプレイヤーが来る場合、先のラウンドの分が先に埋まる
+   *
+   * 「スネーク状」とは以下のような埋め方
+   * ```
+   * 試合1: 1 6 7 12
+   * 試合2: 2 5 8 11
+   * 試合3: 3 4 9 10
+   * ```
+   */
   export type DestinationMethod = "standard";
 
   /* eslint no-shadow: off */
@@ -24,10 +32,21 @@ namespace Preset {
     hasQualifierRound: boolean;
     rounds: {
       name: string;
+      /** -1の場合は残りが全員入る (winners, losersの中で1回だけ使用可能) */
       numGroups?: number;
       qualifierPlayerIndices?: number[][];
-      winners?: { numPerGroup: number, numWildcard: number, destinationRoundIndex: number, destinationMethod: DestinationMethod, handicapMethod: HandicapMethod }
-      losers?: { numPerGroup: number, destinationRoundIndex: number, destinationMethod: DestinationMethod };
+      winners?: {
+        numPerGroup: number;
+        numWildcard: number;
+        destinationRoundIndex: number;
+        destinationMethod: DestinationMethod;
+        handicapMethod: HandicapMethod;
+      }
+      losers?: {
+        numPerGroup: number;
+        destinationRoundIndex: number;
+        destinationMethod: DestinationMethod;
+      };
     }[];
   };
 

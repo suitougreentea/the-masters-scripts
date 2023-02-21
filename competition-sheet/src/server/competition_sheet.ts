@@ -1,3 +1,20 @@
+/**
+ * ## 大会の処理の流れ
+ * ### セットアップ
+ * * サイドバーからsetupCompetition()が呼ばれる
+ * * 人数からプリセットを確定させ、Competitionシート (ステージ情報の読み書き) とCompetitionDetailシート (予選テーブル, supplement comparisonの出力先) を準備
+ * ### 1ステージの流れ
+ * * サイドバーからgetStageInfo()が呼ばれる
+ *   * まだ該当ステージの出場プレイヤーが入力されていない場合、ラウンドをセットアップ
+ *     * 第1ラウンドの場合、Entryシートの情報を読んで出場プレイヤーが入力される
+ *     * 後続ラウンドの場合、前のラウンドの結果を読み出して出場プレイヤーが入力される
+ *       * CompetitionDetailシートに予選リザルトやsupplement comparisonが書き込まれる
+ * * サイドバーでプレイヤーを並べ替え、reorderPlayers()が呼ばれるので並べ替えを反映
+ * * タイマーで該当ステージを選択すると、getStageTimerInfo()が呼ばれるのでタイマー情報を返す
+ * * ゲーム終了後リザルトを入力すると、数式によりリザルトが表示される
+ * * サイドバーで他のステージに移動するとき、leaveStage()が呼ばれる
+ *   * 予選ラウンド中の場合、テーブルにポイントを反映
+ */
 namespace CompetitionSheet {
   type Spreadsheet = GoogleAppsScript.Spreadsheet.Spreadsheet;
   type Sheet = GoogleAppsScript.Spreadsheet.Sheet;
@@ -53,6 +70,31 @@ namespace CompetitionSheet {
     return sheet;
   }
 
+  function getIO(ss: Spreadsheet): Competition.CompetitionIO {
+    return {
+      readEntries: () => {
+        return getPlayerEntries(ss);
+      },
+      readQualifierTable: () => {
+        return getQualifierTable(ss);
+      },
+      readStageResult: (roundIndex: number, groupIndex: number) => {
+        return getStageResult(ss, roundIndex, groupIndex);
+      },
+      writeQualifierResult: (result: Competition.QualifierPlayerResult[]) => {
+        setQualifierResult(ss, result);
+      },
+      writeSupplementComparison: (roundIndex: number, rankId: string, result: Competition.SupplementComparisonResult[]) => {
+        setSupplementComparison(ss, roundIndex, rankId, result);
+      },
+    };
+  }
+
+  /**
+   * Entryシートから参加者を読み取る
+   * @param ss
+   * @returns
+   */
   export function getPlayerEntries(ss: Spreadsheet): Competition.PlayerEntry[] {
     const entrySheet = ss.getSheetByName(Definition.sheetNames.entry)!;
     const values = entrySheet.getRange("R3C1:C3").getValues();
@@ -87,6 +129,12 @@ namespace CompetitionSheet {
     return entries;
   }
 
+  /**
+   * Competition.setupCompetition()の結果に応じて、CompetitionシートとCompetitionDetailシートを準備する
+   * @param ss
+   * @param setupResult
+   * @returns Competitionシート, CompetitionDetailシート
+   */
   export function setupCompetitionSheet(ss: Spreadsheet, setupResult: Competition.CompetitionSetupResult): { competitionSheet: Sheet, detailSheet: Sheet | null } {
     let competitionSheet = getCompetitionSheet(ss);
     if (competitionSheet != null) {
@@ -183,6 +231,11 @@ namespace CompetitionSheet {
     return { competitionSheet, detailSheet };
   }
 
+  /**
+   * Competitionシートに埋め込まれたCompetitionSetupResultを読み出す
+   * @param ss
+   * @returns
+   */
   export function getCurrentSetupResult(ss: Spreadsheet): Competition.CompetitionSetupResult | null {
     const competitionSheet = getCompetitionSheet(ss);
     if (competitionSheet == null) return null;
@@ -197,6 +250,12 @@ namespace CompetitionSheet {
     return result;
   }
 
+  /**
+   * ユーザー入力によって崩れた書式を修正する
+   * @param ss
+   * @param roundIndex
+   * @param groupIndex
+   */
   export function reapplyFormat(ss: Spreadsheet, roundIndex: number, groupIndex: number) {
     const competitionSheet = getCompetitionSheetOrError(ss);
     const templatesSheet = getTemplatesSheetOrError(ss);
@@ -209,14 +268,6 @@ namespace CompetitionSheet {
     applyStageFormatInternal(competitionSheet, templatesSheet, row, stage, false);
   }
 
-  function pasteTemplate(destSheet: Sheet, row: number, column: number, templatesSheet: Sheet, templateName: keyof typeof Definition.templates, type: GoogleAppsScript.Spreadsheet.CopyPasteType) {
-    const templateData = Definition.templates[templateName];
-    const templateRange = templatesSheet.getRange(templateData.row, templateData.column, templateData.numRows, templateData.numColumns);
-
-    const destRange = destSheet.getRange(row, column, templateData.numRows, templateData.numColumns);
-    templateRange.copyTo(destRange, type, false);
-  }
-
   function applyStageFormatInternal(sh: Sheet, template: Sheet, row: number, stage: Competition.StageSetupResult | null, all: boolean) {
     const type = all ? SpreadsheetApp.CopyPasteType.PASTE_NORMAL : SpreadsheetApp.CopyPasteType.PASTE_FORMAT;
     pasteTemplate(sh, row, 1, template, "competitionStage", type);
@@ -227,6 +278,21 @@ namespace CompetitionSheet {
     }
   }
 
+  function pasteTemplate(destSheet: Sheet, row: number, column: number, templatesSheet: Sheet, templateName: keyof typeof Definition.templates, type: GoogleAppsScript.Spreadsheet.CopyPasteType) {
+    const templateData = Definition.templates[templateName];
+    const templateRange = templatesSheet.getRange(templateData.row, templateData.column, templateData.numRows, templateData.numColumns);
+
+    const destRange = destSheet.getRange(row, column, templateData.numRows, templateData.numColumns);
+    templateRange.copyTo(destRange, type, false);
+  }
+
+  /**
+   * ステージ情報 (プレイヤー含む) を取得
+   * @param ss
+   * @param roundIndex
+   * @param groupIndex
+   * @returns
+   */
   export function getStageInfo(ss: Spreadsheet, roundIndex: number, groupIndex: number): Competition.StageInfo {
     const setupResult = getCurrentSetupResultOrError(ss);
     const { stages } = setupResult;
@@ -250,6 +316,13 @@ namespace CompetitionSheet {
     };
   }
 
+  /**
+   * タイマー情報を取得
+   * @param ss
+   * @param roundIndex
+   * @param groupIndex
+   * @returns
+   */
   export function getTimerInfo(ss: Spreadsheet, roundIndex: number, groupIndex: number): Competition.StageTimerInfo {
     const setupResult = getCurrentSetupResultOrError(ss);
     const { stages } = setupResult;
@@ -266,27 +339,13 @@ namespace CompetitionSheet {
     };
   }
 
-  function getIO(ss: Spreadsheet): Competition.CompetitionIO {
-    return {
-      readEntries: () => {
-        return getPlayerEntries(ss);
-      },
-      readQualifierTable: () => {
-        return getQualifierTable(ss);
-      },
-      readStageResult: (roundIndex: number, groupIndex: number) => {
-        return getStageResult(ss, roundIndex, groupIndex);
-      },
-      writeQualifierResult: (result: Competition.QualifierPlayerResult[]) => {
-        setQualifierResult(ss, result);
-      },
-      writeSupplementComparison: (roundIndex: number, rankId: string, result: Competition.SupplementComparisonResult[]) => {
-        setSupplementComparison(ss, roundIndex, rankId, result);
-      },
-    };
-  }
-
-  // 変更があったかを返す
+  /**
+   * ラウンドをセットアップ。プレイヤーを埋める
+   * @param ss
+   * @param setupResult
+   * @param roundIndex
+   * @returns 変更があったかを返す
+   */
   function setupRound(ss: Spreadsheet, setupResult: Competition.CompetitionSetupResult, roundIndex: number): boolean {
     if (setupResult.preset == null) return false; // マニュアル
 
@@ -321,6 +380,13 @@ namespace CompetitionSheet {
     return true;
   }
 
+  /**
+   * ステージのプレイヤーを並び替え
+   * @param ss
+   * @param roundIndex
+   * @param groupIndex
+   * @param newPlayerNames 並び替え後のプレイヤー順
+   */
   export function reorderPlayers(ss: Spreadsheet, roundIndex: number, groupIndex: number, newPlayerNames: (string | null)[]) {
     const competitionSheet = getCompetitionSheetOrError(ss);
 
@@ -412,7 +478,13 @@ namespace CompetitionSheet {
     return result;
   }
 
-  // bestTimeは0の場合あり
+  /**
+   * スプレッドシートからリザルトを読み取る。
+   * @param ss
+   * @param roundIndex
+   * @param groupIndex
+   * @returns タイムが入力されていない場合、bestTimeは0になる
+   */
   function getStageResult(ss: Spreadsheet, roundIndex: number, groupIndex: number): Competition.StagePlayerResult[] {
     const competitionSheet = getCompetitionSheetOrError(ss);
 
@@ -437,6 +509,12 @@ namespace CompetitionSheet {
     return result;
   }
 
+  /**
+   * ステージを抜ける際の処理。予選ポイントを書き込む
+   * @param ss
+   * @param roundIndex
+   * @param groupIndex
+   */
   export function leaveStage(ss: Spreadsheet, roundIndex: number, groupIndex: number) {
     const setupResult = getCurrentSetupResultOrError(ss);
 
@@ -473,7 +551,7 @@ namespace CompetitionSheet {
     detailSheet.getRange(tableRow + 1, tableColumn + 2 + groupIndex, numPlayers, 1).setValues(pointValues);
   }
 
-  export function getQualifierTable(ss: Spreadsheet): Competition.QualifierTableEntry[] {
+  function getQualifierTable(ss: Spreadsheet): Competition.QualifierTableEntry[] {
     const detailSheet = getCompetitionDetailSheetOrError(ss);
     const setupResult = getCurrentSetupResultOrError(ss);
 
@@ -514,7 +592,7 @@ namespace CompetitionSheet {
     return result;
   }
 
-  export function setQualifierResult(ss: Spreadsheet, result: Competition.QualifierPlayerResult[]) {
+  function setQualifierResult(ss: Spreadsheet, result: Competition.QualifierPlayerResult[]) {
     const detailSheet = getCompetitionDetailSheetOrError(ss);
     const setupResult = getCurrentSetupResultOrError(ss);
 
@@ -555,7 +633,7 @@ namespace CompetitionSheet {
     }
   }
 
-  export function setSupplementComparison(ss: Spreadsheet, roundIndex: number, rankId: string, result: Competition.SupplementComparisonResult[]) {
+  function setSupplementComparison(ss: Spreadsheet, roundIndex: number, rankId: string, result: Competition.SupplementComparisonResult[]) {
     const detailSheet = getCompetitionDetailSheetOrError(ss);
     // const setupResult = getCurrentSetupResultOrError(ss);
 

@@ -1,3 +1,7 @@
+/**
+ * 大会をセットアップ。サイドバーから呼ばれる。
+ * @param form サイドバーのフォーム情報
+ */
 function setupCompetition(form: { manual?: "on", manualNumberOfGames: string }) {
   try {
     const { manual, manualNumberOfGames } = form;
@@ -15,6 +19,11 @@ function setupCompetition(form: { manual?: "on", manualNumberOfGames: string }) 
   }
 }
 
+/**
+ * ステージ情報を取得。サイドバーから呼ばれる。
+ * @param stageIndex
+ * @returns stageInfo: ステージ情報, isLast: 最後のステージならtrue
+ */
 function getStageInfo(stageIndex: number): { stageInfo: Competition.StageInfo, isLast: boolean } {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -34,6 +43,11 @@ function getStageInfo(stageIndex: number): { stageInfo: Competition.StageInfo, i
   }
 }
 
+/**
+ * ステージのプレイヤーを並び替え。サイドバーから呼ばれる。
+ * @param stageIndex
+ * @param names 並べ替え後のプレイヤー順
+ */
 function reorderPlayers(stageIndex: number, names: (string | null)[]) {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -52,6 +66,11 @@ function reorderPlayers(stageIndex: number, names: (string | null)[]) {
   }
 }
 
+/**
+ * ステージを抜ける。サイドバーから呼ばれる。
+ * 予選ラウンド中の場合に得点を書き込む。
+ * @param stageIndex
+ */
 function leaveStage(stageIndex: number) {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -63,14 +82,18 @@ function leaveStage(stageIndex: number) {
     const { roundIndex, groupIndex } = setupResult.stages[stageIndex];
 
     CompetitionSheet.reapplyFormat(ss, roundIndex, groupIndex);
-    return CompetitionSheet.leaveStage(ss, roundIndex, groupIndex);
+    CompetitionSheet.leaveStage(ss, roundIndex, groupIndex);
   } catch (e) {
     SpreadsheetApp.getUi().alert(String(e));
     throw e;
   }
 }
 
-// タイマーから
+/**
+ * タイマー情報を取得。タイマーから呼ばれる。
+ * @param stageIndex
+ * @returns stageTimerInfo: タイマー情報, isLast: 最後のステージならtrue
+ */
 function getTimerInfo(stageIndex: number): { stageTimerInfo: Competition.StageTimerInfo, isLast: boolean } {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 

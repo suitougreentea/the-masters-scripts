@@ -1,15 +1,18 @@
-// TODO List:
-// * 拡張するときに前の行の書式受け継がれる問題
-// * タイマーにハンデをうまく表示する
-
-function doGet() {
+/**
+ * タイマーへのアクセス
+ * @returns タイマーページ
+ */
+function doGet(): GoogleAppsScript.HTML.HtmlOutput {
   return HtmlService.createTemplateFromFile("timer").evaluate();
 }
 
+/**
+ * スプレッドシートを開いた際の初期化。メニュー追加
+ */
 function onOpen() {
   const ui = SpreadsheetApp.getUi();
   ui.createMenu("Masters")
-    .addItem("結果をエクスポート", "confirmExport")
+    .addItem("結果をエクスポート", "exportResult")
     .addSeparator()
     .addItem("サイドバーを表示", "showSidebar")
     .addSeparator()
@@ -17,7 +20,10 @@ function onOpen() {
     .addToUi();
 }
 
-function confirmExport() {
+/**
+ * 確認画面を表示してから結果をマイドライブにエクスポート
+ */
+function exportResult() {
   const ui = SpreadsheetApp.getUi();
   const response = ui.alert("Confirm", "結果をエクスポートしますか？", ui.ButtonSet.YES_NO);
   if (response == ui.Button.YES) {
@@ -30,6 +36,9 @@ function confirmExport() {
   }
 }
 
+/**
+ * サイドバーを表示
+ */
 function showSidebar() {
   const html = HtmlService.createTemplateFromFile("sidebar").evaluate()
     .setTitle("Masters")
@@ -39,6 +48,9 @@ function showSidebar() {
     .showSidebar(html);
 }
 
+/**
+ * デバッグ用
+ */
 function debugCommand() {
   const ui = SpreadsheetApp.getUi();
   const input = ui.prompt("", ui.ButtonSet.OK_CANCEL);
