@@ -8,6 +8,28 @@ let intervalId = -1;
 const initialTimes: (number | null)[] = new Array(8);
 
 const timerContainer = document.querySelector<HTMLDivElement>("#timer")!;
+const timerPlayerTemplate = document.querySelector<HTMLTemplateElement>("#timer-player")!;
+const timerPlayers: {
+  id: HTMLDivElement,
+  name: HTMLDivElement,
+  time: HTMLDivElement,
+  gauge: HTMLDivElement,
+  startOrder: HTMLDivElement,
+  diffTime: HTMLDivElement,
+}[] = [];
+for (let i = 0; i < 8; i++) {
+  const player = document.importNode(timerPlayerTemplate.content, true);
+  const id = player.querySelector<HTMLDivElement>(".id")!;
+  const name = player.querySelector<HTMLDivElement>(".name")!;
+  const time = player.querySelector<HTMLDivElement>(".time")!;
+  const gauge = player.querySelector<HTMLDivElement>(".gauge")!;
+  const startOrder = player.querySelector<HTMLDivElement>(".start-order")!;
+  const diffTime = player.querySelector<HTMLDivElement>(".diff-time")!;
+  id.innerText = String(i + 1);
+  timerContainer.appendChild(player);
+  timerPlayers.push({ id, name, time, gauge, startOrder, diffTime });
+}
+
 const startButton = document.querySelector<HTMLButtonElement>("#start")!;
 
 const stageNameSpan = document.querySelector<HTMLSpanElement>("#stage-name")!;
@@ -19,12 +41,45 @@ async function getAndApplyData(stageIndex: number) {
   try {
     const result = await runServerScript("getTimerInfo", [stageIndex]) as { stageTimerInfo: StageTimerInfo, isLast: boolean };
 
+    const getDiffTime = (playerIndex: number) => {
+      const players = result.stageTimerInfo.players;
+      const player = players[playerIndex];
+      if (player == null) return 0;
+
+      if (player.startOrder == 1) return 0;
+
+      // startOrderが1つ先の人を探す
+      let targetIndex = -1;
+      players.forEach((e, i) => {
+        if (e == null) return;
+        if (e.startOrder < player.startOrder) {
+          if (targetIndex == -1 || players[targetIndex]!.startOrder < e.startOrder) {
+            targetIndex = i;
+          }
+        }
+      });
+      if (targetIndex == -1) return 0; // unreachable?
+
+      return player.startTime - players[targetIndex]!.startTime;
+    };
+
     stageNameSpan.innerText = `[${stageIndex + 1}] ${result.stageTimerInfo.stageResult.name}`;
     for (let i = 0; i < 8; i++) {
-      const e = result.stageTimerInfo.players[i];
-      (timerContainer.children[i].children[1] as HTMLDivElement).innerText = e != null ? e.name : "";
-      initialTimes[i] = e != null ? e.startTime : null;
-      setPlayerTime(i, e != null ? e.startTime : null);
+      const playerInfo = result.stageTimerInfo.players[i];
+      const player = timerPlayers[i];
+      if (playerInfo != null) {
+        player.name.innerText = playerInfo.name;
+        initialTimes[i] = playerInfo.startTime;
+        setPlayerTime(i, playerInfo.startTime);
+        player.startOrder.innerText = playerInfo.startOrder + ":";
+        player.diffTime.innerText = "+" + formatTime(getDiffTime(i));
+      } else {
+        player.name.innerText = "";
+        initialTimes[i] = null;
+        setPlayerTime(i, null);
+        player.startOrder.innerText = "";
+        player.diffTime.innerText = "";
+      }
     }
     startButton.disabled = false;
     prevStageButton.disabled = stageIndex == 0;
@@ -32,9 +87,12 @@ async function getAndApplyData(stageIndex: number) {
   } catch {
     stageNameSpan.innerText = `[${stageIndex + 1}] -`;
     for (let i = 0; i < 8; i++) {
-      (timerContainer.children[i].children[1] as HTMLDivElement).innerText = "";
+      const player = timerPlayers[i];
+      player.name.innerText = "";
       initialTimes[i] = null;
       setPlayerTime(i, null);
+      player.startOrder.innerText = "";
+      player.diffTime.innerText = "";
     }
     startButton.disabled = true;
     prevStageButton.disabled = false;
@@ -47,6 +105,10 @@ function startTimer() {
   running = true;
   intervalId = window.setInterval(updateTimer, 10);
   startButton.disabled = true;
+  timerPlayers.forEach(e => {
+    e.startOrder.style.display = "none";
+    e.diffTime.style.display = "none";
+  });
 }
 
 function stopTimer() {
@@ -55,6 +117,10 @@ function stopTimer() {
   running = false;
   intervalId = -1;
   startButton.disabled = false;
+  timerPlayers.forEach(e => {
+    e.startOrder.style.display = "block";
+    e.diffTime.style.display = "block";
+  });
 }
 
 function updateTimer() {
@@ -72,10 +138,10 @@ function updateTimer() {
 }
 
 function setPlayerTime(index: number, time: number | null) {
-  const e = timerContainer.children[index];
+  const player = timerPlayers[index];
   if (time != null) {
-    (e.children[2] as HTMLDivElement).innerText = formatTime(time);
-    (e.children[3] as HTMLDivElement).style.width = (time / 200) + "px";
+    player.time.innerText = formatTime(time);
+    player.gauge.style.width = (time / 200) + "px";
     let color = "#35a16b";
     if (time < 10000) color = "#faf500";
     if (time < 5000) {
@@ -83,14 +149,13 @@ function setPlayerTime(index: number, time: number | null) {
       const u = Math.sqrt(t);
       color = tinycolor.mix("#ff2800", "#faf500", u * 100).toRgbString();
     }
-    (e.children[3] as HTMLDivElement).style.background = color;
+    player.gauge.style.background = color;
   } else {
-    (e.children[2] as HTMLDivElement).innerText = "";
-    (e.children[3] as HTMLDivElement).style.width = "0px";
+    player.time.innerText = "";
+    player.gauge.style.width = "0px";
   }
 }
 
-// TODO: 何番目スタートかを表示
 startButton.onclick = (_) => {
   startTimer();
 };
