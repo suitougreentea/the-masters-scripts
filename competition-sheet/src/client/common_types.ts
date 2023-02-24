@@ -42,4 +42,11 @@ type ApiFunctions = {
   getTimerInfo: (stageIndex: number) => { stageTimerInfo: StageTimerInfo, isLast: boolean }
 };
 
-export { StageSetupResult, StageInfo, StagePlayerEntry, StageTimerInfo, StageTimerPlayerData, ApiFunctions };
+export {
+  type StageSetupResult,
+  type StageInfo,
+  type StagePlayerEntry,
+  type StageTimerInfo,
+  type StageTimerPlayerData,
+  type ApiFunctions
+};

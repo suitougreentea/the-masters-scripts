@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "competition-sheet"
+		},
+		{
+			"path": "broadcast"
+		}
+	],
+	"settings": { "deno.config": "../broadcast/deno.jsonc" }
+}
