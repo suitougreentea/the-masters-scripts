@@ -3,7 +3,7 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended"
   ],
-  "ignorePatterns": ["deploy.js"],
+  "ignorePatterns": ["deploy.js", "gen_common_types.js"],
   "rules": {
     "semi": "warn",
     "no-inner-declarations": "off",
