@@ -1,4 +1,4 @@
-import { runServerScript, StageInfo, withLoader } from "./common";
+import { runServerScript, withLoader } from "./common";
 
 let currentStageIndex = -1;
 
@@ -14,7 +14,7 @@ const applyPlayersOrderButton = document.querySelector<HTMLButtonElement>("#appl
 
 async function getAndApplyStageInfo(stageIndex: number) {
   try {
-    const result = await runServerScript("getStageInfo", [stageIndex]) as { stageInfo: StageInfo, isLast: boolean };
+    const result = await runServerScript("getStageInfo", [stageIndex]);
 
     stageNameSpan.innerText = `[${stageIndex + 1}] ${result.stageInfo.setupResult.name}`;
     prevStageButton.disabled = false;
@@ -79,7 +79,7 @@ refreshStageButton.onclick = (_) => {
 const competitionSettingsForm = document.querySelector<HTMLFormElement>("#competition-settings")!;
 competitionSettingsForm.onsubmit = (_) => {
   withLoader(async () => {
-    await runServerScript("setupCompetition", [competitionSettingsForm]);
+    await runServerScript("setupCompetition", [manualCheckbox.checked, Number(manualNumberOfGamesInput.value)]);
     await changeStage(0);
   });
 };

@@ -1,4 +1,4 @@
-import { runServerScript, StageTimerInfo, withLoader } from "./common";
+import { runServerScript, withLoader } from "./common";
 
 let currentStageIndex = 0;
 
@@ -39,7 +39,7 @@ const refreshStageButton = document.querySelector<HTMLButtonElement>("#refresh-s
 
 async function getAndApplyData(stageIndex: number) {
   try {
-    const result = await runServerScript("getTimerInfo", [stageIndex]) as { stageTimerInfo: StageTimerInfo, isLast: boolean };
+    const result = await runServerScript("getTimerInfo", [stageIndex]);
 
     const getDiffTime = (playerIndex: number) => {
       const players = result.stageTimerInfo.players;

@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.json",
   "files": [
     "api.ts",
+    "common_types.ts",
     "competition.ts",
     "competition_sheet.ts",
     "definition.ts",

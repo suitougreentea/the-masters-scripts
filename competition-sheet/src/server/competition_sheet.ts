@@ -20,7 +20,7 @@ namespace CompetitionSheet {
   type Sheet = GoogleAppsScript.Spreadsheet.Sheet;
   type Range = GoogleAppsScript.Spreadsheet.Range;
 
-  type StagePlayerEntryWithSpreadsheetScore = Competition.StagePlayerEntry & { gradeOrLevel: string | null, time: string | null };
+  type StagePlayerEntryWithSpreadsheetScore = StagePlayerEntry & { gradeOrLevel: string | null, time: string | null };
 
   function constructStageRangeName(roundIndex: number, groupIndex: number) { return `Stage_${roundIndex}_${groupIndex}`; }
   function constructQualifierTableRangeName() { return "QualifierTable"; }
@@ -293,7 +293,7 @@ namespace CompetitionSheet {
    * @param groupIndex
    * @returns
    */
-  export function getStageInfo(ss: Spreadsheet, roundIndex: number, groupIndex: number): Competition.StageInfo {
+  export function getStageInfo(ss: Spreadsheet, roundIndex: number, groupIndex: number): StageInfo {
     const setupResult = getCurrentSetupResultOrError(ss);
     const { stages } = setupResult;
 
@@ -323,7 +323,7 @@ namespace CompetitionSheet {
    * @param groupIndex
    * @returns
    */
-  export function getTimerInfo(ss: Spreadsheet, roundIndex: number, groupIndex: number): Competition.StageTimerInfo {
+  export function getTimerInfo(ss: Spreadsheet, roundIndex: number, groupIndex: number): StageTimerInfo {
     const setupResult = getCurrentSetupResultOrError(ss);
     const { stages } = setupResult;
 
@@ -425,7 +425,7 @@ namespace CompetitionSheet {
     scoreRange.setValues(newScoreValues);
   }
 
-  function getTimerPlayerData(ss: Spreadsheet, roundIndex: number, groupIndex: number): (Competition.StageTimerPlayerData | null)[] {
+  function getTimerPlayerData(ss: Spreadsheet, roundIndex: number, groupIndex: number): (StageTimerPlayerData | null)[] {
     const competitionSheet = getCompetitionSheetOrError(ss);
 
     const row = getStageRange(ss, roundIndex, groupIndex).getRow();
@@ -433,7 +433,7 @@ namespace CompetitionSheet {
     const range = competitionSheet.getRange(row + 2, 2, 8, 6);
     const values = range.getValues();
 
-    const result: (Competition.StageTimerPlayerData | null)[] = [];
+    const result: (StageTimerPlayerData | null)[] = [];
     for (let i = 0; i < 8; i++) {
       if (Util.isNullOrEmptyString(values[i][0])) {
         result.push(null);
@@ -454,7 +454,7 @@ namespace CompetitionSheet {
     return result;
   }
 
-  function getStageEntries(ss: Spreadsheet, roundIndex: number, groupIndex: number): (Competition.StagePlayerEntry | null)[] {
+  function getStageEntries(ss: Spreadsheet, roundIndex: number, groupIndex: number): (StagePlayerEntry | null)[] {
     const competitionSheet = getCompetitionSheetOrError(ss);
 
     const row = getStageRange(ss, roundIndex, groupIndex).getRow();
@@ -465,7 +465,7 @@ namespace CompetitionSheet {
     const nameValues = nameRange.getValues();
     const handicapValues = handicapRange.getValues();
 
-    const result: (Competition.StagePlayerEntry | null)[] = [];
+    const result: (StagePlayerEntry | null)[] = [];
     for (let i = 0; i < 8; i++) {
       if (Util.isNullOrEmptyString(nameValues[i][0])) {
         result.push(null);

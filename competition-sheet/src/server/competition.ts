@@ -47,30 +47,6 @@ namespace Competition {
     }[];
   };
 
-  export type StageInfo = {
-    setupResult: StageSetupResult;
-    ready: boolean;
-    players: (StagePlayerEntry | null)[];
-  };
-  export type StagePlayerEntry = {
-    name: string;
-    handicap: number;
-  };
-
-  export type StageTimerInfo = {
-    stageResult: StageSetupResult;
-    ready: boolean;
-    players: (StageTimerPlayerData | null)[];
-  };
-  export type StageTimerPlayerData = {
-    name: string;
-    rawBestTime: number;
-    handicap: number;
-    bestTime: number;
-    startOrder: number;
-    startTime: number;
-  };
-
   export type StagePlayerScore = {
     name: string;
     grade: Grade.Grade | null;

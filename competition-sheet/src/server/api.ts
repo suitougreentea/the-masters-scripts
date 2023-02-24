@@ -2,14 +2,12 @@
  * 大会をセットアップ。サイドバーから呼ばれる。
  * @param form サイドバーのフォーム情報
  */
-function setupCompetition(form: { manual?: "on", manualNumberOfGames: string }) {
+function setupCompetition(manual: boolean, manualNumberOfGames: number) {
   try {
-    const { manual, manualNumberOfGames } = form;
-
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const entries = CompetitionSheet.getPlayerEntries(ss);
 
-    const setupResult = Competition.setupCompetition(entries.length, manual ? Number(manualNumberOfGames) : null);
+    const setupResult = Competition.setupCompetition(entries.length, manual ? manualNumberOfGames : null);
 
     const { competitionSheet } = CompetitionSheet.setupCompetitionSheet(ss, setupResult);
     competitionSheet.activate();
@@ -24,7 +22,7 @@ function setupCompetition(form: { manual?: "on", manualNumberOfGames: string }) 
  * @param stageIndex
  * @returns stageInfo: ステージ情報, isLast: 最後のステージならtrue
  */
-function getStageInfo(stageIndex: number): { stageInfo: Competition.StageInfo, isLast: boolean } {
+function getStageInfo(stageIndex: number): { stageInfo: StageInfo, isLast: boolean } {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
 
@@ -94,7 +92,7 @@ function leaveStage(stageIndex: number) {
  * @param stageIndex
  * @returns stageTimerInfo: タイマー情報, isLast: 最後のステージならtrue
  */
-function getTimerInfo(stageIndex: number): { stageTimerInfo: Competition.StageTimerInfo, isLast: boolean } {
+function getTimerInfo(stageIndex: number): { stageTimerInfo: StageTimerInfo, isLast: boolean } {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
   const setupResult = CompetitionSheet.getCurrentSetupResultOrError(ss);
@@ -106,3 +104,12 @@ function getTimerInfo(stageIndex: number): { stageTimerInfo: Competition.StageTi
   const result = CompetitionSheet.getTimerInfo(ss, roundIndex, groupIndex);
   return { stageTimerInfo: result, isLast: stageIndex == stages.length - 1 };
 }
+
+// 型チェック用
+const assertApiFunctions: ApiFunctions = {
+  setupCompetition,
+  getStageInfo,
+  reorderPlayers,
+  leaveStage,
+  getTimerInfo,
+};

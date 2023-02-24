@@ -1,41 +1,9 @@
-export type StageSetupResult = {
-  roundIndex: number;
-  groupIndex: number;
-  name: string;
-  numPlayers: number;
-  numWinners: number;
-  hasWildcard: boolean;
-  numLosers: number;
-};
+import { ApiFunctions } from "./common_types";
 
-export type StageInfo = {
-  setupResult: StageSetupResult;
-  ready: boolean;
-  players: (StagePlayerEntry | null)[];
-};
-export type StagePlayerEntry = {
-  name: string;
-  handicap: number;
-};
-
-export type StageTimerInfo = {
-  stageResult: StageSetupResult;
-  ready: boolean;
-  players: (StageTimerPlayerData | null)[];
-};
-export type StageTimerPlayerData = {
-  name: string;
-  rawBestTime: number;
-  handicap: number;
-  bestTime: number;
-  startOrder: number;
-  startTime: number;
-};
-
-export function runServerScript(name: string, args: unknown[]): Promise<unknown> {
+export function runServerScript<TName extends keyof ApiFunctions>(name: TName, args: Parameters<ApiFunctions[TName]>): Promise<ReturnType<ApiFunctions[TName]>> {
   return new Promise((resolve, reject) => {
     google.script.run
-      .withSuccessHandler((result) => resolve(result))
+      .withSuccessHandler((result) => resolve(result as ReturnType<ApiFunctions[TName]>))
       .withFailureHandler((error) => reject(error))[name].apply(null, args);
   });
 }
