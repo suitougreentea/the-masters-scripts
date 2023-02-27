@@ -6,7 +6,7 @@ if (mode != "build" && mode != "watch") throw new Error("Invalid command");
 const watch = mode == "watch";
 
 const options: esbuild.BuildOptions = {
-  entryPoints: ["./client/dashboard.ts", "./client/competition-scene.ts"],
+  entryPoints: ["./client/dashboard.ts", "./client/competition_scene.ts"],
   platform: "browser",
   bundle: true,
   format: "esm",

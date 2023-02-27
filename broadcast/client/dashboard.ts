@@ -1,5 +1,8 @@
 import { type TypeDefinition } from "../common/type_definition.ts";
+import "./components/timer.ts";
+import { MastersTimerElement } from "./components/timer.ts";
 import { denocg } from "./deps.ts";
+import { TimerWrapper } from "./timer_wrapper.ts";
 
 const client = await denocg.getClient<TypeDefinition>();
 
@@ -10,6 +13,10 @@ const loginCancelButton = document.querySelector<HTMLButtonElement>(
 const getStageInfoButton = document.querySelector<HTMLButtonElement>(
   "#get-stage-info",
 )!;
+const timerStartButton = document.querySelector<HTMLButtonElement>("#timer-start")!;
+const timerStopButton = document.querySelector<HTMLButtonElement>("#timer-stop")!;
+const timer = document.querySelector<MastersTimerElement>("#timer")!;
+const timerWrapper = new TimerWrapper(timer);
 
 loginCancelButton.disabled = true;
 loginButton.onclick = async (_) => {
@@ -43,4 +50,19 @@ loginCancelButton.onclick = async (_) => {
 
 getStageInfoButton.onclick = async (_) => {
   await client.requestToServer("getStageInfo");
+};
+
+const currentStageTimerInfoReplicant = await client.getReplicant("currentStageTimerInfo");
+currentStageTimerInfoReplicant.subscribe((value) => {
+  timerWrapper.setData(value?.players);
+});
+
+timerStartButton.onclick = () => {
+  timerWrapper.start();
+  client.broadcastMessage("startTimer");
+};
+
+timerStopButton.onclick = () => {
+  timerWrapper.stop();
+  client.broadcastMessage("stopTimer");
 };

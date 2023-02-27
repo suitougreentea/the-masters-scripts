@@ -1,5 +1,5 @@
 import { ApiFunctions } from "../common/common_types.ts";
-import { AppsScriptApi } from "./apps-script-api.ts";
+import { AppsScriptApi } from "./apps_script_api.ts";
 
 const scriptId =
   "AKfycbyaIO-yeTXnTW6_0EEav-Z_EYHDShVAnE0CZFkT1MFlUXFihXC-vsLTfWQxi9yuEkxmhA";

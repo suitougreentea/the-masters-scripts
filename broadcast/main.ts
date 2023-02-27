@@ -1,6 +1,6 @@
 import { TypeDefinition } from "./common/type_definition.ts";
-import { ApiClient } from "./server/api-client.ts";
-import { AppsScriptApi } from "./server/apps-script-api.ts";
+import { ApiClient } from "./server/api_client.ts";
+import { AppsScriptApi } from "./server/apps_script_api.ts";
 import { denocg } from "./server/deps.ts";
 
 export const config: denocg.ServerConfig<TypeDefinition> = {
@@ -9,6 +9,7 @@ export const config: denocg.ServerConfig<TypeDefinition> = {
   assetsRoot: "./client",
   replicants: {
     currentStageInfo: { persistent: false },
+    currentStageTimerInfo: { persistent: false },
   },
 };
 
@@ -45,7 +46,10 @@ server.registerRequestHandler("cancelLogin", () => {
 });
 
 const currentStageInfoReplicant = await server.getReplicant("currentStageInfo");
+const currentStageTimerInfoReplicant = await server.getReplicant("currentStageTimerInfo");
 server.registerRequestHandler("getStageInfo", async () => {
-  const result = await apiClient.runCommand("getStageInfo", [0]);
-  currentStageInfoReplicant.setValue(result.stageInfo);
+  const stageInfo = await apiClient.runCommand("getStageInfo", [0]);
+  const stageTimerInfo = await apiClient.runCommand("getTimerInfo", [0]);
+  currentStageInfoReplicant.setValue(stageInfo.stageInfo);
+  currentStageTimerInfoReplicant.setValue(stageTimerInfo.stageTimerInfo);
 });
