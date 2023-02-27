@@ -4,6 +4,7 @@ type EmptyObject = Record<keyof unknown, never>;
 
 export type TypeDefinition = {
   replicants: {
+    title: string;
     currentStageInfo: StageInfo | null;
     currentStageTimerInfo: StageTimerInfo | null;
   };

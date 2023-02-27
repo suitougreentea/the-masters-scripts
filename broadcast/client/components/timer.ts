@@ -1,79 +1,108 @@
 import { StageTimerPlayerData } from "../../common/common_types.ts";
-import { formatTime } from "../../common/util.ts";
-import { LitElement, html, css, customElement, map, tinycolor } from "../deps.ts";
+import { commonColors } from "../../common/common_values.ts";
+import { createPromiseSet, formatTime, PromiseSet } from "../../common/util.ts";
+import {
+  css,
+  customElement,
+  html,
+  LitElement,
+  map,
+  tinycolor,
+} from "../deps.ts";
 
 @customElement("masters-timer")
 export class MastersTimerElement extends LitElement {
   static styles = css`
   .container {
-    background-color: black;
-    color: white;
+    background-color: ${commonColors.background};
+    color: ${commonColors.text};
+    padding: 2px 6px;
+  }
+
+  .container-inner {
+    overflow: hidden;
   }
 
   .player {
     display: grid;
-    align-items: end;
-    grid-template-columns: 16px 85px 65px 16px auto;
-    height: 24px;
-    line-height: 16px;
-    border-bottom: 1px solid #444;
-    box-sizing: border-box;
+    align-items: baseline;
+    grid-template-columns: 20px 120px 85px 40px 80px auto;
+    height: 32px;
   }
 
-  .player .id {
+  .border {
+    grid-row: 1;
+    grid-column: 1 / span 6;
+    height: 1px;
+    background-color: #444;
+    transform: translateY(3px);
+  }
+
+  .id {
     grid-row: 1;
     grid-column: 1;
-    font-size: 12px;
+    font-size: 16px;
   }
 
-  .player .name {
+  .name {
     grid-row: 1;
     grid-column: 2;
-    font-size: 16px;
+    font-size: 20px;
     overflow: hidden;
     white-space: nowrap;
-    margin-right: 8px;
-
-    /* つぶす */
-    width: 107%;
-    transform: scaleX(85%);
-    transform-origin: left;
+    text-overflow: ellipsis;
+    margin-right: 4px;
   }
 
-  .player .time {
+  .time {
     grid-row: 1;
     grid-column: 3;
-    font-size: 16px;
+    font-size: 20px;
   }
 
-  .player .gauge {
+  .gauge {
     grid-row: 1;
-    grid-column: 4 / span 2;
+    grid-column: 4 / span 3;
     height: 18px;
+    transform: translateY(2px);
   }
 
-  .player .start-order {
+  .start-order {
     grid-row: 1;
     grid-column: 4;
-    font-size: 12px;
+    font-size: 16px;
     text-shadow: 0 0 5px black;
     margin-left: 2px;
+    transform: translate(0, 0); /* workaround for z-ordering */
   }
 
-  .player .diff-time {
+  .diff-time {
     grid-row: 1;
     grid-column: 5;
-    font-size: 12px;
+    font-size: 16px;
     text-shadow: 0 0 5px black;
+    transform: translate(0, 0); /* workaround for z-ordering */
+  }
+
+  .offset {
+    grid-row: 1;
+    grid-column: 6;
+    font-size: 16px;
+    text-shadow: 0 0 5px black;
+    transform: translate(0, 0); /* workaround for z-ordering */
   }
   `;
 
+  #ordinals = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"];
+
+  #initializedPromise: PromiseSet<void> = createPromiseSet();
   #elements: {
     name: HTMLDivElement;
     time: HTMLDivElement;
     gauge: HTMLDivElement;
     startOrder: HTMLDivElement;
     diffTime: HTMLDivElement;
+    offset: HTMLDivElement;
   }[] = [];
   #data: (StageTimerPlayerData | null)[];
   #intervalId: number | null = null;
@@ -93,8 +122,15 @@ export class MastersTimerElement extends LitElement {
       const gauge = player.querySelector<HTMLDivElement>(".gauge")!;
       const startOrder = player.querySelector<HTMLDivElement>(".start-order")!;
       const diffTime = player.querySelector<HTMLDivElement>(".diff-time")!;
-      this.#elements.push({ name, time, gauge, startOrder, diffTime });
+      const offset = player.querySelector<HTMLDivElement>(".offset")!;
+      this.#elements.push({ name, time, gauge, startOrder, diffTime, offset });
     }
+
+    this.#initializedPromise.resolve();
+  }
+
+  waitForInitialization() {
+    return this.#initializedPromise.promise;
   }
 
   isRunning() {
@@ -106,9 +142,10 @@ export class MastersTimerElement extends LitElement {
 
     this.#startTime = performance.now();
     this.#intervalId = setInterval(() => this.#updateTimer(), 10);
-    this.#elements.forEach(e => {
+    this.#elements.forEach((e) => {
       e.startOrder.style.display = "none";
       e.diffTime.style.display = "none";
+      e.offset.style.display = "none";
     });
   }
 
@@ -118,9 +155,10 @@ export class MastersTimerElement extends LitElement {
     clearInterval(this.#intervalId!);
     this.#startTime = -1;
     this.#intervalId = null;
-    this.#elements.forEach(e => {
+    this.#elements.forEach((e) => {
       e.startOrder.style.display = "";
       e.diffTime.style.display = "";
+      e.offset.style.display = "";
     });
     this.#reset();
   }
@@ -140,7 +178,9 @@ export class MastersTimerElement extends LitElement {
       players.forEach((e, i) => {
         if (e == null) return;
         if (e.startOrder < player.startOrder) {
-          if (targetIndex == -1 || players[targetIndex]!.startOrder < e.startOrder) {
+          if (
+            targetIndex == -1 || players[targetIndex]!.startOrder < e.startOrder
+          ) {
             targetIndex = i;
           }
         }
@@ -156,13 +196,25 @@ export class MastersTimerElement extends LitElement {
       if (player != null) {
         element.name.innerText = player.name;
         this.#setPlayerTime(i, player.startTime);
-        element.startOrder.innerText = player.startOrder + ":";
+        element.startOrder.innerText = this.#ordinals[player.startOrder - 1] +
+          ":";
         element.diffTime.innerText = "+" + formatTime(getDiffTime(i));
+        if (player.handicap > 0) {
+          element.offset.innerText = `[Hdcp. +${player.handicap}]`;
+          element.offset.style.color = "rgb(255, 209, 209)";
+        } else if (player.handicap < 0) {
+          element.offset.innerText = `[Adv. ${player.handicap}]`;
+          element.offset.style.color = "rgb(203, 242, 102)";
+        } else {
+          element.offset.innerText = "";
+          element.offset.style.color = "";
+        }
       } else {
         element.name.innerText = "";
         this.#setPlayerTime(i, null);
         element.startOrder.innerText = "";
         element.diffTime.innerText = "";
+        element.offset.innerText = "";
       }
     }
   }
@@ -174,7 +226,7 @@ export class MastersTimerElement extends LitElement {
   }
 
   #createEmptyData(): (StageTimerPlayerData | null)[] {
-    return [...new Array(8)].map(_ => null);
+    return [...new Array(8)].map((_) => null);
   }
 
   #updateTimer() {
@@ -213,16 +265,23 @@ export class MastersTimerElement extends LitElement {
   render() {
     return html`
     <div class="container">
-      ${map(this.#data, (_, i) => html`
-      <div class="player">
-        <div class="id">${i + 1}</div>
-        <div class="name"></div>
-        <div class="time"></div>
-        <div class="gauge"></div>
-        <div class="start-order"></div>
-        <div class="diff-time"></div>
+      <div class="container-inner">
+        ${
+      map(this.#data, (_, i) =>
+        html`
+        <div class="player">
+          <div class="border"></div>
+          <div class="id">${i + 1}:</div>
+          <div class="name"></div>
+          <div class="time"></div>
+          <div class="gauge"></div>
+          <div class="start-order"></div>
+          <div class="diff-time"></div>
+          <div class="offset"></div>
+        </div>
+        `)
+    }
       </div>
-      `)}
     </div>
     `;
   }

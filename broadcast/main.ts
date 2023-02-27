@@ -46,7 +46,9 @@ server.registerRequestHandler("cancelLogin", () => {
 });
 
 const currentStageInfoReplicant = await server.getReplicant("currentStageInfo");
-const currentStageTimerInfoReplicant = await server.getReplicant("currentStageTimerInfo");
+const currentStageTimerInfoReplicant = await server.getReplicant(
+  "currentStageTimerInfo",
+);
 server.registerRequestHandler("getStageInfo", async () => {
   const stageInfo = await apiClient.runCommand("getStageInfo", [0]);
   const stageTimerInfo = await apiClient.runCommand("getTimerInfo", [0]);

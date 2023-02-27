@@ -169,7 +169,7 @@ namespace Competition {
     firstRound.qualifierPlayerIndices.forEach((indices, i) => stages.push({
       roundIndex: 0,
       groupIndex: i,
-      name: `${firstRound.name}Heat${i + 1}`,
+      name: `${firstRound.name} Heat${i + 1}`,
       numPlayers: indices.length,
       numWinners: 0,
       hasWildcard: false,
@@ -251,7 +251,7 @@ namespace Competition {
       // ステージ情報を埋める
       const stagesToAdd: StageSetupResult[] = [];
       for (let i = 0; i < round.numGroups!; i++) {
-        const name = round.numGroups == 1 ? round.name : `${round.name}${groupIndexToString(i)}`;
+        const name = round.numGroups == 1 ? round.name : `${round.name} ${groupIndexToString(i)}組`;
         const numPlayers = stageNumPlayers[i];
         const numWinners = round.winners != null ? round.winners.numPerGroup : -1;
         const numLosers = round.losers != null ? round.losers.numPerGroup : -1;
@@ -302,7 +302,7 @@ namespace Competition {
               supplementComparisonsToAdd.push({
                 roundIndex,
                 rankId: `T${i}`,
-                name: `${round.name}${i + 1}位`,
+                name: `${round.name} ${i + 1}位`,
                 numPlayers: numRankPlayers,
               });
             }
@@ -313,7 +313,7 @@ namespace Competition {
         const numWildcard = hasWildcard ? 1 : 0;
         if (numWildcard > 0) {
           const unevenNumWinners = stagesToAdd.some(e => e.numWinners != numMaxWinners);
-          const name = unevenNumWinners ? `${round.name}ワイルドカード` : `${round.name}${numMaxWinners + 1}位 (ワイルドカード)`;
+          const name = unevenNumWinners ? `${round.name} ワイルドカード` : `${round.name} ${numMaxWinners + 1}位 (ワイルドカード)`;
           supplementComparisonsToAdd.push({
             roundIndex,
             rankId: "W",
@@ -341,7 +341,7 @@ namespace Competition {
                 supplementComparisonsToAdd.push({
                   roundIndex,
                   rankId: `T${rankIndex}`,
-                  name: `${round.name}${rankIndex + 1}位`,
+                  name: `${round.name} ${rankIndex + 1}位`,
                   numPlayers: numRankPlayers,
                 });
               }
@@ -349,7 +349,7 @@ namespace Competition {
               for (let i = 0; i < numMaxLosers; i++) {
                 const numRankPlayers = stagesToAdd.length;
                 if (numRankPlayers == 1) continue;
-                const name = i == numMaxLosers - 1 ? `${round.name}最下位` : `${round.name} 下から${numMaxLosers - i}位`;
+                const name = i == numMaxLosers - 1 ? `${round.name} 最下位` : `${round.name} 下から${numMaxLosers - i}位`;
                 supplementComparisonsToAdd.push({
                   roundIndex,
                   rankId: `B${numMaxLosers - i}`,

@@ -6,6 +6,8 @@ import { TimerWrapper } from "./timer_wrapper.ts";
 
 const client = await denocg.getClient<TypeDefinition>();
 
+const titleInput = document.querySelector<HTMLInputElement>("#title")!;
+const setInfoButton = document.querySelector<HTMLButtonElement>("#set-info")!;
 const loginButton = document.querySelector<HTMLButtonElement>("#login")!;
 const loginCancelButton = document.querySelector<HTMLButtonElement>(
   "#login-cancel",
@@ -13,10 +15,22 @@ const loginCancelButton = document.querySelector<HTMLButtonElement>(
 const getStageInfoButton = document.querySelector<HTMLButtonElement>(
   "#get-stage-info",
 )!;
-const timerStartButton = document.querySelector<HTMLButtonElement>("#timer-start")!;
-const timerStopButton = document.querySelector<HTMLButtonElement>("#timer-stop")!;
+const timerStartButton = document.querySelector<HTMLButtonElement>(
+  "#timer-start",
+)!;
+const timerStopButton = document.querySelector<HTMLButtonElement>(
+  "#timer-stop",
+)!;
 const timer = document.querySelector<MastersTimerElement>("#timer")!;
 const timerWrapper = new TimerWrapper(timer);
+
+const titleReplicant = await client.getReplicant("title");
+titleReplicant.subscribe((value) => {
+  titleInput.value = value ?? "";
+});
+setInfoButton.onclick = (_) => {
+  titleReplicant.setValue(titleInput.value);
+};
 
 loginCancelButton.disabled = true;
 loginButton.onclick = async (_) => {
@@ -52,7 +66,9 @@ getStageInfoButton.onclick = async (_) => {
   await client.requestToServer("getStageInfo");
 };
 
-const currentStageTimerInfoReplicant = await client.getReplicant("currentStageTimerInfo");
+const currentStageTimerInfoReplicant = await client.getReplicant(
+  "currentStageTimerInfo",
+);
 currentStageTimerInfoReplicant.subscribe((value) => {
   timerWrapper.setData(value?.players);
 });

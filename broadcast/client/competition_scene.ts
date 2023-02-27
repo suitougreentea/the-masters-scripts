@@ -1,21 +1,31 @@
-import { type TypeDefinition } from "../common/type_definition.ts";
-import "./components/timer.ts";
 import { denocg } from "./deps.ts";
-import { MastersTimerElement } from "./components/timer.ts";
-import { TimerWrapper } from "./timer_wrapper.ts";
+import { type TypeDefinition } from "../common/type_definition.ts";
+import "./components/competition.ts";
+import { MastersCompetitionElement } from "./components/competition.ts";
 
 const client = await denocg.getClient<TypeDefinition>();
 
-const timer = document.querySelector<MastersTimerElement>("#timer")!;
-const timerWrapper = new TimerWrapper(timer);
-const currentStageTimerInfoReplicant = await client.getReplicant("currentStageTimerInfo");
+const competition = document.querySelector<MastersCompetitionElement>(
+  "masters-competition",
+)!;
+await competition.waitForInitialization();
+
+const currentStageTimerInfoReplicant = await client.getReplicant(
+  "currentStageTimerInfo",
+);
 currentStageTimerInfoReplicant.subscribe((value) => {
-  timerWrapper.setData(value?.players);
+  competition.setRoundNameText(value?.stageResult.name ?? "");
+  competition.setTimerData(value?.players);
 });
 
 client.addMessageListener("startTimer", () => {
-  timerWrapper.start();
+  competition.startTimer();
 });
 client.addMessageListener("stopTimer", () => {
-  timerWrapper.stop();
+  competition.stopTimer();
+});
+
+const titleReplicant = await client.getReplicant("title");
+titleReplicant.subscribe((value) => {
+  competition.setTitleText(value ?? "");
 });
