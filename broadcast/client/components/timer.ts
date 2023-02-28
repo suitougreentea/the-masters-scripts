@@ -25,7 +25,7 @@ export class MastersTimerElement extends LitElement {
 
   .player {
     display: grid;
-    align-items: baseline;
+    align-items: center;
     grid-template-columns: 20px 120px 85px 40px 80px auto;
     height: 32px;
   }
@@ -35,13 +35,14 @@ export class MastersTimerElement extends LitElement {
     grid-column: 1 / span 6;
     height: 1px;
     background-color: #444;
-    transform: translateY(3px);
+    transform: translateY(10px);
   }
 
   .id {
     grid-row: 1;
     grid-column: 1;
     font-size: 16px;
+    transform: translateY(1px);
   }
 
   .name {
@@ -64,7 +65,7 @@ export class MastersTimerElement extends LitElement {
     grid-row: 1;
     grid-column: 4 / span 3;
     height: 18px;
-    transform: translateY(2px);
+    transform: translateY(1px);
   }
 
   .start-order {
@@ -73,7 +74,7 @@ export class MastersTimerElement extends LitElement {
     font-size: 16px;
     text-shadow: 0 0 5px black;
     margin-left: 2px;
-    transform: translate(0, 0); /* workaround for z-ordering */
+    transform: translateY(1px);
   }
 
   .diff-time {
@@ -81,7 +82,7 @@ export class MastersTimerElement extends LitElement {
     grid-column: 5;
     font-size: 16px;
     text-shadow: 0 0 5px black;
-    transform: translate(0, 0); /* workaround for z-ordering */
+    transform: translateY(1px);
   }
 
   .offset {
@@ -89,7 +90,7 @@ export class MastersTimerElement extends LitElement {
     grid-column: 6;
     font-size: 16px;
     text-shadow: 0 0 5px black;
-    transform: translate(0, 0); /* workaround for z-ordering */
+    transform: translateY(1px);
   }
   `;
 
@@ -280,7 +281,7 @@ export class MastersTimerElement extends LitElement {
           <div class="offset"></div>
         </div>
         `)
-    }
+      }
       </div>
     </div>
     `;
