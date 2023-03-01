@@ -1,8 +1,10 @@
 import { css, customElement, html, LitElement } from "../deps.ts";
 import "./title.ts";
+import "./player_info.ts";
 import "./round_name.ts";
 import "./timer.ts";
 import { MastersTitleElement } from "./title.ts";
+import { MastersPlayerInfoElement } from "./player_info.ts";
 import { MastersRoundNameElement } from "./round_name.ts";
 import { MastersTimerElement } from "./timer.ts";
 import { TimerWrapper } from "../timer_wrapper.ts";
@@ -20,7 +22,7 @@ export class MastersCompetitionElement extends LitElement {
 
   #title {
     position: absolute;
-    top: 995px;
+    top: 1000px;
     left: 245px;
   }
 
@@ -42,6 +44,7 @@ export class MastersCompetitionElement extends LitElement {
   #initializedPromise: PromiseSet<void> = createPromiseSet();
   #roundName!: MastersRoundNameElement;
   #title!: MastersTitleElement;
+  #playerInfo!: MastersPlayerInfoElement;
   #timer!: MastersTimerElement;
   #timerWrapper!: TimerWrapper;
 
@@ -51,6 +54,10 @@ export class MastersCompetitionElement extends LitElement {
 
   async firstUpdated() {
     this.#title = this.renderRoot.querySelector<MastersTitleElement>("#title")!;
+    this.#playerInfo = this.renderRoot.querySelector<MastersPlayerInfoElement>(
+      "#player-info",
+    )!;
+    await this.#playerInfo.waitForInitialization();
     this.#roundName = this.renderRoot.querySelector<MastersRoundNameElement>(
       "#round-name",
     )!;
@@ -74,6 +81,7 @@ export class MastersCompetitionElement extends LitElement {
 
   setTimerData(data?: (StageTimerPlayerData | null)[]) {
     this.#timerWrapper.setData(data);
+    this.#playerInfo.setData(data);
   }
 
   startTimer() {
@@ -90,6 +98,7 @@ export class MastersCompetitionElement extends LitElement {
     return html`
     <div class="container">
       <masters-title id="title"></masters-title>
+      <masters-player-info id="player-info"></masters-player-info>
       <masters-round-name id="round-name"></masters-round-name>
       <masters-timer id="timer"></masters-timer>
     </div>

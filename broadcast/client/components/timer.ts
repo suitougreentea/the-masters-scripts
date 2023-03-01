@@ -267,7 +267,7 @@ export class MastersTimerElement extends LitElement {
     return html`
     <div class="container">
       <div class="container-inner">
-        ${
+      ${
       map(this.#data, (_, i) =>
         html`
         <div class="player">
@@ -281,7 +281,7 @@ export class MastersTimerElement extends LitElement {
           <div class="offset"></div>
         </div>
         `)
-      }
+    }
       </div>
     </div>
     `;
