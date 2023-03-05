@@ -42,18 +42,12 @@ export class MastersSystemMenuElement extends LitElement {
     await client.requestToServer("cancelLogin");
   }
 
-  private async _getStageInfo() {
-    const client = await this._dashboardContext.getClient();
-    await client.requestToServer("getStageInfo");
-  }
-
   render() {
     return html`
     <div class="container">
       <button id="login" ?disabled="${this._loginInProgress}" @click="${this._login}">Login</button>
       <button id="login-cancel" ?disabled="${!this
       ._loginInProgress}" @click="${this._cancelLogin}">Cancel</button>
-      <button id="get-stage-info" @click="${this._getStageInfo}">GetStageInfo(0)</button>
     </div>
     `;
   }

@@ -2,6 +2,7 @@ import { TypeDefinition } from "../../common/type_definition.ts";
 import { createPromiseSet } from "../../common/util.ts";
 import { DashboardContext, dashboardContext } from "./dashboard_context.ts";
 import {
+  css,
   customElement,
   denocg,
   html,
@@ -16,6 +17,12 @@ import { MastersTimerControllerElement } from "./timer_controller.ts";
 
 @customElement("masters-dashboard")
 export class MastersDashboardElement extends LitElement {
+  static styles = css`
+    #system-menu {
+      position: absolute;
+      right: 8px;
+    }
+    `;
   private _initializedPromise = createPromiseSet();
 
   // @ts-ignore: ?

@@ -57,9 +57,10 @@ export class MastersPlayerInfoElement extends LitElement {
 
     .id {
       position: absolute;
-      top: 0px;
-      font-size: 72px;
-      line-height: 72px;
+      top: 5px;
+      color: rgb(160, 160, 160);
+      font-size: 48px;
+      line-height: 48px;
       margin: 0px 5px;
     }
     .player:nth-child(odd) .id {
@@ -83,6 +84,7 @@ export class MastersPlayerInfoElement extends LitElement {
     }
 
     .best-time {
+      display: none;
       position: absolute;
       top: 43px;
       font-size: 18px;
@@ -98,6 +100,7 @@ export class MastersPlayerInfoElement extends LitElement {
     }
 
     .offset {
+      display: none;
       position: absolute;
       top: 64px;
       font-size: 14px;

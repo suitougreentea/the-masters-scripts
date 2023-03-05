@@ -36,8 +36,8 @@ export class MastersCompetitionElement extends LitElement {
   #timer {
     position: absolute;
     top: 140px;
-    left: 1320px;
-    width: 540px;
+    left: 1310px;
+    width: 550px;
   }
   `;
 
