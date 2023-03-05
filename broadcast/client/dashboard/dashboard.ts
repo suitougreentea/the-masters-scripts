@@ -12,15 +12,46 @@ import {
 } from "../deps.ts";
 import "./system_menu.ts";
 import "./timer_controller.ts";
+import "./tabs.ts";
 import "./setup.ts";
+import "./chat.ts";
 import { MastersTimerControllerElement } from "./timer_controller.ts";
 
 @customElement("masters-dashboard")
 export class MastersDashboardElement extends LitElement {
   static styles = css`
+    .container {
+      height: calc(100vh - 16px);
+      margin: 8px;
+      display: flex;
+      flex-direction: column;
+    }
+
     #system-menu {
       position: absolute;
       right: 8px;
+    }
+
+    #column-view {
+      flex-grow: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+
+    .column {
+      box-sizing: border-box;
+    }
+
+    .column + .column {
+      border-left: 1px solid rgb(128, 128, 128);
+    }
+
+    #setup {
+      grid-column: 3;
+    }
+
+    #chat {
+      grid-column: 4;
     }
     `;
   private _initializedPromise = createPromiseSet();
@@ -67,7 +98,11 @@ export class MastersDashboardElement extends LitElement {
     <div class="container">
       <masters-system-menu id="system-menu"></masters-system-menu>
       <masters-timer-controller id="timer-controller"></masters-timer-controller>
-      <masters-setup></masters-setup>
+      <masters-tabs id="tabs"></masters-tabs>
+      <div id="column-view">
+        <masters-setup id="setup" class="column"></masters-setup>
+        <masters-chat id="chat" class="column"></masters-chat>
+      </div>
     </div>
     `;
   }
