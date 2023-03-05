@@ -2,12 +2,12 @@ import { css, customElement, html, LitElement } from "../deps.ts";
 import "./title.ts";
 import "./player_info.ts";
 import "./round_name.ts";
-import "./timer.ts";
+import "../common/timer.ts";
 import { MastersTitleElement } from "./title.ts";
 import { MastersPlayerInfoElement } from "./player_info.ts";
 import { MastersRoundNameElement } from "./round_name.ts";
-import { MastersTimerElement } from "./timer.ts";
-import { TimerWrapper } from "../timer_wrapper.ts";
+import { MastersTimerElement } from "../common/timer.ts";
+import { TimerWrapper } from "../common/timer_wrapper.ts";
 import { StageTimerPlayerData } from "../../common/common_types.ts";
 import { createPromiseSet, PromiseSet } from "../../common/util.ts";
 

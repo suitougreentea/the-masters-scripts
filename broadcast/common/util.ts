@@ -12,7 +12,7 @@ export type PromiseSet<T> = {
   resolve: (result: T) => void;
   reject: (reason: unknown) => void;
 };
-export function createPromiseSet<T>(): PromiseSet<T> {
+export function createPromiseSet<T = void>(): PromiseSet<T> {
   let resolve: ((result: T) => void) | undefined = undefined;
   let reject: ((reason: unknown) => void) | undefined = undefined;
   const promise = new Promise<T>((res, rej) => {

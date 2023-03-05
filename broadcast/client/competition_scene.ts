@@ -1,7 +1,7 @@
 import { denocg } from "./deps.ts";
 import { type TypeDefinition } from "../common/type_definition.ts";
-import "./components/competition.ts";
-import { MastersCompetitionElement } from "./components/competition.ts";
+import "./competition_scene/competition.ts";
+import { MastersCompetitionElement } from "./competition_scene/competition.ts";
 
 const client = await denocg.getClient<TypeDefinition>();
 

@@ -1,5 +1,5 @@
 import { StageTimerPlayerData } from "../../common/common_types.ts";
-import { commonColors } from "../../common/common_values.ts";
+import { commonColors } from "../common_values.ts";
 import { createPromiseSet, formatTime, PromiseSet } from "../../common/util.ts";
 import { css, customElement, html, LitElement, map } from "../deps.ts";
 
@@ -151,10 +151,10 @@ export class MastersPlayerInfoElement extends LitElement {
         element.bestTime.innerText = formatTime(player.rawBestTime);
         if (player.handicap > 0) {
           element.offset.innerText = `[Hdcp. +${player.handicap}]`;
-          element.offset.style.color = "rgb(255, 209, 209)";
+          element.offset.style.color = commonColors.handicapText.cssText;
         } else if (player.handicap < 0) {
           element.offset.innerText = `[Adv. ${player.handicap}]`;
-          element.offset.style.color = "rgb(203, 242, 102)";
+          element.offset.style.color = commonColors.advantageText.cssText;
         } else {
           element.offset.innerText = "";
           element.offset.style.color = "";

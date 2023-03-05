@@ -1,5 +1,5 @@
-import { StageTimerPlayerData } from "../common/common_types.ts";
-import { MastersTimerElement } from "./components/timer.ts";
+import { StageTimerPlayerData } from "../../common/common_types.ts";
+import { MastersTimerElement } from "./timer.ts";
 
 export class TimerWrapper {
   #timer: MastersTimerElement;
