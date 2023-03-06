@@ -19,3 +19,30 @@ export {
 
 // TinyColor
 export { default as tinycolor } from "https://esm.sh/tinycolor2@1.6.0";
+
+// Fluent UI
+import {
+  fluentButton,
+  fluentCard,
+  fluentTab,
+  fluentTabPanel,
+  fluentTabs,
+  fluentTextField,
+  provideFluentDesignSystem,
+} from "https://esm.sh/@fluentui/web-components@2.5.12";
+provideFluentDesignSystem().register(
+  fluentButton(),
+  fluentCard(),
+  fluentTab(),
+  fluentTabPanel(),
+  fluentTabs(),
+  fluentTextField(),
+);
+export {
+  Button as FluentButton,
+  Card as FluentCard,
+  Tab as FluentTab,
+  TabPanel as FluentTabPanel,
+  Tabs as FluentTabs,
+  TextField as FluentTextField,
+} from "https://esm.sh/@fluentui/web-components@2.5.12";

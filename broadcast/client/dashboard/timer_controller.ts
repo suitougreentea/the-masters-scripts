@@ -1,4 +1,11 @@
-import { consume, customElement, html, LitElement, query } from "../deps.ts";
+import {
+  consume,
+  css,
+  customElement,
+  html,
+  LitElement,
+  query,
+} from "../deps.ts";
 import "./timer_controller.ts";
 import "../common/timer.ts";
 import { MastersTimerElement } from "../common/timer.ts";
@@ -6,9 +13,18 @@ import { TimerWrapper } from "../common/timer_wrapper.ts";
 import { createPromiseSet } from "../../common/util.ts";
 import { StageTimerPlayerData } from "../../common/common_types.ts";
 import { DashboardContext, dashboardContext } from "./dashboard_context.ts";
+import { commonColors } from "../common_values.ts";
 
 @customElement("masters-timer-controller")
 export class MastersTimerControllerElement extends LitElement {
+  static styles = css`
+  .toolbar {
+    background-image: linear-gradient(45deg, ${commonColors.background} 80%, transparent 80%);
+    width: 160px;
+    padding: 8px 8px 4px;
+  }
+  `;
+
   private _initializedPromise = createPromiseSet();
 
   @consume({ context: dashboardContext })
@@ -64,8 +80,10 @@ export class MastersTimerControllerElement extends LitElement {
   render() {
     return html`
     <div class="container">
-      <button id="start" @click="${this._start}">Start</button>
-      <button id="stop" @click="${this._stop}">Stop</button>
+      <div class="toolbar">
+        <fluent-button appearance="accent" id="start" @click="${this._start}">Start</fluent-button>
+        <fluent-button id="stop" @click="${this._stop}">Stop</fluent-button>
+      </div>
       <masters-timer id="timer"></masters-timer>
     </div>
     `;

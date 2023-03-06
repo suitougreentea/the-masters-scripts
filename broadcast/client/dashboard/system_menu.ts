@@ -45,9 +45,9 @@ export class MastersSystemMenuElement extends LitElement {
   render() {
     return html`
     <div class="container">
-      <button id="login" ?disabled="${this._loginInProgress}" @click="${this._login}">Login</button>
-      <button id="login-cancel" ?disabled="${!this
-      ._loginInProgress}" @click="${this._cancelLogin}">Cancel</button>
+      <fluent-button id="login" ?disabled="${this._loginInProgress}" @click="${this._login}">Login</fluent-button>
+      <fluent-button id="login-cancel" ?disabled="${!this
+      ._loginInProgress}" @click="${this._cancelLogin}">Cancel</fluent-button>
     </div>
     `;
   }

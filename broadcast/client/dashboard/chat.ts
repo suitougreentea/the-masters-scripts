@@ -1,9 +1,4 @@
-import {
-css,
-  customElement,
-  html,
-  LitElement,
-} from "../deps.ts";
+import { css, customElement, html, LitElement } from "../deps.ts";
 
 @customElement("masters-chat")
 export class MastersChatElement extends LitElement {
@@ -17,7 +12,7 @@ export class MastersChatElement extends LitElement {
     height: 100%;
     border: 0;
   }
-  `
+  `;
 
   render() {
     return html`

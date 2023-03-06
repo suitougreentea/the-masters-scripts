@@ -1,7 +1,9 @@
 import { DashboardContext, dashboardContext } from "./dashboard_context.ts";
 import {
   consume,
+  css,
   customElement,
+  FluentTextField,
   html,
   LitElement,
   query,
@@ -11,12 +13,15 @@ import {
 
 @customElement("masters-setup")
 export class MastersSetupElement extends LitElement {
+  static styles = css`
+  `;
+
   @consume({ context: dashboardContext })
   private _dashboardContext!: DashboardContext;
 
   // @ts-ignore: ?
   @query("#title", true)
-  private _titleInput!: HTMLInputElement;
+  private _titleInput!: FluentTextField;
   // @ts-ignore: ?
   @query("#set-info", true)
   private _setInfoButton!: HTMLButtonElement;
@@ -41,8 +46,9 @@ export class MastersSetupElement extends LitElement {
   render() {
     return html`
     <div class="container">
-      <input id="title" value=${this._title}></input>
-      <button id="set-info">Set</button>
+      <h2>大会設定</h2>
+      <fluent-text-field id="title" value=${this._title} style="width:100%"></fluent-text-field><br>
+      <fluent-button appearance="accent" id="set-info">Set</fluent-button>
     </div>
     `;
   }

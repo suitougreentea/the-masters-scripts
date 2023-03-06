@@ -39,19 +39,20 @@ export class MastersDashboardElement extends LitElement {
     }
 
     .column {
-      box-sizing: border-box;
+      padding: 8px;
     }
 
-    .column + .column {
-      border-left: 1px solid rgb(128, 128, 128);
+    fluent-card {
+      padding: 8px;
     }
 
-    #setup {
-      grid-column: 3;
+    .column-setup {
+      grid-column: 1 / span 3;
     }
 
-    #chat {
+    .column-chat {
       grid-column: 4;
+      border-left: 1px solid lightgray;
     }
     `;
   private _initializedPromise = createPromiseSet();
@@ -100,8 +101,14 @@ export class MastersDashboardElement extends LitElement {
       <masters-timer-controller id="timer-controller"></masters-timer-controller>
       <masters-tabs id="tabs"></masters-tabs>
       <div id="column-view">
-        <masters-setup id="setup" class="column"></masters-setup>
-        <masters-chat id="chat" class="column"></masters-chat>
+        <div class="column column-setup">
+          <fluent-card>
+            <masters-setup id="setup"></masters-setup>
+          </fluent-card>
+        </div>
+        <div class="column column-chat">
+          <masters-chat id="chat"></masters-chat>
+        </div>
       </div>
     </div>
     `;
