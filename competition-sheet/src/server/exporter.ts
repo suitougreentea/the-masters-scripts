@@ -36,10 +36,11 @@ namespace Exporter {
 
     let sheetIndex = 1;
 
-    const entrySheetSrc = ssSrc.getSheetByName(Definition.sheetNames.entry);
-    if (entrySheetSrc == null) throw new Error("Entryシートがありません");
-    const entrySheetDest = copySheetAsValues(entrySheetSrc, ssDest);
-    moveSheet(ssDest, entrySheetDest, sheetIndex);
+    const setupSheetSrc = ssSrc.getSheetByName(Definition.sheetNames.setup);
+    if (setupSheetSrc == null) throw new Error("Setupシートがありません");
+    const setupSheetDest = copySheetAsValues(setupSheetSrc, ssDest);
+    setupSheetDest.setName("Info");
+    moveSheet(ssDest, setupSheetDest, sheetIndex);
     sheetIndex++;
 
     const competitionSheetSrc = ssSrc.getSheetByName(Definition.sheetNames.competition);

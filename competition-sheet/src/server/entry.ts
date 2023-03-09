@@ -60,7 +60,7 @@ function debugCommand() {
       switch (command.slice(1)) {
         case "listSetup":
           for (let i = 8; i <= 24; i++) {
-            console.log(Competition.setupCompetition(i, null));
+            console.log(Competition.setupCompetition(`${i}`, i, null));
           }
           break;
         default:

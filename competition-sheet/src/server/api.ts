@@ -1,115 +1,143 @@
 /**
- * 大会をセットアップ。サイドバーから呼ばれる。
- * @param form サイドバーのフォーム情報
+ * アラートを表示。サイドバーから呼ばれる。
+ * @param message メッセージ
  */
-function setupCompetition(manual: boolean, manualNumberOfGames: number) {
-  try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const entries = CompetitionSheet.getPlayerEntries(ss);
-
-    const setupResult = Competition.setupCompetition(entries.length, manual ? manualNumberOfGames : null);
-
-    const { competitionSheet } = CompetitionSheet.setupCompetitionSheet(ss, setupResult);
-    competitionSheet.activate();
-  } catch (e) {
-    SpreadsheetApp.getUi().alert(String(e));
-    throw e;
-  }
+function mastersShowAlert(message: string) {
+  SpreadsheetApp.getUi().alert(message);
 }
 
 /**
- * ステージ情報を取得。サイドバーから呼ばれる。
- * @param stageIndex
- * @returns stageInfo: ステージ情報, isLast: 最後のステージならtrue
+ * 大会をセットアップ
+ * @param manual マニュアルモード
+ * @param manualNumberOfGames マニュアルモード時のゲーム数
  */
-function getStageInfo(stageIndex: number): { stageInfo: StageInfo, isLast: boolean } {
-  try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-
-    const setupResult = CompetitionSheet.getCurrentSetupResultOrError(ss);
-    const { stages } = setupResult;
-
-    if (stageIndex < 0 || stages.length <= stageIndex) throw new Error("範囲外のステージです: " + stageIndex + 1);
-    const { roundIndex, groupIndex } = stages[stageIndex];
-    const result = CompetitionSheet.getStageInfo(ss, roundIndex, groupIndex);
-
-    CompetitionSheet.reapplyFormat(ss, roundIndex, groupIndex);
-    return { stageInfo: result, isLast: stageIndex == stages.length - 1 };
-  } catch (e) {
-    SpreadsheetApp.getUi().alert(String(e));
-    throw e;
-  }
-}
-
-/**
- * ステージのプレイヤーを並び替え。サイドバーから呼ばれる。
- * @param stageIndex
- * @param names 並べ替え後のプレイヤー順
- */
-function reorderPlayers(stageIndex: number, names: (string | null)[]) {
-  try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-
-    const setupResult = CompetitionSheet.getCurrentSetupResultOrError(ss);
-    const { stages } = setupResult;
-
-    if (stageIndex < 0 || stages.length <= stageIndex) throw new Error("範囲外のステージです: " + stageIndex + 1);
-    const { roundIndex, groupIndex } = setupResult.stages[stageIndex];
-
-    CompetitionSheet.reorderPlayers(ss, roundIndex, groupIndex, names);
-    CompetitionSheet.reapplyFormat(ss, roundIndex, groupIndex);
-  } catch (e) {
-    SpreadsheetApp.getUi().alert(String(e));
-    throw e;
-  }
-}
-
-/**
- * ステージを抜ける。サイドバーから呼ばれる。
- * 予選ラウンド中の場合に得点を書き込む。
- * @param stageIndex
- */
-function leaveStage(stageIndex: number) {
-  try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-
-    const setupResult = CompetitionSheet.getCurrentSetupResultOrError(ss);
-    const { stages } = setupResult;
-
-    if (stageIndex < 0 || stages.length <= stageIndex) throw new Error("範囲外のステージです: " + stageIndex + 1);
-    const { roundIndex, groupIndex } = setupResult.stages[stageIndex];
-
-    CompetitionSheet.reapplyFormat(ss, roundIndex, groupIndex);
-    CompetitionSheet.leaveStage(ss, roundIndex, groupIndex);
-  } catch (e) {
-    SpreadsheetApp.getUi().alert(String(e));
-    throw e;
-  }
-}
-
-/**
- * タイマー情報を取得。タイマーから呼ばれる。
- * @param stageIndex
- * @returns stageTimerInfo: タイマー情報, isLast: 最後のステージならtrue
- */
-function getTimerInfo(stageIndex: number): { stageTimerInfo: StageTimerInfo, isLast: boolean } {
+function mastersSetupCompetition(manual: boolean, manualNumberOfGames: number) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const setupSheet = CompetitionSheet.getSetupSheetOrError(ss);
+  const context = { ss, setupSheet };
+  const name = CompetitionSheet.getCompetitionName(context);
+  const entries = CompetitionSheet.getParticipants(context);
 
-  const setupResult = CompetitionSheet.getCurrentSetupResultOrError(ss);
-  const { stages } = setupResult;
+  const setupResult = Competition.setupCompetition(name, entries.length, manual ? manualNumberOfGames : null);
 
-  if (stageIndex < 0 || stages.length <= stageIndex) throw new Error("範囲外のステージです: " + stageIndex + 1);
-  const { roundIndex, groupIndex } = setupResult.stages[stageIndex];
+  const { competitionSheet } = CompetitionSheet.setupCompetitionSheet(context, setupResult);
+  competitionSheet.activate();
+}
 
-  const result = CompetitionSheet.getTimerInfo(ss, roundIndex, groupIndex);
-  return { stageTimerInfo: result, isLast: stageIndex == stages.length - 1 };
+function mastersExportCompetition(): { url: string } {
+  throw new Error("Not implemented");
+}
+
+function mastersGetCurrentCompetitionMetadata(): CompetitionMetadata | null {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  return CompetitionSheet.getCurrentCompetitionMetadata(ss);
+}
+
+function mastersGetStageData(roundIndex: number, stageIndices?: number[]): StageData[] {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const metadata = CompetitionSheet.getCurrentCompetitionMetadataOrError(ss);
+  const competitionSheet = CompetitionSheet.getCompetitionSheetOrError(ss);
+  const templatesSheet = CompetitionSheet.getTemplatesSheetOrError(ss);
+  const context = { ss, metadata, competitionSheet, templatesSheet };
+
+  const resolvedStageIndices: number[] = [];
+  if (stageIndices != null) {
+    resolvedStageIndices.push(...stageIndices);
+  } else {
+    metadata.rounds[roundIndex].stages.forEach((_, i) => resolvedStageIndices.push(i));
+  }
+
+  const result: StageData[] = [];
+  resolvedStageIndices.forEach((_, stageIndex) => {
+    CompetitionSheet.reapplyFormat(context, roundIndex, stageIndex);
+    CompetitionSheet.getStageData(context, roundIndex, stageIndex);
+  });
+  return result;
+}
+
+function mastersGetSupplementComparisonData(roundIndex: number): SupplementComparisonData[] {
+  throw new Error("Not implemented");
+}
+
+function mastersGetQualifierScore(): QualifierScore {
+  throw new Error("Not implemented");
+}
+
+function mastersGetQualifierResult(): QualifierResult {
+  throw new Error("Not implemented");
+}
+
+function mastersReorderStagePlayers(roundIndex: number, stageIndex: number, names: (string | null)[]) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const metadata = CompetitionSheet.getCurrentCompetitionMetadataOrError(ss);
+  const competitionSheet = CompetitionSheet.getCompetitionSheetOrError(ss);
+  const templatesSheet = CompetitionSheet.getTemplatesSheetOrError(ss);
+  const context = { ss, metadata, competitionSheet, templatesSheet };
+
+  CompetitionSheet.reorderPlayers(context, roundIndex, stageIndex, names);
+  CompetitionSheet.reapplyFormat(context, roundIndex, stageIndex);
+}
+
+function mastersSetStageScore(roundIndex: number, stageIndex: number, score: StageScoreData) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const metadata = CompetitionSheet.getCurrentCompetitionMetadataOrError(ss);
+  const competitionSheet = CompetitionSheet.getCompetitionSheetOrError(ss);
+  const detailSheet = CompetitionSheet.getCompetitionDetailSheet(ss);
+  const templatesSheet = CompetitionSheet.getTemplatesSheetOrError(ss);
+  const context = { ss, metadata, competitionSheet, detailSheet, templatesSheet };
+
+  CompetitionSheet.setStageScore(context, roundIndex, stageIndex, score);
+
+  const stageData = CompetitionSheet.getStageData(context, roundIndex, stageIndex);
+  const resultEntryStubs: Competition.StageResultEntryStub[] = [];
+  stageData.players.forEach(player => {
+    if (player == null) return;
+    resultEntryStubs.push(Competition.constructStageResultEntryStub(player));
+  });
+  const result = Competition.getStageResult(resultEntryStubs);
+  CompetitionSheet.setStageResult(context, roundIndex, stageIndex, result);
+
+  CompetitionSheet.reapplyFormat(context, roundIndex, stageIndex);
+
+  if (Competition.isQualifierRound(metadata, roundIndex)) {
+    if (detailSheet == null) throw new Error();
+    CompetitionSheet.setQualifierTableColumn({ ss, metadata, detailSheet }, stageIndex, result);
+  }
+}
+
+function mastersTryInitializeRound(roundIndex: number): boolean {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const metadata = CompetitionSheet.getCurrentCompetitionMetadataOrError(ss);
+  const setupSheet = CompetitionSheet.getSetupSheetOrError(ss);
+  const competitionSheet = CompetitionSheet.getCompetitionSheetOrError(ss);
+  const detailSheet = CompetitionSheet.getCompetitionDetailSheet(ss);
+  const context = { ss, metadata, setupSheet, competitionSheet, detailSheet };
+
+  return CompetitionSheet.tryInitializeRound(context, roundIndex);
+}
+
+function mastersTryFinalizeRound(roundIndex: number): boolean {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const metadata = CompetitionSheet.getCurrentCompetitionMetadataOrError(ss);
+  const competitionSheet = CompetitionSheet.getCompetitionSheetOrError(ss);
+  const detailSheet = CompetitionSheet.getCompetitionDetailSheet(ss);
+  const context = { ss, metadata, competitionSheet, detailSheet };
+
+  return CompetitionSheet.tryFinalizeRound(context, roundIndex);
 }
 
 // 型チェック用
 const assertApiFunctions: ApiFunctions = {
-  setupCompetition,
-  getStageInfo,
-  reorderPlayers,
-  leaveStage,
-  getTimerInfo,
+  mastersShowAlert,
+  mastersSetupCompetition,
+  mastersExportCompetition,
+  mastersGetCurrentCompetitionMetadata,
+  mastersGetStageData,
+  mastersGetSupplementComparisonData,
+  mastersGetQualifierScore,
+  mastersGetQualifierResult,
+  mastersReorderStagePlayers,
+  mastersSetStageScore,
+  mastersTryInitializeRound,
+  mastersTryFinalizeRound,
 };
