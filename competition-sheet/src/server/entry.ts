@@ -52,22 +52,21 @@ function showSidebar() {
  * デバッグ用
  */
 function debugCommand() {
-  const ui = SpreadsheetApp.getUi();
-  const input = ui.prompt("", ui.ButtonSet.OK_CANCEL);
-  if (input.getSelectedButton() == ui.Button.OK) {
-    const command = input.getResponseText();
-    if (command.startsWith("@")) {
-      switch (command.slice(1)) {
-        case "listSetup":
-          for (let i = 8; i <= 24; i++) {
-            console.log(Competition.setupCompetition(`${i}`, i, null));
-          }
-          break;
-        default:
-          throw new Error("unknown command");
-      }
-    } else {
-      console.log(eval(input.getResponseText()));
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const manualSheet = ss.getSheetByName("Manual")!;
+  const value = manualSheet.getRange(1, 1).getValue();
+  if (Util.isNullOrEmptyString(value)) return;
+  const command = String(value);
+
+  if (command.startsWith("@")) {
+    switch (command.slice(1)) {
+      case "listSetup":
+        Test.listSetup();
+        break;
+      default:
+        throw new Error("unknown command");
     }
+  } else {
+    Test.logJson(eval(command));
   }
 }

@@ -120,7 +120,16 @@ namespace CompetitionSheet {
   }
 
   export function setParticipants(context: { setupSheet: Sheet }, participants: Participant[]) {
-    throw new Error("not implemented");
+    const { setupSheet } = context;
+
+    const valuesRange = setupSheet.getRange("R4C1:C2");
+    const numRows = valuesRange.getNumRows();
+
+    const values: unknown[][] = new Array(numRows).fill(null).map(_ => [null, null]);
+    participants.forEach((participant, i) => {
+      values[i] = [participant.name, participant.firstRoundGroupIndex != null ? Competition.groupIndexToString(participant.firstRoundGroupIndex) : null];
+    });
+    valuesRange.setValues(values);
   }
 
   /**
@@ -399,6 +408,37 @@ namespace CompetitionSheet {
     return true;
   }
 
+  export function resetStage(context: { ss: Spreadsheet, competitionSheet: Sheet }, roundIndex: number, groupIndex: number, setup: StageSetupResult) {
+    const { ss, competitionSheet } = context;
+
+    const row = getStageRange(ss, roundIndex, groupIndex).getRow();
+
+    const nameRange = competitionSheet.getRange(row + 2, 2, 8, 1);
+    const handicapRange = competitionSheet.getRange(row + 2, 4, 8, 1);
+    const scoreRange = competitionSheet.getRange(row + 2, 8, 8, 2);
+
+    const nameValues: unknown[][] = [];
+    const handicapValues: unknown[][] = [];
+    const scoreValues: unknown[][] = [];
+
+    for (let i = 0; i < 8; i++) {
+      if (i < setup.entries.length) {
+        const e = setup.entries[i];
+        nameValues.push([e.name]);
+        handicapValues.push([e.handicap]);
+        scoreValues.push([null, null]);
+      } else {
+        nameValues.push([null]);
+        handicapValues.push([null]);
+        scoreValues.push([null, null]);
+      }
+    }
+
+    nameRange.setValues(nameValues);
+    handicapRange.setValues(handicapValues);
+    scoreRange.setValues(scoreValues);
+  }
+
   export function getStageData(context: { ss: Spreadsheet, competitionSheet: Sheet }, roundIndex: number, groupIndex: number): StageData {
     const { ss, competitionSheet } = context;
 
@@ -520,7 +560,8 @@ namespace CompetitionSheet {
     score.players.forEach(player => {
       const index = nameValues.findIndex(e => e[0] == player.name);
       if (index < 0) throw new Error("対応するプレイヤーが見つかりませんでした。更新後再度並び替えを行ってください: " + player.name);
-      scoreValues[index][0] = Grade.spreadsheetValueToLevelOrGrade({ level: player.level, grade: player.grade });
+      scoreValues[index][0] = Grade.levelOrGradeToSpreadsheetValue({ level: player.level, grade: player.grade });
+      scoreValues[index][1] = player.time != null ? Time.timeToString(player.time) : null; // ここは文字列で入れる
     });
     scoreRange.setValues(scoreValues);
   }
@@ -538,16 +579,15 @@ namespace CompetitionSheet {
         Grade.levelOrGradeToSpreadsheetValue({ level: e.level, grade: e.grade }),
         Time.timeToSpreadsheetValue(e.time),
         Time.timeToSpreadsheetValue(e.timeDiffBest),
-        Time.timeToSpreadsheetValue(e.timeDiffPrev),
         Time.timeToSpreadsheetValue(e.timeDiffTop),
+        Time.timeToSpreadsheetValue(e.timeDiffPrev),
       ];
     });
     dataRange.setValues(values);
   }
 
-  export function getQualifierScore(ss: Spreadsheet): QualifierScore {
-    const detailSheet = getCompetitionDetailSheetOrError(ss);
-    const metadata = getCurrentCompetitionMetadataOrError(ss);
+  export function getQualifierScore(context: { ss: Spreadsheet, metadata: CompetitionMetadata, detailSheet: Sheet }): QualifierScore {
+    const { ss, metadata, detailSheet } = context;
 
     const numPlayers = metadata.numPlayers;
     if (numPlayers == null) throw new Error();

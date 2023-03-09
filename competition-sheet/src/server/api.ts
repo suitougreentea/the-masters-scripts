@@ -6,6 +6,14 @@ function mastersShowAlert(message: string) {
   SpreadsheetApp.getUi().alert(message);
 }
 
+function mastersSetParticipants(participants: Participant[]) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const setupSheet = CompetitionSheet.getSetupSheetOrError(ss);
+  const context = { ss, setupSheet };
+
+  CompetitionSheet.setParticipants(context, participants);
+}
+
 /**
  * 大会をセットアップ
  * @param manual マニュアルモード
@@ -25,12 +33,23 @@ function mastersSetupCompetition(manual: boolean, manualNumberOfGames: number) {
 }
 
 function mastersExportCompetition(): { url: string } {
-  throw new Error("Not implemented");
+  return Exporter.exportResult();
 }
 
 function mastersGetCurrentCompetitionMetadata(): CompetitionMetadata | null {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   return CompetitionSheet.getCurrentCompetitionMetadata(ss);
+}
+
+function mastersResetStage(roundIndex: number, stageIndex: number, setup: StageSetupResult) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const metadata = CompetitionSheet.getCurrentCompetitionMetadataOrError(ss);
+  const competitionSheet = CompetitionSheet.getCompetitionSheetOrError(ss);
+  const templatesSheet = CompetitionSheet.getTemplatesSheetOrError(ss);
+  const context = { ss, metadata, competitionSheet, templatesSheet };
+
+  CompetitionSheet.resetStage(context, roundIndex, stageIndex, setup);
+  CompetitionSheet.reapplyFormat(context, roundIndex, stageIndex);
 }
 
 function mastersGetStageData(roundIndex: number, stageIndices?: number[]): StageData[] {
@@ -48,23 +67,42 @@ function mastersGetStageData(roundIndex: number, stageIndices?: number[]): Stage
   }
 
   const result: StageData[] = [];
-  resolvedStageIndices.forEach((_, stageIndex) => {
+  resolvedStageIndices.forEach(stageIndex => {
     CompetitionSheet.reapplyFormat(context, roundIndex, stageIndex);
-    CompetitionSheet.getStageData(context, roundIndex, stageIndex);
+    const data = CompetitionSheet.getStageData(context, roundIndex, stageIndex);
+    result.push(data);
   });
   return result;
 }
 
 function mastersGetSupplementComparisonData(roundIndex: number): SupplementComparisonData[] {
-  throw new Error("Not implemented");
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const metadata = CompetitionSheet.getCurrentCompetitionMetadataOrError(ss);
+  const competitionSheet = CompetitionSheet.getCompetitionSheetOrError(ss);
+  const detailSheet = CompetitionSheet.getCompetitionDetailSheetOrError(ss);
+  const context = { ss, metadata, competitionSheet, detailSheet };
+
+  return metadata.rounds[roundIndex].supplementComparisons.map(definition => {
+    return CompetitionSheet.getSupplementComparison(context, roundIndex, definition.rankId);
+  });
 }
 
 function mastersGetQualifierScore(): QualifierScore {
-  throw new Error("Not implemented");
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const metadata = CompetitionSheet.getCurrentCompetitionMetadataOrError(ss);
+  const detailSheet = CompetitionSheet.getCompetitionDetailSheetOrError(ss);
+  const context = { ss, metadata, detailSheet };
+
+  return CompetitionSheet.getQualifierScore(context);
 }
 
 function mastersGetQualifierResult(): QualifierResult {
-  throw new Error("Not implemented");
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const metadata = CompetitionSheet.getCurrentCompetitionMetadataOrError(ss);
+  const detailSheet = CompetitionSheet.getCompetitionDetailSheetOrError(ss);
+  const context = { ss, metadata, detailSheet };
+
+  return CompetitionSheet.getQualifierResult(context);
 }
 
 function mastersReorderStagePlayers(roundIndex: number, stageIndex: number, names: (string | null)[]) {
@@ -129,9 +167,11 @@ function mastersTryFinalizeRound(roundIndex: number): boolean {
 // 型チェック用
 const assertApiFunctions: ApiFunctions = {
   mastersShowAlert,
+  mastersSetParticipants,
   mastersSetupCompetition,
   mastersExportCompetition,
   mastersGetCurrentCompetitionMetadata,
+  mastersResetStage,
   mastersGetStageData,
   mastersGetSupplementComparisonData,
   mastersGetQualifierScore,

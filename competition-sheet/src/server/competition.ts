@@ -21,15 +21,6 @@ namespace Competition {
     stages: StageSetupResult[];
   };
 
-  export type StageSetupResult = {
-    entries: StageSetupPlayerEntry[];
-  };
-
-  export type StageSetupPlayerEntry = {
-    name: string;
-    handicap: number;
-  };
-
   export type RoundDependencyDefinition = {
     type: "firstRoundEntry";
   } | {
@@ -289,7 +280,7 @@ namespace Competition {
               const numRankPlayers = stages.filter(e => e.numWinners > i).length;
               if (numRankPlayers == 1) continue;
               supplementComparisons.push({
-                rankId: `T${i}`,
+                rankId: `Tw${i}`,
                 name: `${round.name} ${i + 1}位`,
                 numPlayers: numRankPlayers,
               });
@@ -326,7 +317,7 @@ namespace Competition {
                 const numRankPlayers = stages.filter(e => e.numPlayers > rankIndex).length;
                 if (numRankPlayers == 1) continue;
                 supplementComparisons.push({
-                  rankId: `T${rankIndex}`,
+                  rankId: `Tl${rankIndex}`,
                   name: `${round.name} ${rankIndex + 1}位`,
                   numPlayers: numRankPlayers,
                 });
@@ -664,7 +655,7 @@ namespace Competition {
           }
         }
 
-        const startSnakeIndex = getNextSnakeIndex(groupStubs.map(e => e.entries.length));
+        const startSnakeIndex = getNextSnakeIndex(groupStubs.map(e => e.length));
         sortedStubsToPut.forEach((stub, i) => {
           const snakeIndex = (startSnakeIndex + i) % (groupStubs.length * 2);
           groupStubs[resolveSnakeIndex(snakeIndex, groupStubs.length)].push(stub);
@@ -805,19 +796,32 @@ namespace Competition {
     const comparisons: SupplementComparisonData[] = roundMetadata.supplementComparisons.map(definition => {
       const stubs: SupplementComparisonEntryStub[] = [];
 
-      if (definition.rankId.startsWith("T")) {
-        // 上から
-        const rankNumber = Number(definition.rankId.slice(1));
+      if (definition.rankId.startsWith("Tw")) {
+        // 上から (勝ちプレイヤーのみ)
+        const rankNumber = Number(definition.rankId.slice(2));
         stageResults.forEach((stageResult, stageIndex) => {
           const stageMetadata = roundMetadata.stages[stageIndex];
           const rankIndex = rankNumber;
-          stubs.push(stageResult[rankIndex]);
+          if (rankNumber < stageMetadata.numWinners) {
+            stubs.push(stageResult[rankIndex]);
+          }
+        });
+      } else if (definition.rankId.startsWith("Tl")) {
+        // 上から (負けプレイヤーのみ)
+        const rankNumber = Number(definition.rankId.slice(2));
+        stageResults.forEach((stageResult, stageIndex) => {
+          const stageMetadata = roundMetadata.stages[stageIndex];
+          const rankIndex = rankNumber;
+          if (stageMetadata.numWinners + (stageMetadata.hasWildcard ? 1 : 0) <= rankNumber && rankNumber < stageMetadata.numPlayers) {
+            stubs.push(stageResult[rankIndex]);
+          }
         });
       } else if (definition.rankId == "W") {
         // ワイルドカード
         stageResults.forEach((stageResult, stageIndex) => {
           const stageMetadata = roundMetadata.stages[stageIndex];
           const rankIndex = stageMetadata.numWinners;
+          if (!stageMetadata.hasWildcard) throw new Error();
           stubs.push(stageResult[rankIndex]);
         });
       } else if (definition.rankId.startsWith("B")) {
@@ -826,7 +830,9 @@ namespace Competition {
         stageResults.forEach((stageResult, stageIndex) => {
           const stageMetadata = roundMetadata.stages[stageIndex];
           const rankIndex = stageMetadata.numPlayers - rankNumber;
-          stubs.push(stageResult[rankIndex]);
+          if (rankNumber <= stageMetadata.numLosers) {
+            stubs.push(stageResult[rankIndex]);
+          }
         });
       } else {
         throw new Error();
@@ -945,10 +951,14 @@ namespace Competition {
   function compareStageScore(a: StageResultEntryStub, b: StageResultEntryStub): number {
     if (a.grade != null && b.grade == null) return 1;
     if (a.grade == null && b.grade != null) return -1;
-    if (a.grade != null && b.grade != null && a.timeDiffBest != null && b.timeDiffBest != null) {
+    if (a.grade != null && b.grade != null) {
       // grade-time sort
       if (a.grade != b.grade) return a.grade - b.grade;
-      return - (a.timeDiffBest - b.timeDiffBest);
+      if (a.timeDiffBest != null && b.timeDiffBest != null) return - (a.timeDiffBest - b.timeDiffBest);
+      // この3パターンは結果が正常に入力されていないとき
+      if (a.timeDiffBest != null && b.timeDiffBest == null) return 1;
+      if (a.timeDiffBest == null && b.timeDiffBest != null) return -1;
+      if (a.timeDiffBest == null && b.timeDiffBest == null) return 0;
     }
     // level sort
     return a.level - b.level;
@@ -996,15 +1006,15 @@ namespace Competition {
       const prevScore = i > 0 ? sorted[i - 1] : null;
 
       let timeDiffTop: number | null = null;
-      if (currentScore.grade == Grade.grades.GM && topScore.grade == Grade.grades.GM) {
-        if (currentScore.timeDiffBest == null || topScore.timeDiffBest == null) throw new Error();
+      if (i > 0 && currentScore.grade == Grade.grades.GM && topScore.grade == Grade.grades.GM) {
+        if (currentScore.timeDiffBest == null || topScore.timeDiffBest == null) throw new Error("結果が正常に入力されていません");
         timeDiffTop = currentScore.timeDiffBest - topScore.timeDiffBest;
       }
 
       // 段位が同じときのみ比較する
       let timeDiffPrev: number | null = null;
       if (prevScore != null && (currentScore.grade != null && currentScore.grade == prevScore.grade)) {
-        if (currentScore.timeDiffBest == null || prevScore.timeDiffBest == null) throw new Error();
+        if (currentScore.timeDiffBest == null || prevScore.timeDiffBest == null) throw new Error("結果が正常に入力されていません");
         timeDiffPrev = currentScore.timeDiffBest - prevScore.timeDiffBest;
       }
 
@@ -1033,7 +1043,7 @@ namespace Competition {
       // 段位が同じときのみ比較する
       let timeDiffPrev: number | null = null;
       if (prevScore != null && (currentScore.grade != null && currentScore.grade == prevScore.grade)) {
-        if (currentScore.timeDiffBest == null || prevScore.timeDiffBest == null) throw new Error();
+        if (currentScore.timeDiffBest == null || prevScore.timeDiffBest == null) throw new Error("結果が正常に入力されていません");
         timeDiffPrev = currentScore.timeDiffBest - prevScore.timeDiffBest;
       }
 

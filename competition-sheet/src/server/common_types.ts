@@ -60,7 +60,7 @@ type StageMetadata = {
   numLosers: number;
 };
 
-// rankId: T{number}: 上位から (>=0), B{number}: 下位から (>0), W: ワイルドカード
+// rankId: T[wl]\d: 上位から (>=0, wは勝ちプレイヤーのみ抽出, lは負けプレイヤーのみ抽出), B\d: 下位から (>0), W: ワイルドカード
 type SupplementComparisonMetadata = {
   rankId: string;
   name: string;
@@ -70,6 +70,15 @@ type SupplementComparisonMetadata = {
 type Participant = {
   name: string;
   firstRoundGroupIndex: number | null;
+};
+
+type StageSetupResult = {
+  entries: StageSetupPlayerEntry[];
+};
+
+type StageSetupPlayerEntry = {
+  name: string;
+  handicap: number;
 };
 
 type StagePlayerEntry = {
@@ -139,20 +148,24 @@ type QualifierResult = {
   result: QualifierResultEntry[];
 };
 
+type StageScoreEntry = {
+  name: string;
+  level: number;
+  grade: number | null;
+  time: number | null;
+};
+
 type StageScoreData = {
-  players: {
-    name: string;
-    level: number;
-    grade: number | null;
-    time: number | null;
-  }[];
+  players: StageScoreEntry[];
 };
 
 type ApiFunctions = {
   mastersShowAlert: (message: string) => void;
+  mastersSetParticipants: (participants: Participant[]) => void;
   mastersSetupCompetition: (manual: boolean, manualNumberOfGames: number) => void;
   mastersExportCompetition: () => { url: string };
   mastersGetCurrentCompetitionMetadata: () => CompetitionMetadata | null;
+  mastersResetStage: (roundIndex: number, stageIndex: number, setup: StageSetupResult) => void;
   mastersGetStageData: (roundIndex: number, stageIndices?: number[]) => StageData[];
   mastersGetSupplementComparisonData: (roundIndex: number) => SupplementComparisonData[];
   mastersGetQualifierScore: () => QualifierScore;
@@ -174,6 +187,8 @@ export {
   type StageMetadata,
   type SupplementComparisonMetadata,
   type Participant,
+  type StageSetupResult,
+  type StageSetupPlayerEntry,
   type StagePlayerEntry,
   type StageResultEntry,
   type StageData,

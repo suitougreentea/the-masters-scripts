@@ -24,9 +24,10 @@ namespace Exporter {
   /**
    * 大会リザルトをマイドライブ直下にエクスポート
    */
-  export function exportResult() {
+  export function exportResult(): { url: string } {
     const ssSrc = SpreadsheetApp.getActiveSpreadsheet();
-    const ssDest = SpreadsheetApp.create("The Masters Result");
+    const metadata = CompetitionSheet.getCurrentCompetitionMetadataOrError(ssSrc);
+    const ssDest = SpreadsheetApp.create(`${metadata.name} Result`);
     const defaultSheet = ssDest.getSheets()[0];
 
     const moveSheet = (ss: Spreadsheet, sh: Sheet, pos: number) => {
@@ -63,5 +64,17 @@ namespace Exporter {
     sheetIndex++;
 
     ssDest.deleteSheet(defaultSheet);
+
+    const fileId = ssDest.getId()
+    const file = DriveApp.getFileById(fileId);
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    try {
+      // 動かすアカウントによっては権限が無いはず
+      const folder = DriveApp.getFolderById("1Np9NBJq0rgWFhgxaUG6M2gYyrlT2juXj");
+      file.moveTo(folder);
+    } catch (e) {
+      console.error(e as object);
+    }
+    return { url: `https://docs.google.com/spreadsheets/d/${fileId}/edit?usp=sharing` };
   }
 }
