@@ -1,4 +1,4 @@
-import { StageTimerPlayerData } from "../../common/common_types.ts";
+import { StagePlayerEntry } from "../../common/common_types.ts";
 import { commonColors } from "../common_values.ts";
 import { createPromiseSet, formatTime, PromiseSet } from "../../common/util.ts";
 import { css, customElement, html, LitElement, map } from "../deps.ts";
@@ -121,7 +121,7 @@ export class MastersPlayerInfoElement extends LitElement {
     bestTime: HTMLDivElement;
     offset: HTMLDivElement;
   }[] = [];
-  #data: (StageTimerPlayerData | null)[];
+  #data: (StagePlayerEntry | null)[];
 
   constructor() {
     super();
@@ -170,12 +170,12 @@ export class MastersPlayerInfoElement extends LitElement {
     }
   }
 
-  setData(data?: (StageTimerPlayerData | null)[]) {
+  setData(data?: (StagePlayerEntry | null)[]) {
     this.#data = data ?? this.#createEmptyData();
     this.#reset();
   }
 
-  #createEmptyData(): (StageTimerPlayerData | null)[] {
+  #createEmptyData(): (StagePlayerEntry | null)[] {
     return [...new Array(8)].map((_) => null);
   }
 

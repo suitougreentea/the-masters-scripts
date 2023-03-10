@@ -65,7 +65,7 @@ namespace Exporter {
 
     ssDest.deleteSheet(defaultSheet);
 
-    const fileId = ssDest.getId()
+    const fileId = ssDest.getId();
     const file = DriveApp.getFileById(fileId);
     file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
     try {

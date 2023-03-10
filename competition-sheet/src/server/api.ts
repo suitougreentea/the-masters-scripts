@@ -78,6 +78,7 @@ function mastersGetStageData(roundIndex: number, stageIndices?: number[]): Stage
 function mastersGetSupplementComparisonData(roundIndex: number): SupplementComparisonData[] {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const metadata = CompetitionSheet.getCurrentCompetitionMetadataOrError(ss);
+  if (metadata.rounds[roundIndex].supplementComparisons.length == 0) return [];
   const competitionSheet = CompetitionSheet.getCompetitionSheetOrError(ss);
   const detailSheet = CompetitionSheet.getCompetitionDetailSheetOrError(ss);
   const context = { ss, metadata, competitionSheet, detailSheet };

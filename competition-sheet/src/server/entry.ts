@@ -28,8 +28,8 @@ function exportResult() {
   const response = ui.alert("Confirm", "結果をエクスポートしますか？", ui.ButtonSet.YES_NO);
   if (response == ui.Button.YES) {
     try {
-      Exporter.exportResult();
-      ui.alert("Export", "エクスポート完了。マイドライブ直下に生成されています。", ui.ButtonSet.OK);
+      const { url } = Exporter.exportResult();
+      ui.alert("Export", `エクスポート完了: ${url}`, ui.ButtonSet.OK);
     } catch (e) {
       SpreadsheetApp.getUi().alert(String(e));
     }

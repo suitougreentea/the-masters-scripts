@@ -180,6 +180,16 @@ export class AppsScriptApi {
     return new Response("Not Found", { status: 404 });
   }
 
+  async checkAuth() {
+    if (this.#currentTokens == null) throw new Error("Authorize first");
+    console.log("Tokens refreshing");
+    const newTokens = await this.#oauth2Client.refreshToken.refresh(
+      this.#currentTokens.refreshToken,
+    );
+    const convertedTokens = this.#convertTokens(newTokens, true);
+    this.#setAndSaveTokens(convertedTokens);
+  }
+
   async runCommand(
     scriptId: string,
     functionName: string,
@@ -187,12 +197,7 @@ export class AppsScriptApi {
   ): Promise<unknown> {
     if (this.#currentTokens == null) throw new Error("Authorize first");
     if (this.#currentTokens.expireTime < Date.now() + 480000) {
-      console.log("Tokens refreshing");
-      const newTokens = await this.#oauth2Client.refreshToken.refresh(
-        this.#currentTokens.refreshToken,
-      );
-      const convertedTokens = this.#convertTokens(newTokens, true);
-      this.#setAndSaveTokens(convertedTokens);
+      await this.checkAuth();
     }
     const accessToken = this.#currentTokens.accessToken;
 

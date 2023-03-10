@@ -5,13 +5,13 @@ import {
   html,
   LitElement,
   query,
+  state,
 } from "../deps.ts";
 import "./timer_controller.ts";
 import "../common/timer.ts";
 import { MastersTimerElement } from "../common/timer.ts";
 import { TimerWrapper } from "../common/timer_wrapper.ts";
 import { createPromiseSet } from "../../common/util.ts";
-import { StageTimerPlayerData } from "../../common/common_types.ts";
 import { DashboardContext, dashboardContext } from "./dashboard_context.ts";
 import { commonColors } from "../common_values.ts";
 
@@ -19,9 +19,16 @@ import { commonColors } from "../common_values.ts";
 export class MastersTimerControllerElement extends LitElement {
   static styles = css`
   .toolbar {
-    background-image: linear-gradient(45deg, ${commonColors.background} 80%, transparent 80%);
-    width: 160px;
+    background-image: linear-gradient(45deg, ${commonColors.background} 85%, transparent 85%);
+    width: 480px;
     padding: 8px 8px 4px;
+  }
+
+  #name {
+    display: inline-block;
+    margin-left: 8px;
+    color: ${commonColors.text};
+    transform: translateY(5px); /* TODO */
   }
   `;
 
@@ -34,6 +41,9 @@ export class MastersTimerControllerElement extends LitElement {
   @query("#timer", true)
   private _timer!: MastersTimerElement;
 
+  @state()
+  private _name = "";
+
   private _timerWrapper!: TimerWrapper;
 
   constructor() {
@@ -45,11 +55,12 @@ export class MastersTimerControllerElement extends LitElement {
     this._timerWrapper = new TimerWrapper(this._timer);
 
     const client = await this._dashboardContext.getClient();
-    const currentStageTimerInfoReplicant = await client.getReplicant(
-      "currentStageTimerInfo",
+    const currentBroadcastStageDataReplicant = await client.getReplicant(
+      "currentBroadcastStageData",
     );
-    currentStageTimerInfoReplicant.subscribe((value) => {
-      this._setData(value?.players);
+    currentBroadcastStageDataReplicant.subscribe((value) => {
+      this._name = value?.metadata.name ?? "";
+      this._timerWrapper.setData(value?.stageData?.players);
     });
 
     this._initializedPromise.resolve();
@@ -57,10 +68,6 @@ export class MastersTimerControllerElement extends LitElement {
 
   async waitForInitialization() {
     await this._initializedPromise.promise;
-  }
-
-  private _setData(data?: (StageTimerPlayerData | null)[]) {
-    this._timerWrapper.setData(data);
   }
 
   private async _start() {
@@ -82,7 +89,8 @@ export class MastersTimerControllerElement extends LitElement {
     <div class="container">
       <div class="toolbar">
         <fluent-button appearance="accent" id="start" @click="${this._start}">Start</fluent-button>
-        <fluent-button id="stop" @click="${this._stop}">Stop</fluent-button>
+        <fluent-button id="stop" @click="${this._stop}">Reset</fluent-button>
+        <span id="name">${this._name}</span>
       </div>
       <masters-timer id="timer"></masters-timer>
     </div>

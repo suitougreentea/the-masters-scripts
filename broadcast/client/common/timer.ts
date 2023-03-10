@@ -1,4 +1,4 @@
-import { StageTimerPlayerData } from "../../common/common_types.ts";
+import { StagePlayerEntry } from "../../common/common_types.ts";
 import { commonColors } from "../common_values.ts";
 import { createPromiseSet, formatTime, PromiseSet } from "../../common/util.ts";
 import {
@@ -105,7 +105,7 @@ export class MastersTimerElement extends LitElement {
     diffTime: HTMLDivElement;
     offset: HTMLDivElement;
   }[] = [];
-  #data: (StageTimerPlayerData | null)[];
+  #data: (StagePlayerEntry | null)[];
   #intervalId: number | null = null;
   #startTime = -1;
 
@@ -220,13 +220,13 @@ export class MastersTimerElement extends LitElement {
     }
   }
 
-  setData(data?: (StageTimerPlayerData | null)[]) {
+  setData(data?: (StagePlayerEntry | null)[]) {
     if (this.isRunning()) throw new Error("Timer is running");
     this.#data = data ?? this.#createEmptyData();
     this.#reset();
   }
 
-  #createEmptyData(): (StageTimerPlayerData | null)[] {
+  #createEmptyData(): (StagePlayerEntry | null)[] {
     return [...new Array(8)].map((_) => null);
   }
 

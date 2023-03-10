@@ -1,9 +1,9 @@
-import { StageTimerPlayerData } from "../../common/common_types.ts";
+import { StagePlayerEntry } from "../../common/common_types.ts";
 import { MastersTimerElement } from "./timer.ts";
 
 export class TimerWrapper {
   #timer: MastersTimerElement;
-  #data?: (StageTimerPlayerData | null)[];
+  #data?: (StagePlayerEntry | null)[];
   #pendingSet = false;
 
   constructor(timer: MastersTimerElement) {
@@ -24,7 +24,7 @@ export class TimerWrapper {
     }
   }
 
-  setData(data?: (StageTimerPlayerData | null)[]) {
+  setData(data?: (StagePlayerEntry | null)[]) {
     this.#data = data;
     if (this.#timer.isRunning()) {
       this.#pendingSet = true;

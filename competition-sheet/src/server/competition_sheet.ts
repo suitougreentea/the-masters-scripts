@@ -425,7 +425,7 @@ namespace CompetitionSheet {
       if (i < setup.entries.length) {
         const e = setup.entries[i];
         nameValues.push([e.name]);
-        handicapValues.push([e.handicap]);
+        handicapValues.push([e.handicap != 0 ? e.handicap : null]);
         scoreValues.push([null, null]);
       } else {
         nameValues.push([null]);

@@ -2,11 +2,14 @@ import { ApiFunctions } from "../common/common_types.ts";
 import { AppsScriptApi } from "./apps_script_api.ts";
 
 const scriptId =
-  "AKfycbyaIO-yeTXnTW6_0EEav-Z_EYHDShVAnE0CZFkT1MFlUXFihXC-vsLTfWQxi9yuEkxmhA";
+  "AKfycbx7AmqeEJ7LWszHrJjgO63EgdzVJ5RKiQa6iCsWZyyvnzxFqU9CoZN7QNoD5o6YmwuT7A";
 
 export class ApiClient {
   static getScopes(): string[] {
-    return ["https://www.googleapis.com/auth/spreadsheets"];
+    return [
+      "https://www.googleapis.com/auth/spreadsheets",
+      "https://www.googleapis.com/auth/drive",
+    ];
   }
 
   #appsScriptApi: AppsScriptApi;

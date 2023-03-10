@@ -10,12 +10,12 @@ const competition = document.querySelector<MastersCompetitionElement>(
 )!;
 await competition.waitForInitialization();
 
-const currentStageTimerInfoReplicant = await client.getReplicant(
-  "currentStageTimerInfo",
+const currentBroadcastStageDataReplicant = await client.getReplicant(
+  "currentBroadcastStageData",
 );
-currentStageTimerInfoReplicant.subscribe((value) => {
-  competition.setRoundNameText(value?.stageResult.name ?? "");
-  competition.setTimerData(value?.players);
+currentBroadcastStageDataReplicant.subscribe((value) => {
+  competition.setRoundNameText(value?.metadata.name ?? "");
+  competition.setTimerData(value?.stageData.players);
 });
 
 client.addMessageListener("startTimer", () => {
@@ -25,7 +25,9 @@ client.addMessageListener("stopTimer", () => {
   competition.stopTimer();
 });
 
-const titleReplicant = await client.getReplicant("title");
-titleReplicant.subscribe((value) => {
-  competition.setTitleText(value ?? "");
+const currentCompetitionMetadataReplicant = await client.getReplicant(
+  "currentCompetitionMetadata",
+);
+currentCompetitionMetadataReplicant.subscribe((value) => {
+  competition.setTitleText(value?.name ?? "Retropia22 TGM stream");
 });

@@ -3,11 +3,9 @@ import {
   consume,
   css,
   customElement,
-  FluentTextField,
+  FluentNumberField,
   html,
   LitElement,
-  query,
-  Replicant,
   state,
 } from "../deps.ts";
 
@@ -19,36 +17,41 @@ export class MastersSetupElement extends LitElement {
   @consume({ context: dashboardContext })
   private _dashboardContext!: DashboardContext;
 
-  // @ts-ignore: ?
-  @query("#title", true)
-  private _titleInput!: FluentTextField;
-  // @ts-ignore: ?
-  @query("#set-info", true)
-  private _setInfoButton!: HTMLButtonElement;
-
-  private _titleReplicant!: Replicant<string>;
-
   @state()
-  private _title = "";
+  private _manual = false;
+  @state()
+  private _manualNumberOfGames = 10;
 
   async firstUpdated() {
-    const client = await this._dashboardContext.getClient();
+  }
 
-    this._titleReplicant = await client.getReplicant("title");
-    this._titleReplicant.subscribe((value) => {
-      this._title = value ?? "";
+  private async _startCompetition() {
+    await this._dashboardContext.sendRequest("setupCompetition", {
+      manual: this._manual,
+      manualNumberOfGames: this._manualNumberOfGames,
     });
-    this._setInfoButton.onclick = (_) => {
-      this._titleReplicant.setValue(this._titleInput.value);
-    };
+    this.dispatchEvent(new Event("setup-completed"));
   }
 
   render() {
     return html`
     <div class="container">
       <h2>大会設定</h2>
-      <fluent-text-field id="title" value=${this._title} style="width:100%"></fluent-text-field><br>
-      <fluent-button appearance="accent" id="set-info">Set</fluent-button>
+      <div>スプレッドシート側で大会名と参加者を記入してください<br>将来のバージョンではここで入力できるようになります</div>
+      <div>
+        <fluent-checkbox @change=${(e: Event) =>
+      this._manual = (e.target as HTMLInputElement)
+        .checked} ?checked=${this._manual}>マニュアルモード</fluent-checkbox>
+      </div>
+      <div>
+        <fluent-number-field value=${this._manualNumberOfGames} @change=${(
+      e: Event,
+    ) =>
+      this._manualNumberOfGames = Number(
+        (e.target as FluentNumberField).value,
+      )} ?disabled=${!this._manual}>試合数:</fluent-number-field>
+      </div>
+      <fluent-button appearance="accent" @click=${this._startCompetition}>大会開始</fluent-button>
     </div>
     `;
   }
