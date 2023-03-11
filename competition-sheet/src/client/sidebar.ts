@@ -1,4 +1,18 @@
 import { runServerScript, withLoader } from "./common";
+import { ApiFunctions } from "./common_types";
+
+
+export async function runServerScriptWithErrorDialog<TName extends keyof ApiFunctions>(name: TName, args: Parameters<ApiFunctions[TName]>): Promise<ReturnType<ApiFunctions[TName]>> {
+  try {
+    return await runServerScript(name, args);
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    try {
+      await runServerScript("showAlert", [message]);
+    } catch { /* empty */ }
+    throw e;
+  }
+}
 
 let currentStageIndex = -1;
 
@@ -14,11 +28,13 @@ const applyPlayersOrderButton = document.querySelector<HTMLButtonElement>("#appl
 
 async function getAndApplyStageInfo(stageIndex: number) {
   try {
-    const result = await runServerScript("getStageInfo", [stageIndex]);
+    const result = await runServerScriptWithErrorDialog("getStageInfo", [stageIndex]);
+    const numOverallStages = result.metadata.rounds.map(round => round.stages.length).reduce((a, b) => a + b);
+    const isLast = stageIndex == numOverallStages - 1;
 
-    stageNameSpan.innerText = `[${stageIndex + 1}] ${result.stageInfo.setupResult.name}`;
+    stageNameSpan.innerText = `[${stageIndex + 1}] ${result.stageInfo.metadata.name}`;
     prevStageButton.disabled = false;
-    nextStageButton.disabled = result.isLast;
+    nextStageButton.disabled = isLast;
     setPlayerNames(result.stageInfo.players.map(e => e != null ? e.name : null));
   } catch {
     stageNameSpan.innerText = `[${stageIndex + 1}] -`;
@@ -30,7 +46,7 @@ async function getAndApplyStageInfo(stageIndex: number) {
 
 async function leaveStage(stageIndex: number) {
   try {
-    await runServerScript("leaveStage", [stageIndex]);
+    await runServerScriptWithErrorDialog("leaveStage", [stageIndex]);
   } catch (e) {
     console.error(e);
   }
@@ -79,7 +95,7 @@ refreshStageButton.onclick = (_) => {
 const competitionSettingsForm = document.querySelector<HTMLFormElement>("#competition-settings")!;
 competitionSettingsForm.onsubmit = (_) => {
   withLoader(async () => {
-    await runServerScript("setupCompetition", [manualCheckbox.checked, Number(manualNumberOfGamesInput.value)]);
+    await runServerScriptWithErrorDialog("setupCompetition", [manualCheckbox.checked, Number(manualNumberOfGamesInput.value)]);
     await changeStage(0);
   });
 };
@@ -113,7 +129,7 @@ applyPlayersOrderButton.onclick = (_) => {
       const name = playersSortableItems[i].innerText;
       names.push(name != "" ? name : null);
     }
-    await runServerScript("reorderPlayers", [currentStageIndex, names]);
+    await runServerScriptWithErrorDialog("reorderPlayers", [currentStageIndex, names]);
   });
 };
 
