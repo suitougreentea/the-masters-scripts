@@ -265,11 +265,6 @@ server.registerRequestHandler("setCurrentStageScore", async ({ score }) => {
   if (currentStageIndex == null || currentStageIndex == -1) {
     throw new Error("現在のステージがありません");
   }
-  const currentBroadcastStageData = currentBroadcastStageDataReplicant
-    .getValue();
-  if (currentBroadcastStageData == null) {
-    throw new Error("先にステージを準備状態にしてください");
-  }
 
   await apiClient.runCommand("mastersSetStageScore", [
     currentRoundData.roundIndex,
