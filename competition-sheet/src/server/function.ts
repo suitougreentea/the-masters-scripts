@@ -1,12 +1,20 @@
 type SpreadsheetCell = string | number | Date | null;
 type SpreadsheetArg = SpreadsheetCell | SpreadsheetCell[][]
 
-// TODO: S9でタイムがないときにバグる
+/**
+ * ステージリザルトを計算するスプレッドシート関数。配列で渡すこと。
+ * @param names
+ * @param bestTimes ハンデ調整後の自己ベスト
+ * @param gradeOrLevels
+ * @param clearTimes
+ * @returns リザルトを表に展開したもの
+ */
 function MASTERS_GETRESULT(names: SpreadsheetArg, bestTimes: SpreadsheetArg, gradeOrLevels: SpreadsheetArg, clearTimes: SpreadsheetArg) {
+  // TODO: S9でタイムがないときにバグる
   if (!Array.isArray(names) || !Array.isArray(bestTimes) || !Array.isArray(gradeOrLevels) || !Array.isArray(clearTimes)) throw new Error();
 
   const numRows = Math.min(names.length, bestTimes.length, gradeOrLevels.length, clearTimes.length);
-  const scores: Competition.StagePlayerScore[] = [];
+  const scores: Competition.StageResultEntryStub[] = [];
   for (let i = 0; i < numRows; i++) {
     const nameInput = names[i][0];
     const bestTimeInput = bestTimes[i][0];
@@ -19,7 +27,7 @@ function MASTERS_GETRESULT(names: SpreadsheetArg, bestTimes: SpreadsheetArg, gra
     if (Util.isNullOrEmptyString(gradeOrLevelInput) && Util.isNullOrEmptyString(clearTimeInput)) continue;
 
     const name = String(nameInput);
-    const { grade, level } = Grade.spreadsheetValueToGradeOrLevel(gradeOrLevelInput);
+    const { grade, level } = Grade.spreadsheetValueToLevelOrGrade(gradeOrLevelInput);
     const time = Time.spreadsheetValueToTime(clearTimeInput);
     const bestTime = Time.spreadsheetValueToTime(bestTimeInput);
     if (bestTime == null) throw new Error();
@@ -29,8 +37,8 @@ function MASTERS_GETRESULT(names: SpreadsheetArg, bestTimes: SpreadsheetArg, gra
       grade,
       time,
       level,
-      bestTime,
-    } as Competition.StagePlayerResult); // TODO: 型チェック
+      timeDiffBest: time != null ? time - bestTime : null,
+    });
   }
 
   const result = Competition.getStageResult(scores);
@@ -39,7 +47,7 @@ function MASTERS_GETRESULT(names: SpreadsheetArg, bestTimes: SpreadsheetArg, gra
   return result.map(e => [
     e.rank,
     e.name,
-    Grade.gradeOrLevelToSpreadsheetValue({ grade: e.grade, level: e.level }), // TODO: 型チェック
+    Grade.levelOrGradeToSpreadsheetValue({ grade: e.grade, level: e.level }), // TODO: 型チェック
     Time.timeToSpreadsheetValue(e.time),
     Time.timeToSpreadsheetValue(e.timeDiffBest),
     Time.timeToSpreadsheetValue(e.timeDiffTop),

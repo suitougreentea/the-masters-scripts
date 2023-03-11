@@ -17,6 +17,7 @@ const serverSources = [
   "function.ts",
   "grade.ts",
   "preset.ts",
+  "test.ts",
   "time.ts",
   "util.ts",
 ];

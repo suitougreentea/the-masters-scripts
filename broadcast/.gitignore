@@ -1,0 +1,7 @@
+/client/**/*.bundle.js
+
+/server.log
+/replicants.json
+
+/apps-script-api-conf.json
+/apps-script-api-tokens.json

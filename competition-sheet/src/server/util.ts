@@ -19,12 +19,12 @@ namespace Util {
     }
   }
 
-  export function addConditionalFormatRule(sh: GoogleAppsScript.Spreadsheet.Sheet, rule: GoogleAppsScript.Spreadsheet.ConditionalFormatRule) {
-    const rules = sh.getConditionalFormatRules();
-    rules.push(rule);
-    sh.setConditionalFormatRules(rules);
-  }
-
+  /**
+   * シートにメタデータをJSON形式で格納
+   * @param sh シート
+   * @param key キー
+   * @param obj データ
+   */
   export function setSheetMetadata(sh: GoogleAppsScript.Spreadsheet.Sheet, key: string, obj: unknown) {
     const findArray = sh.createDeveloperMetadataFinder().withKey(key).find();
     if (findArray.length > 0) {
@@ -34,6 +34,12 @@ namespace Util {
     }
   }
 
+  /**
+   * シートに格納されたJSON形式のメタデータを取り出す
+   * @param sh シート
+   * @param key キー
+   * @returns データ
+   */
   export function getSheetMetadata(sh: GoogleAppsScript.Spreadsheet.Sheet, key: string): unknown {
     const findArray = sh.createDeveloperMetadataFinder().withKey(key).find();
     if (findArray.length > 0) {

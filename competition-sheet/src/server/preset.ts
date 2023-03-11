@@ -1,33 +1,26 @@
 namespace Preset {
-  // [numPerGroup] -1の場合は残りが全員入る (winners, losersの中で1回だけ使用可能)
-  // [destinationMethod]
-  // standard: 順位で並べて、同順位内は結果をソートしてスネーク状に埋める
-  // ※ 複数のラウンドからプレイヤーが来る場合、先のラウンドの分が先に埋まる
-  // 「スネーク状」とは以下のような埋め方
-  // 試合1: 1 6 7 12
-  // 試合2: 2 5 8 11
-  // 試合3: 3 4 9 10
-  // [handicapMethod]
-  // none: 順位にかかわらず0 (内部で使っているだけ)
-  // winnersPure: 1位-10、2位-5
-  // winnersDest: 進出後のグループで1番埋まりの場合は-10、2番埋まりの場合は-5
-  // winnersDest2: 1着かつ、進出後のグループで1番埋まりの場合は-10、2番埋まりの場合は-5
-  // losers: 一律+5
-
-  export type HandicapMethod = "none" | "winnersPure" | "winnersDest" | "winnersDest2" | "losers";
-  export type DestinationMethod = "standard";
-
   /* eslint no-shadow: off */
   export type Preset = {
     name: string;
     supportedNumberOfPlayers: [number, number];
-    hasQualifierRound: boolean;
+    type: CompetitionType;
     rounds: {
       name: string;
+      /** -1の場合は残りが全員入る (winners, losersの中で1回だけ使用可能) */
       numGroups?: number;
       qualifierPlayerIndices?: number[][];
-      winners?: { numPerGroup: number, numWildcard: number, destinationRoundIndex: number, destinationMethod: DestinationMethod, handicapMethod: HandicapMethod }
-      losers?: { numPerGroup: number, destinationRoundIndex: number, destinationMethod: DestinationMethod };
+      winners?: {
+        numPerGroup: number;
+        numWildcard: number;
+        destinationRoundIndex: number;
+        destinationMethod: DestinationMethod;
+        handicapMethod: HandicapMethod;
+      }
+      losers?: {
+        numPerGroup: number;
+        destinationRoundIndex: number;
+        destinationMethod: DestinationMethod;
+      };
     }[];
   };
 
@@ -36,7 +29,7 @@ namespace Preset {
     {
       name: "8",
       supportedNumberOfPlayers: [8, 8],
-      hasQualifierRound: true,
+      type: "qualifierFinal",
       rounds: [
         { // 0
           name: "予選",
@@ -62,7 +55,7 @@ namespace Preset {
     {
       name: "9",
       supportedNumberOfPlayers: [9, 9],
-      hasQualifierRound: true,
+      type: "qualifierFinal",
       rounds: [
         { // 0
           name: "予選",
@@ -89,7 +82,7 @@ namespace Preset {
     {
       name: "10",
       supportedNumberOfPlayers: [10, 10],
-      hasQualifierRound: true,
+      type: "qualifierFinal",
       rounds: [
         { // 0
           name: "予選",
@@ -117,7 +110,7 @@ namespace Preset {
     {
       name: "11",
       supportedNumberOfPlayers: [11, 11],
-      hasQualifierRound: true,
+      type: "qualifierFinal",
       rounds: [
         { // 0
           name: "予選",
@@ -146,7 +139,7 @@ namespace Preset {
     {
       name: "12",
       supportedNumberOfPlayers: [12, 12],
-      hasQualifierRound: true,
+      type: "qualifierFinal",
       rounds: [
         { // 0
           name: "予選",
@@ -175,7 +168,7 @@ namespace Preset {
     {
       name: "13",
       supportedNumberOfPlayers: [13, 13],
-      hasQualifierRound: false,
+      type: "tournament",
       rounds: [
         { // 0
           name: "1回戦",
@@ -210,7 +203,7 @@ namespace Preset {
     {
       name: "14",
       supportedNumberOfPlayers: [14, 14],
-      hasQualifierRound: false,
+      type: "tournament",
       rounds: [
         { // 0
           name: "1回戦",
@@ -245,7 +238,7 @@ namespace Preset {
     {
       name: "15",
       supportedNumberOfPlayers: [15, 15],
-      hasQualifierRound: false,
+      type: "tournament",
       rounds: [
         { // 0
           name: "1回戦",
@@ -280,7 +273,7 @@ namespace Preset {
     {
       name: "16",
       supportedNumberOfPlayers: [16, 16],
-      hasQualifierRound: false,
+      type: "tournament",
       rounds: [
         { // 0
           name: "1回戦",
@@ -312,7 +305,7 @@ namespace Preset {
     {
       name: "20",
       supportedNumberOfPlayers: [17, 20],
-      hasQualifierRound: false,
+      type: "tournament",
       rounds: [
         { // 0
           name: "1回戦",
@@ -350,7 +343,7 @@ namespace Preset {
     {
       name: "24",
       supportedNumberOfPlayers: [21, 24],
-      hasQualifierRound: false, // trueの場合、rounds.length == 2
+      type: "tournament",
       rounds: [
         { // 0
           name: "1回戦",

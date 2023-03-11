@@ -2,13 +2,13 @@ namespace Definition {
   export const sheetNames = {
     players: "Players",
     ranking: "Ranking",
-    entry: "Entry",
+    setup: "Setup",
     competition: "Competition",
     competitionDetail: "CompetitionDetail",
     templates: "Templates",
   };
   export const metadataKeys = {
-    setupResult: "setupResult",
+    competitionMetadata: "competitionMetadata",
   };
   export const templates = {
     competitionStage: { row: 1, column: 1, numRows: 10, numColumns: 17 },

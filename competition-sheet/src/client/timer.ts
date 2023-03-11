@@ -1,4 +1,4 @@
-import { runServerScript, StageTimerInfo, withLoader } from "./common";
+import { runServerScript, withLoader } from "./common";
 
 let currentStageIndex = 0;
 
@@ -39,7 +39,9 @@ const refreshStageButton = document.querySelector<HTMLButtonElement>("#refresh-s
 
 async function getAndApplyData(stageIndex: number) {
   try {
-    const result = await runServerScript("getTimerInfo", [stageIndex]) as { stageTimerInfo: StageTimerInfo, isLast: boolean };
+    const result = await runServerScript("getTimerInfo", [stageIndex]);
+    const numOverallStages = result.metadata.rounds.map(round => round.stages.length).reduce((a, b) => a + b);
+    const isLast = stageIndex == numOverallStages - 1;
 
     const getDiffTime = (playerIndex: number) => {
       const players = result.stageTimerInfo.players;
@@ -63,7 +65,7 @@ async function getAndApplyData(stageIndex: number) {
       return player.startTime - players[targetIndex]!.startTime;
     };
 
-    stageNameSpan.innerText = `[${stageIndex + 1}] ${result.stageTimerInfo.stageResult.name}`;
+    stageNameSpan.innerText = `[${stageIndex + 1}] ${result.stageTimerInfo.metadata.name}`;
     for (let i = 0; i < 8; i++) {
       const playerInfo = result.stageTimerInfo.players[i];
       const player = timerPlayers[i];
@@ -83,7 +85,7 @@ async function getAndApplyData(stageIndex: number) {
     }
     startButton.disabled = false;
     prevStageButton.disabled = stageIndex == 0;
-    nextStageButton.disabled = result.isLast;
+    nextStageButton.disabled = isLast;
   } catch {
     stageNameSpan.innerText = `[${stageIndex + 1}] -`;
     for (let i = 0; i < 8; i++) {
