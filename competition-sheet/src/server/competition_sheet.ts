@@ -565,7 +565,7 @@ namespace CompetitionSheet {
     score.players.forEach(player => {
       const index = nameValues.findIndex(e => e[0] == player.name);
       if (index < 0) throw new Error("対応するプレイヤーが見つかりませんでした。更新後再度並び替えを行ってください: " + player.name);
-      scoreValues[index][0] = Grade.levelOrGradeToSpreadsheetValue({ level: player.level, grade: player.grade });
+      scoreValues[index][0] = player.level != null ? Grade.levelOrGradeToSpreadsheetValue({ level: player.level, grade: player.grade }) : null;
       scoreValues[index][1] = player.time != null ? Time.timeToString(player.time) : null; // ここは文字列で入れる
     });
     scoreRange.setValues(scoreValues);

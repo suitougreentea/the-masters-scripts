@@ -150,7 +150,7 @@ type QualifierResult = {
 
 type StageScoreEntry = {
   name: string;
-  level: number;
+  level: number | null;
   grade: number | null;
   time: number | null;
 };
@@ -198,6 +198,7 @@ export {
   type QualifierScore,
   type QualifierResultEntry,
   type QualifierResult,
+  type StageScoreEntry,
   type StageScoreData,
   type ApiFunctions
 };

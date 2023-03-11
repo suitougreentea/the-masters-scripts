@@ -182,6 +182,10 @@ export class MastersDashboardElement extends LitElement {
     }
   }
 
+  private async _onFinishCompetition() {
+    await this._changeTabPage("setup", false);
+  }
+
   private async _onSetupCompleted() {
     await this._dashboardContext.sendRequest("getCurrentCompetitionMetadata");
     await this._changeTabPage("round0", false);
@@ -205,7 +209,7 @@ export class MastersDashboardElement extends LitElement {
       <masters-system-menu id="system-menu"></masters-system-menu>
       <masters-timer-controller id="timer-controller"></masters-timer-controller>
       <div id="tabs-container">
-        <masters-tabs id="tabs" @change-active-tab=${this._onChangeActiveTab}></masters-tabs>
+        <masters-tabs id="tabs" @change-active-tab=${this._onChangeActiveTab} @finish-competition=${this._onFinishCompetition}></masters-tabs>
         <div class="loader" id="tabs-loader" style=${loaderStyle}>
           <fluent-progress-ring></fluent-progress-ring>
         </div>

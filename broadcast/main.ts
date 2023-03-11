@@ -119,7 +119,7 @@ server.registerRequestHandler("refreshCurrentRound", async () => {
   await getRoundData(currentRoundData.roundIndex);
 });
 
-server.registerRequestHandler("finalizeCurrentRound", async () => {
+const finalizeCurrentRound = async () => {
   const metadata = currentCompetitionMetadataReplicant.getValue();
   if (metadata == null) throw new Error("現在の大会がありません");
   const currentRoundData = currentRoundDataReplicant.getValue();
@@ -145,6 +145,24 @@ server.registerRequestHandler("finalizeCurrentRound", async () => {
     supplementComparisons,
     qualifierResult,
   });
+};
+
+server.registerRequestHandler("finalizeCurrentRound", async () => {
+  await finalizeCurrentRound();
+});
+
+server.registerRequestHandler("finalizeCurrentRoundIfCompleted", async () => {
+  const currentRoundData = currentRoundDataReplicant.getValue();
+  if (currentRoundData == null) throw new Error("現在のラウンドがありません");
+
+  if (
+    currentRoundData.stageData.every((stage, stageIndex) =>
+      stage.result.length ==
+        currentRoundData.metadata.stages[stageIndex].numPlayers
+    )
+  ) {
+    await finalizeCurrentRound();
+  }
 });
 
 server.registerRequestHandler("leaveCurrentRound", () => {
@@ -163,6 +181,35 @@ server.registerRequestHandler("refreshCurrentStage", async () => {
   if (currentStageIndex == null || currentStageIndex == -1) {
     throw new Error("現在のステージがありません");
   }
+
+  const stageData = [...currentRoundData.stageData];
+  const fetchedStageData = await apiClient.runCommand("mastersGetStageData", [
+    currentRoundData.roundIndex,
+    [currentStageIndex],
+  ]);
+  stageData[currentStageIndex] = fetchedStageData[0];
+
+  currentRoundDataReplicant.setValue({
+    ...currentRoundData,
+    stageData,
+  });
+});
+
+server.registerRequestHandler("resetCurrentStage", async ({ setup }) => {
+  const currentRoundData = currentRoundDataReplicant.getValue();
+  if (currentRoundData == null) throw new Error("現在のラウンドがありません");
+  const currentStageIndex = currentStageIndexReplicant.getValue();
+  if (currentStageIndex == null || currentStageIndex == -1) {
+    throw new Error(
+      "現在のステージがありません",
+    );
+  }
+
+  await apiClient.runCommand("mastersResetStage", [
+    currentRoundData.roundIndex,
+    currentStageIndex,
+    setup,
+  ]);
 
   const stageData = [...currentRoundData.stageData];
   const fetchedStageData = await apiClient.runCommand("mastersGetStageData", [

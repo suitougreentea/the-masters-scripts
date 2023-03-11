@@ -156,7 +156,7 @@ type QualifierResult = {
 
 type StageScoreEntry = {
   name: string;
-  level: number;
+  level: number | null;
   grade: number | null;
   time: number | null;
 };
@@ -220,6 +220,7 @@ export {
   type StagePlayerEntry,
   type StageResultEntry,
   type StageScoreData,
+  type StageScoreEntry,
   type StageSetupPlayerEntry,
   type StageSetupResult,
   type SupplementComparisonData,

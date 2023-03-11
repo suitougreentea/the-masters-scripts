@@ -7,6 +7,7 @@ import {
   StageData,
   StageMetadata,
   StageScoreData,
+  StageSetupResult,
   SupplementComparisonData,
 } from "./common_types.ts";
 
@@ -55,9 +56,11 @@ export type TypeDefinition = {
     enterRound: { params: { roundIndex: number } };
     refreshCurrentRound: EmptyObject;
     finalizeCurrentRound: EmptyObject;
+    finalizeCurrentRoundIfCompleted: EmptyObject;
     leaveCurrentRound: EmptyObject;
     setCurrentStage: { params: { stageIndex: number } };
     refreshCurrentStage: EmptyObject;
+    resetCurrentStage: { params: { setup: StageSetupResult } };
     reorderCurrentStagePlayers: { params: { names: (string | null)[] } };
     setCurrentStageScore: { params: { score: StageScoreData } };
     finishCompetition: { result: { exportedUrl: string } };

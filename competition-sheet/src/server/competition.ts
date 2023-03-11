@@ -149,7 +149,7 @@ namespace Competition {
 
     const rounds: RoundMetadata[] = [{
       // 予選
-      name,
+      name: firstRound.name,
       stages: qualifierStages,
       numWildcardWinners: 0,
       winnersDestination: {
@@ -160,7 +160,7 @@ namespace Competition {
       supplementComparisons: [],
     }, {
       // 決勝
-      name,
+      name: preset.rounds[1].name,
       stages: finalStages,
       supplementComparisons: [],
     }];
@@ -481,6 +481,9 @@ namespace Competition {
     if (qualifierDependency == null) throw new Error();
     if (qualifierDependency.type != "qualifierRoundResult") throw new Error();
 
+    // 全部のリザルトが揃っていることを確認
+    if (qualifierDependency.result.length != metadata.numPlayers) throw new NotReadyError();
+
     const stages: StageSetupResult[] = round.stages.map(_ => ({ entries: [] }));
 
     const assignHandicap = (rankIndex: number): number => {
@@ -570,6 +573,11 @@ namespace Competition {
       if (foundDependency == null) throw new Error();
       if (foundDependency.type != "tournamentRoundResult") throw new Error();
       const dependentStageResults = foundDependency.stageResults;
+
+      // 全部のリザルトが揃っていることを確認
+      dependentStageResults.forEach((stageResult, stageIndex) => {
+        if (stageResult.result.length != dependentStageMetadata[stageIndex].numPlayers) throw new NotReadyError();
+      });
 
       if (destinationMethod == "standard") {
         const sortedStubsToPut: StagePlayerEntryStub[] = [];

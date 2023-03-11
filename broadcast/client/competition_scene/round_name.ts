@@ -1,11 +1,11 @@
-import { commonColors } from "../common_values.ts";
+import { commonColors } from "../common/common_values.ts";
 import { css, customElement, html, LitElement, property } from "../deps.ts";
 
 @customElement("masters-round-name")
 export class MastersRoundNameElement extends LitElement {
   static styles = css`
     .container {
-      color: ${commonColors.text};
+      color: ${commonColors.textDark};
       text-align: center;
     }
     .ja {

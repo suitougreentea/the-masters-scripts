@@ -13,7 +13,7 @@ import { MastersTimerElement } from "../common/timer.ts";
 import { TimerWrapper } from "../common/timer_wrapper.ts";
 import { createPromiseSet } from "../../common/util.ts";
 import { DashboardContext, dashboardContext } from "./dashboard_context.ts";
-import { commonColors } from "../common_values.ts";
+import { commonColors } from "../common/common_values.ts";
 
 @customElement("masters-timer-controller")
 export class MastersTimerControllerElement extends LitElement {
@@ -27,7 +27,7 @@ export class MastersTimerControllerElement extends LitElement {
   #name {
     display: inline-block;
     margin-left: 8px;
-    color: ${commonColors.text};
+    color: ${commonColors.textDark};
     transform: translateY(5px); /* TODO */
   }
   `;
@@ -61,6 +61,10 @@ export class MastersTimerControllerElement extends LitElement {
     currentBroadcastStageDataReplicant.subscribe((value) => {
       this._name = value?.metadata.name ?? "";
       this._timerWrapper.setData(value?.stageData?.players);
+    });
+
+    this._dashboardContext.addEventListener("stop-timer", () => {
+      this._stop();
     });
 
     this._initializedPromise.resolve();

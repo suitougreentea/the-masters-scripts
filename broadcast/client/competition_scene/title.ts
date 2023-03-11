@@ -1,11 +1,11 @@
-import { commonColors } from "../common_values.ts";
+import { commonColors } from "../common/common_values.ts";
 import { css, customElement, html, LitElement, property } from "../deps.ts";
 
 @customElement("masters-title")
 export class MastersTitleElement extends LitElement {
   static styles = css`
     .container {
-      color: ${commonColors.text};
+      color: ${commonColors.textDark};
       line-height: 36px;
     }
     .title {

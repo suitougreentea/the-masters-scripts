@@ -16,7 +16,9 @@ export {
   state,
 } from "https://esm.sh/lit@2.6.1/decorators";
 export { map } from "https://esm.sh/lit@2.6.1/directives/map";
+export { classMap } from "https://esm.sh/lit@2.6.1/directives/class-map";
 export { styleMap } from "https://esm.sh/lit@2.6.1/directives/style-map";
+export { live } from "https://esm.sh/lit@2.6.1/directives/live";
 export {
   consume,
   createContext,
@@ -31,8 +33,11 @@ import {
   fluentButton,
   fluentCard,
   fluentCheckbox,
+  fluentDialog,
   fluentNumberField,
   fluentProgressRing,
+  fluentRadio,
+  fluentRadioGroup,
   fluentTab,
   fluentTabPanel,
   fluentTabs,
@@ -43,8 +48,11 @@ provideFluentDesignSystem().register(
   fluentButton(),
   fluentCard(),
   fluentCheckbox(),
+  fluentDialog(),
   fluentNumberField(),
   fluentProgressRing(),
+  fluentRadio(),
+  fluentRadioGroup(),
   fluentTab(),
   fluentTabPanel(),
   fluentTabs(),
@@ -54,8 +62,11 @@ export {
   Button as FluentButton,
   Card as FluentCard,
   // Checkbox as FluentCheckbox, // TODO
+  Dialog as FluentDialog,
   NumberField as FluentNumberField,
   ProgressRing as FluentProgressRing,
+  Radio as FluentRadio,
+  RadioGroup as FluentRadioGroup,
   Tab as FluentTab,
   TabPanel as FluentTabPanel,
   Tabs as FluentTabs,

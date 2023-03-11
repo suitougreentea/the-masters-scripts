@@ -76,6 +76,7 @@ export class MastersTabsElement extends LitElement {
   }
 
   private _onTabChange(e: Event) {
+    e.preventDefault();
     this._activeTabName = (e.target as FluentTabs).activeid!;
     this.dispatchEvent(new Event("change-active-tab"));
   }
@@ -96,6 +97,8 @@ export class MastersTabsElement extends LitElement {
       await this._dashboardContext.alert(
         `${result.exportedUrl}に結果がエクスポートされました`,
       );
+      await this._dashboardContext.sendRequest("unsetBroadcastStageData");
+      this.dispatchEvent(new Event("finish-competition"));
     }
   }
 
