@@ -2,9 +2,11 @@ import {
   consume,
   css,
   customElement,
+  FluentTabs,
   html,
   LitElement,
   map,
+  query,
   state,
 } from "../deps.ts";
 import { DashboardContext, dashboardContext } from "./dashboard_context.ts";
@@ -43,6 +45,14 @@ export class MastersTabsElement extends LitElement {
   @state()
   private _roundNames: string[] = [];
 
+  // @ts-ignore: ?
+  @query("fluent-tabs", true)
+  private _fluentTabs!: FluentTabs;
+  private _activeTabName = "setup";
+  get activeTabName() {
+    return this._activeTabName;
+  }
+
   async firstUpdated() {
     const client = await this._dashboardContext.getClient();
     const currentCompetitionMetadataReplicant = await client.getReplicant(
@@ -59,6 +69,15 @@ export class MastersTabsElement extends LitElement {
         this._roundNames = [];
       }
     });
+  }
+
+  changeTab(name: string) {
+    this._fluentTabs.activeid = name;
+  }
+
+  private _onTabChange(e: Event) {
+    this._activeTabName = (e.target as FluentTabs).activeid!;
+    this.dispatchEvent(new Event("change-active-tab"));
   }
 
   private async _reloadCompetitionMetadata() {
@@ -82,18 +101,18 @@ export class MastersTabsElement extends LitElement {
 
   render() {
     return html`
-    <fluent-tabs class="container">
+    <fluent-tabs class="container" @change=${this._onTabChange}>
       <span class="start" slot="start">
         <span id="competition-name">${this._competitionName}</span>
       </span>
-      <fluent-tab slot="tab">セットアップ</fluent-tab>
-      <fluent-tab-panel slot="tabpanel"></fluent-tab-panel>
+      <fluent-tab slot="tab" id="setup">セットアップ</fluent-tab>
       ${
       map(
         this._roundNames,
-        (e) => html`<fluent-tab slot="tab">${e}</fluent-tab>`,
+        (e, i) => html`<fluent-tab slot="tab" id="round${i}">${e}</fluent-tab>`,
       )
     }
+      <fluent-tab-panel slot="tabpanel"></fluent-tab-panel>
       ${
       map(this._roundNames, () =>
         html`<fluent-tab-panel slot="tabpanel"></fluent-tab-panel>`)

@@ -458,8 +458,13 @@ namespace CompetitionSheet {
         const bestTime = Time.spreadsheetValueToTime(e[3]);
         const startOrder = Number(e[4]);
         const startTime = Time.spreadsheetValueToTime(e[5]);
-        const { level, grade } = Grade.spreadsheetValueToLevelOrGrade(e[6]);
-        const time = Time.spreadsheetValueToTime(e[7]);
+        let level: number | null = null;
+        let grade: number | null = null;
+        let time: number | null = null;
+        if (!Util.isNullOrEmptyString(e[6]) || !Util.isNullOrEmptyString(e[7])) {
+          ({ level, grade } = Grade.spreadsheetValueToLevelOrGrade(e[6]));
+          time = Time.spreadsheetValueToTime(e[7]);
+        }
         players.push({
           name,
           rawBestTime: rawBestTime != null ? rawBestTime : 0,

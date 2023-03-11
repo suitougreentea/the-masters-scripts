@@ -94,7 +94,7 @@ type StagePlayerEntry = {
   bestTime: number;
   startOrder: number;
   startTime: number;
-  level: number;
+  level: number | null;
   grade: number | null;
   time: number | null;
 };

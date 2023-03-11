@@ -211,11 +211,17 @@ export class AppsScriptApi {
       function: functionName,
       parameters,
     });
+    if (operation.error) {
+      if (operation.error.details != null) {
+        const detail = operation.error.details.find((e) => e.errorMessage);
+        if (detail != null) {
+          throw new Error(detail.errorMessage);
+        }
+      }
+      throw new Error(operation.error.message);
+    }
     if (operation.done) {
       return operation.response?.result;
-    }
-    if (operation.error) {
-      throw new Error(operation.error.message);
     }
     throw new Error("Unknown error");
   }

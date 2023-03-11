@@ -165,6 +165,15 @@ function mastersTryFinalizeRound(roundIndex: number): boolean {
   return CompetitionSheet.tryFinalizeRound(context, roundIndex);
 }
 
+// 実行可能APIで入出力をオブジェクトでするとnullが捨てられてしまう
+function mastersCallApiAsJson<TName extends keyof ApiFunctions>(functionName: TName, parameters: string): string {
+  const parsedParameters = JSON.parse(parameters) as Parameters<ApiFunctions[TName]>;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const result = globalThis[functionName](...parsedParameters);
+  return JSON.stringify(result);
+}
+
 // 型チェック用
 const assertApiFunctions: ApiFunctions = {
   mastersShowAlert,

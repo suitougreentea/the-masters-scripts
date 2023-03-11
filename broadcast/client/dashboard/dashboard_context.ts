@@ -38,6 +38,12 @@ export class DashboardContext extends EventTarget {
       // deno-lint-ignore no-explicit-any
       const result = await client.requestToServer(name as any, params as any);
       return result;
+    } catch (e) {
+      if (e.message) {
+        await this.alert(e.message);
+      } else {
+        await this.alert(e);
+      }
     } finally {
       this.#requestInProgress = false;
       this.dispatchEvent(new Event("request-ended"));

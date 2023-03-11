@@ -2,7 +2,7 @@ import { ApiFunctions } from "../common/common_types.ts";
 import { AppsScriptApi } from "./apps_script_api.ts";
 
 const scriptId =
-  "AKfycbx7AmqeEJ7LWszHrJjgO63EgdzVJ5RKiQa6iCsWZyyvnzxFqU9CoZN7QNoD5o6YmwuT7A";
+  "AKfycbxLUSYMJscFXcP8-ZKVw0VGY327zcXiB_Sl8ipIEhAKCfpAaR3UXpZnoH3W1oExRst40g";
 
 export class ApiClient {
   static getScopes(): string[] {
@@ -22,10 +22,14 @@ export class ApiClient {
     functionName: TName,
     parameters: Parameters<ApiFunctions[TName]>,
   ): Promise<ReturnType<ApiFunctions[TName]>> {
-    return await this.#appsScriptApi.runCommand(
+    const response = await this.#appsScriptApi.runCommand(
       scriptId,
-      functionName,
-      parameters,
-    ) as ReturnType<ApiFunctions[TName]>;
+      "mastersCallApiAsJson",
+      [functionName, JSON.stringify(parameters)],
+    );
+    if (response === undefined) {
+      return undefined as ReturnType<ApiFunctions[TName]>;
+    }
+    return JSON.parse(response as string) as ReturnType<ApiFunctions[TName]>;
   }
 }

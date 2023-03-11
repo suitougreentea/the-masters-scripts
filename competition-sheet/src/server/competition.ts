@@ -980,10 +980,10 @@ namespace Competition {
     return a.bestGameLevel - b.bestGameLevel;
   }
 
-  export function constructStageResultEntryStub(player: StagePlayerEntry) {
+  export function constructStageResultEntryStub(player: StagePlayerEntry): StageResultEntryStub {
     return {
       name: player.name,
-      level: player.level,
+      level: player.level != null ? player.level : 0,
       grade: player.grade,
       time: player.time,
       timeDiffBest: player.time != null ? player.time - player.bestTime : null,

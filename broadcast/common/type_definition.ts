@@ -6,7 +6,6 @@ import {
   RoundMetadata,
   StageData,
   StageMetadata,
-  StageResultEntry,
   StageScoreData,
   SupplementComparisonData,
 } from "./common_types.ts";
@@ -21,9 +20,11 @@ export type RoundData = {
 };
 
 export type BroadcastStageData = {
+  roundIndex: number;
+  stageIndex: number;
   metadata: StageMetadata;
   stageData: StageData;
-  resultData: StageResultEntry[] | null;
+  shouldShowResult: boolean;
 };
 
 type EmptyObject = Record<keyof unknown, never>;
@@ -54,11 +55,13 @@ export type TypeDefinition = {
     enterRound: { params: { roundIndex: number } };
     refreshCurrentRound: EmptyObject;
     finalizeCurrentRound: EmptyObject;
+    leaveCurrentRound: EmptyObject;
     setCurrentStage: { params: { stageIndex: number } };
     refreshCurrentStage: EmptyObject;
     reorderCurrentStagePlayers: { params: { names: (string | null)[] } };
-    readyCurrentStage: EmptyObject;
     setCurrentStageScore: { params: { score: StageScoreData } };
     finishCompetition: { result: { exportedUrl: string } };
+    sendCurrentStageDataToBroadcast: { params: { shouldShowResult: boolean } };
+    unsetBroadcastStageData: EmptyObject;
   };
 };

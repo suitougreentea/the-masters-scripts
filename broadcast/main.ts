@@ -57,6 +57,10 @@ const currentBroadcastStageDataReplicant = server.getReplicant(
 );
 
 server.registerRequestHandler("setupCompetition", async (params) => {
+  currentStageIndexReplicant.setValue(-1);
+  currentRoundDataReplicant.setValue(null);
+  currentCompetitionMetadataReplicant.setValue(null);
+
   await apiClient.runCommand("mastersSetupCompetition", [
     params.manual,
     params.manualNumberOfGames,
@@ -143,6 +147,11 @@ server.registerRequestHandler("finalizeCurrentRound", async () => {
   });
 });
 
+server.registerRequestHandler("leaveCurrentRound", () => {
+  currentStageIndexReplicant.setValue(-1);
+  currentRoundDataReplicant.setValue(null);
+});
+
 server.registerRequestHandler("setCurrentStage", ({ stageIndex }) => {
   currentStageIndexReplicant.setValue(stageIndex);
 });
@@ -200,21 +209,6 @@ server.registerRequestHandler(
   },
 );
 
-server.registerRequestHandler("readyCurrentStage", () => {
-  const currentRoundData = currentRoundDataReplicant.getValue();
-  if (currentRoundData == null) throw new Error("現在のラウンドがありません");
-  const currentStageIndex = currentStageIndexReplicant.getValue();
-  if (currentStageIndex == null || currentStageIndex == -1) {
-    throw new Error("現在のステージがありません");
-  }
-
-  currentBroadcastStageDataReplicant.setValue({
-    metadata: currentRoundData.metadata.stages[currentStageIndex],
-    stageData: currentRoundData.stageData[currentStageIndex],
-    resultData: null,
-  });
-});
-
 server.registerRequestHandler("setCurrentStageScore", async ({ score }) => {
   const metadata = currentCompetitionMetadataReplicant.getValue();
   if (metadata == null) throw new Error("現在の大会がありません");
@@ -248,11 +242,6 @@ server.registerRequestHandler("setCurrentStageScore", async ({ score }) => {
     qualifierScore = await apiClient.runCommand("mastersGetQualifierScore", []);
   }
 
-  currentBroadcastStageDataReplicant.setValue({
-    metadata: currentRoundData.metadata.stages[currentStageIndex],
-    stageData: currentRoundData.stageData[currentStageIndex],
-    resultData: fetchedStageData[0].result,
-  });
   currentRoundDataReplicant.setValue({
     ...currentRoundData,
     stageData,
@@ -263,11 +252,34 @@ server.registerRequestHandler("setCurrentStageScore", async ({ score }) => {
 server.registerRequestHandler("finishCompetition", async () => {
   const { url } = await apiClient.runCommand("mastersExportCompetition", []);
 
-  currentBroadcastStageDataReplicant.setValue(null);
   currentStageIndexReplicant.setValue(-1);
   currentRoundDataReplicant.setValue(null);
   currentCompetitionMetadataReplicant.setValue(null);
   currentParticipantsReplicant.setValue(null);
 
   return { exportedUrl: url };
+});
+
+server.registerRequestHandler(
+  "sendCurrentStageDataToBroadcast",
+  ({ shouldShowResult }) => {
+    const currentRoundData = currentRoundDataReplicant.getValue();
+    if (currentRoundData == null) throw new Error("現在のラウンドがありません");
+    const currentStageIndex = currentStageIndexReplicant.getValue();
+    if (currentStageIndex == null || currentStageIndex == -1) {
+      throw new Error("現在のステージがありません");
+    }
+
+    currentBroadcastStageDataReplicant.setValue({
+      roundIndex: currentRoundData.roundIndex,
+      stageIndex: currentStageIndex,
+      metadata: currentRoundData.metadata.stages[currentStageIndex],
+      stageData: currentRoundData.stageData[currentStageIndex],
+      shouldShowResult,
+    });
+  },
+);
+
+server.registerRequestHandler("unsetBroadcastStageData", () => {
+  currentBroadcastStageDataReplicant.setValue(null);
 });

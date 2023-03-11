@@ -10,3 +10,5 @@ const dashboard = document.querySelector<MastersDashboardElement>(
 )!;
 dashboard.provideDenoCGClient(client);
 await dashboard.waitForInitialization();
+await dashboard.checkLogin();
+await dashboard.restoreState();
