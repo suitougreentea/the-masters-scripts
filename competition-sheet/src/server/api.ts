@@ -19,14 +19,13 @@ function mastersSetParticipants(participants: Participant[]) {
  * @param manual マニュアルモード
  * @param manualNumberOfGames マニュアルモード時のゲーム数
  */
-function mastersSetupCompetition(manual: boolean, manualNumberOfGames: number) {
+function mastersSetupCompetition(options: CompetitionSetupOptions) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const setupSheet = CompetitionSheet.getSetupSheetOrError(ss);
   const context = { ss, setupSheet };
-  const name = CompetitionSheet.getCompetitionName(context);
   const entries = CompetitionSheet.getParticipants(context);
 
-  const setupResult = Competition.setupCompetition(name, entries.length, manual ? manualNumberOfGames : null);
+  const setupResult = Competition.setupCompetition(entries.length, options);
 
   const { competitionSheet } = CompetitionSheet.setupCompetitionSheet(context, setupResult);
   competitionSheet.activate();

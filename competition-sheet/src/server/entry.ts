@@ -60,9 +60,6 @@ function debugCommand() {
 
   if (command.startsWith("@")) {
     switch (command.slice(1)) {
-      case "listSetup":
-        Test.listSetup();
-        break;
       default:
         throw new Error("unknown command");
     }

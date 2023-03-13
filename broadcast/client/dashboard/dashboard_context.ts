@@ -44,6 +44,7 @@ export class DashboardContext extends EventTarget {
       } else {
         await this.alert(e);
       }
+      throw e;
     } finally {
       this.#requestInProgress = false;
       this.dispatchEvent(new Event("request-ended"));

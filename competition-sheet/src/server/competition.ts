@@ -78,22 +78,22 @@ namespace Competition {
    * @param manualNumberOfGames プリセットモードの場合はnull, マニュアルモードの場合はゲーム数
    * @returns セットアップ結果
    */
-  export function setupCompetition(name: string, numPlayers: number, manualNumberOfGames: number | null): CompetitionSetupResult {
-    if (manualNumberOfGames != null) {
-      return setupCompetitionManual(name, manualNumberOfGames);
+  export function setupCompetition(numPlayers: number, options: CompetitionSetupOptions): CompetitionSetupResult {
+    if (options.manualNumberOfGames != null) {
+      return setupCompetitionManual(options.name, options.manualNumberOfGames);
     } else {
-      const presetName = Preset.getAppropriatePresetName(numPlayers);
+      const presetName = options.overridePresetName != null ? options.overridePresetName : Preset.getAppropriatePresetName(numPlayers);
       if (presetName == null) throw new Error(`${numPlayers}人に適切なプリセットが見つかりませんでした`);
       const preset = Preset.getPreset(presetName);
 
       if (!(preset.supportedNumberOfPlayers[0] <= numPlayers && numPlayers <= preset.supportedNumberOfPlayers[1])) {
-        throw new Error();
+        throw new Error(`プリセット${presetName}は${preset.supportedNumberOfPlayers[0]}～${preset.supportedNumberOfPlayers[1]}人にのみ対応しています`);
       }
 
       if (preset.type == "qualifierFinal") {
-        return setupCompetitionWithQualifier(name, preset, numPlayers);
+        return setupCompetitionWithQualifier(options.name, preset, numPlayers);
       } else if (preset.type == "tournament") {
-        return setupCompetitionWithTournament(name, preset, numPlayers);
+        return setupCompetitionWithTournament(options.name, preset, numPlayers);
       }
       throw new Error();
     }
@@ -348,9 +348,9 @@ namespace Competition {
 
       const numWildcardWinners = round.winners != null ? round.winners.numWildcard : undefined;
 
-      const losersDestination: DestinationInfo | undefined = round.losers != null ? {
+      const losersDestination: DestinationInfo | undefined = round.losers != null && round.losers.destinationRoundIndex != null ? {
         roundIndex: round.losers.destinationRoundIndex,
-        method: round.losers.destinationMethod,
+        method: round.losers.destinationMethod!,
         handicap: "none",
       } : undefined;
 
@@ -947,7 +947,7 @@ namespace Competition {
       return numFilledPlayers.length * 2 - 1 - changedIndex;
     } else if (state == 1) {
       // 前のグループの方が人数が多い -> 下向き
-      if (numFilledPlayers[0] % 2 != 0) throw new Error();
+      if (numFilledPlayers[0] % 2 != 1) throw new Error();
       return changedIndex + 1;
     }
 

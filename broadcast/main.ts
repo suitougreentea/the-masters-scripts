@@ -61,10 +61,7 @@ server.registerRequestHandler("setupCompetition", async (params) => {
   currentRoundDataReplicant.setValue(null);
   currentCompetitionMetadataReplicant.setValue(null);
 
-  await apiClient.runCommand("mastersSetupCompetition", [
-    params.manual,
-    params.manualNumberOfGames,
-  ]);
+  await apiClient.runCommand("mastersSetupCompetition", [params.options]);
 });
 
 server.registerRequestHandler("getCurrentCompetitionMetadata", async () => {

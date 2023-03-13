@@ -34,6 +34,12 @@ type DestinationInfo = {
   handicap: HandicapMethod;
 };
 
+type CompetitionSetupOptions = {
+  name: string;
+  manualNumberOfGames?: number;
+  overridePresetName?: string;
+}
+
 type CompetitionMetadata = {
   name: string;
   numPlayers?: number; // マニュアルモードのときundefined
@@ -162,7 +168,7 @@ type StageScoreData = {
 type ApiFunctions = {
   mastersShowAlert: (message: string) => void;
   mastersSetParticipants: (participants: Participant[]) => void;
-  mastersSetupCompetition: (manual: boolean, manualNumberOfGames: number) => void;
+  mastersSetupCompetition: (options: CompetitionSetupOptions) => void;
   mastersExportCompetition: () => { url: string };
   mastersGetCurrentCompetitionMetadata: () => CompetitionMetadata | null;
   mastersResetStage: (roundIndex: number, stageIndex: number, setup: StageSetupResult) => void;
@@ -182,6 +188,7 @@ export {
   type HandicapMethod,
   type DestinationMethod,
   type DestinationInfo,
+  type CompetitionSetupOptions,
   type CompetitionMetadata,
   type RoundMetadata,
   type StageMetadata,
