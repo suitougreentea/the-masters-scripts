@@ -3,13 +3,7 @@ namespace Test {
     console.log(JSON.stringify(value, null, 2));
   }
 
-  export function listSetup() {
-    for (let i = 8; i <= 24; i++) {
-      logJson(Competition.setupCompetition(`${i}`, i, null));
-    }
-  }
-
-  export function automateWholeCompetition(numPlayers: number, manual?: boolean) {
+  export function automateWholeCompetition(numPlayers: number, presetName?: string) {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const playersSheet = ss.getSheetByName(Definition.sheetNames.players)!;
     const playerNamesValue = playersSheet.getRange(2, 1, numPlayers, 1).getValues();
@@ -22,17 +16,30 @@ namespace Test {
       }
     };
 
-    const presetName = Preset.getAppropriatePresetName(numPlayers);
-    if (presetName == null) throw new Error();
-    const preset = Preset.getPreset(presetName);
+    let resolvedPresetName: string | null = null;
+    let manual = false;
+    let competitionName;
+    if (presetName == "manual") {
+      manual = true;
+      competitionName = "Masters Automated Test - Manual";
+    } else {
+      if (presetName != null) {
+        resolvedPresetName = presetName;
+      } else {
+        resolvedPresetName = Preset.getAppropriatePresetName(numPlayers);
+        if (resolvedPresetName == null) throw new Error();
+      }
+      competitionName = `Masters Automated Test - ${numPlayers} ${resolvedPresetName}`;
+    }
+    const preset = resolvedPresetName != null ? Preset.getPreset(resolvedPresetName) : null;
 
     const participants: Participant[] = [];
-    if (preset.type == "qualifierFinal") {
+    if (manual || preset!.type == "qualifierFinal") {
       playerNames.forEach((name, i) => {
         participants.push({ name, firstRoundGroupIndex: i });
       });
-    } else if (preset.type == "tournament") {
-      const numGroups = preset.rounds[0].numGroups!;
+    } else if (preset!.type == "tournament") {
+      const numGroups = preset!.rounds[0].numGroups!;
       playerNames.forEach((name, i) => {
         participants.push({ name, firstRoundGroupIndex: i % numGroups });
       });
@@ -40,7 +47,11 @@ namespace Test {
       throw new Error();
     }
     mastersSetParticipants(participants);
-    mastersSetupCompetition(manual ? true : false, manual ? 10 : -1);
+    mastersSetupCompetition({
+      name: competitionName,
+      manualNumberOfGames: manual ? 10 : undefined,
+      overridePresetName: !manual ? resolvedPresetName! : undefined,
+    });
     const metadata = mastersGetCurrentCompetitionMetadata()!;
 
     metadata.rounds.forEach((round, roundIndex) => {
@@ -85,5 +96,7 @@ namespace Test {
 
       mastersTryFinalizeRound(roundIndex);
     });
+
+    mastersExportCompetition();
   }
 }

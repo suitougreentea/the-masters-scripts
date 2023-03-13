@@ -68,18 +68,6 @@ namespace CompetitionSheet {
   }
 
   /**
-   * Setupシートから大会名を読み取る
-   * @param ss
-   * @returns
-   */
-  export function getCompetitionName(context: { setupSheet: Sheet }): string {
-    const { setupSheet } = context;
-    const value = setupSheet.getRange("R1C2").getValue();
-    if (Util.isNullOrEmptyString(value)) return "";
-    return String(value);
-  }
-
-  /**
    * Setupシートから参加者を読み取る
    * @param ss
    * @returns
@@ -87,7 +75,7 @@ namespace CompetitionSheet {
   export function getParticipants(context: { setupSheet: Sheet }): Participant[] {
     const { setupSheet } = context;
 
-    const values = setupSheet.getRange("R4C1:C3").getValues();
+    const values = setupSheet.getRange("R3C1:C3").getValues();
 
     const entries: Participant[] = [];
 
@@ -122,7 +110,7 @@ namespace CompetitionSheet {
   export function setParticipants(context: { setupSheet: Sheet }, participants: Participant[]) {
     const { setupSheet } = context;
 
-    const valuesRange = setupSheet.getRange("R4C1:C2");
+    const valuesRange = setupSheet.getRange("R3C1:C2");
     const numRows = valuesRange.getNumRows();
 
     const values: unknown[][] = new Array(numRows).fill(null).map(_ => [null, null]);

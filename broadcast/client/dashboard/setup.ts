@@ -4,10 +4,13 @@ import {
   css,
   customElement,
   FluentNumberField,
+  FluentTextField,
   html,
   LitElement,
+  query,
   state,
 } from "../deps.ts";
+import { CompetitionSetupOptions } from "../../common/common_types.ts";
 
 @customElement("masters-setup")
 export class MastersSetupElement extends LitElement {
@@ -23,7 +26,17 @@ export class MastersSetupElement extends LitElement {
   @state()
   private _manual = false;
   @state()
-  private _manualNumberOfGames = 10;
+  private _overridePreset = false;
+
+  // @ts-ignore: ?
+  @query("#competition-name", true)
+  private _competitionNameTextField!: FluentTextField;
+  // @ts-ignore: ?
+  @query("#manual-num-games", true)
+  private _manualNumberOfGamesNumberField!: FluentNumberField;
+  // @ts-ignore: ?
+  @query("#preset-name", true)
+  private _presetNameTextField!: FluentTextField;
 
   async firstUpdated() {
   }
@@ -34,10 +47,12 @@ export class MastersSetupElement extends LitElement {
         "大会を開始してよろしいですか？現在進行中の大会の情報は失われます。",
       )
     ) {
-      await this._dashboardContext.sendRequest("setupCompetition", {
-        manual: this._manual,
-        manualNumberOfGames: this._manualNumberOfGames,
-      });
+      const options: CompetitionSetupOptions = {
+        name: String(this._competitionNameTextField.value),
+        manualNumberOfGames: this._manual ? Number(this._manualNumberOfGamesNumberField.value) : undefined,
+        overridePresetName: (!this._manual && this._overridePreset) ? String(this._presetNameTextField.value) : undefined,
+      };
+      await this._dashboardContext.sendRequest("setupCompetition", { options });
       this.dispatchEvent(new Event("setup-completed"));
     }
   }
@@ -48,17 +63,21 @@ export class MastersSetupElement extends LitElement {
       <h2>大会設定</h2>
       <div>スプレッドシート側で大会名と参加者を記入してください<br>将来のバージョンではここで入力できるようになります</div>
       <div>
+        <fluent-text-field id="competition-name" value="The Masters xxx">大会名:</fluent-text-field>
+      </div>
+      <div>
         <fluent-checkbox @change=${(e: Event) =>
       this._manual = (e.target as HTMLInputElement)
         .checked} ?checked=${this._manual}>マニュアルモード</fluent-checkbox>
       </div>
       <div>
-        <fluent-number-field value=${this._manualNumberOfGames} @change=${(
-      e: Event,
-    ) =>
-      this._manualNumberOfGames = Number(
-        (e.target as FluentNumberField).value,
-      )} ?disabled=${!this._manual}>試合数:</fluent-number-field>
+        <fluent-number-field id="manual-num-games" value="10" ?disabled=${!this._manual}>試合数:</fluent-number-field>
+      </div>
+      <div>
+        <fluent-checkbox @change=${(e: Event) => this._overridePreset = (e.target as HTMLInputElement).checked} ?checked=${this._overridePreset} ?disabled=${this._manual}>プリセット名を手動で指定</fluent-checkbox>
+      </div>
+      <div>
+        <fluent-text-field id="preset-name" value="" ?disabled=${this._manual || !this._overridePreset}>プリセット名:</fluent-text-field>
       </div>
       <fluent-button appearance="accent" @click=${this._confirmStartCompetition}>大会開始</fluent-button>
     </fluent-card>

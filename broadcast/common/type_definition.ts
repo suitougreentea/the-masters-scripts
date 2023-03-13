@@ -1,5 +1,6 @@
 import {
   CompetitionMetadata,
+  CompetitionSetupOptions,
   Participant,
   QualifierResult,
   QualifierScore,
@@ -49,9 +50,7 @@ export type TypeDefinition = {
     login: { result: { url: string } };
     cancelLogin: EmptyObject;
     checkLogin: EmptyObject;
-    setupCompetition: {
-      params: { manual: boolean; manualNumberOfGames: number };
-    };
+    setupCompetition: { params: { options: CompetitionSetupOptions } };
     getCurrentCompetitionMetadata: EmptyObject;
     enterRound: { params: { roundIndex: number } };
     refreshCurrentRound: EmptyObject;
