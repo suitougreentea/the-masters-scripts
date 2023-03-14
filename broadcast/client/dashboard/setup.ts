@@ -49,8 +49,12 @@ export class MastersSetupElement extends LitElement {
     ) {
       const options: CompetitionSetupOptions = {
         name: String(this._competitionNameTextField.value),
-        manualNumberOfGames: this._manual ? Number(this._manualNumberOfGamesNumberField.value) : undefined,
-        overridePresetName: (!this._manual && this._overridePreset) ? String(this._presetNameTextField.value) : undefined,
+        manualNumberOfGames: this._manual
+          ? Number(this._manualNumberOfGamesNumberField.value)
+          : undefined,
+        overridePresetName: (!this._manual && this._overridePreset)
+          ? String(this._presetNameTextField.value)
+          : undefined,
       };
       await this._dashboardContext.sendRequest("setupCompetition", { options });
       this.dispatchEvent(new Event("setup-completed"));
@@ -71,13 +75,18 @@ export class MastersSetupElement extends LitElement {
         .checked} ?checked=${this._manual}>マニュアルモード</fluent-checkbox>
       </div>
       <div>
-        <fluent-number-field id="manual-num-games" value="10" ?disabled=${!this._manual}>試合数:</fluent-number-field>
+        <fluent-number-field id="manual-num-games" value="10" ?disabled=${!this
+      ._manual}>試合数:</fluent-number-field>
       </div>
       <div>
-        <fluent-checkbox @change=${(e: Event) => this._overridePreset = (e.target as HTMLInputElement).checked} ?checked=${this._overridePreset} ?disabled=${this._manual}>プリセット名を手動で指定</fluent-checkbox>
+        <fluent-checkbox @change=${(e: Event) =>
+      this._overridePreset = (e.target as HTMLInputElement)
+        .checked} ?checked=${this._overridePreset} ?disabled=${this._manual}>プリセット名を手動で指定</fluent-checkbox>
       </div>
       <div>
-        <fluent-text-field id="preset-name" value="" ?disabled=${this._manual || !this._overridePreset}>プリセット名:</fluent-text-field>
+        <fluent-text-field id="preset-name" value="" ?disabled=${
+      this._manual || !this._overridePreset
+    }>プリセット名:</fluent-text-field>
       </div>
       <fluent-button appearance="accent" @click=${this._confirmStartCompetition}>大会開始</fluent-button>
     </fluent-card>

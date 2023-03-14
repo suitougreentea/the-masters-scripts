@@ -145,14 +145,25 @@ export class MastersTimerElement extends LitElement {
     for (let i = 0; i < 8; i++) {
       const player = players[i];
       const id = player.querySelector<HTMLDivElement>(".id")!;
-      const backgroundTime = player.querySelector<HTMLDivElement>(".background-time")!;
+      const backgroundTime = player.querySelector<HTMLDivElement>(
+        ".background-time",
+      )!;
       const name = player.querySelector<HTMLDivElement>(".name")!;
       const time = player.querySelector<HTMLDivElement>(".time")!;
       const gauge = player.querySelector<HTMLDivElement>(".gauge")!;
       const startOrder = player.querySelector<HTMLDivElement>(".start-order")!;
       const diffTime = player.querySelector<HTMLDivElement>(".diff-time")!;
       const offset = player.querySelector<HTMLDivElement>(".offset")!;
-      this.#elements.push({ id, backgroundTime, name, time, gauge, startOrder, diffTime, offset });
+      this.#elements.push({
+        id,
+        backgroundTime,
+        name,
+        time,
+        gauge,
+        startOrder,
+        diffTime,
+        offset,
+      });
     }
 
     this.#initializedPromise.resolve();
@@ -276,8 +287,12 @@ export class MastersTimerElement extends LitElement {
     const player = this.#elements[index];
     if (time != null) {
       player.id.className = "id";
-      player.backgroundTime.className = time == 0 && running ? "background-time background-time-hidden" : "background-time";
-      player.time.className = time == 0 && running ? "time time-hidden" : "time";
+      player.backgroundTime.className = time == 0 && running
+        ? "background-time background-time-hidden"
+        : "background-time";
+      player.time.className = time == 0 && running
+        ? "time time-hidden"
+        : "time";
       player.time.innerText = formatTime(time);
       player.gauge.style.width = (time / 200) + "px";
       let color = "#35a16b";

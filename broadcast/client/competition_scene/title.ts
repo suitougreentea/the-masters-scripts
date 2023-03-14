@@ -35,10 +35,10 @@ export class MastersTitleElement extends LitElement {
       <div>
         <span class="title">${this.value ?? ""}</span>
         <span class="date">${date.getFullYear()}/${
-        date.getMonth() + 1
-      }/${date.getDate()} (${
-        date.toLocaleDateString("en-US", { weekday: "short" })
-      })</span>
+      date.getMonth() + 1
+    }/${date.getDate()} (${
+      date.toLocaleDateString("en-US", { weekday: "short" })
+    })</span>
       </div>
       <div>
         <span class="location">@Retropia22</span>

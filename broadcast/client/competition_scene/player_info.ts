@@ -1,7 +1,15 @@
 import { StagePlayerEntry } from "../../common/common_types.ts";
 import { commonColors } from "../common/common_values.ts";
 import { formatTime } from "../../common/util.ts";
-import { classMap, css, customElement, html, LitElement, map, property } from "../deps.ts";
+import {
+  classMap,
+  css,
+  customElement,
+  html,
+  LitElement,
+  map,
+  property,
+} from "../deps.ts";
 
 @customElement("masters-player-info")
 export class MastersPlayerInfoElement extends LitElement {
@@ -133,7 +141,7 @@ export class MastersPlayerInfoElement extends LitElement {
 
   render() {
     const data = this.data ?? this._createEmptyData();
-    const isDataEmpty = data.every(e => e == null);
+    const isDataEmpty = data.every((e) => e == null);
 
     return html`
     <div class="container">
@@ -141,19 +149,25 @@ export class MastersPlayerInfoElement extends LitElement {
       map(data, (e, i) =>
         html`
         <div class="player">
-          <div class=${classMap({ "id": true, "id-inactive": !isDataEmpty && e == null })}>${i + 1}</div>
+          <div class=${
+          classMap({ "id": true, "id-inactive": !isDataEmpty && e == null })
+        }>${i + 1}</div>
           <div class="name">${e?.name}</div>
-          <div class="best-time">${e != null ? formatTime(e.rawBestTime) : null}</div>
-          ${(() => {
+          <div class="best-time">${
+          e != null ? formatTime(e.rawBestTime) : null
+        }</div>
+          ${
+          (() => {
             const handicap = e?.handicap ?? 0;
             if (handicap > 0) {
-              return html`<div class="offset offset-handicap">[Hdcp. +${handicap}]</div>`
+              return html`<div class="offset offset-handicap">[Hdcp. +${handicap}]</div>`;
             } else if (handicap < 0) {
-              return html`<div class="offset offset-advantage">[Adv. ${handicap}]</div>`
+              return html`<div class="offset offset-advantage">[Adv. ${handicap}]</div>`;
             } else {
-              return html`<div class="offset"></div>`
+              return html`<div class="offset"></div>`;
             }
-          })()}
+          })()
+        }
         </div>
         `)
     }
