@@ -30,6 +30,11 @@ export class MastersTimerControllerElement extends LitElement {
     color: ${commonColors.textDark};
     transform: translateY(5px); /* TODO */
   }
+
+  .timer-container {
+    padding: 2px 6px;
+    background-color: ${commonColors.background};
+  }
   `;
 
   private _initializedPromise = createPromiseSet();
@@ -96,7 +101,9 @@ export class MastersTimerControllerElement extends LitElement {
         <fluent-button id="stop" @click="${this._stop}">Reset</fluent-button>
         <span id="name">${this._name}</span>
       </div>
-      <masters-timer id="timer"></masters-timer>
+      <div class="timer-container">
+        <masters-timer id="timer"></masters-timer>
+      </div>
     </div>
     `;
   }
