@@ -3,8 +3,8 @@
     "gen-common-types": "cd ../competition-sheet && node gen_common_types.js ../broadcast/common/common_types.ts",
     "build": "deno run --allow-env --allow-net --allow-read --allow-run --allow-write build.ts build",
     "build-watch": "deno run --allow-env --allow-net --allow-read --allow-run --allow-write build.ts watch",
-    "start": "deno run --allow-net --allow-read --allow-write main.ts",
-    "start-watch": "deno run --watch --allow-net --allow-read --allow-write main.ts",
+    "start": "deno run --allow-env --allow-net --allow-read --allow-write main.ts",
+    "start-watch": "deno run --watch --allow-env --allow-net --allow-read --allow-write main.ts",
     "dev": "deno task build-watch & deno task start-watch"
   },
   "compilerOptions": {

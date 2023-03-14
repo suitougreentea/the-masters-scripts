@@ -3,6 +3,7 @@ import { TypeDefinition } from "./common/type_definition.ts";
 import { ApiClient } from "./server/api_client.ts";
 import { AppsScriptApi } from "./server/apps_script_api.ts";
 import { denocg } from "./server/deps.ts";
+import { OBSController } from "./server/obs_controller.ts";
 
 export const config: denocg.ServerConfig<TypeDefinition> = {
   socketPort: 8515,
@@ -15,6 +16,13 @@ const server = await denocg.launchServer(config);
 const appsScriptApi = new AppsScriptApi(8516, ApiClient.getScopes());
 await appsScriptApi.initialize();
 const apiClient = new ApiClient(appsScriptApi);
+
+const obsConfigText = await Deno.readTextFile("./obs-websocket-conf.json");
+const obsConfig = JSON.parse(obsConfigText);
+const obs = new OBSController(obsConfig.address, obsConfig.password);
+
+const competitionSceneName = "competition";
+const chatSourceName = "chat";
 
 let currentLoginPromise: Promise<void> | null = null;
 let currentLoginAbort: AbortController | null = null;
@@ -299,6 +307,33 @@ server.registerRequestHandler("finishCompetition", async () => {
   return { exportedUrl: url };
 });
 
+const updateSceneTransforms = async () => {
+  const currentBroadcastStageData = currentBroadcastStageDataReplicant
+    .getValue();
+  const { sceneItemId } = await obs.call("GetSceneItemId", {
+    sceneName: competitionSceneName,
+    sourceName: chatSourceName,
+  });
+  const { sceneItemTransform } = await obs.call("GetSceneItemTransform", {
+    sceneName: competitionSceneName,
+    sceneItemId,
+  });
+
+  if (currentBroadcastStageData != null) {
+    sceneItemTransform.positionY = 440;
+    sceneItemTransform.cropTop = 340;
+  } else {
+    sceneItemTransform.positionY = 100;
+    sceneItemTransform.cropTop = 0;
+  }
+
+  obs.call("SetSceneItemTransform", {
+    sceneName: competitionSceneName,
+    sceneItemId,
+    sceneItemTransform,
+  });
+};
+
 server.registerRequestHandler(
   "sendCurrentStageDataToBroadcast",
   ({ shouldShowResult }) => {
@@ -316,9 +351,14 @@ server.registerRequestHandler(
       stageData: currentRoundData.stageData[currentStageIndex],
       shouldShowResult,
     });
+
+    updateSceneTransforms();
   },
 );
 
 server.registerRequestHandler("unsetBroadcastStageData", () => {
   currentBroadcastStageDataReplicant.setValue(null);
+  updateSceneTransforms();
 });
+
+updateSceneTransforms();
