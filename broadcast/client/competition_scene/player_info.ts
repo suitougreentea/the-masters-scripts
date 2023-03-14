@@ -1,7 +1,7 @@
 import { StagePlayerEntry } from "../../common/common_types.ts";
 import { commonColors } from "../common/common_values.ts";
-import { createPromiseSet, formatTime, PromiseSet } from "../../common/util.ts";
-import { css, customElement, html, LitElement, map } from "../deps.ts";
+import { formatTime } from "../../common/util.ts";
+import { classMap, css, customElement, html, LitElement, map, property } from "../deps.ts";
 
 @customElement("masters-player-info")
 export class MastersPlayerInfoElement extends LitElement {
@@ -69,6 +69,9 @@ export class MastersPlayerInfoElement extends LitElement {
     .player:nth-child(even) .id {
       right: 0px;
     }
+    .id-inactive {
+      opacity: 0.3;
+    }
 
     .name {
       position: absolute;
@@ -113,84 +116,44 @@ export class MastersPlayerInfoElement extends LitElement {
     .player:nth-child(even) .offset {
       right: 194px;
     }
+    .offset-handicap {
+      color: ${commonColors.handicapTextDark};
+    }
+    .offset-advantage {
+      color: ${commonColors.advantageTextDark};
+    }
     `;
 
-  #initializedPromise: PromiseSet<void> = createPromiseSet();
-  #elements: {
-    name: HTMLDivElement;
-    bestTime: HTMLDivElement;
-    offset: HTMLDivElement;
-  }[] = [];
-  #data: (StagePlayerEntry | null)[];
+  @property()
+  data?: (StagePlayerEntry | null)[] = this._createEmptyData();
 
-  constructor() {
-    super();
-    this.#data = this.#createEmptyData();
-  }
-
-  firstUpdated() {
-    const players = this.renderRoot.querySelectorAll<HTMLDivElement>(".player");
-    for (let i = 0; i < 8; i++) {
-      const player = players[i];
-      const name = player.querySelector<HTMLDivElement>(".name")!;
-      const bestTime = player.querySelector<HTMLDivElement>(".best-time")!;
-      const offset = player.querySelector<HTMLDivElement>(".offset")!;
-      this.#elements.push({ name, bestTime, offset });
-    }
-
-    this.#initializedPromise.resolve();
-  }
-
-  waitForInitialization() {
-    return this.#initializedPromise.promise;
-  }
-
-  #reset() {
-    for (let i = 0; i < 8; i++) {
-      const player = this.#data[i];
-      const element = this.#elements[i];
-      if (player != null) {
-        element.name.innerText = player.name;
-        element.bestTime.innerText = formatTime(player.rawBestTime);
-        if (player.handicap > 0) {
-          element.offset.innerText = `[Hdcp. +${player.handicap}]`;
-          element.offset.style.color = commonColors.handicapTextDark.cssText;
-        } else if (player.handicap < 0) {
-          element.offset.innerText = `[Adv. ${player.handicap}]`;
-          element.offset.style.color = commonColors.advantageTextDark.cssText;
-        } else {
-          element.offset.innerText = "";
-          element.offset.style.color = "";
-        }
-      } else {
-        element.name.innerText = "";
-        element.bestTime.innerText = "";
-        element.offset.innerText = "";
-      }
-    }
-  }
-
-  setData(data?: (StagePlayerEntry | null)[]) {
-    this.#data = data ?? this.#createEmptyData();
-    this.#reset();
-  }
-
-  #createEmptyData(): (StagePlayerEntry | null)[] {
+  private _createEmptyData(): (StagePlayerEntry | null)[] {
     return [...new Array(8)].map((_) => null);
   }
 
   render() {
+    const data = this.data ?? this._createEmptyData();
+    const isDataEmpty = data.every(e => e == null);
+
     return html`
     <div class="container">
       ${
-      map(this.#data, (_, i) =>
+      map(data, (e, i) =>
         html`
         <div class="player">
-          <div class="border"></div>
-          <div class="id">${i + 1}</div>
-          <div class="name"></div>
-          <div class="best-time"></div>
-          <div class="offset"></div>
+          <div class=${classMap({ "id": true, "id-inactive": !isDataEmpty && e == null })}>${i + 1}</div>
+          <div class="name">${e?.name}</div>
+          <div class="best-time">${e != null ? formatTime(e.rawBestTime) : null}</div>
+          ${(() => {
+            const handicap = e?.handicap ?? 0;
+            if (handicap > 0) {
+              return html`<div class="offset offset-handicap">[Hdcp. +${handicap}]</div>`
+            } else if (handicap < 0) {
+              return html`<div class="offset offset-advantage">[Adv. ${handicap}]</div>`
+            } else {
+              return html`<div class="offset"></div>`
+            }
+          })()}
         </div>
         `)
     }

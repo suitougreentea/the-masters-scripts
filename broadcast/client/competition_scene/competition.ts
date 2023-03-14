@@ -58,7 +58,6 @@ export class MastersCompetitionElement extends LitElement {
     this.#playerInfo = this.renderRoot.querySelector<MastersPlayerInfoElement>(
       "#player-info",
     )!;
-    await this.#playerInfo.waitForInitialization();
     this.#roundName = this.renderRoot.querySelector<MastersRoundNameElement>(
       "#round-name",
     )!;
@@ -82,7 +81,7 @@ export class MastersCompetitionElement extends LitElement {
 
   setTimerData(data?: (StagePlayerEntry | null)[]) {
     this.#timerWrapper.setData(data);
-    this.#playerInfo.setData(data);
+    this.#playerInfo.data = data;
   }
 
   startTimer() {

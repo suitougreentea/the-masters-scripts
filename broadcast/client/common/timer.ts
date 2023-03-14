@@ -65,6 +65,10 @@ export class MastersTimerElement extends LitElement {
     transform: translateY(1px);
   }
 
+  .id-inactive {
+    opacity: 0.3;
+  }
+
   .name {
     grid-area: 1 / 2 / auto / auto;
     font-size: 20px;
@@ -118,6 +122,7 @@ export class MastersTimerElement extends LitElement {
 
   #initializedPromise: PromiseSet<void> = createPromiseSet();
   #elements: {
+    id: HTMLDivElement;
     backgroundTime: HTMLDivElement;
     name: HTMLDivElement;
     time: HTMLDivElement;
@@ -139,6 +144,7 @@ export class MastersTimerElement extends LitElement {
     const players = this.renderRoot.querySelectorAll<HTMLDivElement>(".player");
     for (let i = 0; i < 8; i++) {
       const player = players[i];
+      const id = player.querySelector<HTMLDivElement>(".id")!;
       const backgroundTime = player.querySelector<HTMLDivElement>(".background-time")!;
       const name = player.querySelector<HTMLDivElement>(".name")!;
       const time = player.querySelector<HTMLDivElement>(".time")!;
@@ -146,7 +152,7 @@ export class MastersTimerElement extends LitElement {
       const startOrder = player.querySelector<HTMLDivElement>(".start-order")!;
       const diffTime = player.querySelector<HTMLDivElement>(".diff-time")!;
       const offset = player.querySelector<HTMLDivElement>(".offset")!;
-      this.#elements.push({ backgroundTime, name, time, gauge, startOrder, diffTime, offset });
+      this.#elements.push({ id, backgroundTime, name, time, gauge, startOrder, diffTime, offset });
     }
 
     this.#initializedPromise.resolve();
@@ -269,6 +275,7 @@ export class MastersTimerElement extends LitElement {
   #setPlayerTime(index: number, time: number | null, running: boolean) {
     const player = this.#elements[index];
     if (time != null) {
+      player.id.className = "id";
       player.backgroundTime.className = time == 0 && running ? "background-time background-time-hidden" : "background-time";
       player.time.className = time == 0 && running ? "time time-hidden" : "time";
       player.time.innerText = formatTime(time);
@@ -282,6 +289,7 @@ export class MastersTimerElement extends LitElement {
       }
       player.gauge.style.background = color;
     } else {
+      player.id.className = "id id-inactive";
       player.backgroundTime.className = "background-time";
       player.time.className = "time";
       player.time.innerText = "";
