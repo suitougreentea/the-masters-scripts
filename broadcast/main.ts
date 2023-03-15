@@ -1,5 +1,5 @@
 import { QualifierResult, QualifierScore } from "./common/common_types.ts";
-import { TypeDefinition } from "./common/type_definition.ts";
+import { RoundData, TypeDefinition } from "./common/type_definition.ts";
 import { ApiClient } from "./server/api_client.ts";
 import { AppsScriptApi } from "./server/apps_script_api.ts";
 import { denocg } from "./server/deps.ts";
@@ -59,13 +59,11 @@ const currentCompetitionMetadataReplicant = server.getReplicant(
   "currentCompetitionMetadata",
 );
 const currentRoundDataReplicant = server.getReplicant("currentRoundData");
-const currentStageIndexReplicant = server.getReplicant("currentStageIndex");
-const currentBroadcastStageDataReplicant = server.getReplicant(
-  "currentBroadcastStageData",
+const currentCompetitionSceneStageDataReplicant = server.getReplicant(
+  "currentCompetitionSceneStageData",
 );
 
 server.registerRequestHandler("setupCompetition", async (params) => {
-  currentStageIndexReplicant.setValue(-1);
   currentRoundDataReplicant.setValue(null);
   currentCompetitionMetadataReplicant.setValue(null);
 
@@ -108,6 +106,46 @@ const getRoundData = async (roundIndex: number) => {
     supplementComparisons,
     qualifierScore,
     qualifierResult,
+  });
+};
+
+const partialUpdateCurrentRoundData = async (params: { stageData?: number[], supplementComparisons?: boolean, qualifierScore?: boolean, qualifierResult?: boolean }) => {
+  const currentRoundData = currentRoundDataReplicant.getValue();
+  if (currentRoundData == null) throw new Error("現在のラウンドがありません");
+
+  const updatedRoundData: Partial<RoundData> = {
+    stageData: currentRoundData.stageData,
+  };
+
+  const stageIndices = params.stageData ?? [];
+  if (stageIndices.length > 0) {
+    const fetchedStageData = await apiClient.runCommand("mastersGetStageData", [
+      currentRoundData.roundIndex,
+      stageIndices,
+    ]);
+    fetchedStageData.forEach((data, i) => {
+      updatedRoundData.stageData![stageIndices[i]] = data;
+    });
+  }
+
+  if (params.supplementComparisons) {
+    const supplementComparisons = await apiClient.runCommand("mastersGetSupplementComparisonData", [currentRoundData.roundIndex]);
+    updatedRoundData.supplementComparisons = supplementComparisons;
+  }
+
+  if (params.qualifierScore) {
+    const qualifierScore = await apiClient.runCommand("mastersGetQualifierScore", []);
+    updatedRoundData.qualifierScore = qualifierScore;
+  }
+
+  if (params.qualifierResult) {
+    const qualifierResult = await apiClient.runCommand("mastersGetQualifierResult", []);
+    updatedRoundData.qualifierResult = qualifierResult;
+  }
+
+  currentRoundDataReplicant.setValue({
+    ...currentRoundData,
+    ...updatedRoundData,
   });
 };
 
@@ -171,135 +209,61 @@ server.registerRequestHandler("finalizeCurrentRoundIfCompleted", async () => {
 });
 
 server.registerRequestHandler("leaveCurrentRound", () => {
-  currentStageIndexReplicant.setValue(-1);
   currentRoundDataReplicant.setValue(null);
 });
 
-server.registerRequestHandler("setCurrentStage", ({ stageIndex }) => {
-  currentStageIndexReplicant.setValue(stageIndex);
+server.registerRequestHandler("refreshStage", async ({ stageIndex }) => {
+  await partialUpdateCurrentRoundData({ stageData: [stageIndex] });
 });
 
-server.registerRequestHandler("refreshCurrentStage", async () => {
+server.registerRequestHandler("resetStage", async ({ stageIndex, setup }) => {
   const currentRoundData = currentRoundDataReplicant.getValue();
   if (currentRoundData == null) throw new Error("現在のラウンドがありません");
-  const currentStageIndex = currentStageIndexReplicant.getValue();
-  if (currentStageIndex == null || currentStageIndex == -1) {
-    throw new Error("現在のステージがありません");
-  }
-
-  const stageData = [...currentRoundData.stageData];
-  const fetchedStageData = await apiClient.runCommand("mastersGetStageData", [
-    currentRoundData.roundIndex,
-    [currentStageIndex],
-  ]);
-  stageData[currentStageIndex] = fetchedStageData[0];
-
-  currentRoundDataReplicant.setValue({
-    ...currentRoundData,
-    stageData,
-  });
-});
-
-server.registerRequestHandler("resetCurrentStage", async ({ setup }) => {
-  const currentRoundData = currentRoundDataReplicant.getValue();
-  if (currentRoundData == null) throw new Error("現在のラウンドがありません");
-  const currentStageIndex = currentStageIndexReplicant.getValue();
-  if (currentStageIndex == null || currentStageIndex == -1) {
-    throw new Error(
-      "現在のステージがありません",
-    );
-  }
 
   await apiClient.runCommand("mastersResetStage", [
     currentRoundData.roundIndex,
-    currentStageIndex,
+    stageIndex,
     setup,
   ]);
 
-  const stageData = [...currentRoundData.stageData];
-  const fetchedStageData = await apiClient.runCommand("mastersGetStageData", [
-    currentRoundData.roundIndex,
-    [currentStageIndex],
-  ]);
-  stageData[currentStageIndex] = fetchedStageData[0];
-
-  currentRoundDataReplicant.setValue({
-    ...currentRoundData,
-    stageData,
-  });
+  await partialUpdateCurrentRoundData({ stageData: [stageIndex] });
 });
 
 server.registerRequestHandler(
-  "reorderCurrentStagePlayers",
-  async ({ names }) => {
+  "reorderStagePlayers",
+  async ({ stageIndex, names }) => {
     const currentRoundData = currentRoundDataReplicant.getValue();
     if (currentRoundData == null) throw new Error("現在のラウンドがありません");
-    const currentStageIndex = currentStageIndexReplicant.getValue();
-    if (currentStageIndex == null || currentStageIndex == -1) {
-      throw new Error(
-        "現在のステージがありません",
-      );
-    }
 
     await apiClient.runCommand("mastersReorderStagePlayers", [
       currentRoundData.roundIndex,
-      currentStageIndex,
+      stageIndex,
       names,
     ]);
 
-    const stageData = [...currentRoundData.stageData];
-    const fetchedStageData = await apiClient.runCommand("mastersGetStageData", [
-      currentRoundData.roundIndex,
-      [currentStageIndex],
-    ]);
-    stageData[currentStageIndex] = fetchedStageData[0];
-
-    currentRoundDataReplicant.setValue({
-      ...currentRoundData,
-      stageData,
-    });
+    await partialUpdateCurrentRoundData({ stageData: [stageIndex] });
   },
 );
 
-server.registerRequestHandler("setCurrentStageScore", async ({ score }) => {
+server.registerRequestHandler("setStageScore", async ({ stageIndex, score }) => {
   const metadata = currentCompetitionMetadataReplicant.getValue();
   if (metadata == null) throw new Error("現在の大会がありません");
   const currentRoundData = currentRoundDataReplicant.getValue();
   if (currentRoundData == null) throw new Error("現在のラウンドがありません");
-  const currentStageIndex = currentStageIndexReplicant.getValue();
-  if (currentStageIndex == null || currentStageIndex == -1) {
-    throw new Error("現在のステージがありません");
-  }
 
   await apiClient.runCommand("mastersSetStageScore", [
     currentRoundData.roundIndex,
-    currentStageIndex,
+    stageIndex,
     score,
   ]);
 
-  const stageData = [...currentRoundData.stageData];
-  const fetchedStageData = await apiClient.runCommand("mastersGetStageData", [
-    currentRoundData.roundIndex,
-    [currentStageIndex],
-  ]);
-  stageData[currentStageIndex] = fetchedStageData[0];
-
-  let qualifierScore: QualifierScore | undefined = undefined;
-  if (metadata.type == "qualifierFinal" && currentRoundData.roundIndex == 0) {
-    qualifierScore = await apiClient.runCommand("mastersGetQualifierScore", []);
-  }
-
-  currentRoundDataReplicant.setValue({
-    ...currentRoundData,
-    stageData,
-    qualifierScore,
-  });
+  const shouldUpdateQualifierScore = metadata.type == "qualifierFinal" && currentRoundData.roundIndex == 0;
+  await partialUpdateCurrentRoundData({ stageData: [stageIndex], qualifierScore: shouldUpdateQualifierScore });
 });
 
 server.registerRequestHandler("finishCompetition", async () => {
   const { url } = await apiClient.runCommand("mastersExportCompetition", []);
 
-  currentStageIndexReplicant.setValue(-1);
   currentRoundDataReplicant.setValue(null);
   currentCompetitionMetadataReplicant.setValue(null);
   currentParticipantsReplicant.setValue(null);
@@ -308,7 +272,7 @@ server.registerRequestHandler("finishCompetition", async () => {
 });
 
 const updateSceneTransforms = async () => {
-  const currentBroadcastStageData = currentBroadcastStageDataReplicant
+  const currentCompetitionSceneStageData = currentCompetitionSceneStageDataReplicant
     .getValue();
   const { sceneItemId } = await obs.call("GetSceneItemId", {
     sceneName: competitionSceneName,
@@ -319,7 +283,7 @@ const updateSceneTransforms = async () => {
     sceneItemId,
   });
 
-  if (currentBroadcastStageData != null) {
+  if (currentCompetitionSceneStageData != null) {
     sceneItemTransform.positionY = 440;
     sceneItemTransform.cropTop = 340;
   } else {
@@ -335,29 +299,24 @@ const updateSceneTransforms = async () => {
 };
 
 server.registerRequestHandler(
-  "sendCurrentStageDataToBroadcast",
-  ({ shouldShowResult }) => {
+  "sendStageDataToCompetitionScene",
+  ({ stageIndex }) => {
     const currentRoundData = currentRoundDataReplicant.getValue();
     if (currentRoundData == null) throw new Error("現在のラウンドがありません");
-    const currentStageIndex = currentStageIndexReplicant.getValue();
-    if (currentStageIndex == null || currentStageIndex == -1) {
-      throw new Error("現在のステージがありません");
-    }
 
-    currentBroadcastStageDataReplicant.setValue({
+    currentCompetitionSceneStageDataReplicant.setValue({
       roundIndex: currentRoundData.roundIndex,
-      stageIndex: currentStageIndex,
-      metadata: currentRoundData.metadata.stages[currentStageIndex],
-      stageData: currentRoundData.stageData[currentStageIndex],
-      shouldShowResult,
+      stageIndex: stageIndex,
+      metadata: currentRoundData.metadata.stages[stageIndex],
+      stageData: currentRoundData.stageData[stageIndex],
     });
 
     updateSceneTransforms();
   },
 );
 
-server.registerRequestHandler("unsetBroadcastStageData", () => {
-  currentBroadcastStageDataReplicant.setValue(null);
+server.registerRequestHandler("unsetTimerStageData", () => {
+  currentCompetitionSceneStageDataReplicant.setValue(null);
   updateSceneTransforms();
 });
 
