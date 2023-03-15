@@ -60,10 +60,10 @@ export class MastersTimerControllerElement extends LitElement {
     this._timerWrapper = new TimerWrapper(this._timer);
 
     const client = await this._dashboardContext.getClient();
-    const currentBroadcastStageDataReplicant = await client.getReplicant(
-      "currentBroadcastStageData",
+    const currentCompetitionSceneStageDataReplicant = await client.getReplicant(
+      "currentCompetitionSceneStageData",
     );
-    currentBroadcastStageDataReplicant.subscribe((value) => {
+    currentCompetitionSceneStageDataReplicant.subscribe((value) => {
       this._name = value?.metadata.name ?? "";
       this._timerWrapper.setData(value?.stageData?.players);
     });

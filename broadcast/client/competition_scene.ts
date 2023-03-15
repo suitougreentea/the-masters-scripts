@@ -10,10 +10,10 @@ const competition = document.querySelector<MastersCompetitionElement>(
 )!;
 await competition.waitForInitialization();
 
-const currentBroadcastStageDataReplicant = await client.getReplicant(
-  "currentBroadcastStageData",
+const currentCompetitionSceneStageDataReplicant = await client.getReplicant(
+  "currentCompetitionSceneStageData",
 );
-currentBroadcastStageDataReplicant.subscribe((value) => {
+currentCompetitionSceneStageDataReplicant.subscribe((value) => {
   competition.setRoundNameText(value?.metadata.name ?? "");
   competition.setTimerData(value?.stageData.players);
 });

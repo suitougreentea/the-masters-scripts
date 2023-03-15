@@ -109,7 +109,14 @@ const getRoundData = async (roundIndex: number) => {
   });
 };
 
-const partialUpdateCurrentRoundData = async (params: { stageData?: number[], supplementComparisons?: boolean, qualifierScore?: boolean, qualifierResult?: boolean }) => {
+const partialUpdateCurrentRoundData = async (
+  params: {
+    stageData?: number[];
+    supplementComparisons?: boolean;
+    qualifierScore?: boolean;
+    qualifierResult?: boolean;
+  },
+) => {
   const currentRoundData = currentRoundDataReplicant.getValue();
   if (currentRoundData == null) throw new Error("現在のラウンドがありません");
 
@@ -129,17 +136,26 @@ const partialUpdateCurrentRoundData = async (params: { stageData?: number[], sup
   }
 
   if (params.supplementComparisons) {
-    const supplementComparisons = await apiClient.runCommand("mastersGetSupplementComparisonData", [currentRoundData.roundIndex]);
+    const supplementComparisons = await apiClient.runCommand(
+      "mastersGetSupplementComparisonData",
+      [currentRoundData.roundIndex],
+    );
     updatedRoundData.supplementComparisons = supplementComparisons;
   }
 
   if (params.qualifierScore) {
-    const qualifierScore = await apiClient.runCommand("mastersGetQualifierScore", []);
+    const qualifierScore = await apiClient.runCommand(
+      "mastersGetQualifierScore",
+      [],
+    );
     updatedRoundData.qualifierScore = qualifierScore;
   }
 
   if (params.qualifierResult) {
-    const qualifierResult = await apiClient.runCommand("mastersGetQualifierResult", []);
+    const qualifierResult = await apiClient.runCommand(
+      "mastersGetQualifierResult",
+      [],
+    );
     updatedRoundData.qualifierResult = qualifierResult;
   }
 
@@ -245,21 +261,28 @@ server.registerRequestHandler(
   },
 );
 
-server.registerRequestHandler("setStageScore", async ({ stageIndex, score }) => {
-  const metadata = currentCompetitionMetadataReplicant.getValue();
-  if (metadata == null) throw new Error("現在の大会がありません");
-  const currentRoundData = currentRoundDataReplicant.getValue();
-  if (currentRoundData == null) throw new Error("現在のラウンドがありません");
+server.registerRequestHandler(
+  "setStageScore",
+  async ({ stageIndex, score }) => {
+    const metadata = currentCompetitionMetadataReplicant.getValue();
+    if (metadata == null) throw new Error("現在の大会がありません");
+    const currentRoundData = currentRoundDataReplicant.getValue();
+    if (currentRoundData == null) throw new Error("現在のラウンドがありません");
 
-  await apiClient.runCommand("mastersSetStageScore", [
-    currentRoundData.roundIndex,
-    stageIndex,
-    score,
-  ]);
+    await apiClient.runCommand("mastersSetStageScore", [
+      currentRoundData.roundIndex,
+      stageIndex,
+      score,
+    ]);
 
-  const shouldUpdateQualifierScore = metadata.type == "qualifierFinal" && currentRoundData.roundIndex == 0;
-  await partialUpdateCurrentRoundData({ stageData: [stageIndex], qualifierScore: shouldUpdateQualifierScore });
-});
+    const shouldUpdateQualifierScore = metadata.type == "qualifierFinal" &&
+      currentRoundData.roundIndex == 0;
+    await partialUpdateCurrentRoundData({
+      stageData: [stageIndex],
+      qualifierScore: shouldUpdateQualifierScore,
+    });
+  },
+);
 
 server.registerRequestHandler("finishCompetition", async () => {
   const { url } = await apiClient.runCommand("mastersExportCompetition", []);
@@ -272,8 +295,9 @@ server.registerRequestHandler("finishCompetition", async () => {
 });
 
 const updateSceneTransforms = async () => {
-  const currentCompetitionSceneStageData = currentCompetitionSceneStageDataReplicant
-    .getValue();
+  const currentCompetitionSceneStageData =
+    currentCompetitionSceneStageDataReplicant
+      .getValue();
   const { sceneItemId } = await obs.call("GetSceneItemId", {
     sceneName: competitionSceneName,
     sourceName: chatSourceName,
@@ -315,7 +339,7 @@ server.registerRequestHandler(
   },
 );
 
-server.registerRequestHandler("unsetTimerStageData", () => {
+server.registerRequestHandler("unsetCompetitionSceneStageData", () => {
   currentCompetitionSceneStageDataReplicant.setValue(null);
   updateSceneTransforms();
 });

@@ -56,11 +56,13 @@ export type TypeDefinition = {
     finalizeCurrentRoundIfCompleted: EmptyObject;
     leaveCurrentRound: EmptyObject;
     refreshStage: { params: { stageIndex: number } };
-    resetStage: { params: { stageIndex: number, setup: StageSetupResult } };
-    reorderStagePlayers: { params: { stageIndex: number, names: (string | null)[] } };
-    setStageScore: { params: { stageIndex: number, score: StageScoreData } };
+    resetStage: { params: { stageIndex: number; setup: StageSetupResult } };
+    reorderStagePlayers: {
+      params: { stageIndex: number; names: (string | null)[] };
+    };
+    setStageScore: { params: { stageIndex: number; score: StageScoreData } };
     finishCompetition: { result: { exportedUrl: string } };
     sendStageDataToCompetitionScene: { params: { stageIndex: number } };
-    unsetTimerStageData: EmptyObject;
+    unsetCompetitionSceneStageData: EmptyObject;
   };
 };

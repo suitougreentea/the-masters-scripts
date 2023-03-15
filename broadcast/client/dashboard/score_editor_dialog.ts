@@ -42,6 +42,11 @@ export class MastersScoreEditorDialogElement extends LitElement {
     }
     `;
 
+  private _stageIndex = -1;
+  get stageIndex() {
+    return this._stageIndex;
+  }
+
   @state()
   _data: DataEntry[] = [];
 
@@ -49,7 +54,8 @@ export class MastersScoreEditorDialogElement extends LitElement {
   @query("fluent-dialog", true)
   private _dialog!: FluentDialog;
 
-  open(players: (StagePlayerEntry | null)[]) {
+  open(stageIndex: number, players: (StagePlayerEntry | null)[]) {
+    this._stageIndex = stageIndex;
     this._data = players.map((e) => {
       return {
         name: e?.name ?? null,
