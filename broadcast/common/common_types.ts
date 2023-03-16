@@ -79,6 +79,12 @@ type SupplementComparisonMetadata = {
   numPlayers: number;
 };
 
+type RegisteredPlayerEntry = {
+  name: string;
+  bestTime: number;
+  comment: string;
+};
+
 type Participant = {
   name: string;
   firstRoundGroupIndex: number | null;
@@ -173,6 +179,7 @@ type StageScoreData = {
 
 type ApiFunctions = {
   mastersShowAlert: (message: string) => void;
+  mastersGetRegisteredPlayers: () => RegisteredPlayerEntry[];
   mastersSetParticipants: (participants: Participant[]) => void;
   mastersSetupCompetition: (options: CompetitionSetupOptions) => void;
   mastersExportCompetition: () => { url: string };
@@ -218,6 +225,7 @@ export {
   type QualifierResultEntry,
   type QualifierScore,
   type QualifierScoreEntry,
+  type RegisteredPlayerEntry,
   type RoundMetadata,
   type StageData,
   type StageMetadata,

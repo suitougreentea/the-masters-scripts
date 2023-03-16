@@ -148,6 +148,9 @@ export class MastersRoundElement extends LitElement {
   }
 
   private async _sendToTimer(stageIndex: number) {
+    // TODO: 仮
+    await this._dashboardContext.sendRequest("getCurrentRegisteredPlayers");
+
     await this._dashboardContext.sendRequest(
       "sendStageDataToCompetitionScene",
       { stageIndex },

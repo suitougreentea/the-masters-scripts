@@ -6,6 +6,14 @@ function mastersShowAlert(message: string) {
   SpreadsheetApp.getUi().alert(message);
 }
 
+function mastersGetRegisteredPlayers(): RegisteredPlayerEntry[] {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const playersParsedSheet = CompetitionSheet.getPlayersParsedSheetOrError(ss);
+  const context = { ss, playersParsedSheet };
+
+  return CompetitionSheet.getRegisteredPlayers(context);
+}
+
 function mastersSetParticipants(participants: Participant[]) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const setupSheet = CompetitionSheet.getSetupSheetOrError(ss);
@@ -176,6 +184,7 @@ function mastersCallApiAsJson<TName extends keyof ApiFunctions>(functionName: TN
 // 型チェック用
 const assertApiFunctions: ApiFunctions = {
   mastersShowAlert,
+  mastersGetRegisteredPlayers,
   mastersSetParticipants,
   mastersSetupCompetition,
   mastersExportCompetition,

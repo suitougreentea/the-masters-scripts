@@ -4,6 +4,7 @@ import {
   Participant,
   QualifierResult,
   QualifierScore,
+  RegisteredPlayerEntry,
   RoundMetadata,
   StageData,
   StageMetadata,
@@ -38,6 +39,7 @@ type EmptyObject = Record<keyof unknown, never>;
 
 export type TypeDefinition = {
   replicants: {
+    currentRegisteredPlayers: RegisteredPlayerEntry[] | null;
     currentParticipants: Participant[] | null;
     currentCompetitionMetadata: CompetitionMetadata | null;
     currentRoundData: RoundData | null;
@@ -56,6 +58,7 @@ export type TypeDefinition = {
     login: { result: { url: string } };
     cancelLogin: EmptyObject;
     checkLogin: EmptyObject;
+    getCurrentRegisteredPlayers: EmptyObject;
     setupCompetition: { params: { options: CompetitionSetupOptions } };
     getCurrentCompetitionMetadata: EmptyObject;
     enterRound: { params: { roundIndex: number } };

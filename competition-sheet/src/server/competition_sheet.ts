@@ -37,6 +37,22 @@ namespace CompetitionSheet {
     return result;
   }
 
+  export function getPlayersSheet(ss: Spreadsheet): Sheet | null {
+    return ss.getSheetByName(Definition.sheetNames.players);
+  }
+  export function getPlayersSheetOrError(ss: Spreadsheet): Sheet {
+    const sheet = getPlayersSheet(ss);
+    if (sheet == null) throw new Error("Setupシートがありません");
+    return sheet;
+  }
+  export function getPlayersParsedSheet(ss: Spreadsheet): Sheet | null {
+    return ss.getSheetByName(Definition.sheetNames.playersParsed);
+  }
+  export function getPlayersParsedSheetOrError(ss: Spreadsheet): Sheet {
+    const sheet = getPlayersParsedSheet(ss);
+    if (sheet == null) throw new Error("Setupシートがありません");
+    return sheet;
+  }
   export function getSetupSheet(ss: Spreadsheet): Sheet | null {
     return ss.getSheetByName(Definition.sheetNames.setup);
   }
@@ -65,6 +81,28 @@ namespace CompetitionSheet {
     const sheet = ss.getSheetByName(Definition.sheetNames.templates);
     if (sheet == null) throw new Error();
     return sheet;
+  }
+
+  export function getRegisteredPlayers(context: { playersParsedSheet: Sheet }): RegisteredPlayerEntry[] {
+    const { playersParsedSheet } = context;
+
+    const values = playersParsedSheet.getRange("R1C1:C3").getValues();
+
+    const entries: RegisteredPlayerEntry[] = [];
+
+    values.forEach(e => {
+      if (Util.isNullOrEmptyString(e[0])) return;
+      const bestTime = Time.spreadsheetValueToTime(e[1]);
+      if (bestTime == null) return;
+      const comment = Util.isNullOrEmptyString(e[2]) ? "" : e[2];
+      entries.push({
+        name: e[0],
+        bestTime,
+        comment,
+      });
+    });
+
+    return entries;
   }
 
   /**

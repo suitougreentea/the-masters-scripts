@@ -18,6 +18,13 @@ currentCompetitionSceneStageDataReplicant.subscribe((value) => {
   competition.setTimerData(value?.stageData.players);
 });
 
+const currentRegisteredPlayersReplicant = await client.getReplicant(
+  "currentRegisteredPlayers",
+);
+currentRegisteredPlayersReplicant.subscribe((value) => {
+  competition.setRegisteredPlayers(value ?? []);
+});
+
 client.addMessageListener("startTimer", () => {
   competition.startTimer();
 });

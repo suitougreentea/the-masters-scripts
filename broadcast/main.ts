@@ -55,6 +55,9 @@ server.registerRequestHandler("checkLogin", async () => {
   await appsScriptApi.checkAuth();
 });
 
+const currentRegisteredPlayersReplicant = server.getReplicant(
+  "currentRegisteredPlayers",
+);
 const currentParticipantsReplicant = server.getReplicant("currentParticipants");
 const currentCompetitionMetadataReplicant = server.getReplicant(
   "currentCompetitionMetadata",
@@ -67,6 +70,14 @@ const currentResultSceneDataReplicant = server.getReplicant(
   "currentResultSceneData",
 );
 const resultSceneActiveReplicant = server.getReplicant("resultSceneActive");
+
+server.registerRequestHandler("getCurrentRegisteredPlayers", async () => {
+  const metadata = await apiClient.runCommand(
+    "mastersGetRegisteredPlayers",
+    [],
+  );
+  currentRegisteredPlayersReplicant.setValue(metadata);
+});
 
 server.registerRequestHandler("setupCompetition", async (params) => {
   currentRoundDataReplicant.setValue(null);

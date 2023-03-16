@@ -41,6 +41,10 @@ export class MastersSetupElement extends LitElement {
   async firstUpdated() {
   }
 
+  private async _refreshRegisteredPlayers() {
+    await this._dashboardContext.sendRequest("getCurrentRegisteredPlayers");
+  }
+
   private async _confirmStartCompetition() {
     if (
       await this._dashboardContext.confirm(
@@ -66,6 +70,7 @@ export class MastersSetupElement extends LitElement {
     <fluent-card class="container">
       <h2>大会設定</h2>
       <div>スプレッドシート側で大会名と参加者を記入してください<br>将来のバージョンではここで入力できるようになります</div>
+      <fluent-button @click=${this._refreshRegisteredPlayers}>登録されているプレイヤーを再読み込み</fluent-button>
       <div>
         <fluent-text-field id="competition-name" value="The Masters xxx">大会名:</fluent-text-field>
       </div>

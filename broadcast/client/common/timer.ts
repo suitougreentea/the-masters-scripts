@@ -1,6 +1,11 @@
 import { StagePlayerEntry } from "../../common/common_types.ts";
 import { commonColors } from "../common/common_values.ts";
-import { createPromiseSet, formatTime, PromiseSet } from "../../common/util.ts";
+import {
+  createPromiseSet,
+  formatTime,
+  getDiffTime,
+  PromiseSet,
+} from "../../common/util.ts";
 import {
   css,
   customElement,
@@ -206,30 +211,6 @@ export class MastersTimerElement extends LitElement {
   #reset() {
     if (this.isRunning()) throw new Error("Timer is running");
 
-    const getDiffTime = (playerIndex: number) => {
-      const players = this.#data;
-      const player = players[playerIndex];
-      if (player == null) return 0;
-
-      if (player.startOrder == 1) return 0;
-
-      // startOrderが1つ先の人を探す
-      let targetIndex = -1;
-      players.forEach((e, i) => {
-        if (e == null) return;
-        if (e.startOrder < player.startOrder) {
-          if (
-            targetIndex == -1 || players[targetIndex]!.startOrder < e.startOrder
-          ) {
-            targetIndex = i;
-          }
-        }
-      });
-      if (targetIndex == -1) return 0; // unreachable?
-
-      return player.startTime - players[targetIndex]!.startTime;
-    };
-
     for (let i = 0; i < 8; i++) {
       const player = this.#data[i];
       const element = this.#elements[i];
@@ -238,7 +219,8 @@ export class MastersTimerElement extends LitElement {
         this.#setPlayerTime(i, player.startTime, false);
         element.startOrder.innerText = this.#ordinals[player.startOrder - 1] +
           ":";
-        element.diffTime.innerText = "+" + formatTime(getDiffTime(i));
+        element.diffTime.innerText = "+" +
+          formatTime(getDiffTime(this.#data, i));
         if (player.handicap > 0) {
           element.offset.innerText = `[Hdcp. +${player.handicap}]`;
           element.offset.style.color = commonColors.handicapTextDark.cssText;

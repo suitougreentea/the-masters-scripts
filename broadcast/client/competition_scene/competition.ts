@@ -8,7 +8,10 @@ import { MastersPlayerInfoElement } from "./player_info.ts";
 import { MastersRoundNameElement } from "./round_name.ts";
 import { MastersTimerElement } from "../common/timer.ts";
 import { TimerWrapper } from "../common/timer_wrapper.ts";
-import { StagePlayerEntry } from "../../common/common_types.ts";
+import {
+  RegisteredPlayerEntry,
+  StagePlayerEntry,
+} from "../../common/common_types.ts";
 import { createPromiseSet, PromiseSet } from "../../common/util.ts";
 
 @customElement("masters-competition")
@@ -84,14 +87,20 @@ export class MastersCompetitionElement extends LitElement {
     this.#playerInfo.data = data;
   }
 
+  setRegisteredPlayers(players: RegisteredPlayerEntry[]) {
+    this.#playerInfo.registeredPlayers = players;
+  }
+
   startTimer() {
     if (this.#timerWrapper == null) return;
     this.#timerWrapper.start();
+    this.#playerInfo.showDetail = false;
   }
 
   stopTimer() {
     if (this.#timerWrapper == null) return;
     this.#timerWrapper.stop();
+    this.#playerInfo.showDetail = true;
   }
 
   render() {
