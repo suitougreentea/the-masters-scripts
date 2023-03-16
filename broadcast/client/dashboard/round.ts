@@ -153,6 +153,9 @@ export class MastersRoundElement extends LitElement {
       { stageIndex },
     );
     this._dashboardContext.requestStopTimer();
+    await this._dashboardContext.sendRequest("toggleResultScene", {
+      show: false,
+    });
   }
 
   private async _reloadStage(stageIndex: number) {
@@ -202,6 +205,13 @@ export class MastersRoundElement extends LitElement {
       score,
     });
     await this._dashboardContext.sendRequest("finalizeCurrentRoundIfCompleted");
+    await this._dashboardContext.sendRequest(
+      "setResultSceneData",
+      { stageIndex },
+    );
+    await this._dashboardContext.sendRequest("toggleResultScene", {
+      show: true,
+    });
   }
 
   private async _reloadRound() {

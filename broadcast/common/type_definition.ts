@@ -28,6 +28,12 @@ export type CompetitionSceneStageData = {
   stageData: StageData;
 };
 
+export type ResultSceneData = {
+  roundData: RoundData;
+  currentStageIndex: number;
+  nextStageName: string | null;
+};
+
 type EmptyObject = Record<keyof unknown, never>;
 
 export type TypeDefinition = {
@@ -36,6 +42,8 @@ export type TypeDefinition = {
     currentCompetitionMetadata: CompetitionMetadata | null;
     currentRoundData: RoundData | null;
     currentCompetitionSceneStageData: CompetitionSceneStageData | null;
+    currentResultSceneData: ResultSceneData | null;
+    resultSceneActive: boolean;
   };
 
   messages: {
@@ -64,5 +72,8 @@ export type TypeDefinition = {
     finishCompetition: { result: { exportedUrl: string } };
     sendStageDataToCompetitionScene: { params: { stageIndex: number } };
     unsetCompetitionSceneStageData: EmptyObject;
+    setResultSceneData: { params: { stageIndex: number } };
+    unsetResultSceneData: EmptyObject;
+    toggleResultScene: { params: { show: boolean } };
   };
 };

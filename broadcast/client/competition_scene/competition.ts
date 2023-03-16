@@ -1,9 +1,9 @@
 import { css, customElement, html, LitElement } from "../deps.ts";
-import "./title.ts";
+import "../common/title.ts";
 import "./player_info.ts";
 import "./round_name.ts";
 import "../common/timer.ts";
-import { MastersTitleElement } from "./title.ts";
+import { MastersTitleElement } from "../common/title.ts";
 import { MastersPlayerInfoElement } from "./player_info.ts";
 import { MastersRoundNameElement } from "./round_name.ts";
 import { MastersTimerElement } from "../common/timer.ts";
@@ -17,7 +17,7 @@ export class MastersCompetitionElement extends LitElement {
   .container {
     width: 1920px;
     height: 1080px;
-    background-image: url("/images/background.png");
+    background-image: url("/images/background-competition.png");
   }
 
   #title {

@@ -23,6 +23,7 @@ export class MastersStagePlayersElement extends LitElement {
     font-size: 14px;
     border: 2px solid ${commonColors.tablePlayers};
     border-collapse: collapse;
+    background-color: white;
   }
 
   col:nth-child(1) {
@@ -63,7 +64,7 @@ export class MastersStagePlayersElement extends LitElement {
   }
 
   tr:nth-child(2n) {
-    background-color:${commonColors.tableLightGray};
+    background-color: ${commonColors.tableLightGray};
   }
 
   th:nth-child(3), th:nth-child(4), th:nth-child(5), th:nth-child(6) {

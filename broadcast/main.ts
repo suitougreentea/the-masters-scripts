@@ -22,6 +22,7 @@ const obsConfig = JSON.parse(obsConfigText);
 const obs = new OBSController(obsConfig.address, obsConfig.password);
 
 const competitionSceneName = "competition";
+const resultSceneName = "result";
 const chatSourceName = "chat";
 
 let currentLoginPromise: Promise<void> | null = null;
@@ -62,6 +63,10 @@ const currentRoundDataReplicant = server.getReplicant("currentRoundData");
 const currentCompetitionSceneStageDataReplicant = server.getReplicant(
   "currentCompetitionSceneStageData",
 );
+const currentResultSceneDataReplicant = server.getReplicant(
+  "currentResultSceneData",
+);
+const resultSceneActiveReplicant = server.getReplicant("resultSceneActive");
 
 server.registerRequestHandler("setupCompetition", async (params) => {
   currentRoundDataReplicant.setValue(null);
@@ -294,34 +299,6 @@ server.registerRequestHandler("finishCompetition", async () => {
   return { exportedUrl: url };
 });
 
-const updateSceneTransforms = async () => {
-  const currentCompetitionSceneStageData =
-    currentCompetitionSceneStageDataReplicant
-      .getValue();
-  const { sceneItemId } = await obs.call("GetSceneItemId", {
-    sceneName: competitionSceneName,
-    sourceName: chatSourceName,
-  });
-  const { sceneItemTransform } = await obs.call("GetSceneItemTransform", {
-    sceneName: competitionSceneName,
-    sceneItemId,
-  });
-
-  if (currentCompetitionSceneStageData != null) {
-    sceneItemTransform.positionY = 440;
-    sceneItemTransform.cropTop = 340;
-  } else {
-    sceneItemTransform.positionY = 100;
-    sceneItemTransform.cropTop = 0;
-  }
-
-  obs.call("SetSceneItemTransform", {
-    sceneName: competitionSceneName,
-    sceneItemId,
-    sceneItemTransform,
-  });
-};
-
 server.registerRequestHandler(
   "sendStageDataToCompetitionScene",
   ({ stageIndex }) => {
@@ -334,14 +311,77 @@ server.registerRequestHandler(
       metadata: currentRoundData.metadata.stages[stageIndex],
       stageData: currentRoundData.stageData[stageIndex],
     });
-
-    updateSceneTransforms();
   },
 );
 
 server.registerRequestHandler("unsetCompetitionSceneStageData", () => {
   currentCompetitionSceneStageDataReplicant.setValue(null);
-  updateSceneTransforms();
 });
 
-updateSceneTransforms();
+currentCompetitionSceneStageDataReplicant.subscribe(async (value) => {
+  const { sceneItemId } = await obs.call("GetSceneItemId", {
+    sceneName: competitionSceneName,
+    sourceName: chatSourceName,
+  });
+  const { sceneItemTransform } = await obs.call("GetSceneItemTransform", {
+    sceneName: competitionSceneName,
+    sceneItemId,
+  });
+
+  if (value != null) {
+    sceneItemTransform.positionY = 440;
+    sceneItemTransform.cropTop = 340;
+  } else {
+    sceneItemTransform.positionY = 100;
+    sceneItemTransform.cropTop = 0;
+  }
+
+  obs.call("SetSceneItemTransform", {
+    sceneName: competitionSceneName,
+    sceneItemId,
+    sceneItemTransform,
+  });
+});
+
+server.registerRequestHandler("setResultSceneData", ({ stageIndex }) => {
+  const metadata = currentCompetitionMetadataReplicant.getValue();
+  if (metadata == null) throw new Error("現在の大会がありません");
+  const currentRoundData = currentRoundDataReplicant.getValue();
+  if (currentRoundData == null) throw new Error("現在のラウンドがありません");
+
+  let nextStageRoundIndex = currentRoundData.roundIndex;
+  let nextStageStageIndex = stageIndex + 1;
+  if (nextStageStageIndex >= currentRoundData.metadata.stages.length) {
+    nextStageRoundIndex++;
+    nextStageStageIndex = 0;
+  }
+  let nextStageName = null;
+  if (nextStageRoundIndex < metadata.rounds.length) {
+    nextStageName =
+      metadata.rounds[nextStageRoundIndex].stages[nextStageStageIndex].name;
+  }
+
+  currentResultSceneDataReplicant.setValue({
+    roundData: currentRoundData,
+    currentStageIndex: stageIndex,
+    nextStageName,
+  });
+});
+
+server.registerRequestHandler("unsetResultSceneData", () => {
+  currentResultSceneDataReplicant.setValue(null);
+});
+
+server.registerRequestHandler("toggleResultScene", ({ show }) => {
+  resultSceneActiveReplicant.setValue(show);
+});
+
+resultSceneActiveReplicant.subscribe(async (value) => {
+  if (value) {
+    await obs.call("SetCurrentProgramScene", { sceneName: resultSceneName });
+  } else {
+    await obs.call("SetCurrentProgramScene", {
+      sceneName: competitionSceneName,
+    });
+  }
+});

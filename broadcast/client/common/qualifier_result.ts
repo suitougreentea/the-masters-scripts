@@ -23,10 +23,11 @@ export class MastersQualifierResultElement extends LitElement {
     font-size: 14px;
     border: 2px solid ${commonColors.tableSupplementComparison};
     border-collapse: collapse;
+    background-color: white;
   }
 
   col:nth-child(1) {
-    width: 16px;
+    width: 24px;
   }
   col:nth-child(2) {
     width: auto;
@@ -63,7 +64,7 @@ export class MastersQualifierResultElement extends LitElement {
   }
 
   tr:nth-child(2n) {
-    background-color:${commonColors.tableLightGray};
+    background-color: ${commonColors.tableLightGray};
   }
 
   tr.winners-end td {
