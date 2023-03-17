@@ -254,7 +254,10 @@ export class MastersResultElement extends LitElement {
           }
               ${
             (() => {
-              if (roundData.qualifierResult) {
+              if (
+                roundData.qualifierResult != null &&
+                roundData.qualifierResult.result.length > 0
+              ) {
                 return html`
                   <div>
                     <div class="heading">予選リザルト</div>
