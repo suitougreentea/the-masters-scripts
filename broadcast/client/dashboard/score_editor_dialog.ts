@@ -2,13 +2,7 @@ import {
   StagePlayerEntry,
   StageScoreEntry,
 } from "../../common/common_types.ts";
-import {
-  formatLevelOrGradeNullable,
-  formatTimeNullable,
-  parseGrade,
-  parseLevelOrGrade,
-  parseTime,
-} from "../../common/util.ts";
+import { formatGrade, formatTime, parseGrade } from "../../common/util.ts";
 import {
   css,
   customElement,
@@ -37,10 +31,19 @@ export class MastersScoreEditorDialogElement extends LitElement {
       padding: 8px;
     }
 
+    .example-entry + .example-entry {
+      margin-left: 24px;
+    }
+
     .dialog-buttons {
       text-align: right;
     }
     `;
+
+  private _stageIndex = -1;
+  get stageIndex() {
+    return this._stageIndex;
+  }
 
   @state()
   _data: DataEntry[] = [];
@@ -49,7 +52,8 @@ export class MastersScoreEditorDialogElement extends LitElement {
   @query("fluent-dialog", true)
   private _dialog!: FluentDialog;
 
-  open(players: (StagePlayerEntry | null)[]) {
+  open(stageIndex: number, players: (StagePlayerEntry | null)[]) {
+    this._stageIndex = stageIndex;
     this._data = players.map((e) => {
       return {
         name: e?.name ?? null,
@@ -82,96 +86,82 @@ export class MastersScoreEditorDialogElement extends LitElement {
     return { score };
   }
 
-  private _changeScore(playerIndex: number, column: string, newValue: string) {
+  private _changeScore(playerIndex: number, newValue: string) {
     const newScore = [...this._data];
     const currentValues = newScore[playerIndex];
-    if (column == "levelOrGrade") {
-      const { level, grade } = parseLevelOrGrade(newValue);
-      if (level == null && grade == null) {
-        if (currentValues.time != null) {
-          // GMを埋める
-          newScore[playerIndex] = {
-            ...currentValues,
-            level: 999,
-            grade: parseGrade("GM"),
-          };
-        } else {
-          // 空に
-          newScore[playerIndex] = {
-            ...currentValues,
-            level,
-            grade,
-          };
-        }
-      } else if (level != null && grade == null) {
-        // 窒息時なので時間を消す
-        newScore[playerIndex] = {
-          ...currentValues,
-          level,
-          grade,
-          time: null,
-        };
+    if (newValue.trim() == "") {
+      newScore[playerIndex] = {
+        ...currentValues,
+        level: null,
+        grade: null,
+        time: null,
+      };
+    } else {
+      const parsedScore = this._parseScore(newValue.trim());
+      if (parsedScore != null) {
+        newScore[playerIndex] = { ...currentValues, ...parsedScore };
       } else {
-        // 完走時
-        newScore[playerIndex] = {
-          ...currentValues,
-          level,
-          grade,
-        };
-      }
-    } else if (column == "time") {
-      const time = parseTime(newValue);
-      if (time != null) {
-        if (currentValues.grade != null) {
-          // 段位そのまま
-          newScore[playerIndex] = {
-            ...currentValues,
-            level: 999,
-            time,
-          };
-        } else {
-          // GMを埋める
-          newScore[playerIndex] = {
-            ...currentValues,
-            level: 999,
-            grade: parseGrade("GM"),
-            time,
-          };
-        }
-      } else {
-        // 時間を空に
-        newScore[playerIndex] = {
-          ...currentValues,
-          time,
-        };
+        newScore[playerIndex] = { ...currentValues };
       }
     }
     this._data = newScore;
   }
 
-  private _clearScore(playerIndex: number) {
-    const newScore = [...this._data];
-    const currentValues = newScore[playerIndex];
-    newScore[playerIndex] = {
-      ...currentValues,
-      level: null,
-      grade: null,
-      time: null,
-    };
-    this._data = newScore;
+  private _parseScore(
+    value: string,
+  ):
+    | { level: number | null; grade: number | null; time: number | null }
+    | null {
+    const levelMatch = value.match(/^\d{1,3}$/);
+    if (levelMatch) {
+      return { level: Number(levelMatch[0]), grade: null, time: null };
+    }
+    const gradeAndTimeMatch = value.match(
+      /^((S[456789]|GM) +)?(((\d{1,2}):(\d{1,2})[:\.](\d{1,2}))|((\d{1,2})(\d\d)(\d\d)))$/,
+    );
+    if (gradeAndTimeMatch) {
+      const grade = parseGrade(gradeAndTimeMatch[2] ?? "GM");
+      const longTime = gradeAndTimeMatch.slice(5, 8);
+      const shortTime = gradeAndTimeMatch.slice(9, 12);
+      let time: number;
+      if (longTime[0] != null) {
+        time = Number(longTime[0]) * 60000 + Number(longTime[1]) * 1000 +
+          Number(longTime[2].padEnd(2, "0")) * 10;
+      } else if (shortTime[0] != null) {
+        time = Number(shortTime[0]) * 60000 + Number(shortTime[1]) * 1000 +
+          Number(shortTime[2]) * 10;
+      } else {
+        throw new Error();
+      }
+      return { level: 999, grade, time };
+    }
+    return null;
+  }
+
+  private _formatScore(
+    score: { level: number | null; grade: number | null; time: number | null },
+  ): string {
+    if (score.level != null && score.grade == null && score.time == null) {
+      return String(score.level);
+    }
+    if (score.grade != null && score.time != null) {
+      return `${formatGrade(score.grade)} ${formatTime(score.time)}`;
+    }
+    if (score.grade == null && score.time != null) {
+      return `GM ${formatTime(score.time)}`;
+    }
+    return "";
   }
 
   render() {
     return html`
-    <fluent-dialog id="dialog-edit-stage-score" hidden trap-focus modal style="--dialog-width: 500px; --dialog-height: 430px;">
+    <fluent-dialog id="dialog-edit-stage-score" hidden trap-focus modal style="--dialog-width: 350px; --dialog-height: 460px;">
       <div class="dialog-container">
         <table>
           <thead>
             <tr>
               <th>名前</th>
-              <th>レベル/段位</th>
-              <th>タイム</th>
-              <th></th>
+              <th>スコア</th>
             </tr>
           </thead>
           <tbody>
@@ -182,31 +172,26 @@ export class MastersScoreEditorDialogElement extends LitElement {
               <tr>
                 <td>${e.name}</td>
                 <td><fluent-text-field ?disabled=${disabled} .value=${
-          live(
-            formatLevelOrGradeNullable({ level: e.level, grade: e.grade }) ??
-              "",
-          )
-        } @change=${(e: Event) =>
+          live(this._formatScore(e))
+        } @change=${(ev: Event) =>
           this._changeScore(
             i,
-            "levelOrGrade",
-            (e.target as FluentTextField).value,
+            (ev.target as FluentTextField).value,
           )}></fluent-text-field></td>
-                <td><fluent-text-field ?disabled=${disabled} .value=${
-          live(formatTimeNullable(e.time) ?? "")
-        } @change=${(e: Event) =>
-          this._changeScore(
-            i,
-            "time",
-            (e.target as FluentTextField).value,
-          )}></fluent-text-field></td>
-                <td><fluent-button ?disabled=${disabled} @click=${() =>
-          this._clearScore(i)}>Clear</fluent-button></td>
               </tr>`;
       })
     }
           </tbody>
         <table>
+        <div>
+          <div><b>入力例:</b></div>
+          <div>
+            <span class="example-entry">443</span>
+            <span class="example-entry">9:32.10</span>
+            <span class="example-entry">S9 9:32:10</span>
+            <span class="example-entry">S9 93210</span>
+          </div>
+        </div>
         <div class="dialog-buttons">
           <fluent-button appearance="accent" @click=${() =>
       this._close(true)}>OK</fluent-button>

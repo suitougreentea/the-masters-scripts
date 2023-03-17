@@ -79,6 +79,11 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
     }
     `;
 
+  private _stageIndex = -1;
+  get stageIndex() {
+    return this._stageIndex;
+  }
+
   @state()
   private _mode: Mode = "reorder";
   @state()
@@ -97,7 +102,12 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
   @query("fluent-dialog", true)
   private _dialog!: FluentDialog;
 
-  open(data: (StagePlayerEntry | null)[], initialMode: Mode) {
+  open(
+    stageIndex: number,
+    data: (StagePlayerEntry | null)[],
+    initialMode: Mode,
+  ) {
+    this._stageIndex = stageIndex;
     this._reorderPlayers = [];
     data.forEach((e) => {
       if (e == null) return;

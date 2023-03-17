@@ -1,7 +1,20 @@
-import { StagePlayerEntry } from "../../common/common_types.ts";
+import {
+  RegisteredPlayerEntry,
+  StagePlayerEntry,
+} from "../../common/common_types.ts";
 import { commonColors } from "../common/common_values.ts";
-import { createPromiseSet, formatTime, PromiseSet } from "../../common/util.ts";
-import { css, customElement, html, LitElement, map } from "../deps.ts";
+import { formatTime, getDiffTime } from "../../common/util.ts";
+import {
+  classMap,
+  css,
+  customElement,
+  html,
+  LitElement,
+  map,
+  property,
+} from "../deps.ts";
+
+const ordinals = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"];
 
 @customElement("masters-player-info")
 export class MastersPlayerInfoElement extends LitElement {
@@ -14,7 +27,6 @@ export class MastersPlayerInfoElement extends LitElement {
       position: absolute;
       width: 288px;
       height: 436px;
-      text-shadow: 0 0 5px black;
     }
     .player:nth-child(odd) {
       text-align: left;
@@ -59,6 +71,7 @@ export class MastersPlayerInfoElement extends LitElement {
       position: absolute;
       top: 5px;
       color: rgb(160, 160, 160);
+      text-shadow: 0 0 5px black;
       font-size: 48px;
       line-height: 48px;
       margin: 0px 5px;
@@ -69,12 +82,16 @@ export class MastersPlayerInfoElement extends LitElement {
     .player:nth-child(even) .id {
       right: 0px;
     }
+    .id-inactive {
+      opacity: 0.3;
+    }
 
     .name {
       position: absolute;
       top: 10px;
       font-size: 24px;
       line-height: 24px;
+      text-shadow: 0 0 5px black;
     }
     .player:nth-child(odd) .name {
       left: 60px;
@@ -82,115 +99,136 @@ export class MastersPlayerInfoElement extends LitElement {
     .player:nth-child(even) .name {
       right: 60px;
     }
-
-    .best-time {
-      display: none;
+    
+    .detail {
       position: absolute;
-      top: 43px;
-      font-size: 18px;
-      line-height: 18px;
-      font-weight: bold;
-      text-shadow: 2px 2px 0 black;
-    }
-    .player:nth-child(odd) .best-time {
-      left: 192px;
-    }
-    .player:nth-child(even) .best-time {
-      right: 194px;
+      top: 77px;
+      width: 210px;
+      height: 310px;
+      border-radius: 5px;
+      background: rgba(0, 0, 0, 0.97);
+      box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.7);
+      padding: 12px;
     }
 
-    .offset {
-      display: none;
-      position: absolute;
-      top: 64px;
-      font-size: 14px;
-      line-height: 14px;
-      text-shadow: 2px 2px 0 black;
+    .player:nth-child(odd) .detail {
+      left: 20px;
     }
-    .player:nth-child(odd) .offset {
-      left: 192px;
+    .player:nth-child(even) .detail {
+      right: 20px;
     }
-    .player:nth-child(even) .offset {
-      right: 194px;
+
+    .detail-name {
+      font-size: 20px;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid ${commonColors.textDark};
+    }
+
+    dl {
+      display: grid;
+      margin: 0;
+      row-gap: 10px;
+    }
+
+    dt {
+      grid-column: 1;
+      text-align: left;
+    }
+
+    dd {
+      grid-column: 2;
+      text-align: right;
+    }
+
+    .offset-handicap {
+      color: ${commonColors.handicapTextDark};
+    }
+    .offset-advantage {
+      color: ${commonColors.advantageTextDark};
+    }
+
+    .free {
+      height: 100px;
+      word-wrap: break-word;
+      overflow: hidden;
+      text-align: left;
     }
     `;
 
-  #initializedPromise: PromiseSet<void> = createPromiseSet();
-  #elements: {
-    name: HTMLDivElement;
-    bestTime: HTMLDivElement;
-    offset: HTMLDivElement;
-  }[] = [];
-  #data: (StagePlayerEntry | null)[];
+  @property()
+  data?: (StagePlayerEntry | null)[] = this._createEmptyData();
 
-  constructor() {
-    super();
-    this.#data = this.#createEmptyData();
-  }
+  @property()
+  showDetail? = true;
 
-  firstUpdated() {
-    const players = this.renderRoot.querySelectorAll<HTMLDivElement>(".player");
-    for (let i = 0; i < 8; i++) {
-      const player = players[i];
-      const name = player.querySelector<HTMLDivElement>(".name")!;
-      const bestTime = player.querySelector<HTMLDivElement>(".best-time")!;
-      const offset = player.querySelector<HTMLDivElement>(".offset")!;
-      this.#elements.push({ name, bestTime, offset });
-    }
+  @property()
+  registeredPlayers: RegisteredPlayerEntry[] = [];
 
-    this.#initializedPromise.resolve();
-  }
-
-  waitForInitialization() {
-    return this.#initializedPromise.promise;
-  }
-
-  #reset() {
-    for (let i = 0; i < 8; i++) {
-      const player = this.#data[i];
-      const element = this.#elements[i];
-      if (player != null) {
-        element.name.innerText = player.name;
-        element.bestTime.innerText = formatTime(player.rawBestTime);
-        if (player.handicap > 0) {
-          element.offset.innerText = `[Hdcp. +${player.handicap}]`;
-          element.offset.style.color = commonColors.handicapTextDark.cssText;
-        } else if (player.handicap < 0) {
-          element.offset.innerText = `[Adv. ${player.handicap}]`;
-          element.offset.style.color = commonColors.advantageTextDark.cssText;
-        } else {
-          element.offset.innerText = "";
-          element.offset.style.color = "";
-        }
-      } else {
-        element.name.innerText = "";
-        element.bestTime.innerText = "";
-        element.offset.innerText = "";
-      }
-    }
-  }
-
-  setData(data?: (StagePlayerEntry | null)[]) {
-    this.#data = data ?? this.#createEmptyData();
-    this.#reset();
-  }
-
-  #createEmptyData(): (StagePlayerEntry | null)[] {
+  private _createEmptyData(): (StagePlayerEntry | null)[] {
     return [...new Array(8)].map((_) => null);
   }
 
   render() {
+    const data = this.data ?? this._createEmptyData();
+    const isDataEmpty = data.every((e) => e == null);
+
     return html`
     <div class="container">
       ${
-      map(this.#data, (_, i) =>
+      map(data, (e, i) =>
         html`
         <div class="player">
-          <div class="border"></div>
-          <div class="id">${i + 1}</div>
-          <div class="name"></div>
-          <div class="best-time"></div>
-          <div class="offset"></div>
+          <div class=${
+          classMap({ "id": true, "id-inactive": !isDataEmpty && e == null })
+        }>${i + 1}</div>
+          <div class="name">${e?.name}</div>
+          ${
+          this.showDetail && e != null
+            ? html`
+          <div class="detail">
+            <div class="detail-name">${e?.name}</div>
+            <hr>
+            <dl class="best-time">
+              <dt>自己ベスト</dt>
+              <dd>${e != null ? formatTime(e.rawBestTime) : null}</dd>
+              <dt>スタート</dt>
+              <dd>
+                ${e != null ? formatTime(e.startTime) : null}
+                <br>
+                ${
+              (() => {
+                const handicap = e?.handicap ?? 0;
+                if (handicap > 0) {
+                  return html`<div class="offset-handicap">[Hdcp. +${handicap}]</div>`;
+                } else if (handicap < 0) {
+                  return html`<div class="offset-advantage">[Adv. ${handicap}]</div>`;
+                } else {
+                  return html`<div class="offset-neutral">[±0]</div>`;
+                }
+              })()
+            }
+              </dd>
+              <dt>スタート順</dt>
+              <dd>${e != null ? ordinals[e.startOrder - 1] : null}</dd>
+              <dt>前の人から</dt>
+              <dd>${
+              e != null ? `+${formatTime(getDiffTime(data, i))}` : null
+            }</dd>
+            </dl>
+            <hr>
+            <div class="free">
+              ${
+              (this.registeredPlayers.find((p) => p.name == e.name)?.comment ??
+                "").split("\n").map((line) => html`${line}<br>`)
+            }
+            </div>
+          </div>
+          `
+            : null
+        }
         </div>
         `)
     }

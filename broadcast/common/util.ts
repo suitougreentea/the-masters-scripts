@@ -1,3 +1,5 @@
+import { StagePlayerEntry } from "./common_types.ts";
+
 export function formatTime(ms: number, positiveSign = false): string {
   const sign = ms > 0 ? (positiveSign ? "+" : "") : ms < 0 ? "-" : "";
   const abs = Math.abs(ms);
@@ -67,6 +69,32 @@ export function parseLevelOrGrade(
   if (parsedGrade >= 0) return { grade: parsedGrade, level: 999 };
 
   return { grade: null, level: null };
+}
+
+export function getDiffTime(
+  players: (StagePlayerEntry | null)[],
+  playerIndex: number,
+): number {
+  const player = players[playerIndex];
+  if (player == null) return 0;
+
+  if (player.startOrder == 1) return 0;
+
+  // startOrderが1つ先の人を探す
+  let targetIndex = -1;
+  players.forEach((e, i) => {
+    if (e == null) return;
+    if (e.startOrder < player.startOrder) {
+      if (
+        targetIndex == -1 || players[targetIndex]!.startOrder < e.startOrder
+      ) {
+        targetIndex = i;
+      }
+    }
+  });
+  if (targetIndex == -1) return 0; // unreachable?
+
+  return player.startTime - players[targetIndex]!.startTime;
 }
 
 export type PromiseSet<T> = {

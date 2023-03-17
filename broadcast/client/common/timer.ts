@@ -1,6 +1,11 @@
 import { StagePlayerEntry } from "../../common/common_types.ts";
 import { commonColors } from "../common/common_values.ts";
-import { createPromiseSet, formatTime, PromiseSet } from "../../common/util.ts";
+import {
+  createPromiseSet,
+  formatTime,
+  getDiffTime,
+  PromiseSet,
+} from "../../common/util.ts";
 import {
   css,
   customElement,
@@ -14,9 +19,7 @@ import {
 export class MastersTimerElement extends LitElement {
   static styles = css`
   .container {
-    background-color: ${commonColors.background};
     color: ${commonColors.textDark};
-    padding: 2px 6px;
   }
 
   .container-inner {
@@ -30,24 +33,49 @@ export class MastersTimerElement extends LitElement {
     height: 32px;
   }
 
+  .background-left {
+    grid-area: 1 / 1 / auto / span 2;
+    height: 100%;
+    background-color: ${commonColors.background};
+  }
+
+  .background-time {
+    grid-area: 1 / 3 / auto / auto;
+    height: 100%;
+    background-color: ${commonColors.background};
+    transition-property: background-color;
+    transition-duration: 0.5s;
+  }
+
+  .background-time-hidden {
+    background-color: transparent;
+  }
+
+  .background-right {
+    grid-area: 1 / 4 / auto / span 3;
+    height: 100%;
+    background-color: ${commonColors.background};
+  }
+
   .border {
-    grid-row: 1;
-    grid-column: 1 / span 6;
+    grid-area: 1 / 1 / auto / span 6;
     height: 1px;
     background-color: #444;
     transform: translateY(10px);
   }
 
   .id {
-    grid-row: 1;
-    grid-column: 1;
+    grid-area: 1 / 1 / auto / auto;
     font-size: 16px;
     transform: translateY(1px);
   }
 
+  .id-inactive {
+    opacity: 0.3;
+  }
+
   .name {
-    grid-row: 1;
-    grid-column: 2;
+    grid-area: 1 / 2 / auto / auto;
     font-size: 20px;
     overflow: hidden;
     white-space: nowrap;
@@ -56,21 +84,24 @@ export class MastersTimerElement extends LitElement {
   }
 
   .time {
-    grid-row: 1;
-    grid-column: 3;
+    grid-area: 1 / 3 / auto / auto;
     font-size: 20px;
+    transition-property: color;
+    transition-duration: 0.5s;
+  }
+
+  .time-hidden {
+    color: transparent;
   }
 
   .gauge {
-    grid-row: 1;
-    grid-column: 4 / span 3;
+    grid-area: 1 / 4 / auto / span 3;
     height: 18px;
     transform: translateY(1px);
   }
 
   .start-order {
-    grid-row: 1;
-    grid-column: 4;
+    grid-area: 1 / 4 / auto / auto;
     font-size: 16px;
     text-shadow: 0 0 5px black;
     margin-left: 2px;
@@ -78,16 +109,14 @@ export class MastersTimerElement extends LitElement {
   }
 
   .diff-time {
-    grid-row: 1;
-    grid-column: 5;
+    grid-area: 1 / 5 / auto / auto;
     font-size: 16px;
     text-shadow: 0 0 5px black;
     transform: translateY(1px);
   }
 
   .offset {
-    grid-row: 1;
-    grid-column: 6;
+    grid-area: 1 / 6 / auto / auto;
     font-size: 16px;
     text-shadow: 0 0 5px black;
     transform: translateY(1px);
@@ -98,6 +127,8 @@ export class MastersTimerElement extends LitElement {
 
   #initializedPromise: PromiseSet<void> = createPromiseSet();
   #elements: {
+    id: HTMLDivElement;
+    backgroundTime: HTMLDivElement;
     name: HTMLDivElement;
     time: HTMLDivElement;
     gauge: HTMLDivElement;
@@ -118,13 +149,26 @@ export class MastersTimerElement extends LitElement {
     const players = this.renderRoot.querySelectorAll<HTMLDivElement>(".player");
     for (let i = 0; i < 8; i++) {
       const player = players[i];
+      const id = player.querySelector<HTMLDivElement>(".id")!;
+      const backgroundTime = player.querySelector<HTMLDivElement>(
+        ".background-time",
+      )!;
       const name = player.querySelector<HTMLDivElement>(".name")!;
       const time = player.querySelector<HTMLDivElement>(".time")!;
       const gauge = player.querySelector<HTMLDivElement>(".gauge")!;
       const startOrder = player.querySelector<HTMLDivElement>(".start-order")!;
       const diffTime = player.querySelector<HTMLDivElement>(".diff-time")!;
       const offset = player.querySelector<HTMLDivElement>(".offset")!;
-      this.#elements.push({ name, time, gauge, startOrder, diffTime, offset });
+      this.#elements.push({
+        id,
+        backgroundTime,
+        name,
+        time,
+        gauge,
+        startOrder,
+        diffTime,
+        offset,
+      });
     }
 
     this.#initializedPromise.resolve();
@@ -167,39 +211,16 @@ export class MastersTimerElement extends LitElement {
   #reset() {
     if (this.isRunning()) throw new Error("Timer is running");
 
-    const getDiffTime = (playerIndex: number) => {
-      const players = this.#data;
-      const player = players[playerIndex];
-      if (player == null) return 0;
-
-      if (player.startOrder == 1) return 0;
-
-      // startOrderが1つ先の人を探す
-      let targetIndex = -1;
-      players.forEach((e, i) => {
-        if (e == null) return;
-        if (e.startOrder < player.startOrder) {
-          if (
-            targetIndex == -1 || players[targetIndex]!.startOrder < e.startOrder
-          ) {
-            targetIndex = i;
-          }
-        }
-      });
-      if (targetIndex == -1) return 0; // unreachable?
-
-      return player.startTime - players[targetIndex]!.startTime;
-    };
-
     for (let i = 0; i < 8; i++) {
       const player = this.#data[i];
       const element = this.#elements[i];
       if (player != null) {
         element.name.innerText = player.name;
-        this.#setPlayerTime(i, player.startTime);
+        this.#setPlayerTime(i, player.startTime, false);
         element.startOrder.innerText = this.#ordinals[player.startOrder - 1] +
           ":";
-        element.diffTime.innerText = "+" + formatTime(getDiffTime(i));
+        element.diffTime.innerText = "+" +
+          formatTime(getDiffTime(this.#data, i));
         if (player.handicap > 0) {
           element.offset.innerText = `[Hdcp. +${player.handicap}]`;
           element.offset.style.color = commonColors.handicapTextDark.cssText;
@@ -212,7 +233,7 @@ export class MastersTimerElement extends LitElement {
         }
       } else {
         element.name.innerText = "";
-        this.#setPlayerTime(i, null);
+        this.#setPlayerTime(i, null, false);
         element.startOrder.innerText = "";
         element.diffTime.innerText = "";
         element.offset.innerText = "";
@@ -237,16 +258,23 @@ export class MastersTimerElement extends LitElement {
       const initialTime = this.#data[i]?.startTime;
       if (initialTime != null) {
         const time = Math.max(0, initialTime - elapsed);
-        this.#setPlayerTime(i, time);
+        this.#setPlayerTime(i, time, true);
       } else {
-        this.#setPlayerTime(i, null);
+        this.#setPlayerTime(i, null, true);
       }
     }
   }
 
-  #setPlayerTime(index: number, time: number | null) {
+  #setPlayerTime(index: number, time: number | null, running: boolean) {
     const player = this.#elements[index];
     if (time != null) {
+      player.id.className = "id";
+      player.backgroundTime.className = time == 0 && running
+        ? "background-time background-time-hidden"
+        : "background-time";
+      player.time.className = time == 0 && running
+        ? "time time-hidden"
+        : "time";
       player.time.innerText = formatTime(time);
       player.gauge.style.width = (time / 200) + "px";
       let color = "#35a16b";
@@ -258,6 +286,9 @@ export class MastersTimerElement extends LitElement {
       }
       player.gauge.style.background = color;
     } else {
+      player.id.className = "id id-inactive";
+      player.backgroundTime.className = "background-time";
+      player.time.className = "time";
       player.time.innerText = "";
       player.gauge.style.width = "0px";
     }
@@ -271,6 +302,9 @@ export class MastersTimerElement extends LitElement {
       map(this.#data, (_, i) =>
         html`
         <div class="player">
+          <div class="background-left"></div>
+          <div class="background-time"></div>
+          <div class="background-right"></div>
           <div class="border"></div>
           <div class="id">${i + 1}:</div>
           <div class="name"></div>

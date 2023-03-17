@@ -4,6 +4,7 @@ import {
   Participant,
   QualifierResult,
   QualifierScore,
+  RegisteredPlayerEntry,
   RoundMetadata,
   StageData,
   StageMetadata,
@@ -21,23 +22,30 @@ export type RoundData = {
   qualifierResult?: QualifierResult;
 };
 
-export type BroadcastStageData = {
+export type CompetitionSceneStageData = {
   roundIndex: number;
   stageIndex: number;
   metadata: StageMetadata;
   stageData: StageData;
-  shouldShowResult: boolean;
+};
+
+export type ResultSceneData = {
+  roundData: RoundData;
+  currentStageIndex: number;
+  nextStageName: string | null;
 };
 
 type EmptyObject = Record<keyof unknown, never>;
 
 export type TypeDefinition = {
   replicants: {
+    currentRegisteredPlayers: RegisteredPlayerEntry[] | null;
     currentParticipants: Participant[] | null;
     currentCompetitionMetadata: CompetitionMetadata | null;
     currentRoundData: RoundData | null;
-    currentStageIndex: number;
-    currentBroadcastStageData: BroadcastStageData | null;
+    currentCompetitionSceneStageData: CompetitionSceneStageData | null;
+    currentResultSceneData: ResultSceneData | null;
+    resultSceneActive: boolean;
   };
 
   messages: {
@@ -50,6 +58,7 @@ export type TypeDefinition = {
     login: { result: { url: string } };
     cancelLogin: EmptyObject;
     checkLogin: EmptyObject;
+    getCurrentRegisteredPlayers: EmptyObject;
     setupCompetition: { params: { options: CompetitionSetupOptions } };
     getCurrentCompetitionMetadata: EmptyObject;
     enterRound: { params: { roundIndex: number } };
@@ -57,13 +66,17 @@ export type TypeDefinition = {
     finalizeCurrentRound: EmptyObject;
     finalizeCurrentRoundIfCompleted: EmptyObject;
     leaveCurrentRound: EmptyObject;
-    setCurrentStage: { params: { stageIndex: number } };
-    refreshCurrentStage: EmptyObject;
-    resetCurrentStage: { params: { setup: StageSetupResult } };
-    reorderCurrentStagePlayers: { params: { names: (string | null)[] } };
-    setCurrentStageScore: { params: { score: StageScoreData } };
+    refreshStage: { params: { stageIndex: number } };
+    resetStage: { params: { stageIndex: number; setup: StageSetupResult } };
+    reorderStagePlayers: {
+      params: { stageIndex: number; names: (string | null)[] };
+    };
+    setStageScore: { params: { stageIndex: number; score: StageScoreData } };
     finishCompetition: { result: { exportedUrl: string } };
-    sendCurrentStageDataToBroadcast: { params: { shouldShowResult: boolean } };
-    unsetBroadcastStageData: EmptyObject;
+    sendStageDataToCompetitionScene: { params: { stageIndex: number } };
+    unsetCompetitionSceneStageData: EmptyObject;
+    setResultSceneData: { params: { stageIndex: number } };
+    unsetResultSceneData: EmptyObject;
+    toggleResultScene: { params: { show: boolean } };
   };
 };

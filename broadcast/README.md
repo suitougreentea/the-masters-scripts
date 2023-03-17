@@ -9,6 +9,15 @@
 }
 ```
 
+`obs-websocket-conf.json`:
+
+```json
+{
+  "address": "ws://...",
+  "password": "..."
+}
+```
+
 ## Run
 
 ```sh

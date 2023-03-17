@@ -1,14 +1,17 @@
 import { css, customElement, html, LitElement } from "../deps.ts";
-import "./title.ts";
+import "../common/title.ts";
 import "./player_info.ts";
 import "./round_name.ts";
 import "../common/timer.ts";
-import { MastersTitleElement } from "./title.ts";
+import { MastersTitleElement } from "../common/title.ts";
 import { MastersPlayerInfoElement } from "./player_info.ts";
 import { MastersRoundNameElement } from "./round_name.ts";
 import { MastersTimerElement } from "../common/timer.ts";
 import { TimerWrapper } from "../common/timer_wrapper.ts";
-import { StagePlayerEntry } from "../../common/common_types.ts";
+import {
+  RegisteredPlayerEntry,
+  StagePlayerEntry,
+} from "../../common/common_types.ts";
 import { createPromiseSet, PromiseSet } from "../../common/util.ts";
 
 @customElement("masters-competition")
@@ -17,7 +20,7 @@ export class MastersCompetitionElement extends LitElement {
   .container {
     width: 1920px;
     height: 1080px;
-    background-image: url("/images/background.png");
+    background-image: url("/images/background-competition.png");
   }
 
   #title {
@@ -35,9 +38,10 @@ export class MastersCompetitionElement extends LitElement {
 
   #timer {
     position: absolute;
-    top: 140px;
+    top: 150px;
     left: 1310px;
     width: 550px;
+    height: 256px;
   }
   `;
 
@@ -57,7 +61,6 @@ export class MastersCompetitionElement extends LitElement {
     this.#playerInfo = this.renderRoot.querySelector<MastersPlayerInfoElement>(
       "#player-info",
     )!;
-    await this.#playerInfo.waitForInitialization();
     this.#roundName = this.renderRoot.querySelector<MastersRoundNameElement>(
       "#round-name",
     )!;
@@ -81,17 +84,23 @@ export class MastersCompetitionElement extends LitElement {
 
   setTimerData(data?: (StagePlayerEntry | null)[]) {
     this.#timerWrapper.setData(data);
-    this.#playerInfo.setData(data);
+    this.#playerInfo.data = data;
+  }
+
+  setRegisteredPlayers(players: RegisteredPlayerEntry[]) {
+    this.#playerInfo.registeredPlayers = players;
   }
 
   startTimer() {
     if (this.#timerWrapper == null) return;
     this.#timerWrapper.start();
+    this.#playerInfo.showDetail = false;
   }
 
   stopTimer() {
     if (this.#timerWrapper == null) return;
     this.#timerWrapper.stop();
+    this.#playerInfo.showDetail = true;
   }
 
   render() {

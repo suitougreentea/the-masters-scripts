@@ -1,6 +1,7 @@
 namespace Definition {
   export const sheetNames = {
     players: "Players",
+    playersParsed: "Players_Parsed",
     ranking: "Ranking",
     setup: "Setup",
     competition: "Competition",

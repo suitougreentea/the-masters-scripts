@@ -23,6 +23,7 @@ export class MastersStageResultElement extends LitElement {
     font-size: 14px;
     border: 2px solid ${commonColors.tableResult};
     border-collapse: collapse;
+    background-color: white;
   }
 
   col:nth-child(1) {
@@ -57,7 +58,7 @@ export class MastersStageResultElement extends LitElement {
   }
 
   tr:nth-child(2n) {
-    background-color:${commonColors.tableLightGray};
+    background-color: ${commonColors.tableLightGray};
   }
 
   tr.winners-end td, tr.wildcard-end td {

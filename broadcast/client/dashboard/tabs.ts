@@ -97,7 +97,15 @@ export class MastersTabsElement extends LitElement {
       await this._dashboardContext.alert(
         `${result.exportedUrl}に結果がエクスポートされました`,
       );
-      await this._dashboardContext.sendRequest("unsetBroadcastStageData");
+      await this._dashboardContext.sendRequest("toggleResultScene", {
+        show: false,
+      });
+      await this._dashboardContext.sendRequest(
+        "unsetCompetitionSceneStageData",
+      );
+      await this._dashboardContext.sendRequest(
+        "unsetResultSceneData",
+      );
       this.dispatchEvent(new Event("finish-competition"));
     }
   }

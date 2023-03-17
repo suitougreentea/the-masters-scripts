@@ -1,6 +1,5 @@
 import { DashboardContext, dashboardContext } from "./dashboard_context.ts";
 import {
-  classMap,
   consume,
   css,
   customElement,
@@ -47,10 +46,6 @@ export class MastersRoundElement extends LitElement {
       height: calc(100vh - 415px);
       overflow-y: scroll;
       padding: 8px;
-    }
-
-    .stage-active h2 {
-      background-color: rgb(255, 255, 230);
     }
 
     .stage-toolbar {
@@ -127,8 +122,6 @@ export class MastersRoundElement extends LitElement {
   private _manualMode = false;
   @state()
   private _currentRoundData?: RoundData | null = null;
-  @state()
-  private _currentStageIndex = -1;
 
   // @ts-ignore: ?
   @query("masters-player-names-editor-dialog", true)
@@ -152,61 +145,76 @@ export class MastersRoundElement extends LitElement {
     currentRoundDataReplicant.subscribe((value) => {
       this._currentRoundData = value;
     });
-    const currentStageIndexReplicant = await client.getReplicant(
-      "currentStageIndex",
+  }
+
+  private async _sendToTimer(stageIndex: number) {
+    // TODO: 仮
+    await this._dashboardContext.sendRequest("getCurrentRegisteredPlayers");
+
+    await this._dashboardContext.sendRequest(
+      "sendStageDataToCompetitionScene",
+      { stageIndex },
     );
-    currentStageIndexReplicant.subscribe((value) => {
-      this._currentStageIndex = value ?? -1;
+    this._dashboardContext.requestStopTimer();
+    await this._dashboardContext.sendRequest("toggleResultScene", {
+      show: false,
     });
   }
 
-  private async _activateStage(stageIndex: number) {
-    await this._dashboardContext.sendRequest("setCurrentStage", { stageIndex });
+  private async _reloadStage(stageIndex: number) {
+    await this._dashboardContext.sendRequest("refreshStage", { stageIndex });
   }
 
-  private async _sendToTimer() {
-    await this._dashboardContext.sendRequest(
-      "sendCurrentStageDataToBroadcast",
-      { shouldShowResult: false },
-    );
-    this._dashboardContext.requestStopTimer();
-  }
-
-  private async _reloadStage() {
-    await this._dashboardContext.sendRequest("refreshCurrentStage");
-  }
-
-  private _editStagePlayerNames() {
-    const currentStageData =
-      this._currentRoundData!.stageData[this._currentStageIndex];
+  private _editStagePlayerNames(stageIndex: number) {
+    const currentStageData = this._currentRoundData!.stageData[stageIndex];
     this._playerNamesEditorDialog.open(
+      stageIndex,
       currentStageData.players,
       this._manualMode ? "reset" : "reorder",
     );
   }
 
-  private _editStageScore() {
-    const currentStageData =
-      this._currentRoundData!.stageData[this._currentStageIndex];
-    this._scoreEditorDialog.open(currentStageData.players);
+  private _editStageScore(stageIndex: number) {
+    const currentStageData = this._currentRoundData!.stageData[stageIndex];
+    this._scoreEditorDialog.open(stageIndex, currentStageData.players);
   }
 
-  private async _updateStagePlayerNames(data: PlayerNamesEditorData) {
+  private async _updateStagePlayerNames(
+    stageIndex: number,
+    data: PlayerNamesEditorData,
+  ) {
     if (data.mode == "reorder") {
       const names = data.players;
-      await this._dashboardContext.sendRequest("reorderCurrentStagePlayers", {
+      await this._dashboardContext.sendRequest("reorderStagePlayers", {
+        stageIndex,
         names,
       });
     } else if (data.mode == "reset") {
       const setup: StageSetupResult = { entries: data.players };
-      await this._dashboardContext.sendRequest("resetCurrentStage", { setup });
+      await this._dashboardContext.sendRequest("resetStage", {
+        stageIndex,
+        setup,
+      });
     }
   }
 
-  private async _updateStageScore(data: ScoreEditorDialogData) {
+  private async _updateStageScore(
+    stageIndex: number,
+    data: ScoreEditorDialogData,
+  ) {
     const score: StageScoreData = { players: data.score };
-    await this._dashboardContext.sendRequest("setCurrentStageScore", { score });
+    await this._dashboardContext.sendRequest("setStageScore", {
+      stageIndex,
+      score,
+    });
     await this._dashboardContext.sendRequest("finalizeCurrentRoundIfCompleted");
+    await this._dashboardContext.sendRequest(
+      "setResultSceneData",
+      { stageIndex },
+    );
+    await this._dashboardContext.sendRequest("toggleResultScene", {
+      show: true,
+    });
   }
 
   private async _reloadRound() {
@@ -225,37 +233,32 @@ export class MastersRoundElement extends LitElement {
       map(this._currentRoundData?.stageData ?? [], (e, i) => {
         const stageMetadata: StageMetadata =
           this._currentRoundData!.metadata.stages[i];
-        const isActive = i == this._currentStageIndex;
         return html`
-          <div class=${classMap({ "stage": true, "stage-active": isActive })}>
+          <div class="stage">
             <h2>${stageMetadata.name}</h2>
             <div class="stage-toolbar">
               <div>
-                <fluent-button appearance="accent" .disabled=${isActive} @click=${() =>
-          this._activateStage(i)}>選択</fluent-button>
-                <fluent-button .disabled=${!isActive} @click=${this._sendToTimer}>タイマーに送信</fluent-button>
+                <fluent-button @click=${() =>
+          this._sendToTimer(i)}>タイマーに送信</fluent-button>
               </div>
               <div>
-                <fluent-button .disabled=${!isActive} @click=${this._reloadStage}>再読み込み</fluent-button>
+                <fluent-button @click=${() =>
+          this._reloadStage(i)}>再読み込み</fluent-button>
               </div>
             </div>
             <div class="stage-container">
               <div class="stage-players-container">
                 <masters-stage-players .data=${e.players}></masters-stage-players>
-                ${
-          isActive
-            ? html`
                 <div class="stage-players-overlay">
-                  <div class="stage-players-edit stage-players-edit-player-names" @click=${this._editStagePlayerNames}>
+                  <div class="stage-players-edit stage-players-edit-player-names" @click=${() =>
+          this._editStagePlayerNames(i)}>
                     <div class="stage-players-edit-overlay">編集</div>
                   </div>
-                  <div class="stage-players-edit stage-players-edit-score" @click=${this._editStageScore}>
+                  <div class="stage-players-edit stage-players-edit-score" @click=${() =>
+          this._editStageScore(i)}>
                     <div class="stage-players-edit-overlay">編集</div>
                   </div>
                 </div>
-                `
-            : null
-        }
               </div>
               <masters-stage-result .data=${e.result} .numWinners=${stageMetadata.numWinners} .hasWildcard=${stageMetadata.hasWildcard}></masters-stage-result>
             </div>
@@ -298,14 +301,14 @@ export class MastersRoundElement extends LitElement {
       </div>
     </div>
 
-    <masters-player-names-editor-dialog @update-data=${(e: Event) =>
-      this._updateStagePlayerNames(
-        (e.target as MastersPlayerNamesEditorDialogElement).getData(),
-      )}></masters-player-names-editor-dialog>
-    <masters-score-editor-dialog @update-data=${(e: Event) =>
-      this._updateStageScore(
-        (e.target as MastersScoreEditorDialogElement).getData(),
-      )}></masters-score-editor-dialog>
+    <masters-player-names-editor-dialog @update-data=${(e: Event) => {
+      const editor = e.target as MastersPlayerNamesEditorDialogElement;
+      this._updateStagePlayerNames(editor.stageIndex, editor.getData());
+    }}></masters-player-names-editor-dialog>
+    <masters-score-editor-dialog @update-data=${(e: Event) => {
+      const editor = e.target as MastersScoreEditorDialogElement;
+      this._updateStageScore(editor.stageIndex, editor.getData());
+    }}></masters-score-editor-dialog>
     `;
   }
 }
