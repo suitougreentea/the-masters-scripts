@@ -31,26 +31,38 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
   static styles = css`
     .dialog-container {
       padding: 8px;
+      user-select: none;
     }
 
     .dialog-buttons {
       text-align: right;
     }
 
+    .type {
+      margin-bottom: 12px;
+    }
+
     .reorder-container {
       display: flex;
       justify-content: space-between;
+      margin-bottom: 12px;
     }
 
     .left-side {
+    }
+
+    .middle-side {
+      display: flex;
+      align-items: center;
     }
 
     .right-side {
     }
 
     .player {
-      width: 180px;
-      height: 24px;
+      width: 150px;
+      height: 32px;
+      line-height: 32px;
       padding: 4px;
       border: 1px solid gray;
       border-radius: 3px;
@@ -66,6 +78,7 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
     }
 
     .right-side .position {
+      width: 20px;
     }
 
     .p1 {
@@ -76,6 +89,10 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
     }
     .moved {
       opacity: 0.5;
+    }
+
+    fluent-text-field {
+      width: 185px;
     }
     `;
 
@@ -276,9 +293,9 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
 
     let isInvalid = false;
     return html`
-    <fluent-dialog id="dialog-edit-stage-score" hidden trap-focus modal style="--dialog-width: 500px; --dialog-height: 430px;">
+    <fluent-dialog id="dialog-edit-player-names" hidden trap-focus modal style="--dialog-width: 400px; --dialog-height: 440px;">
       <div class="dialog-container">
-        <fluent-radio-group .value=${live(this._mode)} @change=${(e: Event) =>
+        <fluent-radio-group class="type" .value=${live(this._mode)} @change=${(e: Event) =>
       this._mode = (e.target as FluentRadioGroup).value as Mode}>
           <fluent-radio value="reorder">並べ替え</fluent-radio>
           <fluent-radio value="reset">再設定</fluent-radio>
@@ -319,6 +336,7 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
             })
           }
               </div>
+              <div class="middle-side">→</div>
               <div class="right-side">
                 ${
             map(rightSide, (e, i) => {
