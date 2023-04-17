@@ -1,11 +1,5 @@
 import { TypeDefinition } from "../../common/type_definition.ts";
-import {
-  createContext,
-  denocg,
-  RequestName,
-  RequestParams,
-  RequestResult,
-} from "../deps.ts";
+import { createContext, denocg } from "../deps.ts";
 
 export class DashboardContext extends EventTarget {
   #clientPromise: Promise<denocg.Client<TypeDefinition>>;
@@ -24,11 +18,11 @@ export class DashboardContext extends EventTarget {
     return this.#requestInProgress;
   }
 
-  async sendRequest<TKey extends RequestName<TypeDefinition>>(
-    ...[name, params]: RequestParams<TypeDefinition, TKey> extends undefined
-      ? [name: TKey, params?: undefined]
-      : [name: TKey, params: RequestParams<TypeDefinition, TKey>]
-  ): Promise<RequestResult<TypeDefinition, TKey>> {
+  async sendRequest<TKey extends denocg.Types.RequestName<TypeDefinition>>(
+    ...[name, params]: denocg.Types.RequestParams<TypeDefinition, TKey> extends
+      undefined ? [name: TKey, params?: undefined]
+      : [name: TKey, params: denocg.Types.RequestParams<TypeDefinition, TKey>]
+  ): Promise<denocg.Types.RequestResult<TypeDefinition, TKey>> {
     try {
       this.#requestInProgress = true;
       this.dispatchEvent(new Event("request-started"));

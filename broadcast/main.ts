@@ -330,28 +330,34 @@ server.registerRequestHandler("unsetCompetitionSceneStageData", () => {
 });
 
 currentCompetitionSceneStageDataReplicant.subscribe(async (value) => {
-  const { sceneItemId } = await obs.call("GetSceneItemId", {
-    sceneName: competitionSceneName,
-    sourceName: chatSourceName,
-  });
-  const { sceneItemTransform } = await obs.call("GetSceneItemTransform", {
-    sceneName: competitionSceneName,
-    sceneItemId,
-  });
+  try {
+    const { sceneItemId } = await obs.call("GetSceneItemId", {
+      sceneName: competitionSceneName,
+      sourceName: chatSourceName,
+    });
+    const { sceneItemTransform } = await obs.call("GetSceneItemTransform", {
+      sceneName: competitionSceneName,
+      sceneItemId,
+    });
 
-  if (value != null) {
-    sceneItemTransform.positionY = 440;
-    sceneItemTransform.cropTop = 340;
-  } else {
-    sceneItemTransform.positionY = 100;
-    sceneItemTransform.cropTop = 0;
+    if (value != null) {
+      sceneItemTransform.positionY = 440;
+      sceneItemTransform.cropTop = 340;
+    } else {
+      sceneItemTransform.positionY = 100;
+      sceneItemTransform.cropTop = 0;
+    }
+    sceneItemTransform.boundsWidth = 1;
+    sceneItemTransform.boundsHeight = 1;
+
+    obs.call("SetSceneItemTransform", {
+      sceneName: competitionSceneName,
+      sceneItemId,
+      sceneItemTransform,
+    });
+  } catch (e) {
+    console.error(e);
   }
-
-  obs.call("SetSceneItemTransform", {
-    sceneName: competitionSceneName,
-    sceneItemId,
-    sceneItemTransform,
-  });
 });
 
 server.registerRequestHandler("setResultSceneData", ({ stageIndex }) => {
@@ -388,11 +394,15 @@ server.registerRequestHandler("toggleResultScene", ({ show }) => {
 });
 
 resultSceneActiveReplicant.subscribe(async (value) => {
-  if (value) {
-    await obs.call("SetCurrentProgramScene", { sceneName: resultSceneName });
-  } else {
-    await obs.call("SetCurrentProgramScene", {
-      sceneName: competitionSceneName,
-    });
+  try {
+    if (value) {
+      await obs.call("SetCurrentProgramScene", { sceneName: resultSceneName });
+    } else {
+      await obs.call("SetCurrentProgramScene", {
+        sceneName: competitionSceneName,
+      });
+    }
+  } catch (e) {
+    console.error(e);
   }
 });
