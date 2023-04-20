@@ -49,6 +49,10 @@ export class DashboardContext extends EventTarget {
     this.dispatchEvent(new Event("stop-timer"));
   }
 
+  requestActivateTimer() {
+    this.dispatchEvent(new Event("activate-timer"));
+  }
+
   // TODO: Modal実装
   async confirm(message: string): Promise<boolean> {
     await Promise.resolve();

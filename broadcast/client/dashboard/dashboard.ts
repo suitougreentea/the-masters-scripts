@@ -5,8 +5,10 @@ import {
   css,
   customElement,
   denocg,
+  FluentSwitch,
   html,
   LitElement,
+  live,
   provide,
   query,
   state,
@@ -27,8 +29,12 @@ export class MastersDashboardElement extends LitElement {
     .container {
       height: calc(100vh - 16px);
       margin: 8px;
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: 1fr 280px;
+    }
+
+    .container > * {
+      overflow: hidden;
     }
 
     .loader {
@@ -39,9 +45,28 @@ export class MastersDashboardElement extends LitElement {
       align-items: center;
     }
 
+    #content {
+      grid-area: 1 / 1 / auto / auto;
+      display: grid;
+      padding: 8px;
+    }
+
+    #sidebar {
+      grid-area: 1 / 2 / auto / auto;
+      display: grid;
+      grid-template-rows: auto auto auto 1fr;
+      background-color: rgb(249, 249, 249);
+      border-left: 1px solid gray;
+    }
+
     #system-menu {
-      position: absolute;
-      right: 8px;
+      padding: 8px;
+      border-bottom: 1px solid gray;
+    }
+
+    #menu {
+      padding: 8px;
+      border-bottom: 1px solid gray;
     }
 
     #tabs-container {
@@ -50,37 +75,29 @@ export class MastersDashboardElement extends LitElement {
 
     #tabs {
       grid-area: 1 / 1 / auto / auto;
+      padding: 8px;
     }
 
     #tabs-loader {
       grid-area: 1 / 1 / auto / auto;
     }
 
-    #column-view {
-      flex-grow: 1;
-      display: grid;
-      grid-template-columns: 7fr 2fr;
-    }
-
-    .column {
-      padding: 8px;
-    }
-
-    .column-setup {
+    #setup {
       grid-area: 1 / 1 / auto / auto;
     }
 
-    .column-round {
+    #round {
       grid-area: 1 / 1 / auto / auto;
     }
 
-    .column-chat {
-      grid-area: 1 / 2 / auto / auto;
-      border-left: 1px solid lightgray;
+    #content-loader {
+      grid-area: 1 / 1 / auto / auto;
     }
 
-    #column-view-loader {
+    #timer-controller {
       grid-area: 1 / 1 / auto / auto;
+      z-index: 1001;
+      margin-right: 8px;
     }
     `;
   private _initializedPromise = createPromiseSet();
@@ -98,6 +115,8 @@ export class MastersDashboardElement extends LitElement {
 
   @state()
   private _requestInProgress = false;
+  @state()
+  private _timerVisible = false;
 
   // @ts-ignore: ?
   @query("#tabs", true)
@@ -119,6 +138,12 @@ export class MastersDashboardElement extends LitElement {
     });
     this._dashboardContext.addEventListener("request-ended", () => {
       this._requestInProgress = false;
+    });
+
+    this._dashboardContext.addEventListener("activate-timer", () => {
+      if (!this._timerVisible) {
+        this._timerVisible = true;
+      }
     });
 
     this._clientPromiseResolve = resolve;
@@ -204,30 +229,32 @@ export class MastersDashboardElement extends LitElement {
     const roundStyle = styleMap({
       display: roundPageActive ? null : "none",
     });
+    const timerStyle = styleMap({
+      display: this._timerVisible ? null : "none",
+    });
     return html`
     <div class="container">
-      <masters-system-menu id="system-menu"></masters-system-menu>
-      <masters-timer-controller id="timer-controller"></masters-timer-controller>
-      <div id="tabs-container">
-        <masters-tabs id="tabs" @change-active-tab=${this._onChangeActiveTab} @finish-competition=${this._onFinishCompetition}></masters-tabs>
-        <div class="loader" id="tabs-loader" style=${loaderStyle}>
+      <div id="content">
+        <masters-setup id="setup" style=${setupStyle} @setup-completed=${this._onSetupCompleted}></masters-setup>
+        <masters-round id="round" style=${roundStyle}></masters-round>
+        <div class="loader" id="content-loader" style=${loaderStyle}>
           <fluent-progress-ring></fluent-progress-ring>
         </div>
       </div>
-      <div id="column-view">
-        <div class="column column-setup">
-          <masters-setup id="setup" style=${setupStyle} @setup-completed=${this._onSetupCompleted}></masters-setup>
+      <div id="sidebar">
+        <masters-system-menu id="system-menu"></masters-system-menu>
+        <div id="menu">
+          <fluent-switch ?current-checked=${live(this._timerVisible)} @change=${(ev: Event) => this._timerVisible = (ev.target as FluentSwitch).currentChecked}>タイマー</fluent-switch>
         </div>
-        <div class="column column-round">
-          <masters-round id="round" style=${roundStyle}></masters-round>
+        <div id="tabs-container">
+          <masters-tabs id="tabs" @change-active-tab=${this._onChangeActiveTab} @finish-competition=${this._onFinishCompetition}></masters-tabs>
+          <div class="loader" id="tabs-loader" style=${loaderStyle}>
+            <fluent-progress-ring></fluent-progress-ring>
+          </div>
         </div>
-        <div class="column column-chat">
-          <masters-chat id="chat"></masters-chat>
-        </div>
-        <div class="loader" id="column-view-loader" style=${loaderStyle}>
-          <fluent-progress-ring></fluent-progress-ring>
-        </div>
+        <masters-chat id="chat"></masters-chat>
       </div>
+      <masters-timer-controller id="timer-controller" style=${timerStyle}></masters-timer-controller>
     </div>
     `;
   }
