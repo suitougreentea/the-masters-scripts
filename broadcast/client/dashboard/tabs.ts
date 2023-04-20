@@ -90,8 +90,11 @@ export class MastersTabsElement extends LitElement {
         `${result.exportedUrl}に結果がエクスポートされました`,
       );
       if (await this._dashboardContext.confirm("結果をツイートしますか？")) {
-        const message = `${this._competitionName}の結果です。\n${result.exportedUrl}`;
-        window.open(`https://twitter.com/intent/tweet?text=${encodeURI(message)}`);
+        const message =
+          `${this._competitionName}の結果です。\n${result.exportedUrl}`;
+        window.open(
+          `https://twitter.com/intent/tweet?text=${encodeURI(message)}`,
+        );
       }
       await this._dashboardContext.sendRequest("toggleResultScene", {
         show: false,
@@ -128,7 +131,7 @@ export class MastersTabsElement extends LitElement {
     <span class="end">
       <fluent-button @click=${this._reloadCompetitionMetadata}>大会設定を再読み込み</fluent-button>
       <fluent-button appearance="accent" .disabled=${!this
-    ._hasMetadata} @click=${this._confirmFinishCompetition}>大会を終了</fluent-button>
+      ._hasMetadata} @click=${this._confirmFinishCompetition}>大会を終了</fluent-button>
     </span>
     `;
   }

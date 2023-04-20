@@ -157,8 +157,12 @@ export class MastersScoreEditorDialogElement extends LitElement {
   private _checkEnterKey(ev: KeyboardEvent, index: number) {
     if (ev.code == "Enter") {
       if (this._parseScore((ev.target as FluentTextField).value) != null) {
-        const textFields = this.renderRoot.querySelectorAll<FluentTextField>("fluent-text-field");
-        const okButton = this.renderRoot.querySelector<FluentButton>(".dialog-buttons fluent-button:first-child")!;
+        const textFields = this.renderRoot.querySelectorAll<FluentTextField>(
+          "fluent-text-field",
+        );
+        const okButton = this.renderRoot.querySelector<FluentButton>(
+          ".dialog-buttons fluent-button:first-child",
+        )!;
         for (let targetIndex = index + 1; targetIndex < 8; targetIndex++) {
           if (!textFields[targetIndex].disabled) {
             textFields[targetIndex].focus();
@@ -197,7 +201,8 @@ export class MastersScoreEditorDialogElement extends LitElement {
           this._changeScore(
             i,
             (ev.target as FluentTextField).value,
-          )} @keydown=${(ev: KeyboardEvent) => this._checkEnterKey(ev, i)}></fluent-text-field></td>
+          )} @keydown=${(ev: KeyboardEvent) =>
+          this._checkEnterKey(ev, i)}></fluent-text-field></td>
               </tr>`;
       })
     }

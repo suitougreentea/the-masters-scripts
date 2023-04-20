@@ -228,20 +228,20 @@ export class MastersRoundElement extends LitElement {
     return html`
     <fluent-card class="container">
       ${
-    map(this._currentRoundData?.stageData ?? [], (e, i) => {
-      const stageMetadata: StageMetadata =
-        this._currentRoundData!.metadata.stages[i];
-      return html`
+      map(this._currentRoundData?.stageData ?? [], (e, i) => {
+        const stageMetadata: StageMetadata =
+          this._currentRoundData!.metadata.stages[i];
+        return html`
         <div class="stage">
           <h2>${stageMetadata.name}</h2>
           <div class="stage-toolbar">
             <div>
               <fluent-button @click=${() =>
-        this._sendToTimer(i)}>タイマーに送信</fluent-button>
+          this._sendToTimer(i)}>タイマーに送信</fluent-button>
             </div>
             <div>
               <fluent-button @click=${() =>
-        this._reloadStage(i)}>再読み込み</fluent-button>
+          this._reloadStage(i)}>再読み込み</fluent-button>
             </div>
           </div>
           <div class="stage-container">
@@ -249,11 +249,11 @@ export class MastersRoundElement extends LitElement {
               <masters-stage-players .data=${e.players}></masters-stage-players>
               <div class="stage-players-overlay">
                 <div class="stage-players-edit stage-players-edit-player-names" @click=${() =>
-        this._editStagePlayerNames(i)}>
+          this._editStagePlayerNames(i)}>
                   <div class="stage-players-edit-overlay">編集</div>
                 </div>
                 <div class="stage-players-edit stage-players-edit-score" @click=${() =>
-        this._editStageScore(i)}>
+          this._editStageScore(i)}>
                   <div class="stage-players-edit-overlay">編集</div>
                 </div>
               </div>
@@ -262,34 +262,34 @@ export class MastersRoundElement extends LitElement {
           </div>
         </div>
         `;
-    })
-  }
+      })
+    }
       ${
-    this._currentRoundData?.qualifierScore != null
-      ? html`
+      this._currentRoundData?.qualifierScore != null
+        ? html`
       <h2>予選スコア</h2>
       <masters-qualifier-score .data=${this._currentRoundData.qualifierScore.players} .stageMetadata=${this._currentRoundData.metadata.stages}></masters-qualifier-score>
       `
-      : null
-  }
+        : null
+    }
       ${
-    this._currentRoundData?.qualifierResult != null
-      ? html`
+      this._currentRoundData?.qualifierResult != null
+        ? html`
       <h2>予選リザルト</h2>
       <masters-qualifier-result .data=${this._currentRoundData.qualifierResult.result}></masters-qualifier-result>
       `
-      : null
-  }
+        : null
+    }
       ${
-    map(this._currentRoundData?.supplementComparisons ?? [], (e, i) => {
-      const comparisonMetadata: SupplementComparisonMetadata =
-        this._currentRoundData!.metadata.supplementComparisons[i];
-      return html`
+      map(this._currentRoundData?.supplementComparisons ?? [], (e, i) => {
+        const comparisonMetadata: SupplementComparisonMetadata =
+          this._currentRoundData!.metadata.supplementComparisons[i];
+        return html`
         <h2>${comparisonMetadata.name}</h2>
         <masters-supplement-comparison .data=${e.comparison}></masters-supplement-comparison>
         `;
-    })
-  }
+      })
+    }
       <div class="toolbar">
         <fluent-button @click=${this._reloadRound}>ラウンドデータを再読み込み</fluent-button>
         <fluent-button @click=${this._forceFinalizeRound}>ラウンド結果を再計算</fluent-button>

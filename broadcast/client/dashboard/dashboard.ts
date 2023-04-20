@@ -244,7 +244,11 @@ export class MastersDashboardElement extends LitElement {
       <div id="sidebar">
         <masters-system-menu id="system-menu"></masters-system-menu>
         <div id="menu">
-          <fluent-switch ?current-checked=${live(this._timerVisible)} @change=${(ev: Event) => this._timerVisible = (ev.target as FluentSwitch).currentChecked}>タイマー</fluent-switch>
+          <fluent-switch ?current-checked=${
+      live(this._timerVisible)
+    } @change=${(ev: Event) =>
+      this._timerVisible =
+        (ev.target as FluentSwitch).currentChecked}>タイマー</fluent-switch>
         </div>
         <div id="tabs-container">
           <masters-tabs id="tabs" @change-active-tab=${this._onChangeActiveTab} @finish-competition=${this._onFinishCompetition}></masters-tabs>
