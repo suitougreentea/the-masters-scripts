@@ -106,6 +106,11 @@ export class MastersRoundElement extends LitElement {
       grid-area: 2 / 1 / auto / auto;
       text-align: right;
     }
+
+    masters-player-names-editor-dialog, masters-score-editor-dialog {
+      position: relative;
+      z-index: 10000;
+    }
   `;
 
   @consume({ context: dashboardContext })
