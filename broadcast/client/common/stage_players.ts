@@ -18,7 +18,7 @@ import { commonColors } from "./common_values.ts";
 export class MastersStagePlayersElement extends LitElement {
   static styles = css`
   table {
-    width: 510px;
+    width: 490px;
     table-layout: fixed;
     font-size: 14px;
     border: 2px solid ${commonColors.tablePlayers};

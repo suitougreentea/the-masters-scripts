@@ -15,19 +15,11 @@ import { DashboardContext, dashboardContext } from "./dashboard_context.ts";
 export class MastersTabsElement extends LitElement {
   static styles = css`
   .container {
-    background-color: rgb(249, 249, 249);
-    border-bottom: 1px solid gray;
   }
 
-  .start, .end {
-    display: inline-block;
-    padding: 0px 8px;
-  }
-  .start {
-    border-right: 1px solid gray;
-  }
-  .end {
-    border-left: 1px solid gray;
+  fluent-tabs {
+    margin: 8px 0;
+    --base-height-multiplier: 4;
   }
 
   #competition-name {
@@ -97,6 +89,13 @@ export class MastersTabsElement extends LitElement {
       await this._dashboardContext.alert(
         `${result.exportedUrl}に結果がエクスポートされました`,
       );
+      if (await this._dashboardContext.confirm("結果をツイートしますか？")) {
+        const message =
+          `${this._competitionName}の結果です。\n${result.exportedUrl}`;
+        window.open(
+          `https://twitter.com/intent/tweet?text=${encodeURI(message)}`,
+        );
+      }
       await this._dashboardContext.sendRequest("toggleResultScene", {
         show: false,
       });
@@ -112,10 +111,10 @@ export class MastersTabsElement extends LitElement {
 
   render() {
     return html`
-    <fluent-tabs class="container" @change=${this._onTabChange}>
-      <span class="start" slot="start">
-        <span id="competition-name">${this._competitionName}</span>
-      </span>
+    <span class="start">
+      <span id="competition-name">${this._competitionName}</span>
+    </span>
+    <fluent-tabs class="container" orientation="vertical" @change=${this._onTabChange}>
       <fluent-tab slot="tab" id="setup">セットアップ</fluent-tab>
       ${
       map(
@@ -128,12 +127,12 @@ export class MastersTabsElement extends LitElement {
       map(this._roundNames, () =>
         html`<fluent-tab-panel slot="tabpanel"></fluent-tab-panel>`)
     }
-      <span class="end" slot="end">
-        <fluent-button @click=${this._reloadCompetitionMetadata}>大会設定を再読み込み</fluent-button>
-        <fluent-button appearance="accent" .disabled=${!this
-      ._hasMetadata} @click=${this._confirmFinishCompetition}>大会を終了</fluent-button>
-      </span>
     </fluent-tabs>
+    <span class="end">
+      <fluent-button @click=${this._reloadCompetitionMetadata}>大会設定を再読み込み</fluent-button>
+      <fluent-button appearance="accent" .disabled=${!this
+      ._hasMetadata} @click=${this._confirmFinishCompetition}>大会を終了</fluent-button>
+    </span>
     `;
   }
 }

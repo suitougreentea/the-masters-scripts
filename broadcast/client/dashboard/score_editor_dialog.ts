@@ -6,6 +6,7 @@ import { formatGrade, formatTime, parseGrade } from "../../common/util.ts";
 import {
   css,
   customElement,
+  FluentButton,
   FluentDialog,
   FluentTextField,
   html,
@@ -153,6 +154,29 @@ export class MastersScoreEditorDialogElement extends LitElement {
     return "";
   }
 
+  private _checkEnterKey(ev: KeyboardEvent, index: number) {
+    if (ev.code == "Enter") {
+      if (this._parseScore((ev.target as FluentTextField).value) != null) {
+        const textFields = this.renderRoot.querySelectorAll<FluentTextField>(
+          "fluent-text-field",
+        );
+        const okButton = this.renderRoot.querySelector<FluentButton>(
+          ".dialog-buttons fluent-button:first-child",
+        )!;
+        for (let targetIndex = index + 1; targetIndex < 8; targetIndex++) {
+          if (!textFields[targetIndex].disabled) {
+            textFields[targetIndex].focus();
+            ev.preventDefault();
+            return;
+          }
+        }
+        okButton.focus();
+        ev.preventDefault();
+        return;
+      }
+    }
+  }
+
   render() {
     return html`
     <fluent-dialog id="dialog-edit-stage-score" hidden trap-focus modal style="--dialog-width: 350px; --dialog-height: 460px;">
@@ -177,7 +201,8 @@ export class MastersScoreEditorDialogElement extends LitElement {
           this._changeScore(
             i,
             (ev.target as FluentTextField).value,
-          )}></fluent-text-field></td>
+          )} @keydown=${(ev: KeyboardEvent) =>
+          this._checkEnterKey(ev, i)}></fluent-text-field></td>
               </tr>`;
       })
     }

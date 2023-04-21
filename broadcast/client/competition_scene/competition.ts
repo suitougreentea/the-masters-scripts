@@ -13,6 +13,7 @@ import {
   StagePlayerEntry,
 } from "../../common/common_types.ts";
 import { createPromiseSet, PromiseSet } from "../../common/util.ts";
+import { commonColors } from "../common/common_values.ts";
 
 @customElement("masters-competition")
 export class MastersCompetitionElement extends LitElement {
@@ -43,6 +44,15 @@ export class MastersCompetitionElement extends LitElement {
     width: 550px;
     height: 256px;
   }
+
+  #timer-placeholder {
+    position: absolute;
+    top: 150px;
+    left: 1310px;
+    width: 550px;
+    height: 256px;
+    background-color: ${commonColors.background};
+  }
   `;
 
   #initializedPromise: PromiseSet<void> = createPromiseSet();
@@ -51,6 +61,7 @@ export class MastersCompetitionElement extends LitElement {
   #playerInfo!: MastersPlayerInfoElement;
   #timer!: MastersTimerElement;
   #timerWrapper!: TimerWrapper;
+  #timerPlaceholder!: HTMLDivElement;
 
   constructor() {
     super();
@@ -68,6 +79,9 @@ export class MastersCompetitionElement extends LitElement {
     await this.#timer.waitForInitialization();
     this.#timerWrapper = new TimerWrapper(this.#timer);
     this.#initializedPromise.resolve();
+    this.#timerPlaceholder = this.renderRoot.querySelector<HTMLDivElement>(
+      "#timer-placeholder",
+    )!;
   }
 
   async waitForInitialization() {
@@ -85,6 +99,8 @@ export class MastersCompetitionElement extends LitElement {
   setTimerData(data?: (StagePlayerEntry | null)[]) {
     this.#timerWrapper.setData(data);
     this.#playerInfo.data = data;
+    this.#timer.style.display = data != null ? "unset" : "none";
+    this.#timerPlaceholder.style.display = data != null ? "none" : "unset";
   }
 
   setRegisteredPlayers(players: RegisteredPlayerEntry[]) {
@@ -110,6 +126,7 @@ export class MastersCompetitionElement extends LitElement {
       <masters-player-info id="player-info"></masters-player-info>
       <masters-round-name id="round-name"></masters-round-name>
       <masters-timer id="timer"></masters-timer>
+      <div id="timer-placeholder"></div>
     </div>
     `;
   }

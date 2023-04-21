@@ -295,8 +295,9 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
     return html`
     <fluent-dialog id="dialog-edit-player-names" hidden trap-focus modal style="--dialog-width: 400px; --dialog-height: 440px;">
       <div class="dialog-container">
-        <fluent-radio-group class="type" .value=${live(this._mode)} @change=${(e: Event) =>
-      this._mode = (e.target as FluentRadioGroup).value as Mode}>
+        <fluent-radio-group class="type" .value=${live(this._mode)} @change=${(
+      e: Event,
+    ) => this._mode = (e.target as FluentRadioGroup).value as Mode}>
           <fluent-radio value="reorder">並べ替え</fluent-radio>
           <fluent-radio value="reset">再設定</fluent-radio>
         </fluent-radio-group>

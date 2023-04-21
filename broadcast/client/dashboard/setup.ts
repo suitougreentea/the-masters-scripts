@@ -16,6 +16,7 @@ import { CompetitionSetupOptions } from "../../common/common_types.ts";
 export class MastersSetupElement extends LitElement {
   static styles = css`
     .container {
+      overflow-y: scroll;
       padding: 8px;
     }
   `;

@@ -36,14 +36,7 @@ import {
 export class MastersRoundElement extends LitElement {
   static styles = css`
     .container {
-      display: grid;
-      grid-template-columns: auto 420px;
-      grid-gap: 8px;
-    }
-
-    .column {
-      /* TODO: もっとうまいやりかたがありそう */
-      height: calc(100vh - 415px);
+      height: calc(100vh - 32px);
       overflow-y: scroll;
       padding: 8px;
     }
@@ -89,7 +82,7 @@ export class MastersRoundElement extends LitElement {
     .stage-players-edit-player-names {
       bottom: 2px;
       left: 18px;
-      width: 225px;
+      width: 205px;
       height: calc(100% - 27px);
     }
 
@@ -110,8 +103,13 @@ export class MastersRoundElement extends LitElement {
     }
 
     .toolbar {
-      grid-area: 2 / 1 / auto / span 2;
+      grid-area: 2 / 1 / auto / auto;
       text-align: right;
+    }
+
+    masters-player-names-editor-dialog, masters-score-editor-dialog {
+      position: relative;
+      z-index: 10000;
     }
   `;
 
@@ -159,6 +157,7 @@ export class MastersRoundElement extends LitElement {
     await this._dashboardContext.sendRequest("toggleResultScene", {
       show: false,
     });
+    this._dashboardContext.requestActivateTimer();
   }
 
   private async _reloadStage(stageIndex: number) {
@@ -227,79 +226,75 @@ export class MastersRoundElement extends LitElement {
 
   render() {
     return html`
-    <div class="container">
-      <fluent-card class="column">
-        ${
+    <fluent-card class="container">
+      ${
       map(this._currentRoundData?.stageData ?? [], (e, i) => {
         const stageMetadata: StageMetadata =
           this._currentRoundData!.metadata.stages[i];
         return html`
-          <div class="stage">
-            <h2>${stageMetadata.name}</h2>
-            <div class="stage-toolbar">
-              <div>
-                <fluent-button @click=${() =>
+        <div class="stage">
+          <h2>${stageMetadata.name}</h2>
+          <div class="stage-toolbar">
+            <div>
+              <fluent-button @click=${() =>
           this._sendToTimer(i)}>タイマーに送信</fluent-button>
-              </div>
-              <div>
-                <fluent-button @click=${() =>
-          this._reloadStage(i)}>再読み込み</fluent-button>
-              </div>
             </div>
-            <div class="stage-container">
-              <div class="stage-players-container">
-                <masters-stage-players .data=${e.players}></masters-stage-players>
-                <div class="stage-players-overlay">
-                  <div class="stage-players-edit stage-players-edit-player-names" @click=${() =>
-          this._editStagePlayerNames(i)}>
-                    <div class="stage-players-edit-overlay">編集</div>
-                  </div>
-                  <div class="stage-players-edit stage-players-edit-score" @click=${() =>
-          this._editStageScore(i)}>
-                    <div class="stage-players-edit-overlay">編集</div>
-                  </div>
-                </div>
-              </div>
-              <masters-stage-result .data=${e.result} .numWinners=${stageMetadata.numWinners} .hasWildcard=${stageMetadata.hasWildcard}></masters-stage-result>
+            <div>
+              <fluent-button @click=${() =>
+          this._reloadStage(i)}>再読み込み</fluent-button>
             </div>
           </div>
-          `;
+          <div class="stage-container">
+            <div class="stage-players-container">
+              <masters-stage-players .data=${e.players}></masters-stage-players>
+              <div class="stage-players-overlay">
+                <div class="stage-players-edit stage-players-edit-player-names" @click=${() =>
+          this._editStagePlayerNames(i)}>
+                  <div class="stage-players-edit-overlay">編集</div>
+                </div>
+                <div class="stage-players-edit stage-players-edit-score" @click=${() =>
+          this._editStageScore(i)}>
+                  <div class="stage-players-edit-overlay">編集</div>
+                </div>
+              </div>
+            </div>
+            <masters-stage-result .data=${e.result} .numWinners=${stageMetadata.numWinners} .hasWildcard=${stageMetadata.hasWildcard}></masters-stage-result>
+          </div>
+        </div>
+        `;
       })
     }
-      </fluent-card>
-      <fluent-card class="column">
-        ${
+      ${
       this._currentRoundData?.qualifierScore != null
         ? html`
-        <h2>予選スコア</h2>
-        <masters-qualifier-score .data=${this._currentRoundData.qualifierScore.players} .stageMetadata=${this._currentRoundData.metadata.stages}></masters-qualifier-score>
-        `
+      <h2>予選スコア</h2>
+      <masters-qualifier-score .data=${this._currentRoundData.qualifierScore.players} .stageMetadata=${this._currentRoundData.metadata.stages}></masters-qualifier-score>
+      `
         : null
     }
-        ${
+      ${
       this._currentRoundData?.qualifierResult != null
         ? html`
-        <h2>予選リザルト</h2>
-        <masters-qualifier-result .data=${this._currentRoundData.qualifierResult.result}></masters-qualifier-result>
-        `
+      <h2>予選リザルト</h2>
+      <masters-qualifier-result .data=${this._currentRoundData.qualifierResult.result}></masters-qualifier-result>
+      `
         : null
     }
-        ${
+      ${
       map(this._currentRoundData?.supplementComparisons ?? [], (e, i) => {
         const comparisonMetadata: SupplementComparisonMetadata =
           this._currentRoundData!.metadata.supplementComparisons[i];
         return html`
-          <h2>${comparisonMetadata.name}</h2>
-          <masters-supplement-comparison .data=${e.comparison}></masters-supplement-comparison>
-          `;
+        <h2>${comparisonMetadata.name}</h2>
+        <masters-supplement-comparison .data=${e.comparison}></masters-supplement-comparison>
+        `;
       })
     }
-      </fluent-card>
       <div class="toolbar">
         <fluent-button @click=${this._reloadRound}>ラウンドデータを再読み込み</fluent-button>
         <fluent-button @click=${this._forceFinalizeRound}>ラウンド結果を再計算</fluent-button>
       </div>
-    </div>
+    </fluent-card>
 
     <masters-player-names-editor-dialog @update-data=${(e: Event) => {
       const editor = e.target as MastersPlayerNamesEditorDialogElement;

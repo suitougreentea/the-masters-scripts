@@ -1,5 +1,5 @@
 // DenoCG dependency
-export * as denocg from "https://deno.land/x/denocg@v0.0.6/server/mod.ts";
+export * as denocg from "https://deno.land/x/denocg@v0.0.7/server/mod.ts";
 
 // obs-websocket dependency
 export {
