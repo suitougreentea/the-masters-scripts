@@ -381,10 +381,10 @@ namespace Preset {
     },
 
     // 1回戦3組, 敗者復活1戦1組, 2回戦2組 (17～20人, 計8戦)
-    // 17: W1:[6,6,5]>(W2:12,L1:5); L1:[5]>(W2:4); W2:[8,8]>(W3:4); W3:[8]>(W4:4)
-    // 18: W1:[6,6,6]>(W2:12,L1:6); L1:[6]>(W2:4); W2:[8,8]>(W3:4); W3:[8]>(W4:4)
-    // 19: W1:[7,6,6]>(W2:12,L1:7); L1:[7]>(W2:4); W2:[8,8]>(W3:4); W3:[8]>(W4:4)
-    // 20: W1:[7,7,6]>(W2:12,L1:8); L1:[8]>(W2:4); W2:[8,8]>(W3:4); W3:[8]>(W4:4)
+    // 17: W1:[6,6,5]>(W2:12,L1:5); L1:[5]>(W2:4); W2:[8,8]>(W3:8); W3:[8]>(W4:4)
+    // 18: W1:[6,6,6]>(W2:12,L1:6); L1:[6]>(W2:4); W2:[8,8]>(W3:8); W3:[8]>(W4:4)
+    // 19: W1:[7,6,6]>(W2:12,L1:7); L1:[7]>(W2:4); W2:[8,8]>(W3:8); W3:[8]>(W4:4)
+    // 20: W1:[7,7,6]>(W2:12,L1:8); L1:[8]>(W2:4); W2:[8,8]>(W3:8); W3:[8]>(W4:4)
     {
       name: "20",
       supportedNumberOfPlayers: [17, 20],
@@ -642,9 +642,9 @@ namespace Preset {
     },
 
     // 6人編成, 1回戦3組, 敗者復活1戦1組, 2回戦2組 (13～15人, 計8戦)
-    // 13: W1:[5,4,4]>(W2:9,L1:4); L1:[4]>(W2:3); W2:[6,6]>(W3:3); W3:[6]>(W4:3)
-    // 14: W1:[5,5,4]>(W2:9,L1:5); L1:[5]>(W2:3); W2:[6,6]>(W3:3); W3:[6]>(W4:3)
-    // 15: W1:[5,5,5]>(W2:9,L1:6); L1:[6]>(W2:3); W2:[6,6]>(W3:3); W3:[6]>(W4:3)
+    // 13: W1:[5,4,4]>(W2:9,L1:4); L1:[4]>(W2:3); W2:[6,6]>(W3:6); W3:[6]>(W4:3)
+    // 14: W1:[5,5,4]>(W2:9,L1:5); L1:[5]>(W2:3); W2:[6,6]>(W3:6); W3:[6]>(W4:3)
+    // 15: W1:[5,5,5]>(W2:9,L1:6); L1:[6]>(W2:3); W2:[6,6]>(W3:6); W3:[6]>(W4:3)
     {
       name: "15_6",
       supportedNumberOfPlayers: [13, 15],
@@ -845,6 +845,124 @@ namespace Preset {
           winners: { numPerGroup: 3, numWildcard: 0, destinationRoundIndex: 3, destinationMethod: "standard", handicapMethod: "winnersDest" }
         },
         { // 3
+          name: "決勝",
+          numGroups: 1,
+        },
+      ]
+    },
+
+    // 7人編成, 1回戦2組, 敗者復活1組, 2回戦1組, 敗者復活1組 (12～14人, 計7戦)
+    // 12: W1:[6,6]>(W2:7,L1:5); L1:[5]>(L2:4); W2:[7]>(W3:4,L2:3); L2:[7]>(W3:3) W3:[7]>(W4:4)
+    // 13: W1:[7,6]>(W2:7,L1:6); L1:[6]>(L2:4); W2:[7]>(W3:4,L2:3); L2:[7]>(W3:3) W3:[7]>(W4:4)
+    // 14: W1:[7,7]>(W2:7,L1:7); L1:[7]>(L2:4); W2:[7]>(W3:4,L2:3); L2:[7]>(W3:3) W3:[7]>(W4:4)
+    {
+      name: "14_7",
+      supportedNumberOfPlayers: [12, 14],
+      type: "tournament",
+      rounds: [
+        { // 0
+          name: "1回戦",
+          numGroups: 2,
+          winners: { numPerGroup: 3, numWildcard: 1, destinationRoundIndex: 2, destinationMethod: "standard", handicapMethod: "winnersDest" },
+          losers: { numPerGroup: -1, destinationRoundIndex: 1, destinationMethod: "standard" },
+        },
+        { // 1
+          name: "敗者復活1",
+          numGroups: 1,
+          winners: { numPerGroup: 4, numWildcard: 0, destinationRoundIndex: 3, destinationMethod: "standard", handicapMethod: "losers" },
+        },
+        { // 2
+          name: "2回戦",
+          numGroups: 1,
+          winners: { numPerGroup: 4, numWildcard: 0, destinationRoundIndex: 4, destinationMethod: "standard", handicapMethod: "winnersDest" },
+          losers: { numPerGroup: -1, destinationRoundIndex: 3, destinationMethod: "standard" },
+        },
+        { // 3
+          name: "敗者復活2",
+          numGroups: 1,
+          winners: { numPerGroup: 3, numWildcard: 0, destinationRoundIndex: 4, destinationMethod: "standard", handicapMethod: "losers" },
+        },
+        { // 4
+          name: "準決勝",
+          numGroups: 1,
+          winners: { numPerGroup: 4, numWildcard: 0, destinationRoundIndex: 5, destinationMethod: "standard", handicapMethod: "winnersDest" }
+        },
+        { // 5
+          name: "決勝",
+          numGroups: 1,
+        },
+      ]
+    },
+
+    // 7人編成, 1回戦3組, 敗者復活1戦1組, 2回戦2組 (15～19人, 計8戦)
+    // 15: W1:[5,5,5]>(W2:12,L1:3); L1:[3]>(W2:2); W2:[7,7]>(W3:7); W3:[7]>(W4:4)
+    // 16: W1:[6,5,5]>(W2:12,L1:4); L1:[4]>(W2:2); W2:[7,7]>(W3:7); W3:[7]>(W4:4)
+    // 17: W1:[6,6,5]>(W2:12,L1:5); L1:[5]>(W2:2); W2:[7,7]>(W3:7); W3:[7]>(W4:4)
+    // 18: W1:[6,6,6]>(W2:12,L1:6); L1:[6]>(W2:2); W2:[7,7]>(W3:7); W3:[7]>(W4:4)
+    // 19: W1:[7,6,6]>(W2:12,L1:7); L1:[7]>(W2:2); W2:[7,7]>(W3:7); W3:[7]>(W4:4)
+    {
+      name: "19_7",
+      supportedNumberOfPlayers: [15, 19],
+      type: "tournament",
+      rounds: [
+        { // 0
+          name: "1回戦",
+          numGroups: 3,
+          winners: { numPerGroup: 4, numWildcard: 0, destinationRoundIndex: 2, destinationMethod: "standard", handicapMethod: "winnersDest" },
+          losers: { numPerGroup: -1, destinationRoundIndex: 1, destinationMethod: "standard" },
+        },
+        { // 1
+          name: "敗者復活",
+          numGroups: 1,
+          winners: { numPerGroup: 2, numWildcard: 0, destinationRoundIndex: 2, destinationMethod: "standard", handicapMethod: "losers" },
+        },
+        { // 2
+          name: "2回戦",
+          numGroups: 2,
+          winners: { numPerGroup: 3, numWildcard: 1, destinationRoundIndex: 3, destinationMethod: "standard", handicapMethod: "winnersDest" }
+        },
+        { // 3
+          name: "準決勝",
+          numGroups: 1,
+          winners: { numPerGroup: 4, numWildcard: 0, destinationRoundIndex: 4, destinationMethod: "standard", handicapMethod: "winnersDest" }
+        },
+        { // 4
+          name: "決勝",
+          numGroups: 1,
+        },
+      ]
+    },
+
+    // 7人編成, 1回戦3組, 敗者復活1戦2組, 2回戦2組 (20～21人, 計9戦)
+    // 20: W1:[7,7,6]>(W2:12,L1:8); L1:[4,4]>(W2:2); W2:[7,7]>(W3:7); W3:[7]>(W4:4)
+    // 21: W1:[7,7,7]>(W2:12,L1:9); L1:[5,4]>(W2:2); W2:[7,7]>(W3:7); W3:[7]>(W4:4)
+    {
+      name: "21_7",
+      supportedNumberOfPlayers: [20, 21],
+      type: "tournament",
+      rounds: [
+        { // 0
+          name: "1回戦",
+          numGroups: 3,
+          winners: { numPerGroup: 4, numWildcard: 0, destinationRoundIndex: 2, destinationMethod: "standard", handicapMethod: "winnersDest" },
+          losers: { numPerGroup: -1, destinationRoundIndex: 1, destinationMethod: "standard" },
+        },
+        { // 1
+          name: "敗者復活",
+          numGroups: 2,
+          winners: { numPerGroup: 1, numWildcard: 0, destinationRoundIndex: 2, destinationMethod: "standard", handicapMethod: "losers" },
+        },
+        { // 2
+          name: "2回戦",
+          numGroups: 2,
+          winners: { numPerGroup: 3, numWildcard: 1, destinationRoundIndex: 3, destinationMethod: "standard", handicapMethod: "winnersDest" }
+        },
+        { // 3
+          name: "準決勝",
+          numGroups: 1,
+          winners: { numPerGroup: 4, numWildcard: 0, destinationRoundIndex: 4, destinationMethod: "standard", handicapMethod: "winnersDest" }
+        },
+        { // 4
           name: "決勝",
           numGroups: 1,
         },
