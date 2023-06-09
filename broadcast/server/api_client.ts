@@ -2,7 +2,7 @@ import { ApiFunctions } from "../common/common_types.ts";
 import { AppsScriptApi } from "./apps_script_api.ts";
 
 const scriptId =
-  "AKfycbxXwj-8s0OsjF71I1nc7-vimKauCkc1bmme-5DAZlygkKxz9ug_YY94qi9Bdgf6qaI1";
+  "AKfycbwz-rWXlZudgksJTGbaauMWfrDmg7vS-yChOER8u-oq4ccDLM5_L57srIP2RTj2D-6i";
 
 export class ApiClient {
   static getScopes(): string[] {
