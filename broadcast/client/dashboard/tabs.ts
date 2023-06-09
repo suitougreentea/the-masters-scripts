@@ -77,14 +77,10 @@ export class MastersTabsElement extends LitElement {
     await this._dashboardContext.sendRequest("getCurrentCompetitionMetadata");
   }
 
-  private async _confirmFinishCompetition() {
-    if (
-      await this._dashboardContext.confirm(
-        "大会を終了してもよろしいですか？すべての試合が終わったあとに押してください。",
-      )
-    ) {
+  private async _confirmFinishCompetitionWithExport() {
+    if (await this._dashboardContext.confirm("エクスポートして終了しますか？\n※「大会設定を再読み込み」から復元することができます。")) {
       const result = await this._dashboardContext.sendRequest(
-        "finishCompetition",
+        "finishCompetitionWithExport",
       );
       await this._dashboardContext.alert(
         `${result.exportedUrl}に結果がエクスポートされました`,
@@ -96,6 +92,24 @@ export class MastersTabsElement extends LitElement {
           `https://twitter.com/intent/tweet?text=${encodeURI(message)}`,
         );
       }
+      await this._dashboardContext.sendRequest("toggleResultScene", {
+        show: false,
+      });
+      await this._dashboardContext.sendRequest(
+        "unsetCompetitionSceneStageData",
+      );
+      await this._dashboardContext.sendRequest(
+        "unsetResultSceneData",
+      );
+      this.dispatchEvent(new Event("finish-competition"));
+    }
+  }
+
+  private async _confirmFinishCompetitionWithoutExport() {
+    if (await this._dashboardContext.confirm("エクスポートして終了しますか？\n※「大会設定を再読み込み」から復元することができます。")) {
+      await this._dashboardContext.sendRequest(
+        "finishCompetitionWithoutExport",
+      );
       await this._dashboardContext.sendRequest("toggleResultScene", {
         show: false,
       });
@@ -131,7 +145,8 @@ export class MastersTabsElement extends LitElement {
     <span class="end">
       <fluent-button @click=${this._reloadCompetitionMetadata}>大会設定を再読み込み</fluent-button>
       <fluent-button appearance="accent" .disabled=${!this
-      ._hasMetadata} @click=${this._confirmFinishCompetition}>大会を終了</fluent-button>
+      ._hasMetadata} @click=${() => this._confirmFinishCompetitionWithExport()}>エクスポートして終了</fluent-button>
+      <fluent-button .disabled=${!this._hasMetadata} @click=${() => this._confirmFinishCompetitionWithoutExport()}>エクスポートせずに終了</fluent-button>
     </span>
     `;
   }

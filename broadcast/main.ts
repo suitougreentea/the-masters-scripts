@@ -300,7 +300,7 @@ server.registerRequestHandler(
   },
 );
 
-server.registerRequestHandler("finishCompetition", async () => {
+server.registerRequestHandler("finishCompetitionWithExport", async () => {
   const { url } = await apiClient.runCommand("mastersExportCompetition", []);
 
   currentRoundDataReplicant.setValue(null);
@@ -308,6 +308,12 @@ server.registerRequestHandler("finishCompetition", async () => {
   currentParticipantsReplicant.setValue(null);
 
   return { exportedUrl: url };
+});
+
+server.registerRequestHandler("finishCompetitionWithoutExport", () => {
+  currentRoundDataReplicant.setValue(null);
+  currentCompetitionMetadataReplicant.setValue(null);
+  currentParticipantsReplicant.setValue(null);
 });
 
 server.registerRequestHandler(

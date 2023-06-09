@@ -72,7 +72,8 @@ export type TypeDefinition = {
       params: { stageIndex: number; names: (string | null)[] };
     };
     setStageScore: { params: { stageIndex: number; score: StageScoreData } };
-    finishCompetition: { result: { exportedUrl: string } };
+    finishCompetitionWithExport: { result: { exportedUrl: string } };
+    finishCompetitionWithoutExport: EmptyObject;
     sendStageDataToCompetitionScene: { params: { stageIndex: number } };
     unsetCompetitionSceneStageData: EmptyObject;
     setResultSceneData: { params: { stageIndex: number } };

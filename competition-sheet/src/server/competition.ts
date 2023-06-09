@@ -207,6 +207,10 @@ namespace Competition {
           }
           if (winner) {
             numSend += dependentRound.winners!.numWildcard;
+          } else {
+            if (dependentRound.winners != null && dependentRound.winners.numWildcard > 0) {
+              numSend += dependentRound.numGroups! - dependentRound.winners!.numWildcard;
+            }
           }
 
           if (destinationMethod == "standard") {
@@ -639,6 +643,30 @@ namespace Competition {
           const numWildcard = hasWildcard ? 1 : 0;
           const numMaxLosers = Math.max(...dependentStageMetadata.map(e => e.numLosers));
           const unevenNumLosers = dependentStageMetadata.some(e => e.numLosers != numMaxLosers);
+
+          if (hasWildcard) {
+            const wildcardResults: SupplementComparisonEntryStub[] = [];
+            const originalRankIndices: Record<string, number> = {};
+            dependentStageMetadata.forEach((dependentStage, dependentStageIndex) => {
+              const rankIndex = dependentStage.numWinners;
+              const dependentStageResult = dependentStageResults[dependentStageIndex].result[rankIndex];
+              wildcardResults.push(dependentStageResult);
+              originalRankIndices[dependentStageResult.name] = rankIndex;
+            });
+
+            const sortedWildcardResults = [...wildcardResults];
+            sortedWildcardResults.sort(compareStageScore).reverse();
+
+            sortedWildcardResults.forEach((result, i) => {
+              if (i < dependentRoundMetadata.numWildcardWinners!) return;
+              sortedStubsToPut.push({
+                name: result.name,
+                previousRoundHandicapMethod: dependentRoundMetadata.losersDestination!.handicap,
+                previousRoundRankIndex: originalRankIndices[result.name],
+              });
+            });
+          }
+
           for (let i = 0; i < numMaxLosers; i++) {
             const resultsPerRank: SupplementComparisonEntryStub[] = [];
             const originalRankIndices: Record<string, number> = {};
@@ -656,7 +684,7 @@ namespace Competition {
             sortedResultsPerRank.forEach(result => {
               sortedStubsToPut.push({
                 name: result.name,
-                previousRoundHandicapMethod: dependentRoundMetadata.losersDestination!.handicap, // == "none"
+                previousRoundHandicapMethod: dependentRoundMetadata.losersDestination!.handicap,
                 previousRoundRankIndex: originalRankIndices[result.name],
               });
             });
