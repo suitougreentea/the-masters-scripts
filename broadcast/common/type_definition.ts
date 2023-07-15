@@ -62,6 +62,8 @@ export type TypeDefinition = {
     getCurrentRegisteredPlayers: EmptyObject;
     registerPlayer: { params: { data: RegisteredPlayerEntry } };
     updatePlayer: { params: { oldName: string; data: RegisteredPlayerEntry } };
+    getCurrentParticipants: EmptyObject;
+    setParticipants: { params: { participants: Participant[] } };
     setupCompetition: { params: { options: CompetitionSetupOptions } };
     getCurrentCompetitionMetadata: EmptyObject;
     enterRound: { params: { roundIndex: number } };

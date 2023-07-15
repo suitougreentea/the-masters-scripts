@@ -141,7 +141,7 @@ namespace CompetitionSheet {
    * @param ss
    * @returns
    */
-  export function getParticipants(context: { setupSheet: Sheet }): Participant[] {
+  export function getParticipants(context: { setupSheet: Sheet }, validation: boolean): Participant[] {
     const { setupSheet } = context;
 
     const values = setupSheet.getRange("R3C1:C3").getValues();
@@ -160,12 +160,12 @@ namespace CompetitionSheet {
         firstRoundGroupIndex = null;
       } else {
         const parsed = Competition.stringToGroupIndex(String(firstRoundGroupInput));
-        if (parsed == null) throw new Error("不正な1回戦組があります: " + firstRoundGroupInput);
+        if (parsed == null && validation) throw new Error("不正な1回戦組があります: " + firstRoundGroupInput);
         firstRoundGroupIndex = parsed;
       }
 
       const bestTime = Time.spreadsheetValueToTime(bestTimeInput);
-      if (bestTime == null) throw new Error("自己ベストの無いプレイヤーがいます");
+      if (bestTime == null && validation) throw new Error("自己ベストの無いプレイヤーがいます");
 
       entries.push({
         name,
@@ -250,7 +250,7 @@ namespace CompetitionSheet {
         pasteTemplate(detailSheet, 2, detailSheetColumn, templatesSheet, tableTemplateName, SpreadsheetApp.CopyPasteType.PASTE_NORMAL);
         ss.setNamedRange(constructQualifierTableRangeName(), detailSheet!.getRange(2, detailSheetColumn));
 
-        const playerEntries = getParticipants({ setupSheet });
+        const playerEntries = getParticipants({ setupSheet }, true);
         Competition.validateEntriesWithQualifier(playerEntries, numPlayers);
         const nameValues: string[][] = [];
         for (let i = 0; i < numPlayers; i++) {
@@ -372,7 +372,7 @@ namespace CompetitionSheet {
         if (definition.type == "firstRoundEntry") {
           return {
             type: "firstRoundEntry",
-            data: getParticipants(context),
+            data: getParticipants(context, true),
           };
         } else if (definition.type == "qualifierRoundResult") {
           if (detailSheet == null) throw new Error();

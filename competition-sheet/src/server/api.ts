@@ -35,7 +35,7 @@ function mastersGetParticipants(): Participant[] {
   const setupSheet = CompetitionSheet.getSetupSheetOrError(ss);
   const context = { ss, setupSheet };
 
-  return CompetitionSheet.getParticipants(context);
+  return CompetitionSheet.getParticipants(context, false);
 }
 
 function mastersSetParticipants(participants: Participant[]) {
@@ -55,7 +55,7 @@ function mastersSetupCompetition(options: CompetitionSetupOptions) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const setupSheet = CompetitionSheet.getSetupSheetOrError(ss);
   const context = { ss, setupSheet };
-  const entries = CompetitionSheet.getParticipants(context);
+  const entries = CompetitionSheet.getParticipants(context, true);
 
   const setupResult = Competition.setupCompetition(entries.length, options);
 

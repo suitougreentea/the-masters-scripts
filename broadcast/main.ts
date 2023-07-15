@@ -79,8 +79,17 @@ const getCurrentRegisteredPlayers = async () => {
   currentRegisteredPlayersReplicant.setValue(players);
 };
 
+const getCurrentParticipants = async () => {
+  const participants = await apiClient.runCommand(
+    "mastersGetParticipants",
+    [],
+  );
+  currentParticipantsReplicant.setValue(participants);
+};
+
 server.registerRequestHandler("enterSetup", async () => {
   await getCurrentRegisteredPlayers();
+  await getCurrentParticipants();
 });
 
 server.registerRequestHandler("getCurrentRegisteredPlayers", async () => {
@@ -101,6 +110,18 @@ server.registerRequestHandler("updatePlayer", async (params) => {
     [params.oldName, params.data],
   );
   await getCurrentRegisteredPlayers();
+});
+
+server.registerRequestHandler("getCurrentParticipants", async () => {
+  await getCurrentParticipants();
+});
+
+server.registerRequestHandler("setParticipants", async (params) => {
+  await apiClient.runCommand(
+    "mastersSetParticipants",
+    [params.participants],
+  );
+  await getCurrentParticipants();
 });
 
 server.registerRequestHandler("setupCompetition", async (params) => {

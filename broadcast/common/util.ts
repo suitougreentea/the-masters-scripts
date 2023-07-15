@@ -1,5 +1,17 @@
 import { StagePlayerEntry } from "./common_types.ts";
 
+const groupTable = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
+
+export function formatGroup(groupIndex: number): string {
+  return groupTable[groupIndex];
+}
+
+export function parseGroup(group: string): number | null {
+  const index = groupTable.indexOf(group.toUpperCase());
+  if (index < 0) return null;
+  return index;
+}
+
 export function formatTime(ms: number, positiveSign = false): string {
   const sign = ms > 0 ? (positiveSign ? "+" : "") : ms < 0 ? "-" : "";
   const abs = Math.abs(ms);
