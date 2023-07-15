@@ -83,6 +83,7 @@ export class MastersTabsElement extends LitElement {
         "エクスポートして終了しますか？\n※「大会設定を再読み込み」から復元することができます。",
       )
     ) {
+      const competitionName = this._competitionName; // cache before reset
       const result = await this._dashboardContext.sendRequest(
         "finishCompetitionWithExport",
       );
@@ -91,7 +92,7 @@ export class MastersTabsElement extends LitElement {
       );
       if (await this._dashboardContext.confirm("結果をツイートしますか？")) {
         const message =
-          `${this._competitionName}の結果です。\n${result.exportedUrl}`;
+          `${competitionName}の結果です。\n${result.exportedUrl}`;
         window.open(
           `https://twitter.com/intent/tweet?text=${encodeURI(message)}`,
         );
