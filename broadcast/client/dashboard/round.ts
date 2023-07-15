@@ -36,6 +36,7 @@ import {
 export class MastersRoundElement extends LitElement {
   static styles = css`
     .container {
+      width: calc(100vw - 312px);
       height: calc(100vh - 32px);
       overflow-y: scroll;
       padding: 8px;

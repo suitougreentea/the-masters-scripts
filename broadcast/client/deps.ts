@@ -37,6 +37,7 @@ import {
   fluentTab,
   fluentTabPanel,
   fluentTabs,
+  fluentTextArea,
   fluentTextField,
   provideFluentDesignSystem,
 } from "https://esm.sh/@fluentui/web-components@2.5.12";
@@ -53,6 +54,7 @@ provideFluentDesignSystem().register(
   fluentTab(),
   fluentTabPanel(),
   fluentTabs(),
+  fluentTextArea(),
   fluentTextField(),
 );
 export {
@@ -68,5 +70,6 @@ export {
   Tab as FluentTab,
   TabPanel as FluentTabPanel,
   Tabs as FluentTabs,
+  TextArea as FluentTextArea,
   TextField as FluentTextField,
 } from "https://esm.sh/@fluentui/web-components@2.5.12";

@@ -105,6 +105,37 @@ namespace CompetitionSheet {
     return entries;
   }
 
+  export function registerOrUpdatePlayer(context: { playersSheet: Sheet }, oldName: string | null, player: RegisteredPlayerEntry) {
+    const { playersSheet } = context;
+
+    const valuesRange = playersSheet.getRange("R2C1:C3");
+    const values = valuesRange.getValues();
+
+    if (oldName == null) {
+      const duplicateIndex = values.findIndex(e => e[0] == player.name);
+      if (duplicateIndex >= 0) {
+        throw new Error("既に同じ名前のプレイヤーが登録されています");
+      }
+      const emptyRowIndex = values.findIndex(e => Util.isNullOrEmptyString(e[0]));
+      if (emptyRowIndex < 0) {
+        throw new Error("空き行がありません");
+      }
+      values[emptyRowIndex] = [player.name, Time.timeToString(player.bestTime), player.comment]
+    } else {
+      const registeredRowIndex = values.findIndex(e => e[0] == oldName);
+      if (registeredRowIndex < 0) {
+        throw new Error("このプレイヤーは登録されていません");
+      }
+      const duplicateIndex = values.findIndex((e, i) => i != registeredRowIndex && e[0] == player.name);
+      if (duplicateIndex >= 0) {
+        throw new Error("既に同じ名前のプレイヤーが登録されています");
+      }
+      values[registeredRowIndex] = [player.name, Time.timeToString(player.bestTime), player.comment]
+    }
+
+    valuesRange.setValues(values);
+  }
+
   /**
    * Setupシートから参加者を読み取る
    * @param ss

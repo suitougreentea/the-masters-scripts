@@ -71,12 +71,36 @@ const currentResultSceneDataReplicant = server.getReplicant(
 );
 const resultSceneActiveReplicant = server.getReplicant("resultSceneActive");
 
-server.registerRequestHandler("getCurrentRegisteredPlayers", async () => {
-  const metadata = await apiClient.runCommand(
+const getCurrentRegisteredPlayers = async () => {
+  const players = await apiClient.runCommand(
     "mastersGetRegisteredPlayers",
     [],
   );
-  currentRegisteredPlayersReplicant.setValue(metadata);
+  currentRegisteredPlayersReplicant.setValue(players);
+};
+
+server.registerRequestHandler("enterSetup", async () => {
+  await getCurrentRegisteredPlayers();
+});
+
+server.registerRequestHandler("getCurrentRegisteredPlayers", async () => {
+  await getCurrentRegisteredPlayers();
+});
+
+server.registerRequestHandler("registerPlayer", async (params) => {
+  await apiClient.runCommand(
+    "mastersRegisterPlayer",
+    [params.data],
+  );
+  await getCurrentRegisteredPlayers();
+});
+
+server.registerRequestHandler("updatePlayer", async (params) => {
+  await apiClient.runCommand(
+    "mastersUpdatePlayer",
+    [params.oldName, params.data],
+  );
+  await getCurrentRegisteredPlayers();
 });
 
 server.registerRequestHandler("setupCompetition", async (params) => {
