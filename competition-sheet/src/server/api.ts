@@ -14,6 +14,30 @@ function mastersGetRegisteredPlayers(): RegisteredPlayerEntry[] {
   return CompetitionSheet.getRegisteredPlayers(context);
 }
 
+function mastersRegisterPlayer(player: RegisteredPlayerEntry) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const playersSheet = CompetitionSheet.getPlayersSheetOrError(ss);
+  const context = { ss, playersSheet };
+
+  CompetitionSheet.registerOrUpdatePlayer(context, null, player);
+}
+
+function mastersUpdatePlayer(oldName: string, player: RegisteredPlayerEntry) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const playersSheet = CompetitionSheet.getPlayersSheetOrError(ss);
+  const context = { ss, playersSheet };
+
+  CompetitionSheet.registerOrUpdatePlayer(context, oldName, player);
+}
+
+function mastersGetParticipants(): Participant[] {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const setupSheet = CompetitionSheet.getSetupSheetOrError(ss);
+  const context = { ss, setupSheet };
+
+  return CompetitionSheet.getParticipants(context, false);
+}
+
 function mastersSetParticipants(participants: Participant[]) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const setupSheet = CompetitionSheet.getSetupSheetOrError(ss);
@@ -31,7 +55,7 @@ function mastersSetupCompetition(options: CompetitionSetupOptions) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const setupSheet = CompetitionSheet.getSetupSheetOrError(ss);
   const context = { ss, setupSheet };
-  const entries = CompetitionSheet.getParticipants(context);
+  const entries = CompetitionSheet.getParticipants(context, true);
 
   const setupResult = Competition.setupCompetition(entries.length, options);
 
@@ -185,6 +209,9 @@ function mastersCallApiAsJson<TName extends keyof ApiFunctions>(functionName: TN
 const assertApiFunctions: ApiFunctions = {
   mastersShowAlert,
   mastersGetRegisteredPlayers,
+  mastersRegisterPlayer,
+  mastersUpdatePlayer,
+  mastersGetParticipants,
   mastersSetParticipants,
   mastersSetupCompetition,
   mastersExportCompetition,

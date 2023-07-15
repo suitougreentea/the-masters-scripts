@@ -163,7 +163,14 @@ export class MastersDashboardElement extends LitElement {
   }
 
   async checkLogin() {
-    await this._dashboardContext.sendRequest("checkLogin");
+    try {
+      await this._dashboardContext.sendRequest("checkLogin");
+    } catch (e) {
+      await this._dashboardContext.alert(
+        "ログインに失敗しました。再ログインを試してください",
+      );
+      throw e;
+    }
   }
 
   async restoreState() {
@@ -175,6 +182,8 @@ export class MastersDashboardElement extends LitElement {
     if (metadata != null && currentRoundData != null) {
       const tabName = `round${currentRoundData.roundIndex}`;
       await this._changeTabPage(tabName, false);
+    } else {
+      await this._enterTabPage("setup");
     }
   }
 
@@ -193,6 +202,9 @@ export class MastersDashboardElement extends LitElement {
   }
 
   private async _enterTabPage(tabName: string) {
+    if (tabName == "setup") {
+      await this._dashboardContext.sendRequest("enterSetup");
+    }
     if (tabName.startsWith("round")) {
       const roundIndex = Number(tabName.slice(5));
       await this._dashboardContext.sendRequest("enterRound", { roundIndex });

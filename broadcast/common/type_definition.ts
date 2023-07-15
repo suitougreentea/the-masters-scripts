@@ -58,7 +58,12 @@ export type TypeDefinition = {
     login: { result: { url: string } };
     cancelLogin: EmptyObject;
     checkLogin: EmptyObject;
+    enterSetup: EmptyObject;
     getCurrentRegisteredPlayers: EmptyObject;
+    registerPlayer: { params: { data: RegisteredPlayerEntry } };
+    updatePlayer: { params: { oldName: string; data: RegisteredPlayerEntry } };
+    getCurrentParticipants: EmptyObject;
+    setParticipants: { params: { participants: Participant[] } };
     setupCompetition: { params: { options: CompetitionSetupOptions } };
     getCurrentCompetitionMetadata: EmptyObject;
     enterRound: { params: { roundIndex: number } };

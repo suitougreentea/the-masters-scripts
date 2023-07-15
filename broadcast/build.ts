@@ -1,5 +1,5 @@
 import * as esbuild from "https://deno.land/x/esbuild@v0.17.5/mod.js";
-import { httpImports } from "./esbuild-plugin/esbuild-plugin-http-imports.ts";
+import { denoPlugins } from "https://deno.land/x/esbuild_deno_loader@0.8.1/mod.ts";
 
 const mode = Deno.args[0];
 if (mode != "build" && mode != "watch") throw new Error("Invalid command");
@@ -18,9 +18,8 @@ const options: esbuild.BuildOptions = {
   outdir: "./client",
   outExtension: { ".js": ".bundle.js" },
   metafile: true,
-  loader: { ".mjs": "js" },
   plugins: [
-    httpImports(),
+    ...denoPlugins(),
     {
       name: "append-comments",
       setup: (build) => {
