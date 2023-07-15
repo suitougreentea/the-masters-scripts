@@ -163,7 +163,12 @@ export class MastersDashboardElement extends LitElement {
   }
 
   async checkLogin() {
-    await this._dashboardContext.sendRequest("checkLogin");
+    try {
+      await this._dashboardContext.sendRequest("checkLogin");
+    } catch (e) {
+      await this._dashboardContext.alert("ログインに失敗しました。再ログインを試してください");
+      throw e;
+    }
   }
 
   async restoreState() {
