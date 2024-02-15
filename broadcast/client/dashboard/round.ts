@@ -9,10 +9,11 @@ import {
   query,
   state,
 } from "../deps.ts";
-import { RoundData } from "../../common/type_definition.ts";
+import { OcrResult, RoundData } from "../../common/type_definition.ts";
 import {
   StageMetadata,
   StageScoreData,
+  StageScoreEntry,
   StageSetupResult,
   SupplementComparisonMetadata,
 } from "../../common/common_types.ts";
@@ -130,6 +131,9 @@ export class MastersRoundElement extends LitElement {
   @query("masters-score-editor-dialog", true)
   private _scoreEditorDialog!: MastersScoreEditorDialogElement;
 
+  // TODO: Experimental
+  private _latestOcrResult?: OcrResult | null;
+
   async firstUpdated() {
     const client = await this._dashboardContext.getClient();
     const currentCompetitionMetadataReplicant = await client.getReplicant(
@@ -144,6 +148,11 @@ export class MastersRoundElement extends LitElement {
     currentRoundDataReplicant.subscribe((value) => {
       this._currentRoundData = value;
     });
+    // TODO: Experimental
+    const latestOcrResultReplicant = await client.getReplicant("latestOcrResult");
+    latestOcrResultReplicant.subscribe((value) => {
+      this._latestOcrResult = value;
+    })
   }
 
   private async _sendToTimer(stageIndex: number) {
@@ -154,6 +163,7 @@ export class MastersRoundElement extends LitElement {
       "sendStageDataToCompetitionScene",
       { stageIndex },
     );
+    await this._dashboardContext.sendRequest("resetOcrState"); // TODO: Experimental
     this._dashboardContext.requestStopTimer();
     await this._dashboardContext.sendRequest("toggleResultScene", {
       show: false,
@@ -177,6 +187,40 @@ export class MastersRoundElement extends LitElement {
   private _editStageScore(stageIndex: number) {
     const currentStageData = this._currentRoundData!.stageData[stageIndex];
     this._scoreEditorDialog.open(stageIndex, currentStageData.players);
+    // TODO: Experimental
+    if (this._latestOcrResult != null) {
+      const initialScore: StageScoreEntry[] = [];
+      currentStageData.players.forEach((player, i) => {
+        if (player == null) return;
+        const status = this._latestOcrResult!.status[i];
+        if (status.level == 0) return;
+        let grade: number | null;
+        let level: number | null;
+        let time: number | null;
+        if (status.level < 999) {
+          grade = null;
+          level = status.level;
+          time = null;
+        } else if (status.grade < 18) {
+          // -S9
+          grade = Math.max(status.grade - 12, 0); // TODO: support all grades
+          level = null;
+          time = status.gameTime;
+        } else {
+          // GM
+          grade = null;
+          level = null;
+          time = status.gameTime;
+        }
+        initialScore.push({
+          name: player.name,
+          grade,
+          level,
+          time,
+        });
+      })
+      this._scoreEditorDialog.setData({ score: initialScore });
+    }
   }
 
   private async _updateStagePlayerNames(

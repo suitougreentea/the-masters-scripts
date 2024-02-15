@@ -4,6 +4,9 @@ import { ApiClient } from "./server/api_client.ts";
 import { AppsScriptApi } from "./server/apps_script_api.ts";
 import { denocg } from "./server/deps.ts";
 import { OBSController } from "./server/obs_controller.ts";
+// TODO: Experimental
+import { OcrResult } from "./common/type_definition.ts";
+import { OcrServer } from "./server/ocr_server.ts";
 
 export const config: denocg.ServerConfig<TypeDefinition> = {
   socketPort: 8515,
@@ -456,4 +459,15 @@ resultSceneActiveReplicant.subscribe(async (value) => {
   } catch (e) {
     console.error(e);
   }
+});
+
+// TODO: Experimental
+const ocrServer = new OcrServer(8517);
+const latestOcrResultReplicant = server.getReplicant("latestOcrResult");
+ocrServer.addEventListener("data", (ev) => {
+  latestOcrResultReplicant.setValue((ev as CustomEvent).detail as OcrResult);
+});
+server.registerRequestHandler("resetOcrState", () => {
+  latestOcrResultReplicant.setValue(null);
+  ocrServer.requestReset();
 });

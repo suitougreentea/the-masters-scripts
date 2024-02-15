@@ -35,6 +35,21 @@ export type ResultSceneData = {
   nextStageName: string | null;
 };
 
+// TODO: Experimental
+export type OcrResult = {
+  status: {
+    frameTime: number;
+    playing: boolean;
+    level: number;
+    grade: number;
+    gameTime: number;
+    sections: {
+      lap: number;
+      split: number;
+    }[];
+  }[];
+};
+
 type EmptyObject = Record<keyof unknown, never>;
 
 export type TypeDefinition = {
@@ -46,6 +61,8 @@ export type TypeDefinition = {
     currentCompetitionSceneStageData: CompetitionSceneStageData | null;
     currentResultSceneData: ResultSceneData | null;
     resultSceneActive: boolean;
+    // TODO: Experimental
+    latestOcrResult: OcrResult | null;
   };
 
   messages: {
@@ -84,5 +101,7 @@ export type TypeDefinition = {
     setResultSceneData: { params: { stageIndex: number } };
     unsetResultSceneData: EmptyObject;
     toggleResultScene: { params: { show: boolean } };
+    // TODO: Experimental
+    resetOcrState: EmptyObject;
   };
 };
