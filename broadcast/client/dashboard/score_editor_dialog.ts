@@ -73,6 +73,18 @@ export class MastersScoreEditorDialogElement extends LitElement {
     }
   }
 
+  // TODO: Experimental
+  setData(data: ScoreEditorDialogData) {
+    data.score.forEach((e) => {
+      const index = this._data.findIndex(p => p.name == e.name);
+      if (index >= 0) {
+        this._data[index].level = e.level;
+        this._data[index].grade = e.grade;
+        this._data[index].time = e.time;
+      }
+    });
+  }
+
   getData(): ScoreEditorDialogData {
     const score: StageScoreEntry[] = [];
     this._data.forEach((e) => {

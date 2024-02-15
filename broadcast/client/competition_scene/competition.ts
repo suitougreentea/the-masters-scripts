@@ -14,6 +14,8 @@ import {
 } from "../../common/common_types.ts";
 import { createPromiseSet, PromiseSet } from "../../common/util.ts";
 import { commonColors } from "../common/common_values.ts";
+// TODO: Experimental
+import { OcrResult } from "../../common/type_definition.ts";
 
 @customElement("masters-competition")
 export class MastersCompetitionElement extends LitElement {
@@ -78,10 +80,10 @@ export class MastersCompetitionElement extends LitElement {
     this.#timer = this.renderRoot.querySelector<MastersTimerElement>("#timer")!;
     await this.#timer.waitForInitialization();
     this.#timerWrapper = new TimerWrapper(this.#timer);
-    this.#initializedPromise.resolve();
     this.#timerPlaceholder = this.renderRoot.querySelector<HTMLDivElement>(
       "#timer-placeholder",
     )!;
+    this.#initializedPromise.resolve();
   }
 
   async waitForInitialization() {
@@ -117,6 +119,11 @@ export class MastersCompetitionElement extends LitElement {
     if (this.#timerWrapper == null) return;
     this.#timerWrapper.stop();
     this.#playerInfo.showDetail = true;
+  }
+
+  // TODO: Experimental
+  setOcrResult(result?: OcrResult | null) {
+    this.#timerWrapper.setOcrResult(result);
   }
 
   render() {

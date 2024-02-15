@@ -38,3 +38,9 @@ const currentCompetitionMetadataReplicant = await client.getReplicant(
 currentCompetitionMetadataReplicant.subscribe((value) => {
   competition.setTitleText(value?.name ?? "Retropia22 TGM stream");
 });
+
+// TODO: Experimental
+const latestOcrResultReplicant = await client.getReplicant("latestOcrResult");
+latestOcrResultReplicant.subscribe((value) => {
+  competition.setOcrResult(value);
+})
