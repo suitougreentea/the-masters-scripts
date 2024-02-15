@@ -1,5 +1,7 @@
 import { StagePlayerEntry } from "../../common/common_types.ts";
 import { MastersTimerElement } from "./timer.ts";
+// TODO: Experimental
+import { OcrResult } from "../../common/type_definition.ts";
 
 export class TimerWrapper {
   #timer: MastersTimerElement;
@@ -31,5 +33,10 @@ export class TimerWrapper {
     } else {
       this.#timer.setData(this.#data);
     }
+  }
+
+  // TODO: Experimental
+  setOcrResult(result?: OcrResult | null) {
+    this.#timer.setOcrResult(result);
   }
 }

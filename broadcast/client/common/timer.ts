@@ -14,6 +14,8 @@ import {
   map,
   tinycolor,
 } from "../deps.ts";
+// TODO: Experimental
+import { OcrResult } from "../../common/type_definition.ts";
 
 @customElement("masters-timer")
 export class MastersTimerElement extends LitElement {
@@ -94,6 +96,11 @@ export class MastersTimerElement extends LitElement {
     color: transparent;
   }
 
+  /* TODO: Experimental */
+  .time-level {
+    text-align: center;
+  }
+
   .gauge {
     grid-area: 1 / 4 / auto / span 3;
     height: 18px;
@@ -139,6 +146,9 @@ export class MastersTimerElement extends LitElement {
   #data: (StagePlayerEntry | null)[];
   #intervalId: number | null = null;
   #startTime = -1;
+
+  // TODO: Experimental
+  #currentOcrResult: OcrResult | null = null;
 
   constructor() {
     super();
@@ -247,6 +257,11 @@ export class MastersTimerElement extends LitElement {
     this.#reset();
   }
 
+  // TODO: Experimental
+  setOcrResult(result?: OcrResult | null) {
+    this.#currentOcrResult = result ?? null;
+  }
+
   #createEmptyData(): (StagePlayerEntry | null)[] {
     return [...new Array(8)].map((_) => null);
   }
@@ -285,6 +300,19 @@ export class MastersTimerElement extends LitElement {
         color = tinycolor.mix("#ff2800", "#faf500", u * 100).toRgbString();
       }
       player.gauge.style.background = color;
+
+      // TODO: Experimental
+      if (time == 0 && this.#currentOcrResult != null) {
+        const status = this.#currentOcrResult.status[index];
+        player.backgroundTime.className = "background-time";
+        player.time.className = "time time-level";
+        player.time.innerText = `${status.level}`;
+        const dead = status.level < 999 && status.playing == false;
+        const finished = status.level == 999;
+        const stopping = status.level % 100 == 99;
+        player.gauge.style.width = (status.level / 999 * 325) + "px";
+        player.gauge.style.background = finished ? "#cbf266" : dead ? "#7f878f" : stopping ? "#ff9900" : "#66ccff";
+      }
     } else {
       player.id.className = "id id-inactive";
       player.backgroundTime.className = "background-time";
