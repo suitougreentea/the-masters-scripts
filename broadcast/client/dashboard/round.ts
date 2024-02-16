@@ -187,8 +187,37 @@ export class MastersRoundElement extends LitElement {
   private _editStageScore(stageIndex: number) {
     const currentStageData = this._currentRoundData!.stageData[stageIndex];
     this._scoreEditorDialog.open(stageIndex, currentStageData.players);
+
     // TODO: Experimental
-    if (this._latestOcrResult != null) {
+    const oldScore: StageScoreEntry[] = currentStageData.result.map((result) => {
+      const name = result.name;
+      let grade: number | null;
+      let level: number | null;
+      let time: number | null;
+      if (result.level < 999) {
+        grade = null;
+        level = result.level;
+        time = null;
+      } else if (result.grade != null && result.grade < 6) {
+        // -S9
+        grade = result.grade;
+        level = null;
+        time = result.time;
+      } else {
+        // GM
+        grade = null;
+        level = null;
+        time = result.time;
+      }
+      return {
+        name,
+        grade,
+        level,
+        time,
+      };
+    })
+
+    if (oldScore.length == 0 && this._latestOcrResult != null) {
       const initialScore: StageScoreEntry[] = [];
       currentStageData.players.forEach((player, i) => {
         if (player == null) return;
