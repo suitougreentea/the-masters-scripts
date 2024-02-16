@@ -117,6 +117,9 @@ export class MastersTimerControllerElement extends LitElement {
   }
 
   private async _stop() {
+    // TODO: Experimental
+    await this._dashboardContext.sendRequest("resetOcrState");
+
     const client = await this._dashboardContext.getClient();
     this._timerWrapper.stop();
     client.broadcastMessage("stopTimer");
