@@ -1,4 +1,8 @@
 {
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "lib": ["dom", "deno.ns", "deno.unstable"]
+  },
   "tasks": {
     "gen-common-types": "cd ../competition-sheet && node gen_common_types.js ../broadcast/common/common_types.ts",
     "build": "deno run --allow-env --allow-net --allow-read --allow-run --allow-write build.ts build",
@@ -7,8 +11,5 @@
     "start-watch": "deno run --watch --allow-env --allow-net --allow-read --allow-write main.ts",
     "dev": "deno task build-watch & deno task start-watch",
     "check": "deno check main.ts build.ts client/dashboard.ts client/competition_scene.ts client/result_scene.ts"
-  },
-  "compilerOptions": {
-    "lib": ["dom", "deno.ns", "deno.unstable"]
   }
 }
