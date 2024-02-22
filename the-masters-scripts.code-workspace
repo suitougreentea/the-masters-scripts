@@ -5,7 +5,13 @@
 		},
 		{
 			"path": "broadcast"
+		},
+		{
+			"path": "backend"
 		}
 	],
-	"settings": { "deno.config": "../broadcast/deno.jsonc" }
+	"settings": {
+		"deno.config": "../broadcast/deno.jsonc",
+		"deno.enable": true
+	}
 }

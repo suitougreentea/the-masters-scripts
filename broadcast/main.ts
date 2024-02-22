@@ -1,7 +1,7 @@
 import { QualifierResult, QualifierScore } from "./common/common_types.ts";
 import { RoundData, TypeDefinition } from "./common/type_definition.ts";
 import { ApiClient } from "./server/api_client.ts";
-import { AppsScriptApi } from "./server/apps_script_api.ts";
+import { LocalApi as AppsScriptApi } from "./server/local_api.ts";
 import { denocg } from "./server/deps.ts";
 import { OBSController } from "./server/obs_controller.ts";
 // TODO: Experimental
