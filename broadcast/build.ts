@@ -10,6 +10,7 @@ const options: esbuild.BuildOptions = {
     "./client/dashboard.ts",
     "./client/competition_scene.ts",
     "./client/result_scene.ts",
+    "./client/ocr_info.ts",
   ],
   platform: "browser",
   bundle: true,
