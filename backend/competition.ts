@@ -15,9 +15,10 @@ import {
   SupplementComparisonData,
   SupplementComparisonEntry,
   SupplementComparisonMetadata,
-} from "./common_types.ts";
-import { grades } from "./grade.ts";
+} from "../common/common_types.ts";
 import { getAppropriatePresetName, getPreset, Preset } from "./preset.ts";
+import { groupIndexToString } from "../common/group.ts";
+import { grades } from "../common/grade.ts";
 
 /**
  * [用語]
@@ -85,18 +86,6 @@ type SupplementComparisonEntryStub = Omit<
   SupplementComparisonEntry,
   "rank" | "timeDiffPrev"
 >;
-
-const groupNames = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
-
-export function groupIndexToString(index: number): string {
-  return groupNames[index];
-}
-
-export function stringToGroupIndex(string: string): number | null {
-  const index = groupNames.indexOf(string);
-  if (index == -1) return null;
-  return index;
-}
 
 /**
  * 人数に応じて大会をセットアップ。ステージやsupplement comparisonの情報を割り出す。

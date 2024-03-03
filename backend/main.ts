@@ -1,31 +1,24 @@
 import * as Api from "./api.ts";
-import { ApiFunctions } from "./common_types.ts";
-import { register } from "./inject.ts";
-import {
-  FileSerializerManager,
-  injectKey as serializerManagerKey,
-} from "./serializer.ts";
-import { injectKey as playersStoreKey, PlayersStore } from "./players_store.ts";
-import { injectKey as setupStoreKey, SetupStore } from "./setup_store.ts";
-import {
-  CompetitionStore,
-  injectKey as competitionStoreKey,
-} from "./competition_store.ts";
+import { ApiFunctions } from "../common/common_types.ts";
+import { configureInject, modifyInjectLocal } from "./inject_config.ts";
 
-register(serializerManagerKey, FileSerializerManager);
-register(playersStoreKey, PlayersStore);
-register(setupStoreKey, SetupStore);
-register(competitionStoreKey, CompetitionStore);
+configureInject();
+if (Deno.args[0] == "--local") {
+  console.log("Running in local mode.");
+  modifyInjectLocal();
+}
 
-const apiFunctions = Api as ApiFunctions;
+type MapMaybePromise<T extends { [key: string]: ((...args: any[]) => any) }> = { [K in keyof T]: T[K] | ((...args: Parameters<T[K]>) => Promise<ReturnType<T[K]>>) }
+const apiFunctions = Api as MapMaybePromise<ApiFunctions>;
 
 Deno.serve({ port: 8518 }, async (req) => {
   try {
     const message = await req.json();
-    const functionName = message.functionName;
+    const functionName = message.functionName as keyof ApiFunctions;
     console.log(functionName);
-    const args = message.args;
-    const returnValue = apiFunctions[functionName](...args);
+    const args = message.args as any[];
+    const returnValueMaybePromise = apiFunctions[functionName](...args);
+    const returnValue = returnValueMaybePromise instanceof Promise ? await returnValueMaybePromise : returnValueMaybePromise
     console.log(returnValue);
     const response = {
       "body": returnValue,

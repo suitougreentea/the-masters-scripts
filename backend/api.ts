@@ -13,7 +13,7 @@ import {
   StageSetupResult,
   SupplementComparisonData,
   SupplementComparisonEntry,
-} from "./common_types.ts";
+} from "../common/common_types.ts";
 import {
   constructStageResultEntryStub,
   finalizeRound,
@@ -30,6 +30,7 @@ import { resolve } from "./inject.ts";
 import { injectKey as playersStoreKey } from "./players_store.ts";
 import { injectKey as setupStoreKey } from "./setup_store.ts";
 import { injectKey as competitionStoreKey } from "./competition_store.ts";
+import { injectKey as exporterKey } from "./exporter.ts";
 
 const lazy = <T>(ctor: () => T): { value: T } => {
   let instance: T | null = null;
@@ -43,6 +44,7 @@ const lazy = <T>(ctor: () => T): { value: T } => {
 const playersStore = lazy(() => resolve(playersStoreKey));
 const setupStore = lazy(() => resolve(setupStoreKey));
 const competitionStore = lazy(() => resolve(competitionStoreKey));
+const exporter = lazy(() => resolve(exporterKey));
 
 const stageSetupResultToStagePlayers = (setupResult: StageSetupResult) => {
   const stagePlayers: (StagePlayerEntry | null)[] = setupResult.entries.map(
@@ -142,8 +144,8 @@ export function mastersSetupCompetition(options: CompetitionSetupOptions) {
   competitionStore.value.setRounds(rounds);
 }
 
-export function mastersExportCompetition(): { url: string } {
-  throw new Error("Not implemented");
+export async function mastersExportCompetition(): Promise<{ url: string }> {
+  return await exporter.value.exportCompetition();
 }
 
 export function mastersGetCurrentCompetitionMetadata():
@@ -417,24 +419,3 @@ export function mastersTryFinalizeRound(roundIndex: number): boolean {
 
   return true;
 }
-
-// 型チェック用
-const assertApiFunctions: ApiFunctions = {
-  mastersGetRegisteredPlayers,
-  mastersRegisterPlayer,
-  mastersUpdatePlayer,
-  mastersGetParticipants,
-  mastersSetParticipants,
-  mastersSetupCompetition,
-  mastersExportCompetition,
-  mastersGetCurrentCompetitionMetadata,
-  mastersResetStage,
-  mastersGetStageData,
-  mastersGetSupplementComparisonData,
-  mastersGetQualifierScore,
-  mastersGetQualifierResult,
-  mastersReorderStagePlayers,
-  mastersSetStageScore,
-  mastersTryInitializeRound,
-  mastersTryFinalizeRound,
-};

@@ -2,7 +2,7 @@ import {
   CompetitionType,
   DestinationMethod,
   HandicapMethod,
-} from "./common_types.ts";
+} from "../common/common_types.ts";
 
 export type Preset = {
   name: string;

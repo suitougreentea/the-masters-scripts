@@ -1,4 +1,4 @@
-import { RegisteredPlayerEntry } from "./common_types.ts";
+import { RegisteredPlayerEntry } from "../common/common_types.ts";
 import { createKey, injectCtor } from "./inject.ts";
 import {
   injectKey as serializerManagerKey,

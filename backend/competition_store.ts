@@ -4,7 +4,7 @@ import {
   QualifierScore,
   StageData,
   SupplementComparisonData,
-} from "./common_types.ts";
+} from "../common/common_types.ts";
 import { createKey, injectCtor } from "./inject.ts";
 import {
   injectKey as serializerManagerKey,
