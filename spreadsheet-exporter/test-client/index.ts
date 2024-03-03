@@ -1,4 +1,4 @@
-import { Data } from "../../common/spreadsheet_exporter_types.ts"
+import { Data } from "../../common/spreadsheet_exporter_types.ts";
 
 const entrypoint = Deno.readTextFileSync(import.meta.dirname + "/.entrypoint");
 
@@ -10,7 +10,9 @@ if (import.meta.main) {
 
   const data: Data = {
     credential: Deno.readTextFileSync(import.meta.dirname + "/.credential"),
-    input: JSON.parse(Deno.readTextFileSync(import.meta.dirname + "/" + inputFilename)),
+    input: JSON.parse(
+      Deno.readTextFileSync(import.meta.dirname + "/" + inputFilename),
+    ),
   };
 
   const response = await fetch(entrypoint, {
