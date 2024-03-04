@@ -6,7 +6,7 @@ import {
   resizeSheet,
   timeToSpreadsheetValue,
 } from "../common/spreadsheet_util.ts";
-import { getScoreResultTemplate, getScoreTableTemplate } from "./templates.ts";
+import { getScoreResultTemplate, getScoreTableTemplate, getSupplementComparisonTemplate } from "./templates.ts";
 
 export const createSupplementsSheet = (
   ss: GoogleAppsScript.Spreadsheet.Spreadsheet,
@@ -64,7 +64,7 @@ export const createSupplementsSheet = (
 
     const numStages = scoreTableTemplate.numColumns - 2;
     const scoreTableRange = sh.getRange(
-      2,
+      3,
       tableColumn,
       numPlayers,
       numStages + 2,
@@ -109,6 +109,15 @@ export const createSupplementsSheet = (
 
     let row = 1;
     supplementComparisons.forEach((e) => {
+      pasteTemplate(
+        sh,
+        row,
+        1,
+        templatesSheet,
+        getSupplementComparisonTemplate(e.comparison.length),
+        SpreadsheetApp.CopyPasteType.PASTE_NORMAL,
+      );
+
       sh.getRange(row, 1).setValue(e.name);
 
       const range = sh.getRange(row + 2, 1, e.comparison.length, 6);

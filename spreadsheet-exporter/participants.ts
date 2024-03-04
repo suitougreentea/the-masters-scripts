@@ -23,9 +23,10 @@ export const createParticipantsSheet = (
 
   const numPlayersRange = sh.getRange(1, 3);
   numPlayersRange.setValue(list.length);
+  numPlayersRange.setHorizontalAlignment("center");
 
   const headerRange = sh.getRange(2, 1, 1, 3);
-  headerRange.setValues([["名前", "組", "自己ベスト"]]);
+  headerRange.setValues([["プレイヤー", "組", "ベスト"]]);
   applyHeaderStyle(headerRange);
 
   const valueRange = sh.getRange(3, 1, list.length, 3);

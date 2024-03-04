@@ -1,0 +1,1985 @@
+{
+  "name": "Masters Automated Test - 11 11_4p",
+  "participants": {
+    "list": [
+      {
+        "name": "a",
+        "bestTime": 540000,
+        "firstRoundGroupIndex": 0
+      },
+      {
+        "name": "b",
+        "bestTime": 541000,
+        "firstRoundGroupIndex": 1
+      },
+      {
+        "name": "c",
+        "bestTime": 600000,
+        "firstRoundGroupIndex": 2
+      },
+      {
+        "name": "d",
+        "bestTime": 630000,
+        "firstRoundGroupIndex": 3
+      },
+      {
+        "name": "e",
+        "bestTime": 540000,
+        "firstRoundGroupIndex": 4
+      },
+      {
+        "name": "f",
+        "bestTime": 542000,
+        "firstRoundGroupIndex": 5
+      },
+      {
+        "name": "g",
+        "bestTime": 550000,
+        "firstRoundGroupIndex": 6
+      },
+      {
+        "name": "h",
+        "bestTime": 680000,
+        "firstRoundGroupIndex": 7
+      },
+      {
+        "name": "i",
+        "bestTime": 750000,
+        "firstRoundGroupIndex": 8
+      },
+      {
+        "name": "j",
+        "bestTime": 610100,
+        "firstRoundGroupIndex": 9
+      },
+      {
+        "name": "k",
+        "bestTime": 671110,
+        "firstRoundGroupIndex": 10
+      }
+    ]
+  },
+  "stages": {
+    "list": [
+      {
+        "name": "予選 Heat1",
+        "entries": [
+          {
+            "name": "b",
+            "rawBestTime": 541000,
+            "handicap": 0,
+            "bestTime": 541000,
+            "startOrder": 3,
+            "startTime": 59000,
+            "level": 999,
+            "grade": 6,
+            "time": 628648
+          },
+          null,
+          null,
+          {
+            "name": "c",
+            "rawBestTime": 600000,
+            "handicap": 0,
+            "bestTime": 600000,
+            "startOrder": 1,
+            "startTime": 0,
+            "level": 93,
+            "grade": null,
+            "time": null
+          },
+          {
+            "name": "a",
+            "rawBestTime": 540000,
+            "handicap": 0,
+            "bestTime": 540000,
+            "startOrder": 4,
+            "startTime": 60000,
+            "level": 187,
+            "grade": null,
+            "time": null
+          },
+          null,
+          {
+            "name": "f",
+            "rawBestTime": 542000,
+            "handicap": 0,
+            "bestTime": 542000,
+            "startOrder": 2,
+            "startTime": 58000,
+            "level": 999,
+            "grade": 6,
+            "time": 714712
+          },
+          null
+        ],
+        "result": [
+          {
+            "rank": 1,
+            "name": "b",
+            "level": 999,
+            "grade": 6,
+            "time": 628648,
+            "timeDiffBest": 87648,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          },
+          {
+            "rank": 2,
+            "name": "f",
+            "level": 999,
+            "grade": 6,
+            "time": 714712,
+            "timeDiffBest": 172712,
+            "timeDiffTop": 85064,
+            "timeDiffPrev": 85064
+          },
+          {
+            "rank": 3,
+            "name": "a",
+            "level": 187,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          },
+          {
+            "rank": 4,
+            "name": "c",
+            "level": 93,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          }
+        ],
+        "borderlines": []
+      },
+      {
+        "name": "予選 Heat2",
+        "entries": [
+          {
+            "name": "c",
+            "rawBestTime": 600000,
+            "handicap": 0,
+            "bestTime": 600000,
+            "startOrder": 3,
+            "startTime": 80000,
+            "level": 880,
+            "grade": null,
+            "time": null
+          },
+          {
+            "name": "d",
+            "rawBestTime": 630000,
+            "handicap": 0,
+            "bestTime": 630000,
+            "startOrder": 2,
+            "startTime": 50000,
+            "level": 999,
+            "grade": 6,
+            "time": 550333
+          },
+          null,
+          {
+            "name": "e",
+            "rawBestTime": 540000,
+            "handicap": 0,
+            "bestTime": 540000,
+            "startOrder": 4,
+            "startTime": 140000,
+            "level": 999,
+            "grade": 6,
+            "time": 767437
+          },
+          null,
+          {
+            "name": "h",
+            "rawBestTime": 680000,
+            "handicap": 0,
+            "bestTime": 680000,
+            "startOrder": 1,
+            "startTime": 0,
+            "level": 854,
+            "grade": null,
+            "time": null
+          },
+          null,
+          null
+        ],
+        "result": [
+          {
+            "rank": 1,
+            "name": "d",
+            "level": 999,
+            "grade": 6,
+            "time": 550333,
+            "timeDiffBest": -79667,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          },
+          {
+            "rank": 2,
+            "name": "e",
+            "level": 999,
+            "grade": 6,
+            "time": 767437,
+            "timeDiffBest": 227437,
+            "timeDiffTop": 307104,
+            "timeDiffPrev": 307104
+          },
+          {
+            "rank": 3,
+            "name": "c",
+            "level": 880,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          },
+          {
+            "rank": 4,
+            "name": "h",
+            "level": 854,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          }
+        ],
+        "borderlines": []
+      },
+      {
+        "name": "予選 Heat3",
+        "entries": [
+          null,
+          null,
+          null,
+          {
+            "name": "f",
+            "rawBestTime": 542000,
+            "handicap": 0,
+            "bestTime": 542000,
+            "startOrder": 3,
+            "startTime": 68100,
+            "level": 270,
+            "grade": null,
+            "time": null
+          },
+          null,
+          {
+            "name": "g",
+            "rawBestTime": 550000,
+            "handicap": 0,
+            "bestTime": 550000,
+            "startOrder": 2,
+            "startTime": 60100,
+            "level": 711,
+            "grade": null,
+            "time": null
+          },
+          {
+            "name": "j",
+            "rawBestTime": 610100,
+            "handicap": 0,
+            "bestTime": 610100,
+            "startOrder": 1,
+            "startTime": 0,
+            "level": 999,
+            "grade": 6,
+            "time": 725911
+          },
+          {
+            "name": "e",
+            "rawBestTime": 540000,
+            "handicap": 0,
+            "bestTime": 540000,
+            "startOrder": 4,
+            "startTime": 70100,
+            "level": 999,
+            "grade": 6,
+            "time": 572109
+          }
+        ],
+        "result": [
+          {
+            "rank": 1,
+            "name": "e",
+            "level": 999,
+            "grade": 6,
+            "time": 572109,
+            "timeDiffBest": 32109,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          },
+          {
+            "rank": 2,
+            "name": "j",
+            "level": 999,
+            "grade": 6,
+            "time": 725911,
+            "timeDiffBest": 115811,
+            "timeDiffTop": 83702,
+            "timeDiffPrev": 83702
+          },
+          {
+            "rank": 3,
+            "name": "g",
+            "level": 711,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          },
+          {
+            "rank": 4,
+            "name": "f",
+            "level": 270,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          }
+        ],
+        "borderlines": []
+      },
+      {
+        "name": "予選 Heat4",
+        "entries": [
+          {
+            "name": "i",
+            "rawBestTime": 750000,
+            "handicap": 0,
+            "bestTime": 750000,
+            "startOrder": 1,
+            "startTime": 0,
+            "level": 507,
+            "grade": null,
+            "time": null
+          },
+          null,
+          null,
+          {
+            "name": "h",
+            "rawBestTime": 680000,
+            "handicap": 0,
+            "bestTime": 680000,
+            "startOrder": 2,
+            "startTime": 70000,
+            "level": 999,
+            "grade": 6,
+            "time": 692051
+          },
+          {
+            "name": "a",
+            "rawBestTime": 540000,
+            "handicap": 0,
+            "bestTime": 540000,
+            "startOrder": 4,
+            "startTime": 210000,
+            "level": 189,
+            "grade": null,
+            "time": null
+          },
+          null,
+          null,
+          {
+            "name": "g",
+            "rawBestTime": 550000,
+            "handicap": 0,
+            "bestTime": 550000,
+            "startOrder": 3,
+            "startTime": 200000,
+            "level": 658,
+            "grade": null,
+            "time": null
+          }
+        ],
+        "result": [
+          {
+            "rank": 1,
+            "name": "h",
+            "level": 999,
+            "grade": 6,
+            "time": 692051,
+            "timeDiffBest": 12051,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          },
+          {
+            "rank": 2,
+            "name": "g",
+            "level": 658,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          },
+          {
+            "rank": 3,
+            "name": "i",
+            "level": 507,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          },
+          {
+            "rank": 4,
+            "name": "a",
+            "level": 189,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          }
+        ],
+        "borderlines": []
+      },
+      {
+        "name": "予選 Heat5",
+        "entries": [
+          {
+            "name": "j",
+            "rawBestTime": 610100,
+            "handicap": 0,
+            "bestTime": 610100,
+            "startOrder": 3,
+            "startTime": 139900,
+            "level": 999,
+            "grade": 6,
+            "time": 674766
+          },
+          {
+            "name": "i",
+            "rawBestTime": 750000,
+            "handicap": 0,
+            "bestTime": 750000,
+            "startOrder": 1,
+            "startTime": 0,
+            "level": 999,
+            "grade": 6,
+            "time": 575146
+          },
+          {
+            "name": "k",
+            "rawBestTime": 671110,
+            "handicap": 0,
+            "bestTime": 671110,
+            "startOrder": 2,
+            "startTime": 78890,
+            "level": 6,
+            "grade": null,
+            "time": null
+          },
+          {
+            "name": "c",
+            "rawBestTime": 600000,
+            "handicap": 0,
+            "bestTime": 600000,
+            "startOrder": 4,
+            "startTime": 150000,
+            "level": 999,
+            "grade": 6,
+            "time": 596849
+          },
+          null,
+          null,
+          null,
+          null
+        ],
+        "result": [
+          {
+            "rank": 1,
+            "name": "i",
+            "level": 999,
+            "grade": 6,
+            "time": 575146,
+            "timeDiffBest": -174854,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          },
+          {
+            "rank": 2,
+            "name": "c",
+            "level": 999,
+            "grade": 6,
+            "time": 596849,
+            "timeDiffBest": -3151,
+            "timeDiffTop": 171703,
+            "timeDiffPrev": 171703
+          },
+          {
+            "rank": 3,
+            "name": "j",
+            "level": 999,
+            "grade": 6,
+            "time": 674766,
+            "timeDiffBest": 64666,
+            "timeDiffTop": 239520,
+            "timeDiffPrev": 67817
+          },
+          {
+            "rank": 4,
+            "name": "k",
+            "level": 6,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          }
+        ],
+        "borderlines": []
+      },
+      {
+        "name": "予選 Heat6",
+        "entries": [
+          null,
+          {
+            "name": "e",
+            "rawBestTime": 540000,
+            "handicap": 0,
+            "bestTime": 540000,
+            "startOrder": 4,
+            "startTime": 131110,
+            "level": 550,
+            "grade": null,
+            "time": null
+          },
+          null,
+          {
+            "name": "a",
+            "rawBestTime": 540000,
+            "handicap": 0,
+            "bestTime": 540000,
+            "startOrder": 3,
+            "startTime": 131110,
+            "level": 419,
+            "grade": null,
+            "time": null
+          },
+          {
+            "name": "b",
+            "rawBestTime": 541000,
+            "handicap": 0,
+            "bestTime": 541000,
+            "startOrder": 2,
+            "startTime": 130110,
+            "level": 51,
+            "grade": null,
+            "time": null
+          },
+          null,
+          {
+            "name": "k",
+            "rawBestTime": 671110,
+            "handicap": 0,
+            "bestTime": 671110,
+            "startOrder": 1,
+            "startTime": 0,
+            "level": 999,
+            "grade": 6,
+            "time": 575832
+          },
+          null
+        ],
+        "result": [
+          {
+            "rank": 1,
+            "name": "k",
+            "level": 999,
+            "grade": 6,
+            "time": 575832,
+            "timeDiffBest": -95278,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          },
+          {
+            "rank": 2,
+            "name": "e",
+            "level": 550,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          },
+          {
+            "rank": 3,
+            "name": "a",
+            "level": 419,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          },
+          {
+            "rank": 4,
+            "name": "b",
+            "level": 51,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          }
+        ],
+        "borderlines": []
+      },
+      {
+        "name": "予選 Heat7",
+        "entries": [
+          {
+            "name": "g",
+            "rawBestTime": 550000,
+            "handicap": 0,
+            "bestTime": 550000,
+            "startOrder": 3,
+            "startTime": 80000,
+            "level": 677,
+            "grade": null,
+            "time": null
+          },
+          null,
+          {
+            "name": "d",
+            "rawBestTime": 630000,
+            "handicap": 0,
+            "bestTime": 630000,
+            "startOrder": 1,
+            "startTime": 0,
+            "level": 999,
+            "grade": 6,
+            "time": 597826
+          },
+          null,
+          null,
+          null,
+          {
+            "name": "b",
+            "rawBestTime": 541000,
+            "handicap": 0,
+            "bestTime": 541000,
+            "startOrder": 4,
+            "startTime": 89000,
+            "level": 687,
+            "grade": null,
+            "time": null
+          },
+          {
+            "name": "c",
+            "rawBestTime": 600000,
+            "handicap": 0,
+            "bestTime": 600000,
+            "startOrder": 2,
+            "startTime": 30000,
+            "level": 999,
+            "grade": 6,
+            "time": 662210
+          }
+        ],
+        "result": [
+          {
+            "rank": 1,
+            "name": "d",
+            "level": 999,
+            "grade": 6,
+            "time": 597826,
+            "timeDiffBest": -32174,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          },
+          {
+            "rank": 2,
+            "name": "c",
+            "level": 999,
+            "grade": 6,
+            "time": 662210,
+            "timeDiffBest": 62210,
+            "timeDiffTop": 94384,
+            "timeDiffPrev": 94384
+          },
+          {
+            "rank": 3,
+            "name": "b",
+            "level": 687,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          },
+          {
+            "rank": 4,
+            "name": "g",
+            "level": 677,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          }
+        ],
+        "borderlines": []
+      },
+      {
+        "name": "予選 Heat8",
+        "entries": [
+          {
+            "name": "e",
+            "rawBestTime": 540000,
+            "handicap": 0,
+            "bestTime": 540000,
+            "startOrder": 4,
+            "startTime": 210000,
+            "level": 999,
+            "grade": 5,
+            "time": 724712
+          },
+          null,
+          {
+            "name": "f",
+            "rawBestTime": 542000,
+            "handicap": 0,
+            "bestTime": 542000,
+            "startOrder": 3,
+            "startTime": 208000,
+            "level": 131,
+            "grade": null,
+            "time": null
+          },
+          null,
+          {
+            "name": "d",
+            "rawBestTime": 630000,
+            "handicap": 0,
+            "bestTime": 630000,
+            "startOrder": 2,
+            "startTime": 120000,
+            "level": 999,
+            "grade": 6,
+            "time": 723556
+          },
+          null,
+          {
+            "name": "i",
+            "rawBestTime": 750000,
+            "handicap": 0,
+            "bestTime": 750000,
+            "startOrder": 1,
+            "startTime": 0,
+            "level": 999,
+            "grade": 6,
+            "time": 705807
+          },
+          null
+        ],
+        "result": [
+          {
+            "rank": 1,
+            "name": "i",
+            "level": 999,
+            "grade": 6,
+            "time": 705807,
+            "timeDiffBest": -44193,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          },
+          {
+            "rank": 2,
+            "name": "d",
+            "level": 999,
+            "grade": 6,
+            "time": 723556,
+            "timeDiffBest": 93556,
+            "timeDiffTop": 137749,
+            "timeDiffPrev": 137749
+          },
+          {
+            "rank": 3,
+            "name": "e",
+            "level": 999,
+            "grade": 5,
+            "time": 724712,
+            "timeDiffBest": 184712,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          },
+          {
+            "rank": 4,
+            "name": "f",
+            "level": 131,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          }
+        ],
+        "borderlines": []
+      },
+      {
+        "name": "予選 Heat9",
+        "entries": [
+          null,
+          {
+            "name": "f",
+            "rawBestTime": 542000,
+            "handicap": 0,
+            "bestTime": 542000,
+            "startOrder": 4,
+            "startTime": 138000,
+            "level": 999,
+            "grade": 6,
+            "time": 771015
+          },
+          {
+            "name": "g",
+            "rawBestTime": 550000,
+            "handicap": 0,
+            "bestTime": 550000,
+            "startOrder": 3,
+            "startTime": 130000,
+            "level": 79,
+            "grade": null,
+            "time": null
+          },
+          null,
+          null,
+          null,
+          {
+            "name": "h",
+            "rawBestTime": 680000,
+            "handicap": 0,
+            "bestTime": 680000,
+            "startOrder": 1,
+            "startTime": 0,
+            "level": 751,
+            "grade": null,
+            "time": null
+          },
+          {
+            "name": "k",
+            "rawBestTime": 671110,
+            "handicap": 0,
+            "bestTime": 671110,
+            "startOrder": 2,
+            "startTime": 8890,
+            "level": 999,
+            "grade": 6,
+            "time": 762743
+          }
+        ],
+        "result": [
+          {
+            "rank": 1,
+            "name": "k",
+            "level": 999,
+            "grade": 6,
+            "time": 762743,
+            "timeDiffBest": 91633,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          },
+          {
+            "rank": 2,
+            "name": "f",
+            "level": 999,
+            "grade": 6,
+            "time": 771015,
+            "timeDiffBest": 229015,
+            "timeDiffTop": 137382,
+            "timeDiffPrev": 137382
+          },
+          {
+            "rank": 3,
+            "name": "h",
+            "level": 751,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          },
+          {
+            "rank": 4,
+            "name": "g",
+            "level": 79,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          }
+        ],
+        "borderlines": []
+      },
+      {
+        "name": "予選 Heat10",
+        "entries": [
+          {
+            "name": "i",
+            "rawBestTime": 750000,
+            "handicap": 0,
+            "bestTime": 750000,
+            "startOrder": 1,
+            "startTime": 0,
+            "level": 999,
+            "grade": 6,
+            "time": 746235
+          },
+          {
+            "name": "h",
+            "rawBestTime": 680000,
+            "handicap": 0,
+            "bestTime": 680000,
+            "startOrder": 2,
+            "startTime": 70000,
+            "level": 375,
+            "grade": null,
+            "time": null
+          },
+          null,
+          {
+            "name": "b",
+            "rawBestTime": 541000,
+            "handicap": 0,
+            "bestTime": 541000,
+            "startOrder": 4,
+            "startTime": 209000,
+            "level": 999,
+            "grade": 6,
+            "time": 682737
+          },
+          null,
+          {
+            "name": "j",
+            "rawBestTime": 610100,
+            "handicap": 0,
+            "bestTime": 610100,
+            "startOrder": 3,
+            "startTime": 139900,
+            "level": 999,
+            "grade": 6,
+            "time": 743354
+          },
+          null,
+          null
+        ],
+        "result": [
+          {
+            "rank": 1,
+            "name": "i",
+            "level": 999,
+            "grade": 6,
+            "time": 746235,
+            "timeDiffBest": -3765,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          },
+          {
+            "rank": 2,
+            "name": "j",
+            "level": 999,
+            "grade": 6,
+            "time": 743354,
+            "timeDiffBest": 133254,
+            "timeDiffTop": 137019,
+            "timeDiffPrev": 137019
+          },
+          {
+            "rank": 3,
+            "name": "b",
+            "level": 999,
+            "grade": 6,
+            "time": 682737,
+            "timeDiffBest": 141737,
+            "timeDiffTop": 145502,
+            "timeDiffPrev": 8483
+          },
+          {
+            "rank": 4,
+            "name": "h",
+            "level": 375,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          }
+        ],
+        "borderlines": []
+      },
+      {
+        "name": "予選 Heat11",
+        "entries": [
+          null,
+          null,
+          {
+            "name": "d",
+            "rawBestTime": 630000,
+            "handicap": 0,
+            "bestTime": 630000,
+            "startOrder": 2,
+            "startTime": 41110,
+            "level": 999,
+            "grade": 6,
+            "time": 754120
+          },
+          {
+            "name": "a",
+            "rawBestTime": 540000,
+            "handicap": 0,
+            "bestTime": 540000,
+            "startOrder": 4,
+            "startTime": 131110,
+            "level": 999,
+            "grade": 6,
+            "time": 750711
+          },
+          {
+            "name": "k",
+            "rawBestTime": 671110,
+            "handicap": 0,
+            "bestTime": 671110,
+            "startOrder": 1,
+            "startTime": 0,
+            "level": 2,
+            "grade": null,
+            "time": null
+          },
+          {
+            "name": "j",
+            "rawBestTime": 610100,
+            "handicap": 0,
+            "bestTime": 610100,
+            "startOrder": 3,
+            "startTime": 61010,
+            "level": 394,
+            "grade": null,
+            "time": null
+          },
+          null,
+          null
+        ],
+        "result": [
+          {
+            "rank": 1,
+            "name": "d",
+            "level": 999,
+            "grade": 6,
+            "time": 754120,
+            "timeDiffBest": 124120,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          },
+          {
+            "rank": 2,
+            "name": "a",
+            "level": 999,
+            "grade": 6,
+            "time": 750711,
+            "timeDiffBest": 210711,
+            "timeDiffTop": 86591,
+            "timeDiffPrev": 86591
+          },
+          {
+            "rank": 3,
+            "name": "j",
+            "level": 394,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          },
+          {
+            "rank": 4,
+            "name": "k",
+            "level": 2,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          }
+        ],
+        "borderlines": []
+      },
+      {
+        "name": "決勝",
+        "entries": [
+          null,
+          null,
+          {
+            "name": "i",
+            "rawBestTime": 750000,
+            "handicap": -5,
+            "bestTime": 755000,
+            "startOrder": 1,
+            "startTime": 0,
+            "level": 131,
+            "grade": null,
+            "time": null
+          },
+          {
+            "name": "d",
+            "rawBestTime": 630000,
+            "handicap": -10,
+            "bestTime": 640000,
+            "startOrder": 3,
+            "startTime": 115000,
+            "level": 999,
+            "grade": 6,
+            "time": 718894
+          },
+          null,
+          {
+            "name": "e",
+            "rawBestTime": 540000,
+            "handicap": 0,
+            "bestTime": 540000,
+            "startOrder": 4,
+            "startTime": 215000,
+            "level": 999,
+            "grade": 6,
+            "time": 566536
+          },
+          {
+            "name": "k",
+            "rawBestTime": 671110,
+            "handicap": 0,
+            "bestTime": 671110,
+            "startOrder": 2,
+            "startTime": 83890,
+            "level": 999,
+            "grade": 6,
+            "time": 774787
+          },
+          null
+        ],
+        "result": [
+          {
+            "rank": 1,
+            "name": "e",
+            "level": 999,
+            "grade": 6,
+            "time": 566536,
+            "timeDiffBest": 26536,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          },
+          {
+            "rank": 2,
+            "name": "d",
+            "level": 999,
+            "grade": 6,
+            "time": 718894,
+            "timeDiffBest": 78894,
+            "timeDiffTop": 52358,
+            "timeDiffPrev": 52358
+          },
+          {
+            "rank": 3,
+            "name": "k",
+            "level": 999,
+            "grade": 6,
+            "time": 774787,
+            "timeDiffBest": 103677,
+            "timeDiffTop": 77141,
+            "timeDiffPrev": 24783
+          },
+          {
+            "rank": 4,
+            "name": "i",
+            "level": 131,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
+          }
+        ],
+        "borderlines": [
+          1
+        ]
+      }
+    ]
+  },
+  "supplements": {
+    "qualifierScore": {
+      "players": [
+        {
+          "name": "a",
+          "totalPoints": 8,
+          "stageResults": [
+            {
+              "stageIndex": 0,
+              "rankIndex": 2,
+              "points": 2
+            },
+            {
+              "stageIndex": 3,
+              "rankIndex": 3,
+              "points": 1
+            },
+            {
+              "stageIndex": 5,
+              "rankIndex": 2,
+              "points": 2
+            },
+            {
+              "stageIndex": 10,
+              "rankIndex": 1,
+              "points": 3
+            }
+          ]
+        },
+        {
+          "name": "b",
+          "totalPoints": 9,
+          "stageResults": [
+            {
+              "stageIndex": 0,
+              "rankIndex": 0,
+              "points": 4
+            },
+            {
+              "stageIndex": 5,
+              "rankIndex": 3,
+              "points": 1
+            },
+            {
+              "stageIndex": 6,
+              "rankIndex": 2,
+              "points": 2
+            },
+            {
+              "stageIndex": 9,
+              "rankIndex": 2,
+              "points": 2
+            }
+          ]
+        },
+        {
+          "name": "c",
+          "totalPoints": 9,
+          "stageResults": [
+            {
+              "stageIndex": 0,
+              "rankIndex": 3,
+              "points": 1
+            },
+            {
+              "stageIndex": 1,
+              "rankIndex": 2,
+              "points": 2
+            },
+            {
+              "stageIndex": 4,
+              "rankIndex": 1,
+              "points": 3
+            },
+            {
+              "stageIndex": 6,
+              "rankIndex": 1,
+              "points": 3
+            }
+          ]
+        },
+        {
+          "name": "d",
+          "totalPoints": 15,
+          "stageResults": [
+            {
+              "stageIndex": 1,
+              "rankIndex": 0,
+              "points": 4
+            },
+            {
+              "stageIndex": 6,
+              "rankIndex": 0,
+              "points": 4
+            },
+            {
+              "stageIndex": 7,
+              "rankIndex": 1,
+              "points": 3
+            },
+            {
+              "stageIndex": 10,
+              "rankIndex": 0,
+              "points": 4
+            }
+          ]
+        },
+        {
+          "name": "e",
+          "totalPoints": 12,
+          "stageResults": [
+            {
+              "stageIndex": 1,
+              "rankIndex": 1,
+              "points": 3
+            },
+            {
+              "stageIndex": 2,
+              "rankIndex": 0,
+              "points": 4
+            },
+            {
+              "stageIndex": 5,
+              "rankIndex": 1,
+              "points": 3
+            },
+            {
+              "stageIndex": 7,
+              "rankIndex": 2,
+              "points": 2
+            }
+          ]
+        },
+        {
+          "name": "f",
+          "totalPoints": 8,
+          "stageResults": [
+            {
+              "stageIndex": 0,
+              "rankIndex": 1,
+              "points": 3
+            },
+            {
+              "stageIndex": 2,
+              "rankIndex": 3,
+              "points": 1
+            },
+            {
+              "stageIndex": 7,
+              "rankIndex": 3,
+              "points": 1
+            },
+            {
+              "stageIndex": 8,
+              "rankIndex": 1,
+              "points": 3
+            }
+          ]
+        },
+        {
+          "name": "g",
+          "totalPoints": 7,
+          "stageResults": [
+            {
+              "stageIndex": 2,
+              "rankIndex": 2,
+              "points": 2
+            },
+            {
+              "stageIndex": 3,
+              "rankIndex": 1,
+              "points": 3
+            },
+            {
+              "stageIndex": 6,
+              "rankIndex": 3,
+              "points": 1
+            },
+            {
+              "stageIndex": 8,
+              "rankIndex": 3,
+              "points": 1
+            }
+          ]
+        },
+        {
+          "name": "h",
+          "totalPoints": 8,
+          "stageResults": [
+            {
+              "stageIndex": 1,
+              "rankIndex": 3,
+              "points": 1
+            },
+            {
+              "stageIndex": 3,
+              "rankIndex": 0,
+              "points": 4
+            },
+            {
+              "stageIndex": 8,
+              "rankIndex": 2,
+              "points": 2
+            },
+            {
+              "stageIndex": 9,
+              "rankIndex": 3,
+              "points": 1
+            }
+          ]
+        },
+        {
+          "name": "i",
+          "totalPoints": 14,
+          "stageResults": [
+            {
+              "stageIndex": 3,
+              "rankIndex": 2,
+              "points": 2
+            },
+            {
+              "stageIndex": 4,
+              "rankIndex": 0,
+              "points": 4
+            },
+            {
+              "stageIndex": 7,
+              "rankIndex": 0,
+              "points": 4
+            },
+            {
+              "stageIndex": 9,
+              "rankIndex": 0,
+              "points": 4
+            }
+          ]
+        },
+        {
+          "name": "j",
+          "totalPoints": 10,
+          "stageResults": [
+            {
+              "stageIndex": 2,
+              "rankIndex": 1,
+              "points": 3
+            },
+            {
+              "stageIndex": 4,
+              "rankIndex": 2,
+              "points": 2
+            },
+            {
+              "stageIndex": 9,
+              "rankIndex": 1,
+              "points": 3
+            },
+            {
+              "stageIndex": 10,
+              "rankIndex": 2,
+              "points": 2
+            }
+          ]
+        },
+        {
+          "name": "k",
+          "totalPoints": 10,
+          "stageResults": [
+            {
+              "stageIndex": 4,
+              "rankIndex": 3,
+              "points": 1
+            },
+            {
+              "stageIndex": 5,
+              "rankIndex": 0,
+              "points": 4
+            },
+            {
+              "stageIndex": 8,
+              "rankIndex": 0,
+              "points": 4
+            },
+            {
+              "stageIndex": 10,
+              "rankIndex": 3,
+              "points": 1
+            }
+          ]
+        }
+      ]
+    },
+    "qualifierResult": {
+      "players": [
+        {
+          "rank": 1,
+          "name": "d",
+          "points": 15,
+          "numPlaces": [
+            3,
+            1,
+            0,
+            0
+          ],
+          "bestGameLevel": 999,
+          "bestGameGrade": 6,
+          "bestGameTimeDiffBest": -79667
+        },
+        {
+          "rank": 2,
+          "name": "i",
+          "points": 14,
+          "numPlaces": [
+            3,
+            0,
+            1,
+            0
+          ],
+          "bestGameLevel": 999,
+          "bestGameGrade": 6,
+          "bestGameTimeDiffBest": -174854
+        },
+        {
+          "rank": 3,
+          "name": "e",
+          "points": 12,
+          "numPlaces": [
+            1,
+            2,
+            1,
+            0
+          ],
+          "bestGameLevel": 999,
+          "bestGameGrade": 6,
+          "bestGameTimeDiffBest": 32109
+        },
+        {
+          "rank": 4,
+          "name": "k",
+          "points": 10,
+          "numPlaces": [
+            2,
+            0,
+            0,
+            2
+          ],
+          "bestGameLevel": 999,
+          "bestGameGrade": 6,
+          "bestGameTimeDiffBest": -95278
+        },
+        {
+          "rank": 5,
+          "name": "j",
+          "points": 10,
+          "numPlaces": [
+            0,
+            2,
+            2,
+            0
+          ],
+          "bestGameLevel": 999,
+          "bestGameGrade": 6,
+          "bestGameTimeDiffBest": 64666
+        },
+        {
+          "rank": 6,
+          "name": "b",
+          "points": 9,
+          "numPlaces": [
+            1,
+            0,
+            2,
+            1
+          ],
+          "bestGameLevel": 999,
+          "bestGameGrade": 6,
+          "bestGameTimeDiffBest": 87648
+        },
+        {
+          "rank": 7,
+          "name": "c",
+          "points": 9,
+          "numPlaces": [
+            0,
+            2,
+            1,
+            1
+          ],
+          "bestGameLevel": 999,
+          "bestGameGrade": 6,
+          "bestGameTimeDiffBest": -3151
+        },
+        {
+          "rank": 8,
+          "name": "h",
+          "points": 8,
+          "numPlaces": [
+            1,
+            0,
+            1,
+            2
+          ],
+          "bestGameLevel": 999,
+          "bestGameGrade": 6,
+          "bestGameTimeDiffBest": 12051
+        },
+        {
+          "rank": 9,
+          "name": "f",
+          "points": 8,
+          "numPlaces": [
+            0,
+            2,
+            0,
+            2
+          ],
+          "bestGameLevel": 999,
+          "bestGameGrade": 6,
+          "bestGameTimeDiffBest": 172712
+        },
+        {
+          "rank": 10,
+          "name": "a",
+          "points": 8,
+          "numPlaces": [
+            0,
+            1,
+            2,
+            1
+          ],
+          "bestGameLevel": 999,
+          "bestGameGrade": 6,
+          "bestGameTimeDiffBest": 210711
+        },
+        {
+          "rank": 11,
+          "name": "g",
+          "points": 7,
+          "numPlaces": [
+            0,
+            1,
+            1,
+            2
+          ],
+          "bestGameLevel": 711,
+          "bestGameGrade": null,
+          "bestGameTimeDiffBest": null
+        }
+      ]
+    },
+    "supplementComparisons": []
+  },
+  "leaderboard": {
+    "list": [
+      {
+        "rank": 1,
+        "name": "6",
+        "bestTime": 530000
+      },
+      {
+        "rank": 2,
+        "name": "l",
+        "bestTime": 539000
+      },
+      {
+        "rank": 3,
+        "name": "a",
+        "bestTime": 540000
+      },
+      {
+        "rank": 4,
+        "name": "e",
+        "bestTime": 540000
+      },
+      {
+        "rank": 5,
+        "name": "b",
+        "bestTime": 541000
+      },
+      {
+        "rank": 6,
+        "name": "f",
+        "bestTime": 542000
+      },
+      {
+        "rank": 7,
+        "name": "Z",
+        "bestTime": 543210
+      },
+      {
+        "rank": 8,
+        "name": "g",
+        "bestTime": 550000
+      },
+      {
+        "rank": 9,
+        "name": "q",
+        "bestTime": 556540
+      },
+      {
+        "rank": 10,
+        "name": "z",
+        "bestTime": 563870
+      },
+      {
+        "rank": 11,
+        "name": "o",
+        "bestTime": 570000
+      },
+      {
+        "rank": 12,
+        "name": "c",
+        "bestTime": 600000
+      },
+      {
+        "rank": 13,
+        "name": "4",
+        "bestTime": 601100
+      },
+      {
+        "rank": 14,
+        "name": "C",
+        "bestTime": 605000
+      },
+      {
+        "rank": 15,
+        "name": "D",
+        "bestTime": 610000
+      },
+      {
+        "rank": 16,
+        "name": "j",
+        "bestTime": 610100
+      },
+      {
+        "rank": 17,
+        "name": "F",
+        "bestTime": 611110
+      },
+      {
+        "rank": 18,
+        "name": "E",
+        "bestTime": 615000
+      },
+      {
+        "rank": 19,
+        "name": "r",
+        "bestTime": 620300
+      },
+      {
+        "rank": 20,
+        "name": "G",
+        "bestTime": 622220
+      },
+      {
+        "rank": 21,
+        "name": "5",
+        "bestTime": 623100
+      },
+      {
+        "rank": 22,
+        "name": "s",
+        "bestTime": 623450
+      },
+      {
+        "rank": 23,
+        "name": "p",
+        "bestTime": 627650
+      },
+      {
+        "rank": 24,
+        "name": "d",
+        "bestTime": 630000
+      },
+      {
+        "rank": 25,
+        "name": "u",
+        "bestTime": 632100
+      },
+      {
+        "rank": 26,
+        "name": "H",
+        "bestTime": 633330
+      },
+      {
+        "rank": 27,
+        "name": "v",
+        "bestTime": 639990
+      },
+      {
+        "rank": 28,
+        "name": "I",
+        "bestTime": 644440
+      },
+      {
+        "rank": 29,
+        "name": "Y",
+        "bestTime": 654320
+      },
+      {
+        "rank": 30,
+        "name": "J",
+        "bestTime": 655550
+      },
+      {
+        "rank": 31,
+        "name": "y",
+        "bestTime": 660000
+      },
+      {
+        "rank": 32,
+        "name": "K",
+        "bestTime": 666660
+      },
+      {
+        "rank": 33,
+        "name": "k",
+        "bestTime": 671110
+      },
+      {
+        "rank": 34,
+        "name": "L",
+        "bestTime": 677770
+      },
+      {
+        "rank": 35,
+        "name": "h",
+        "bestTime": 680000
+      },
+      {
+        "rank": 36,
+        "name": "M",
+        "bestTime": 688880
+      },
+      {
+        "rank": 37,
+        "name": "N",
+        "bestTime": 700000
+      },
+      {
+        "rank": 38,
+        "name": "O",
+        "bestTime": 711110
+      },
+      {
+        "rank": 39,
+        "name": "x",
+        "bestTime": 720000
+      },
+      {
+        "rank": 40,
+        "name": "B",
+        "bestTime": 720210
+      },
+      {
+        "rank": 41,
+        "name": "P",
+        "bestTime": 722220
+      },
+      {
+        "rank": 42,
+        "name": "Q",
+        "bestTime": 733330
+      },
+      {
+        "rank": 43,
+        "name": "1",
+        "bestTime": 741120
+      },
+      {
+        "rank": 44,
+        "name": "R",
+        "bestTime": 744440
+      },
+      {
+        "rank": 45,
+        "name": "i",
+        "bestTime": 750000
+      },
+      {
+        "rank": 46,
+        "name": "0",
+        "bestTime": 753210
+      },
+      {
+        "rank": 47,
+        "name": "m",
+        "bestTime": 754560
+      },
+      {
+        "rank": 48,
+        "name": "S",
+        "bestTime": 755550
+      },
+      {
+        "rank": 49,
+        "name": "X",
+        "bestTime": 765430
+      },
+      {
+        "rank": 50,
+        "name": "T",
+        "bestTime": 766660
+      },
+      {
+        "rank": 51,
+        "name": "7",
+        "bestTime": 766800
+      },
+      {
+        "rank": 52,
+        "name": "9",
+        "bestTime": 776900
+      },
+      {
+        "rank": 53,
+        "name": "U",
+        "bestTime": 777770
+      },
+      {
+        "rank": 54,
+        "name": "w",
+        "bestTime": 780000
+      },
+      {
+        "rank": 55,
+        "name": "A",
+        "bestTime": 780310
+      },
+      {
+        "rank": 56,
+        "name": "t",
+        "bestTime": 785430
+      },
+      {
+        "rank": 57,
+        "name": "V",
+        "bestTime": 788880
+      },
+      {
+        "rank": 58,
+        "name": "W",
+        "bestTime": 800000
+      },
+      {
+        "rank": 59,
+        "name": "3",
+        "bestTime": 802310
+      },
+      {
+        "rank": 60,
+        "name": "8",
+        "bestTime": 804350
+      },
+      {
+        "rank": 61,
+        "name": "n",
+        "bestTime": 810000
+      },
+      {
+        "rank": 62,
+        "name": "2",
+        "bestTime": 811130
+      }
+    ]
+  }
+}

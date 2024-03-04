@@ -26,11 +26,11 @@ export const createLeaderboardSheet = (
 
   const sh = ss.insertSheet("Ranking");
 
-  resizeSheet(sh, list.length + 1, 2);
+  resizeSheet(sh, list.length + 1, 3);
   setColumnWidths(sh, [34, 100, 59]);
 
   const headerRange = sh.getRange(1, 1, 1, 3);
-  headerRange.setValues([["#", "プレイヤー", "タイム"]]);
+  headerRange.setValues([["順位", "プレイヤー", "タイム"]]);
   applyHeaderStyle(headerRange);
 
   const valueRange = sh.getRange(2, 1, list.length, 3);
