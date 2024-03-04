@@ -5,7 +5,7 @@ export const injectKey = createKey<SerializerManager>(
 );
 
 export interface SerializerManager {
-  getSerializer<T>(path: string): Serializer<T>;
+  getSerializer<T>(name: string): Serializer<T>;
 }
 
 export interface Serializer<T> {
@@ -16,20 +16,22 @@ export interface Serializer<T> {
 export class FileSerializerManager {
   #serializers = new Map<string, Serializer<any>>();
 
-  getSerializer<T>(path: string) {
-    const serializer = this.#serializers.get(path);
+  getSerializer<T>(name: string) {
+    const serializer = this.#serializers.get(name);
     if (serializer != null) return serializer as Serializer<T>;
-    const created = new FileSerializer(path);
-    this.#serializers.set(path, created);
+    const created = new FileSerializer(name);
+    this.#serializers.set(name, created);
     return created as Serializer<T>;
   }
 }
 
 export class FileSerializer<T> implements Serializer<T> {
+  #name: string;
   #path: string;
 
-  constructor(path: string) {
-    this.#path = path;
+  constructor(name: string) {
+    this.#name = name;
+    this.#path = `./data/${name}.json`;
   }
 
   serialize(value: T) {

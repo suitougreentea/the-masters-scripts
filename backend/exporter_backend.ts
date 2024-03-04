@@ -7,7 +7,7 @@ export interface ExporterBackend {
   exportCompetition(input: Input): Promise<string>;
 }
 
-export class SpreadsheetExporterBackend {
+export class SpreadsheetExporterBackend implements ExporterBackend {
   #entrypoint: string;
   #credential: string;
 
@@ -30,13 +30,5 @@ export class SpreadsheetExporterBackend {
     } else {
       throw new Error("No exportedUrl field found");
     }
-  }
-}
-
-export class JsonExporterBackend {
-  async exportCompetition(input: Input): Promise<string> {
-    const filename = Date.now() + ".json";
-    await Deno.writeTextFile(filename, JSON.stringify(input, null, 2));
-    return filename;
   }
 }

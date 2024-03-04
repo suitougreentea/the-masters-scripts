@@ -36,7 +36,7 @@ export class CompetitionStore {
 
   constructor(serializerManager: SerializerManager) {
     this.#serializer = serializerManager.getSerializer(
-      "./data/competition.json",
+      "competition",
     );
     this.#deserialize();
   }

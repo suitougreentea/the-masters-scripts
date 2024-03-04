@@ -163,7 +163,7 @@ export class Exporter {
     }
 
     const input: Input = {
-      name: metadata.name,
+      name: `${metadata.name} Result`,
       participants,
       stages,
       supplements,

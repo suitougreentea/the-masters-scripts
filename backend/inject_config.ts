@@ -3,6 +3,7 @@ import {
   FileSerializerManager,
   injectKey as serializerManagerKey,
 } from "./serializer.ts";
+import { InMemorySerializerManager } from "./serializer_test.ts";
 import { injectKey as playersStoreKey, PlayersStore } from "./players_store.ts";
 import { injectKey as setupStoreKey, SetupStore } from "./setup_store.ts";
 import {
@@ -10,7 +11,8 @@ import {
   injectKey as competitionStoreKey,
 } from "./competition_store.ts";
 import { injectKey as exporterKey, Exporter } from "./exporter.ts";
-import { injectKey as exporterBackendKey, JsonExporterBackend, SpreadsheetExporterBackend } from "./exporter_backend.ts";
+import { injectKey as exporterBackendKey, SpreadsheetExporterBackend } from "./exporter_backend.ts";
+import { InMemoryExporterBackend } from "./exporter_backend_test.ts";
 
 export const configureInject = () => {
   register(serializerManagerKey, FileSerializerManager);
@@ -21,6 +23,11 @@ export const configureInject = () => {
   register(exporterBackendKey, SpreadsheetExporterBackend);
 };
 
+export const modifyInjectInMemory = () => {
+  register(serializerManagerKey, InMemorySerializerManager);
+  register(exporterBackendKey, InMemoryExporterBackend);
+}
+
 export const modifyInjectLocal = () => {
-  register(exporterBackendKey, JsonExporterBackend);
+  register(exporterBackendKey, InMemoryExporterBackend);
 }

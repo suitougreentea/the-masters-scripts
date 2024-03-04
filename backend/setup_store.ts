@@ -18,7 +18,7 @@ export class SetupStore {
   #participants: Participant[] = [];
 
   constructor(serializerManager: SerializerManager) {
-    this.#serializer = serializerManager.getSerializer("./data/setup.json");
+    this.#serializer = serializerManager.getSerializer("setup");
     this.#deserialize();
   }
 

@@ -18,7 +18,7 @@ export class PlayersStore {
   #registeredPlayers: RegisteredPlayerEntry[] = [];
 
   constructor(serializerManager: SerializerManager) {
-    this.#serializer = serializerManager.getSerializer("./data/players.json");
+    this.#serializer = serializerManager.getSerializer("players");
     this.#deserialize();
   }
 

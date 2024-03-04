@@ -1,28 +1,35 @@
 import { Serializer } from "./serializer.ts";
 import { SerializerManager } from "./serializer.ts";
 
+const serializers = new Map<string, InMemorySerializer<any>>();
+const getSerializer = <T>(name: string) => {
+  const serializer = serializers.get(name);
+  if (serializer != null) return serializer as InMemorySerializer<T>;
+  const created = new InMemorySerializer(name);
+  serializers.set(name, created);
+  return created as InMemorySerializer<T>;
+}
+
+export const getSerializerValue = <T>(name: string) => {
+  return getSerializer<T>(name).deserialize();
+}
+
+export const setSerializerValue = <T>(name: string, value: T | null) => {
+  return getSerializer<T>(name).setValue(value);
+}
+
 export class InMemorySerializerManager implements SerializerManager {
-  #serializers = new Map<string, InMemorySerializer<any>>();
-
-  getSerializer<T>(path: string) {
-    const serializer = this.#serializers.get(path);
-    if (serializer != null) return serializer as InMemorySerializer<T>;
-    const created = new InMemorySerializer(path);
-    this.#serializers.set(path, created);
-    return created as InMemorySerializer<T>;
-  }
-
-  setValue<T>(path: string, value: T | null) {
-    this.getSerializer(path).setValue(value);
+  getSerializer<T>(name: string) {
+    return getSerializer<T>(name);
   }
 }
 
 export class InMemorySerializer<T> implements Serializer<T> {
-  #path: string;
+  #name: string;
   #serializedValue: T | null = null;
 
-  constructor(path: string) {
-    this.#path = path;
+  constructor(name: string) {
+    this.#name = name;
   }
 
   serialize(value: T) {
