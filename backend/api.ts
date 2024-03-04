@@ -110,7 +110,19 @@ export function mastersSetParticipants(participants: Participant[]) {
  */
 export function mastersSetupCompetition(options: CompetitionSetupOptions) {
   const participants = setupStore.value.getParticipants();
-  console.warn("TODO: validate participants");
+
+  // validate participants
+  participants.forEach(participant => {
+    // TODO: duplicate check
+    const { name } = participant;
+    if (participants.filter(e => e.name == participant.name).length != 1) {
+      throw new Error("プレイヤーが重複しています: " + name);
+    }
+    if (playersStore.value.getPlayer(name) == null) {
+      throw new Error("プレイヤーが登録されていません: " + name);
+    }
+  })
+
   const setupResult = setupCompetition(participants.length, options);
   competitionStore.value.reset();
   competitionStore.value.setMetadata(setupResult.metadata);
