@@ -11,7 +11,7 @@ import { TimerWrapper } from "../common/timer_wrapper.ts";
 import {
   RegisteredPlayerEntry,
   StagePlayerEntry,
-} from "../../common/common_types.ts";
+} from "../../../common/common_types.ts";
 import { createPromiseSet, PromiseSet } from "../../common/util.ts";
 import { commonColors } from "../common/common_values.ts";
 // TODO: Experimental

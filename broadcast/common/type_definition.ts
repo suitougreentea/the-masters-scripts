@@ -11,7 +11,7 @@ import {
   StageScoreData,
   StageSetupResult,
   SupplementComparisonData,
-} from "./common_types.ts";
+} from "../../common/common_types.ts";
 
 export type RoundData = {
   roundIndex: number;

@@ -1,4 +1,4 @@
-import { RegisteredPlayerEntry } from "../../common/common_types.ts";
+import { RegisteredPlayerEntry } from "../../../common/common_types.ts";
 import { formatTime, parseTime } from "../../common/util.ts";
 import {
   css,

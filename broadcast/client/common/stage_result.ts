@@ -1,4 +1,4 @@
-import { StageResultEntry } from "../../common/common_types.ts";
+import { StageResultEntry } from "../../../common/common_types.ts";
 import {
   formatLevelOrGradeNullable,
   formatTimeNullable,

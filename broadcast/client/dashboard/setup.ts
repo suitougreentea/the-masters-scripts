@@ -17,7 +17,7 @@ import {
   CompetitionSetupOptions,
   Participant,
   RegisteredPlayerEntry,
-} from "../../common/common_types.ts";
+} from "../../../common/common_types.ts";
 import "./player_registration_dialog.ts";
 import "./participants_editor_dialog.ts";
 import { MastersPlayerRegistrationDialogElement } from "./player_registration_dialog.ts";

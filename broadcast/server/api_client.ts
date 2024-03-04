@@ -1,4 +1,4 @@
-import { ApiFunctions } from "../common/common_types.ts";
+import { ApiFunctions } from "../../common/common_types.ts";
 import { LocalApi as AppsScriptApi } from "./local_api.ts";
 
 const scriptId =

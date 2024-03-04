@@ -1,4 +1,4 @@
-import { SupplementComparisonEntry } from "../../common/common_types.ts";
+import { SupplementComparisonEntry } from "../../../common/common_types.ts";
 import {
   formatLevelOrGradeNullable,
   formatTimeNullable,

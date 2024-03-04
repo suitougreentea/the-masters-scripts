@@ -16,7 +16,7 @@ import {
   StageScoreEntry,
   StageSetupResult,
   SupplementComparisonMetadata,
-} from "../../common/common_types.ts";
+} from "../../../common/common_types.ts";
 import "../common/qualifier_result.ts";
 import "../common/qualifier_score.ts";
 import "../common/stage_players.ts";

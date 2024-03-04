@@ -1,4 +1,4 @@
-import { StagePlayerEntry } from "../../common/common_types.ts";
+import { StagePlayerEntry } from "../../../common/common_types.ts";
 import { commonColors } from "../common/common_values.ts";
 import {
   createPromiseSet,

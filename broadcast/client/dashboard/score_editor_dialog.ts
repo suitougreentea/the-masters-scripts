@@ -1,7 +1,7 @@
 import {
   StagePlayerEntry,
   StageScoreEntry,
-} from "../../common/common_types.ts";
+} from "../../../common/common_types.ts";
 import { formatGrade, formatTime, parseGrade } from "../../common/util.ts";
 import {
   css,

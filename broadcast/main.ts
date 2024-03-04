@@ -1,4 +1,4 @@
-import { QualifierResult, QualifierScore } from "./common/common_types.ts";
+import { QualifierResult, QualifierScore } from "../common/common_types.ts";
 import { RoundData, TypeDefinition } from "./common/type_definition.ts";
 import { ApiClient } from "./server/api_client.ts";
 import { LocalApi as AppsScriptApi } from "./server/local_api.ts";

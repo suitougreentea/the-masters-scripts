@@ -1,7 +1,7 @@
 import {
   RegisteredPlayerEntry,
   StagePlayerEntry,
-} from "../../common/common_types.ts";
+} from "../../../common/common_types.ts";
 import { commonColors } from "../common/common_values.ts";
 import { formatTime, getDiffTime } from "../../common/util.ts";
 import {

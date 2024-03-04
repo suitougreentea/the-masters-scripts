@@ -4,7 +4,6 @@
     "lib": ["dom", "deno.ns", "deno.unstable"]
   },
   "tasks": {
-    "gen-common-types": "cd ../competition-sheet && node gen_common_types.js ../broadcast/common/common_types.ts",
     "build": "deno run --allow-env --allow-net --allow-read --allow-run --allow-write build.ts build",
     "build-watch": "deno run --allow-env --allow-net --allow-read --allow-run --allow-write build.ts watch",
     "start": "deno run --allow-env --allow-net --allow-read --allow-write main.ts",

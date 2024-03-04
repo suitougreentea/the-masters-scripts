@@ -1,4 +1,4 @@
-import { StagePlayerEntry } from "./common_types.ts";
+import { StagePlayerEntry } from "../../common/common_types.ts";
 
 const groupTable = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
 

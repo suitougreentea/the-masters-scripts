@@ -1,4 +1,4 @@
-import { StagePlayerEntry } from "../../common/common_types.ts";
+import { StagePlayerEntry } from "../../../common/common_types.ts";
 import { MastersTimerElement } from "./timer.ts";
 // TODO: Experimental
 import { OcrResult } from "../../common/type_definition.ts";

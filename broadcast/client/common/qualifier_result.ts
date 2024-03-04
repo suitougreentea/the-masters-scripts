@@ -1,4 +1,4 @@
-import { QualifierResultEntry } from "../../common/common_types.ts";
+import { QualifierResultEntry } from "../../../common/common_types.ts";
 import {
   formatLevelOrGradeNullable,
   formatTimeNullable,
