@@ -10,6 +10,7 @@
     "start": "deno run --allow-env --allow-net --allow-read --allow-write main.ts",
     "start-watch": "deno run --watch --allow-env --allow-net --allow-read --allow-write main.ts",
     "dev": "deno task build-watch & deno task start-watch",
-    "check": "deno check main.ts build.ts client/dashboard.ts client/competition_scene.ts client/result_scene.ts"
+    "check": "deno check main.ts build.ts client/dashboard.ts client/competition_scene.ts client/result_scene.ts",
+    "ocr-client-mock": "deno run --allow-net --allow-read ocr_client_mock/main.ts"
   }
 }
