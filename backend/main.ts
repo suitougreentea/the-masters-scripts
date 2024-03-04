@@ -15,11 +15,9 @@ Deno.serve({ port: 8518 }, async (req) => {
   try {
     const message = await req.json();
     const functionName = message.functionName as keyof ApiFunctions;
-    console.log(functionName);
     const args = message.args as any[];
     const returnValueMaybePromise = apiFunctions[functionName](...args);
     const returnValue = returnValueMaybePromise instanceof Promise ? await returnValueMaybePromise : returnValueMaybePromise
-    console.log(returnValue);
     const response = {
       "body": returnValue,
     };
