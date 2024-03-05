@@ -96,7 +96,6 @@ export class MastersTimerControllerElement extends LitElement {
       this._stop();
     });
 
-    // TODO: Experimental
     const latestOcrResultReplicant = await client.getReplicant("latestOcrResult");
     latestOcrResultReplicant.subscribe((value) => {
       this._timerWrapper.setOcrResult(value);
@@ -117,9 +116,7 @@ export class MastersTimerControllerElement extends LitElement {
   }
 
   private async _stop() {
-    // TODO: Experimental
     await this._dashboardContext.sendRequest("resetOcrState");
-
     const client = await this._dashboardContext.getClient();
     this._timerWrapper.stop();
     client.broadcastMessage("stopTimer");

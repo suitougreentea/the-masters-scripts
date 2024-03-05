@@ -131,7 +131,6 @@ export class MastersRoundElement extends LitElement {
   @query("masters-score-editor-dialog", true)
   private _scoreEditorDialog!: MastersScoreEditorDialogElement;
 
-  // TODO: Experimental
   private _latestOcrResult?: OcrResult | null;
 
   async firstUpdated() {
@@ -148,7 +147,6 @@ export class MastersRoundElement extends LitElement {
     currentRoundDataReplicant.subscribe((value) => {
       this._currentRoundData = value;
     });
-    // TODO: Experimental
     const latestOcrResultReplicant = await client.getReplicant("latestOcrResult");
     latestOcrResultReplicant.subscribe((value) => {
       this._latestOcrResult = value;
@@ -163,7 +161,6 @@ export class MastersRoundElement extends LitElement {
       "sendStageDataToCompetitionScene",
       { stageIndex },
     );
-    await this._dashboardContext.sendRequest("resetOcrState"); // TODO: Experimental
     this._dashboardContext.requestStopTimer();
     await this._dashboardContext.sendRequest("toggleResultScene", {
       show: false,
@@ -188,7 +185,6 @@ export class MastersRoundElement extends LitElement {
     const currentStageData = this._currentRoundData!.stageData[stageIndex];
     this._scoreEditorDialog.open(stageIndex, currentStageData.players);
 
-    // TODO: Experimental
     const oldScore: StageScoreEntry[] = currentStageData.result.map((result) => {
       const name = result.name;
       let grade: number | null;

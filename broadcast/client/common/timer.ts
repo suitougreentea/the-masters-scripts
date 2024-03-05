@@ -6,6 +6,7 @@ import {
   getDiffTime,
   PromiseSet,
 } from "../../common/util.ts";
+import { OcrResult } from "../../common/type_definition.ts";
 import {
   css,
   customElement,
@@ -14,8 +15,6 @@ import {
   map,
   tinycolor,
 } from "../deps.ts";
-// TODO: Experimental
-import { OcrResult } from "../../common/type_definition.ts";
 
 @customElement("masters-timer")
 export class MastersTimerElement extends LitElement {
@@ -96,7 +95,6 @@ export class MastersTimerElement extends LitElement {
     color: transparent;
   }
 
-  /* TODO: Experimental */
   .time-level {
     text-align: center;
   }
@@ -146,8 +144,7 @@ export class MastersTimerElement extends LitElement {
   #data: (StagePlayerEntry | null)[];
   #intervalId: number | null = null;
   #startTime = -1;
-
-  // TODO: Experimental
+  #elapsedTime = 0;
   #currentOcrResult: OcrResult | null = null;
 
   constructor() {
@@ -192,11 +189,18 @@ export class MastersTimerElement extends LitElement {
     return this.#intervalId != null;
   }
 
+  isStarted() {
+    return this.#startTime >= 0;
+  }
+
   start() {
     if (this.isRunning()) throw new Error("Timer is running");
 
     this.#startTime = performance.now();
-    this.#intervalId = setInterval(() => this.#updateTimer(), 10);
+    this.#intervalId = setInterval(() => {
+      this.#tickTimer();
+      this.#updateRender();
+    } , 10);
     this.#elements.forEach((e) => {
       e.startOrder.style.display = "none";
       e.diffTime.style.display = "none";
@@ -208,7 +212,6 @@ export class MastersTimerElement extends LitElement {
     if (!this.isRunning()) return;
 
     clearInterval(this.#intervalId!);
-    this.#startTime = -1;
     this.#intervalId = null;
     this.#elements.forEach((e) => {
       e.startOrder.style.display = "";
@@ -221,12 +224,20 @@ export class MastersTimerElement extends LitElement {
   #reset() {
     if (this.isRunning()) throw new Error("Timer is running");
 
+    this.#startTime = -1;
+    this.#elapsedTime = 0;
+    this.#updateRender();
+  }
+
+  setData(data?: (StagePlayerEntry | null)[]) {
+    if (this.isRunning()) throw new Error("Timer is running");
+    this.#data = data ?? this.#createEmptyData();
+
     for (let i = 0; i < 8; i++) {
       const player = this.#data[i];
       const element = this.#elements[i];
       if (player != null) {
         element.name.innerText = player.name;
-        this.#setPlayerTime(i, player.startTime, false);
         element.startOrder.innerText = this.#ordinals[player.startOrder - 1] +
           ":";
         element.diffTime.innerText = "+" +
@@ -243,21 +254,15 @@ export class MastersTimerElement extends LitElement {
         }
       } else {
         element.name.innerText = "";
-        this.#setPlayerTime(i, null, false);
         element.startOrder.innerText = "";
         element.diffTime.innerText = "";
         element.offset.innerText = "";
       }
     }
-  }
 
-  setData(data?: (StagePlayerEntry | null)[]) {
-    if (this.isRunning()) throw new Error("Timer is running");
-    this.#data = data ?? this.#createEmptyData();
     this.#reset();
   }
 
-  // TODO: Experimental
   setOcrResult(result?: OcrResult | null) {
     this.#currentOcrResult = result ?? null;
   }
@@ -266,28 +271,31 @@ export class MastersTimerElement extends LitElement {
     return [...new Array(8)].map((_) => null);
   }
 
-  #updateTimer() {
+  #tickTimer() {
     const now = performance.now();
-    const elapsed = now - this.#startTime;
+    this.#elapsedTime = now - this.#startTime;
+  }
+
+  #updateRender() {
     for (let i = 0; i < 8; i++) {
-      const initialTime = this.#data[i]?.startTime;
-      if (initialTime != null) {
-        const time = Math.max(0, initialTime - elapsed);
-        this.#setPlayerTime(i, time, true);
+      const startTime = this.#data[i]?.startTime;
+      if (startTime != null) {
+        const time = Math.max(0, startTime - this.#elapsedTime);
+        this.#setPlayerTime(i, time);
       } else {
-        this.#setPlayerTime(i, null, true);
+        this.#setPlayerTime(i, null);
       }
     }
   }
 
-  #setPlayerTime(index: number, time: number | null, running: boolean) {
+  #setPlayerTime(index: number, time: number | null) {
     const player = this.#elements[index];
     if (time != null) {
       player.id.className = "id";
-      player.backgroundTime.className = time == 0 && running
+      player.backgroundTime.className = time == 0 && this.isRunning()
         ? "background-time background-time-hidden"
         : "background-time";
-      player.time.className = time == 0 && running
+      player.time.className = time == 0 && this.isRunning()
         ? "time time-hidden"
         : "time";
       player.time.innerText = formatTime(time);
@@ -301,8 +309,7 @@ export class MastersTimerElement extends LitElement {
       }
       player.gauge.style.background = color;
 
-      // TODO: Experimental
-      if (time == 0 && this.#currentOcrResult != null) {
+      if (this.isStarted() && time == 0 && this.#currentOcrResult != null) {
         const status = this.#currentOcrResult.status[index];
         player.backgroundTime.className = "background-time";
         player.time.className = "time time-level";

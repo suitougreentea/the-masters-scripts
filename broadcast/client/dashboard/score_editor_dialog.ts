@@ -73,7 +73,6 @@ export class MastersScoreEditorDialogElement extends LitElement {
     }
   }
 
-  // TODO: Experimental
   setData(data: ScoreEditorDialogData) {
     data.score.forEach((e) => {
       const index = this._data.findIndex(p => p.name == e.name);

@@ -35,7 +35,6 @@ export type ResultSceneData = {
   nextStageName: string | null;
 };
 
-// TODO: Experimental
 export type OcrResult = {
   status: {
     frameTime: number;
@@ -61,7 +60,6 @@ export type TypeDefinition = {
     currentCompetitionSceneStageData: CompetitionSceneStageData | null;
     currentResultSceneData: ResultSceneData | null;
     resultSceneActive: boolean;
-    // TODO: Experimental
     latestOcrResult: OcrResult | null;
   };
 
@@ -101,7 +99,6 @@ export type TypeDefinition = {
     setResultSceneData: { params: { stageIndex: number } };
     unsetResultSceneData: EmptyObject;
     toggleResultScene: { params: { show: boolean } };
-    // TODO: Experimental
     resetOcrState: EmptyObject;
   };
 };

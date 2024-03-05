@@ -1,11 +1,9 @@
 import { QualifierResult, QualifierScore } from "../common/common_types.ts";
-import { RoundData, TypeDefinition } from "./common/type_definition.ts";
+import { OcrResult, RoundData, TypeDefinition } from "./common/type_definition.ts";
 import { ApiClient } from "./server/api_client.ts";
 import { LocalApi as AppsScriptApi } from "./server/local_api.ts";
 import { denocg } from "./server/deps.ts";
 import { OBSController } from "./server/obs_controller.ts";
-// TODO: Experimental
-import { OcrResult } from "./common/type_definition.ts";
 import { OcrServer } from "./server/ocr_server.ts";
 
 export const config: denocg.ServerConfig<TypeDefinition> = {
@@ -27,6 +25,8 @@ const obs = new OBSController(obsConfig.address, obsConfig.password);
 const competitionSceneName = "competition";
 const resultSceneName = "result";
 const chatSourceName = "chat";
+
+const ocrServer = new OcrServer(8517);
 
 let currentLoginPromise: Promise<void> | null = null;
 let currentLoginAbort: AbortController | null = null;
@@ -73,6 +73,7 @@ const currentResultSceneDataReplicant = server.getReplicant(
   "currentResultSceneData",
 );
 const resultSceneActiveReplicant = server.getReplicant("resultSceneActive");
+const latestOcrResultReplicant = server.getReplicant("latestOcrResult");
 
 const getCurrentRegisteredPlayers = async () => {
   const players = await apiClient.runCommand(
@@ -461,13 +462,13 @@ resultSceneActiveReplicant.subscribe(async (value) => {
   }
 });
 
-// TODO: Experimental
-const ocrServer = new OcrServer(8517);
-const latestOcrResultReplicant = server.getReplicant("latestOcrResult");
 ocrServer.addEventListener("data", (ev) => {
   latestOcrResultReplicant.setValue((ev as CustomEvent).detail as OcrResult);
 });
+
 server.registerRequestHandler("resetOcrState", () => {
+  // TODO: 関数を抜けるタイミングで、OCRから送られてくるデータがリセットされているとは限らない
+  // (一瞬リセット前のデータが送られてくるかも)
   latestOcrResultReplicant.setValue(null);
   ocrServer.requestReset();
 });

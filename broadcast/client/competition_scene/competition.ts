@@ -14,7 +14,6 @@ import {
 } from "../../../common/common_types.ts";
 import { createPromiseSet, PromiseSet } from "../../common/util.ts";
 import { commonColors } from "../common/common_values.ts";
-// TODO: Experimental
 import { OcrResult } from "../../common/type_definition.ts";
 
 @customElement("masters-competition")
@@ -121,7 +120,6 @@ export class MastersCompetitionElement extends LitElement {
     this.#playerInfo.showDetail = true;
   }
 
-  // TODO: Experimental
   setOcrResult(result?: OcrResult | null) {
     this.#timerWrapper.setOcrResult(result);
   }

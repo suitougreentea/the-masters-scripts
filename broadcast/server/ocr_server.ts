@@ -1,4 +1,3 @@
-// TODO: Experimental
 import { OcrResult } from "../common/type_definition.ts";
 
 type Message = {
