@@ -175,6 +175,7 @@ export function mastersResetStage(
   competitionStore.value.setStageData(roundIndex, stageIndex, stageData);
 }
 
+// TODO: fetch single stage
 export function mastersGetStageData(
   roundIndex: number,
   stageIndices?: number[],

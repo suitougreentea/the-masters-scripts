@@ -3,7 +3,7 @@ import {
   FileSerializerManager,
   injectKey as serializerManagerKey,
 } from "./serializer.ts";
-import { InMemorySerializerManager } from "./serializer_test.ts";
+import { InMemorySerializerManager } from "./serializer_dev.ts";
 import { injectKey as playersStoreKey, PlayersStore } from "./players_store.ts";
 import { injectKey as setupStoreKey, SetupStore } from "./setup_store.ts";
 import {
@@ -12,7 +12,7 @@ import {
 } from "./competition_store.ts";
 import { injectKey as exporterKey, Exporter } from "./exporter.ts";
 import { injectKey as exporterBackendKey, SpreadsheetExporterBackend } from "./exporter_backend.ts";
-import { InMemoryExporterBackend } from "./exporter_backend_test.ts";
+import { InMemoryExporterBackend } from "./exporter_backend_dev.ts";
 
 export const configureInject = () => {
   register(serializerManagerKey, FileSerializerManager);

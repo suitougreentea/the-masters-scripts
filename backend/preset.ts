@@ -1560,6 +1560,10 @@ export function getPreset(name: string): Preset {
   return found;
 }
 
+export function getAllPresetNames(): string[] {
+  return presets.map(e => e.name);
+}
+
 export function getAppropriatePresetName(numPlayers: number): string | null {
   if (numPlayers == 8) return "8_4p";
   if (numPlayers == 9) return "9_4p";
