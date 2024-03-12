@@ -1,7 +1,7 @@
 import { QualifierResult, QualifierScore } from "../common/common_types.ts";
 import { OcrResult, RoundData, TypeDefinition } from "./common/type_definition.ts";
 import { ApiClient } from "./server/api_client.ts";
-import { LocalApi as AppsScriptApi } from "./server/local_api.ts";
+import { LocalApi } from "./server/local_api.ts";
 import { denocg } from "./server/deps.ts";
 import { OBSController } from "./server/obs_controller.ts";
 import { OcrServer } from "./server/ocr_server.ts";
@@ -14,9 +14,9 @@ export const config: denocg.ServerConfig<TypeDefinition> = {
 
 const server = await denocg.launchServer(config);
 
-const appsScriptApi = new AppsScriptApi(8516, ApiClient.getScopes());
-await appsScriptApi.initialize();
-const apiClient = new ApiClient(appsScriptApi);
+const localApi = new LocalApi(8516, []);
+await localApi.initialize();
+const apiClient = new ApiClient(localApi);
 
 const obsConfigText = await Deno.readTextFile("./obs-websocket-conf.json");
 const obsConfig = JSON.parse(obsConfigText);
@@ -33,7 +33,7 @@ let currentLoginAbort: AbortController | null = null;
 
 server.registerRequestHandler("login", () => {
   currentLoginAbort = new AbortController();
-  currentLoginPromise = appsScriptApi.auth({
+  currentLoginPromise = localApi.auth({
     abortController: currentLoginAbort,
   });
   (async () => {
@@ -47,7 +47,7 @@ server.registerRequestHandler("login", () => {
       currentLoginPromise = null;
     }
   })();
-  return { url: appsScriptApi.getAuthUrl() };
+  return { url: localApi.getAuthUrl() };
 });
 
 server.registerRequestHandler("cancelLogin", () => {
@@ -55,7 +55,7 @@ server.registerRequestHandler("cancelLogin", () => {
 });
 
 server.registerRequestHandler("checkLogin", async () => {
-  await appsScriptApi.checkAuth();
+  await localApi.checkAuth();
 });
 
 const currentRegisteredPlayersReplicant = server.getReplicant(

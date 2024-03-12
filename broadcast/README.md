@@ -1,14 +1,5 @@
 ## Setup
 
-`apps-script-api-conf.json`:
-
-```json
-{
-  "clientId": "...",
-  "clientSecret": "..."
-}
-```
-
 `obs-websocket-conf.json`:
 
 ```json

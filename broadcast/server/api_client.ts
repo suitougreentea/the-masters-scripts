@@ -1,29 +1,19 @@
 import { ApiFunctions } from "../../common/common_types.ts";
-import { LocalApi as AppsScriptApi } from "./local_api.ts";
-
-const scriptId =
-  "AKfycbxY5rLG4s8lTiHZmZFKioraDxH4h2qQSsIpLSxTYBhpDEgbAnRzKmNHS-wnrUankSnd";
+import { LocalApi } from "./local_api.ts";
 
 export class ApiClient {
-  static getScopes(): string[] {
-    return [
-      "https://www.googleapis.com/auth/spreadsheets",
-      "https://www.googleapis.com/auth/drive",
-    ];
-  }
+  #localApi: LocalApi;
 
-  #appsScriptApi: AppsScriptApi;
-
-  constructor(appsScriptApi: AppsScriptApi) {
-    this.#appsScriptApi = appsScriptApi;
+  constructor(localApi: LocalApi) {
+    this.#localApi = localApi;
   }
 
   async runCommand<TName extends keyof ApiFunctions>(
     functionName: TName,
     parameters: Parameters<ApiFunctions[TName]>,
   ): Promise<ReturnType<ApiFunctions[TName]>> {
-    const response = await this.#appsScriptApi.runCommand(
-      scriptId,
+    const response = await this.#localApi.runCommand(
+      "",
       "mastersCallApiAsJson",
       [functionName, JSON.stringify(parameters)],
     );

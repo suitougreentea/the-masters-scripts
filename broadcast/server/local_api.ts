@@ -1,3 +1,4 @@
+// TODO: this no longer needs to be Apps Script compatible
 export class LocalApi {
   constructor(_port: number, _scope: string[]) {}
 
