@@ -1,3 +1,4 @@
+// Data and original script courtesy of @jshimada3256 (X)
 import { TextLineStream } from "https://deno.land/std@0.141.0/streams/mod.ts";
 
 if (import.meta.main) {
