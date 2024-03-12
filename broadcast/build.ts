@@ -19,22 +19,7 @@ const options: esbuild.BuildOptions = {
   outdir: "./client",
   outExtension: { ".js": ".bundle.js" },
   metafile: true,
-  plugins: [
-    ...denoPlugins(),
-    {
-      name: "append-comments",
-      setup: (build) => {
-        build.onEnd((result) => {
-          Object.keys(result.metafile?.outputs ?? {}).forEach((path) => {
-            const input = Deno.readTextFileSync(path);
-            const output =
-              "// deno-lint-ignore-file\n// deno-fmt-ignore-file\n" + input;
-            Deno.writeTextFileSync(path, output);
-          });
-        });
-      },
-    },
-  ],
+  plugins: [...denoPlugins()],
 };
 
 if (watch) {

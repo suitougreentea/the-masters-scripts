@@ -3,6 +3,9 @@
     "experimentalDecorators": true,
     "lib": ["dom", "deno.ns", "deno.unstable"]
   },
+  "exclude": [
+    "./client/*.bundle.js"
+  ],
   "tasks": {
     "build": "deno run --allow-env --allow-net --allow-read --allow-run --allow-write build.ts build",
     "build-watch": "deno run --allow-env --allow-net --allow-read --allow-run --allow-write build.ts watch",
