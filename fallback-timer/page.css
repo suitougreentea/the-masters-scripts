@@ -1,0 +1,76 @@
+body {
+  background: black;
+  color: white;
+  padding: 8px;
+  overflow-x: scroll;
+}
+
+#toolbar {
+  margin-bottom: 12px;
+}
+
+#toolbar .spacer {
+  width: 20px;
+}
+
+#prev-stage, #next-stage {
+  width: 32px;
+  min-width: unset;
+}
+
+#stage-name {
+  display: inline-block;
+  width: 150px;
+  text-align: center;
+}
+
+.player {
+  display: grid;
+  align-items: end;
+  grid-template-columns: 16px 85px 65px 16px auto;
+  height: 24px;
+  line-height: 16px;
+  border-bottom: 1px solid #444;
+  box-sizing: border-box;
+}
+
+.player .id {
+  grid-row: 1;
+  grid-column: 1;
+  font-size: 12px;
+}
+
+.player .name {
+  grid-row: 1;
+  grid-column: 2;
+  font-size: 16px;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-right: 8px;
+
+  /* つぶす */
+  width: 107%;
+  transform: scaleX(85%);
+  transform-origin: left;
+}
+
+.player .time {
+  grid-row: 1;
+  grid-column: 3;
+  font-size: 16px;
+}
+
+.player .gauge {
+  grid-row: 1;
+  grid-column: 4 / span 2;
+  height: 18px;
+}
+
+#loader {
+  background: rgba(0, 0, 0, 0.7);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}

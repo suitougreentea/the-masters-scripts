@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>@import url("./page.css");</style>
+  </head>
+  <body>
+    <div id="toolbar">
+      <div>
+        <span>スプレッドシートのURL: </span>
+        <input type="text" id="spreadsheet" placeholder="https://docs.google.com/spreadsheets/d/...">
+        <span class="spacer"></span>
+        <span>ゲーム番号: </span>
+        <input type="number" id="game" value="1" min="1" max="20">
+        <button id="get">GET</button>
+      </div>
+      <div>
+        <button id="start">START</button>
+        <button id="reset">RESET</button>
+      </div>
+    </div>
+
+    <template id="timer-player">
+      <div class="player">
+        <div class="id"></div>
+        <div class="name"></div>
+        <div class="time"></div>
+        <div class="gauge"></div>
+      </div>
+    </template>
+    <div id="timer"></div>
+
+    <div id="loader" style="display: none">
+      <div class="loader"></div>
+    </div>
+    <script type="module">import "./page.ts";</script>
+  </body>
+</html>

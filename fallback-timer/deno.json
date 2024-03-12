@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "lib": ["deno.window", "dom"],
     "types": [
       "https://raw.githubusercontent.com/proudust/deno-gas-types/main/types/index.d.ts"
     ]
@@ -9,6 +10,7 @@
   ],
   "tasks": {
     "build": "deno run --allow-env --allow-net --allow-read --allow-run --allow-write https://raw.githubusercontent.com/proudust/gas-deno-starter/52dde15fc902f911f12e974f7fea7a31f3538519/_build.ts",
-    "deploy": "deno task build && deno task build deploy"
+    "build-page": "deno run --allow-env --allow-read --allow-run --allow-write build_page.ts",
+    "deploy": "deno task build && deno task build-page && deno task build deploy"
   }
 }
