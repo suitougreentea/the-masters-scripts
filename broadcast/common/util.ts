@@ -1,4 +1,5 @@
 import { StagePlayerEntry } from "../../common/common_types.ts";
+import { Grade, gradeToString, stringToGrade, tryStringToGrade } from "../../common/grade.ts";
 
 const groupTable = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
 
@@ -46,25 +47,15 @@ export function parseTime(time: string): number | null {
   }
 }
 
-const gradeTable = ["S4", "S5", "S6", "S7", "S8", "S9", "GM"];
-
-export function formatGrade(grade: number): string {
-  return gradeTable[grade];
-}
-
-export function parseGrade(grade: string): number {
-  return gradeTable.indexOf(grade);
-}
-
 export function formatLevelOrGrade(
-  levelOrGrade: { level: number; grade: number | null },
+  levelOrGrade: { level: number; grade: Grade | null },
 ): string {
-  if (levelOrGrade.grade != null) return formatGrade(levelOrGrade.grade);
+  if (levelOrGrade.grade != null) return gradeToString(levelOrGrade.grade);
   return String(levelOrGrade.level);
 }
 
 export function formatLevelOrGradeNullable(
-  levelOrGrade: { level: number | null; grade: number | null },
+  levelOrGrade: { level: number | null; grade: Grade | null },
 ): string | null {
   if (levelOrGrade.level == null) return null;
   return formatLevelOrGrade({
@@ -76,10 +67,10 @@ export function formatLevelOrGradeNullable(
 export function parseLevelOrGrade(
   levelOrGrade: string,
   emptyAsGm = false,
-): { level: number | null; grade: number | null } {
+): { level: number | null; grade: Grade | null } {
   if (levelOrGrade == "") {
     if (emptyAsGm) {
-      return { grade: parseGrade("GM"), level: 999 };
+      return { grade: stringToGrade("GM"), level: 999 };
     } else {
       return { grade: null, level: null };
     }
@@ -88,8 +79,8 @@ export function parseLevelOrGrade(
   const parsedLevel = Number(levelOrGrade);
   if (!isNaN(parsedLevel)) return { grade: null, level: parsedLevel };
 
-  const parsedGrade = parseGrade(levelOrGrade);
-  if (parsedGrade >= 0) return { grade: parsedGrade, level: 999 };
+  const parsedGrade = tryStringToGrade(levelOrGrade);
+  if (parsedGrade != null) return { grade: parsedGrade, level: 999 };
 
   return { grade: null, level: null };
 }

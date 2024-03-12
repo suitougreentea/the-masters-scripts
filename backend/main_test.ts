@@ -1,10 +1,8 @@
-import { assertEquals } from "https://deno.land/std@0.215.0/assert/mod.ts";
-
 import { configureInject, modifyInjectInMemory } from "./inject_config.ts";
 import { automateWholeCompetition } from "./automation.ts";
 import { getAllPresetNames, getPreset } from "./preset.ts";
 
-Deno.test(async function wholeCompetitionCompletes(t) {
+Deno.test("Whole competition completes", async (t) => {
   configureInject();
   modifyInjectInMemory();
 

@@ -1255,7 +1255,7 @@ function resolveSnakeIndex(snakeIndex: number, numGroups: number): number {
   return snakeIndex < numGroups ? snakeIndex : numGroups * 2 - 1 - snakeIndex;
 }
 
-function compareStageScore(
+export function compareStageScore(
   a: StageResultEntryStub,
   b: StageResultEntryStub,
 ): number {
@@ -1276,7 +1276,7 @@ function compareStageScore(
   return a.level - b.level;
 }
 
-function compareQualifierScore(
+export function compareQualifierScore(
   a: QualifierResultEntryStub,
   b: QualifierResultEntryStub,
 ): number {

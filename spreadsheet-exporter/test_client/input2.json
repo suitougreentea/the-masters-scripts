@@ -1,5 +1,5 @@
 {
-  "name": "Masters Automated Test - 23 24",
+  "name": "Masters Automated Test - 23 24 Result",
   "participants": {
     "list": [
       {
@@ -125,28 +125,6 @@
         "name": "1回戦 A組",
         "entries": [
           {
-            "name": "j",
-            "rawBestTime": 610100,
-            "handicap": 0,
-            "bestTime": 610100,
-            "startOrder": 6,
-            "startTime": 144460,
-            "level": 999,
-            "grade": 6,
-            "time": 643168
-          },
-          {
-            "name": "p",
-            "rawBestTime": 627650,
-            "handicap": 0,
-            "bestTime": 627650,
-            "startOrder": 4,
-            "startTime": 126910,
-            "level": 999,
-            "grade": 6,
-            "time": 609718
-          },
-          {
             "name": "d",
             "rawBestTime": 630000,
             "handicap": 0,
@@ -154,41 +132,8 @@
             "startOrder": 3,
             "startTime": 124560,
             "level": 999,
-            "grade": 6,
-            "time": 639444
-          },
-          {
-            "name": "s",
-            "rawBestTime": 623450,
-            "handicap": 0,
-            "bestTime": 623450,
-            "startOrder": 5,
-            "startTime": 131110,
-            "level": 999,
-            "grade": 6,
-            "time": 688734
-          },
-          {
-            "name": "m",
-            "rawBestTime": 754560,
-            "handicap": 0,
-            "bestTime": 754560,
-            "startOrder": 1,
-            "startTime": 0,
-            "level": 999,
-            "grade": 6,
-            "time": 735485
-          },
-          {
-            "name": "a",
-            "rawBestTime": 540000,
-            "handicap": 0,
-            "bestTime": 540000,
-            "startOrder": 8,
-            "startTime": 214560,
-            "level": 851,
-            "grade": null,
-            "time": null
+            "grade": 18,
+            "time": 615030
           },
           {
             "name": "g",
@@ -198,8 +143,19 @@
             "startOrder": 7,
             "startTime": 204560,
             "level": 999,
-            "grade": 6,
-            "time": 575407
+            "grade": 18,
+            "time": 688794
+          },
+          {
+            "name": "p",
+            "rawBestTime": 627650,
+            "handicap": 0,
+            "bestTime": 627650,
+            "startOrder": 4,
+            "startTime": 126910,
+            "level": 555,
+            "grade": null,
+            "time": null
           },
           {
             "name": "v",
@@ -208,76 +164,120 @@
             "bestTime": 639990,
             "startOrder": 2,
             "startTime": 114570,
-            "level": 170,
+            "level": 632,
             "grade": null,
             "time": null
+          },
+          {
+            "name": "s",
+            "rawBestTime": 623450,
+            "handicap": 0,
+            "bestTime": 623450,
+            "startOrder": 5,
+            "startTime": 131110,
+            "level": 999,
+            "grade": 18,
+            "time": 622490
+          },
+          {
+            "name": "j",
+            "rawBestTime": 610100,
+            "handicap": 0,
+            "bestTime": 610100,
+            "startOrder": 6,
+            "startTime": 144460,
+            "level": 999,
+            "grade": 18,
+            "time": 635511
+          },
+          {
+            "name": "m",
+            "rawBestTime": 754560,
+            "handicap": 0,
+            "bestTime": 754560,
+            "startOrder": 1,
+            "startTime": 0,
+            "level": 163,
+            "grade": null,
+            "time": null
+          },
+          {
+            "name": "a",
+            "rawBestTime": 540000,
+            "handicap": 0,
+            "bestTime": 540000,
+            "startOrder": 8,
+            "startTime": 214560,
+            "level": 999,
+            "grade": 18,
+            "time": 581331
           }
         ],
         "result": [
           {
             "rank": 1,
-            "name": "m",
+            "name": "d",
             "level": 999,
-            "grade": 6,
-            "time": 735485,
-            "timeDiffBest": -19075,
+            "grade": 18,
+            "time": 615030,
+            "timeDiffBest": -14970,
             "timeDiffTop": null,
             "timeDiffPrev": null
           },
           {
             "rank": 2,
-            "name": "p",
+            "name": "s",
             "level": 999,
-            "grade": 6,
-            "time": 609718,
-            "timeDiffBest": -17932,
-            "timeDiffTop": 1143,
-            "timeDiffPrev": 1143
+            "grade": 18,
+            "time": 622490,
+            "timeDiffBest": -960,
+            "timeDiffTop": 14010,
+            "timeDiffPrev": 14010
           },
           {
             "rank": 3,
-            "name": "d",
+            "name": "j",
             "level": 999,
-            "grade": 6,
-            "time": 639444,
-            "timeDiffBest": 9444,
-            "timeDiffTop": 28519,
-            "timeDiffPrev": 27376
+            "grade": 18,
+            "time": 635511,
+            "timeDiffBest": 25411,
+            "timeDiffTop": 40381,
+            "timeDiffPrev": 26371
           },
           {
             "rank": 4,
-            "name": "g",
+            "name": "a",
             "level": 999,
-            "grade": 6,
-            "time": 575407,
-            "timeDiffBest": 25407,
-            "timeDiffTop": 44482,
-            "timeDiffPrev": 15963
+            "grade": 18,
+            "time": 581331,
+            "timeDiffBest": 41331,
+            "timeDiffTop": 56301,
+            "timeDiffPrev": 15920
           },
           {
             "rank": 5,
-            "name": "j",
+            "name": "g",
             "level": 999,
-            "grade": 6,
-            "time": 643168,
-            "timeDiffBest": 33068,
-            "timeDiffTop": 52143,
-            "timeDiffPrev": 7661
+            "grade": 18,
+            "time": 688794,
+            "timeDiffBest": 138794,
+            "timeDiffTop": 153764,
+            "timeDiffPrev": 97463
           },
           {
             "rank": 6,
-            "name": "s",
-            "level": 999,
-            "grade": 6,
-            "time": 688734,
-            "timeDiffBest": 65284,
-            "timeDiffTop": 84359,
-            "timeDiffPrev": 32216
+            "name": "v",
+            "level": 632,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
           },
           {
             "rank": 7,
-            "name": "a",
-            "level": 851,
+            "name": "p",
+            "level": 555,
             "grade": null,
             "time": null,
             "timeDiffBest": null,
@@ -286,8 +286,8 @@
           },
           {
             "rank": 8,
-            "name": "v",
-            "level": 170,
+            "name": "m",
+            "level": 163,
             "grade": null,
             "time": null,
             "timeDiffBest": null,
@@ -303,46 +303,13 @@
         "name": "1回戦 B組",
         "entries": [
           {
-            "name": "n",
-            "rawBestTime": 810000,
-            "handicap": 0,
-            "bestTime": 810000,
-            "startOrder": 1,
-            "startTime": 0,
-            "level": 999,
-            "grade": 6,
-            "time": 676154
-          },
-          {
-            "name": "k",
-            "rawBestTime": 671110,
-            "handicap": 0,
-            "bestTime": 671110,
-            "startOrder": 5,
-            "startTime": 138890,
-            "level": 369,
-            "grade": null,
-            "time": null
-          },
-          {
             "name": "h",
             "rawBestTime": 680000,
             "handicap": 0,
             "bestTime": 680000,
             "startOrder": 4,
             "startTime": 130000,
-            "level": 999,
-            "grade": 6,
-            "time": 606207
-          },
-          {
-            "name": "q",
-            "rawBestTime": 556540,
-            "handicap": 0,
-            "bestTime": 556540,
-            "startOrder": 6,
-            "startTime": 253460,
-            "level": 549,
+            "level": 975,
             "grade": null,
             "time": null
           },
@@ -353,7 +320,51 @@
             "bestTime": 541000,
             "startOrder": 7,
             "startTime": 269000,
-            "level": 371,
+            "level": 141,
+            "grade": null,
+            "time": null
+          },
+          {
+            "name": "q",
+            "rawBestTime": 556540,
+            "handicap": 0,
+            "bestTime": 556540,
+            "startOrder": 6,
+            "startTime": 253460,
+            "level": 999,
+            "grade": 18,
+            "time": 720011
+          },
+          {
+            "name": "n",
+            "rawBestTime": 810000,
+            "handicap": 0,
+            "bestTime": 810000,
+            "startOrder": 1,
+            "startTime": 0,
+            "level": 999,
+            "grade": 18,
+            "time": 746168
+          },
+          {
+            "name": "t",
+            "rawBestTime": 785430,
+            "handicap": 0,
+            "bestTime": 785430,
+            "startOrder": 2,
+            "startTime": 24570,
+            "level": 999,
+            "grade": 18,
+            "time": 655870
+          },
+          {
+            "name": "e",
+            "rawBestTime": 540000,
+            "handicap": 0,
+            "bestTime": 540000,
+            "startOrder": 8,
+            "startTime": 270000,
+            "level": 178,
             "grade": null,
             "time": null
           },
@@ -364,88 +375,77 @@
             "bestTime": 780000,
             "startOrder": 3,
             "startTime": 30000,
-            "level": 3,
-            "grade": null,
-            "time": null
+            "level": 999,
+            "grade": 18,
+            "time": 691502
           },
           {
-            "name": "e",
-            "rawBestTime": 540000,
+            "name": "k",
+            "rawBestTime": 671110,
             "handicap": 0,
-            "bestTime": 540000,
-            "startOrder": 8,
-            "startTime": 270000,
-            "level": 911,
-            "grade": null,
-            "time": null
-          },
-          {
-            "name": "t",
-            "rawBestTime": 785430,
-            "handicap": 0,
-            "bestTime": 785430,
-            "startOrder": 2,
-            "startTime": 24570,
-            "level": 302,
-            "grade": null,
-            "time": null
+            "bestTime": 671110,
+            "startOrder": 5,
+            "startTime": 138890,
+            "level": 999,
+            "grade": 18,
+            "time": 734437
           }
         ],
         "result": [
           {
             "rank": 1,
-            "name": "n",
+            "name": "t",
             "level": 999,
-            "grade": 6,
-            "time": 676154,
-            "timeDiffBest": -133846,
+            "grade": 18,
+            "time": 655870,
+            "timeDiffBest": -129560,
             "timeDiffTop": null,
             "timeDiffPrev": null
           },
           {
             "rank": 2,
-            "name": "h",
+            "name": "w",
             "level": 999,
-            "grade": 6,
-            "time": 606207,
-            "timeDiffBest": -73793,
-            "timeDiffTop": 60053,
-            "timeDiffPrev": 60053
+            "grade": 18,
+            "time": 691502,
+            "timeDiffBest": -88498,
+            "timeDiffTop": 41062,
+            "timeDiffPrev": 41062
           },
           {
             "rank": 3,
-            "name": "e",
-            "level": 911,
-            "grade": null,
-            "time": null,
-            "timeDiffBest": null,
-            "timeDiffTop": null,
-            "timeDiffPrev": null
+            "name": "n",
+            "level": 999,
+            "grade": 18,
+            "time": 746168,
+            "timeDiffBest": -63832,
+            "timeDiffTop": 65728,
+            "timeDiffPrev": 24666
           },
           {
             "rank": 4,
-            "name": "q",
-            "level": 549,
-            "grade": null,
-            "time": null,
-            "timeDiffBest": null,
-            "timeDiffTop": null,
-            "timeDiffPrev": null
+            "name": "k",
+            "level": 999,
+            "grade": 18,
+            "time": 734437,
+            "timeDiffBest": 63327,
+            "timeDiffTop": 192887,
+            "timeDiffPrev": 127159
           },
           {
             "rank": 5,
-            "name": "b",
-            "level": 371,
-            "grade": null,
-            "time": null,
-            "timeDiffBest": null,
-            "timeDiffTop": null,
-            "timeDiffPrev": null
+            "name": "q",
+            "level": 999,
+            "grade": 18,
+            "time": 720011,
+            "timeDiffBest": 163471,
+            "timeDiffTop": 293031,
+            "timeDiffPrev": 100144
           },
           {
             "rank": 6,
-            "name": "k",
-            "level": 369,
+            "name": "h",
+            "level": 975,
             "grade": null,
             "time": null,
             "timeDiffBest": null,
@@ -454,8 +454,8 @@
           },
           {
             "rank": 7,
-            "name": "t",
-            "level": 302,
+            "name": "e",
+            "level": 178,
             "grade": null,
             "time": null,
             "timeDiffBest": null,
@@ -464,8 +464,8 @@
           },
           {
             "rank": 8,
-            "name": "w",
-            "level": 3,
+            "name": "b",
+            "level": 141,
             "grade": null,
             "time": null,
             "timeDiffBest": null,
@@ -481,60 +481,26 @@
         "name": "1回戦 C組",
         "entries": [
           {
-            "name": "l",
-            "rawBestTime": 539000,
-            "handicap": 0,
-            "bestTime": 539000,
-            "startOrder": 7,
-            "startTime": 211000,
-            "level": 999,
-            "grade": 6,
-            "time": 741669
-          },
-          null,
-          {
-            "name": "f",
-            "rawBestTime": 542000,
-            "handicap": 0,
-            "bestTime": 542000,
-            "startOrder": 6,
-            "startTime": 208000,
-            "level": 999,
-            "grade": 6,
-            "time": 711942
-          },
-          {
-            "name": "i",
-            "rawBestTime": 750000,
-            "handicap": 0,
-            "bestTime": 750000,
-            "startOrder": 1,
-            "startTime": 0,
-            "level": 999,
-            "grade": 6,
-            "time": 726050
-          },
-          {
             "name": "o",
             "rawBestTime": 570000,
             "handicap": 0,
             "bestTime": 570000,
             "startOrder": 5,
             "startTime": 180000,
-            "level": 999,
-            "grade": 6,
-            "time": 551946
+            "level": 442,
+            "grade": null,
+            "time": null
           },
           {
-            "name": "c",
-            "rawBestTime": 600000,
+            "name": "u",
+            "rawBestTime": 632100,
             "handicap": 0,
-            "bestTime": 600000,
-            "startOrder": 4,
-            "startTime": 150000,
-            "level": 999,
-            "grade": 6,
-            "time": 696179
+            "bestTime": 632100,
+            "startOrder": 2,
+            "startTime": 117900,
+            "level": 143,
+            "grade": null,
+            "time": null
           },
           {
             "name": "r",
@@ -544,91 +510,125 @@
             "startOrder": 3,
             "startTime": 129700,
             "level": 999,
-            "grade": 6,
-            "time": 675941
+            "grade": 18,
+            "time": 617812
           },
           {
-            "name": "u",
-            "rawBestTime": 632100,
+            "name": "l",
+            "rawBestTime": 539000,
             "handicap": 0,
-            "bestTime": 632100,
-            "startOrder": 2,
-            "startTime": 117900,
+            "bestTime": 539000,
+            "startOrder": 7,
+            "startTime": 211000,
             "level": 999,
-            "grade": 6,
-            "time": 623694
+            "grade": 18,
+            "time": 688144
+          },
+          null,
+          {
+            "name": "f",
+            "rawBestTime": 542000,
+            "handicap": 0,
+            "bestTime": 542000,
+            "startOrder": 6,
+            "startTime": 208000,
+            "level": 692,
+            "grade": null,
+            "time": null
+          },
+          {
+            "name": "c",
+            "rawBestTime": 600000,
+            "handicap": 0,
+            "bestTime": 600000,
+            "startOrder": 4,
+            "startTime": 150000,
+            "level": 602,
+            "grade": null,
+            "time": null
+          },
+          {
+            "name": "i",
+            "rawBestTime": 750000,
+            "handicap": 0,
+            "bestTime": 750000,
+            "startOrder": 1,
+            "startTime": 0,
+            "level": 999,
+            "grade": 18,
+            "time": 753540
           }
         ],
         "result": [
           {
             "rank": 1,
-            "name": "i",
+            "name": "r",
             "level": 999,
-            "grade": 6,
-            "time": 726050,
-            "timeDiffBest": -23950,
+            "grade": 18,
+            "time": 617812,
+            "timeDiffBest": -2488,
             "timeDiffTop": null,
             "timeDiffPrev": null
           },
           {
             "rank": 2,
-            "name": "o",
+            "name": "i",
             "level": 999,
-            "grade": 6,
-            "time": 551946,
-            "timeDiffBest": -18054,
-            "timeDiffTop": 5896,
-            "timeDiffPrev": 5896
+            "grade": 18,
+            "time": 753540,
+            "timeDiffBest": 3540,
+            "timeDiffTop": 6028,
+            "timeDiffPrev": 6028
           },
           {
             "rank": 3,
-            "name": "u",
+            "name": "l",
             "level": 999,
-            "grade": 6,
-            "time": 623694,
-            "timeDiffBest": -8406,
-            "timeDiffTop": 15544,
-            "timeDiffPrev": 9648
+            "grade": 18,
+            "time": 688144,
+            "timeDiffBest": 149144,
+            "timeDiffTop": 151632,
+            "timeDiffPrev": 145604
           },
           {
             "rank": 4,
-            "name": "r",
-            "level": 999,
-            "grade": 6,
-            "time": 675941,
-            "timeDiffBest": 55641,
-            "timeDiffTop": 79591,
-            "timeDiffPrev": 64047
+            "name": "f",
+            "level": 692,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
           },
           {
             "rank": 5,
             "name": "c",
-            "level": 999,
-            "grade": 6,
-            "time": 696179,
-            "timeDiffBest": 96179,
-            "timeDiffTop": 120129,
-            "timeDiffPrev": 40538
+            "level": 602,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
           },
           {
             "rank": 6,
-            "name": "f",
-            "level": 999,
-            "grade": 6,
-            "time": 711942,
-            "timeDiffBest": 169942,
-            "timeDiffTop": 193892,
-            "timeDiffPrev": 73763
+            "name": "o",
+            "level": 442,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
           },
           {
             "rank": 7,
-            "name": "l",
-            "level": 999,
-            "grade": 6,
-            "time": 741669,
-            "timeDiffBest": 202669,
-            "timeDiffTop": 226619,
-            "timeDiffPrev": 32727
+            "name": "u",
+            "level": 143,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
           }
         ],
         "borderlines": [
@@ -638,115 +638,115 @@
       {
         "name": "敗者復活 A組",
         "entries": [
-          null,
           {
-            "name": "a",
+            "name": "e",
             "rawBestTime": 540000,
             "handicap": 0,
             "bestTime": 540000,
             "startOrder": 5,
-            "startTime": 245430,
-            "level": 978,
-            "grade": null,
-            "time": null
+            "startTime": 140000,
+            "level": 999,
+            "grade": 18,
+            "time": 578487
           },
-          null,
           {
-            "name": "t",
-            "rawBestTime": 785430,
+            "name": "h",
+            "rawBestTime": 680000,
             "handicap": 0,
-            "bestTime": 785430,
+            "bestTime": 680000,
             "startOrder": 1,
             "startTime": 0,
             "level": 999,
-            "grade": 6,
-            "time": 730458
+            "grade": 18,
+            "time": 551981
           },
+          null,
           {
-            "name": "s",
-            "rawBestTime": 623450,
+            "name": "u",
+            "rawBestTime": 632100,
             "handicap": 0,
-            "bestTime": 623450,
-            "startOrder": 2,
-            "startTime": 161980,
-            "level": 999,
-            "grade": 6,
-            "time": 669919
-          },
-          {
-            "name": "f",
-            "rawBestTime": 542000,
-            "handicap": 0,
-            "bestTime": 542000,
-            "startOrder": 4,
-            "startTime": 243430,
-            "level": 999,
-            "grade": 6,
-            "time": 648983
-          },
-          {
-            "name": "j",
-            "rawBestTime": 610100,
-            "handicap": 0,
-            "bestTime": 610100,
+            "bestTime": 632100,
             "startOrder": 3,
-            "startTime": 175330,
+            "startTime": 47900,
             "level": 999,
-            "grade": 6,
-            "time": 749416
+            "grade": 18,
+            "time": 549461
+          },
+          {
+            "name": "g",
+            "rawBestTime": 550000,
+            "handicap": 0,
+            "bestTime": 550000,
+            "startOrder": 4,
+            "startTime": 130000,
+            "level": 999,
+            "grade": 18,
+            "time": 595252
+          },
+          null,
+          {
+            "name": "v",
+            "rawBestTime": 639990,
+            "handicap": 0,
+            "bestTime": 639990,
+            "startOrder": 2,
+            "startTime": 40010,
+            "level": 999,
+            "grade": 18,
+            "time": 633035
           },
           null
         ],
         "result": [
           {
             "rank": 1,
-            "name": "t",
+            "name": "h",
             "level": 999,
-            "grade": 6,
-            "time": 730458,
-            "timeDiffBest": -54972,
+            "grade": 18,
+            "time": 551981,
+            "timeDiffBest": -128019,
             "timeDiffTop": null,
             "timeDiffPrev": null
           },
           {
             "rank": 2,
-            "name": "s",
+            "name": "u",
             "level": 999,
-            "grade": 6,
-            "time": 669919,
-            "timeDiffBest": 46469,
-            "timeDiffTop": 101441,
-            "timeDiffPrev": 101441
+            "grade": 18,
+            "time": 549461,
+            "timeDiffBest": -82639,
+            "timeDiffTop": 45380,
+            "timeDiffPrev": 45380
           },
           {
             "rank": 3,
-            "name": "f",
+            "name": "v",
             "level": 999,
-            "grade": 6,
-            "time": 648983,
-            "timeDiffBest": 106983,
-            "timeDiffTop": 161955,
-            "timeDiffPrev": 60514
+            "grade": 18,
+            "time": 633035,
+            "timeDiffBest": -6955,
+            "timeDiffTop": 121064,
+            "timeDiffPrev": 75684
           },
           {
             "rank": 4,
-            "name": "j",
+            "name": "e",
             "level": 999,
-            "grade": 6,
-            "time": 749416,
-            "timeDiffBest": 139316,
-            "timeDiffTop": 194288,
-            "timeDiffPrev": 32333
+            "grade": 18,
+            "time": 578487,
+            "timeDiffBest": 38487,
+            "timeDiffTop": 166506,
+            "timeDiffPrev": 45442
           },
           {
             "rank": 5,
-            "name": "a",
-            "level": 978,
-            "grade": null,
-            "time": null,
-            "timeDiffBest": null,
-            "timeDiffTop": null,
-            "timeDiffPrev": null
+            "name": "g",
+            "level": 999,
+            "grade": 18,
+            "time": 595252,
+            "timeDiffBest": 45252,
+            "timeDiffTop": 173271,
+            "timeDiffPrev": 6765
           }
         ],
         "borderlines": [
@@ -757,129 +757,129 @@
         "name": "敗者復活 B組",
         "entries": [
           {
-            "name": "k",
-            "rawBestTime": 671110,
-            "handicap": 0,
-            "bestTime": 671110,
-            "startOrder": 2,
-            "startTime": 108890,
-            "level": 993,
-            "grade": null,
-            "time": null
-          },
-          {
-            "name": "v",
-            "rawBestTime": 639990,
-            "handicap": 0,
-            "bestTime": 639990,
-            "startOrder": 3,
-            "startTime": 140010,
-            "level": 999,
-            "grade": 6,
-            "time": 555786
-          },
-          {
-            "name": "l",
-            "rawBestTime": 539000,
-            "handicap": 0,
-            "bestTime": 539000,
-            "startOrder": 6,
-            "startTime": 241000,
-            "level": 999,
-            "grade": 6,
-            "time": 591498
-          },
-          null,
-          {
             "name": "c",
             "rawBestTime": 600000,
             "handicap": 0,
             "bestTime": 600000,
-            "startOrder": 4,
-            "startTime": 180000,
+            "startOrder": 3,
+            "startTime": 154560,
             "level": 999,
-            "grade": 6,
-            "time": 595632
+            "grade": 18,
+            "time": 543901
           },
+          null,
           {
-            "name": "w",
-            "rawBestTime": 780000,
+            "name": "p",
+            "rawBestTime": 627650,
             "handicap": 0,
-            "bestTime": 780000,
+            "bestTime": 627650,
+            "startOrder": 2,
+            "startTime": 126910,
+            "level": 111,
+            "grade": null,
+            "time": null
+          },
+          null,
+          {
+            "name": "m",
+            "rawBestTime": 754560,
+            "handicap": 0,
+            "bestTime": 754560,
             "startOrder": 1,
             "startTime": 0,
             "level": 999,
-            "grade": 6,
-            "time": 556449
+            "grade": 18,
+            "time": 723327
+          },
+          {
+            "name": "o",
+            "rawBestTime": 570000,
+            "handicap": 0,
+            "bestTime": 570000,
+            "startOrder": 4,
+            "startTime": 184560,
+            "level": 999,
+            "grade": 18,
+            "time": 611541
           },
           {
             "name": "b",
             "rawBestTime": 541000,
             "handicap": 0,
             "bestTime": 541000,
-            "startOrder": 5,
-            "startTime": 239000,
-            "level": 271,
-            "grade": null,
-            "time": null
+            "startOrder": 6,
+            "startTime": 213560,
+            "level": 999,
+            "grade": 18,
+            "time": 563309
           },
-          null
+          {
+            "name": "q",
+            "rawBestTime": 556540,
+            "handicap": 0,
+            "bestTime": 556540,
+            "startOrder": 5,
+            "startTime": 198020,
+            "level": 999,
+            "grade": 18,
+            "time": 774622
+          }
         ],
         "result": [
           {
             "rank": 1,
-            "name": "w",
+            "name": "c",
             "level": 999,
-            "grade": 6,
-            "time": 556449,
-            "timeDiffBest": -223551,
+            "grade": 18,
+            "time": 543901,
+            "timeDiffBest": -56099,
             "timeDiffTop": null,
             "timeDiffPrev": null
           },
           {
             "rank": 2,
-            "name": "v",
+            "name": "m",
             "level": 999,
-            "grade": 6,
-            "time": 555786,
-            "timeDiffBest": -84204,
-            "timeDiffTop": 139347,
-            "timeDiffPrev": 139347
+            "grade": 18,
+            "time": 723327,
+            "timeDiffBest": -31233,
+            "timeDiffTop": 24866,
+            "timeDiffPrev": 24866
           },
           {
             "rank": 3,
-            "name": "c",
+            "name": "b",
             "level": 999,
-            "grade": 6,
-            "time": 595632,
-            "timeDiffBest": -4368,
-            "timeDiffTop": 219183,
-            "timeDiffPrev": 79836
+            "grade": 18,
+            "time": 563309,
+            "timeDiffBest": 22309,
+            "timeDiffTop": 78408,
+            "timeDiffPrev": 53542
           },
           {
             "rank": 4,
-            "name": "l",
+            "name": "o",
             "level": 999,
-            "grade": 6,
-            "time": 591498,
-            "timeDiffBest": 52498,
-            "timeDiffTop": 276049,
-            "timeDiffPrev": 56866
+            "grade": 18,
+            "time": 611541,
+            "timeDiffBest": 41541,
+            "timeDiffTop": 97640,
+            "timeDiffPrev": 19232
           },
           {
             "rank": 5,
-            "name": "k",
-            "level": 993,
-            "grade": null,
-            "time": null,
-            "timeDiffBest": null,
-            "timeDiffTop": null,
-            "timeDiffPrev": null
+            "name": "q",
+            "level": 999,
+            "grade": 18,
+            "time": 774622,
+            "timeDiffBest": 218082,
+            "timeDiffTop": 274181,
+            "timeDiffPrev": 176541
           },
           {
             "rank": 6,
-            "name": "b",
-            "level": 271,
+            "name": "p",
+            "level": 111,
             "grade": null,
             "time": null,
             "timeDiffBest": null,
@@ -895,149 +895,149 @@
         "name": "2回戦 A組",
         "entries": [
           {
+            "name": "s",
+            "rawBestTime": 623450,
+            "handicap": 0,
+            "bestTime": 623450,
+            "startOrder": 5,
+            "startTime": 171980,
+            "level": 999,
+            "grade": 18,
+            "time": 646447
+          },
+          {
+            "name": "l",
+            "rawBestTime": 539000,
+            "handicap": 0,
+            "bestTime": 539000,
+            "startOrder": 8,
+            "startTime": 256430,
+            "level": 999,
+            "grade": 18,
+            "time": 644964
+          },
+          {
             "name": "h",
             "rawBestTime": 680000,
-            "handicap": -5,
-            "bestTime": 685000,
-            "startOrder": 3,
-            "startTime": 135000,
-            "level": 420,
+            "handicap": 5,
+            "bestTime": 675000,
+            "startOrder": 4,
+            "startTime": 120430,
+            "level": 544,
             "grade": null,
             "time": null
-          },
-          {
-            "name": "n",
-            "rawBestTime": 810000,
-            "handicap": -10,
-            "bestTime": 820000,
-            "startOrder": 1,
-            "startTime": 0,
-            "level": 324,
-            "grade": null,
-            "time": null
-          },
-          {
-            "name": "o",
-            "rawBestTime": 570000,
-            "handicap": 0,
-            "bestTime": 570000,
-            "startOrder": 6,
-            "startTime": 250000,
-            "level": 999,
-            "grade": 6,
-            "time": 678964
-          },
-          {
-            "name": "q",
-            "rawBestTime": 556540,
-            "handicap": 0,
-            "bestTime": 556540,
-            "startOrder": 7,
-            "startTime": 263460,
-            "level": 999,
-            "grade": 6,
-            "time": 547249
           },
           {
             "name": "w",
             "rawBestTime": 780000,
-            "handicap": 5,
-            "bestTime": 775000,
+            "handicap": -5,
+            "bestTime": 785000,
             "startOrder": 2,
-            "startTime": 45000,
-            "level": 999,
-            "grade": 6,
-            "time": 578746
-          },
-          {
-            "name": "e",
-            "rawBestTime": 540000,
-            "handicap": 0,
-            "bestTime": 540000,
-            "startOrder": 8,
-            "startTime": 280000,
-            "level": 590,
+            "startTime": 10430,
+            "level": 110,
             "grade": null,
             "time": null
           },
           {
-            "name": "s",
-            "rawBestTime": 623450,
-            "handicap": 5,
-            "bestTime": 618450,
-            "startOrder": 5,
-            "startTime": 201550,
+            "name": "j",
+            "rawBestTime": 610100,
+            "handicap": 0,
+            "bestTime": 610100,
+            "startOrder": 6,
+            "startTime": 185330,
             "level": 999,
-            "grade": 6,
-            "time": 623174
+            "grade": 18,
+            "time": 724018
           },
           {
-            "name": "d",
-            "rawBestTime": 630000,
-            "handicap": 0,
-            "bestTime": 630000,
-            "startOrder": 4,
-            "startTime": 190000,
+            "name": "t",
+            "rawBestTime": 785430,
+            "handicap": -10,
+            "bestTime": 795430,
+            "startOrder": 1,
+            "startTime": 0,
             "level": 999,
-            "grade": 6,
-            "time": 714358
+            "grade": 18,
+            "time": 630303
+          },
+          {
+            "name": "m",
+            "rawBestTime": 754560,
+            "handicap": 5,
+            "bestTime": 749560,
+            "startOrder": 3,
+            "startTime": 45870,
+            "level": 574,
+            "grade": null,
+            "time": null
+          },
+          {
+            "name": "f",
+            "rawBestTime": 542000,
+            "handicap": 0,
+            "bestTime": 542000,
+            "startOrder": 7,
+            "startTime": 253430,
+            "level": 358,
+            "grade": null,
+            "time": null
           }
         ],
         "result": [
           {
             "rank": 1,
-            "name": "w",
+            "name": "t",
             "level": 999,
-            "grade": 6,
-            "time": 578746,
-            "timeDiffBest": -196254,
+            "grade": 18,
+            "time": 630303,
+            "timeDiffBest": -165127,
             "timeDiffTop": null,
             "timeDiffPrev": null
           },
           {
             "rank": 2,
-            "name": "q",
+            "name": "s",
             "level": 999,
-            "grade": 6,
-            "time": 547249,
-            "timeDiffBest": -9291,
-            "timeDiffTop": 186963,
-            "timeDiffPrev": 186963
+            "grade": 18,
+            "time": 646447,
+            "timeDiffBest": 22997,
+            "timeDiffTop": 188124,
+            "timeDiffPrev": 188124
           },
           {
             "rank": 3,
-            "name": "s",
+            "name": "l",
             "level": 999,
-            "grade": 6,
-            "time": 623174,
-            "timeDiffBest": 4724,
-            "timeDiffTop": 200978,
-            "timeDiffPrev": 14015
+            "grade": 18,
+            "time": 644964,
+            "timeDiffBest": 105964,
+            "timeDiffTop": 271091,
+            "timeDiffPrev": 82967
           },
           {
             "rank": 4,
-            "name": "d",
+            "name": "j",
             "level": 999,
-            "grade": 6,
-            "time": 714358,
-            "timeDiffBest": 84358,
-            "timeDiffTop": 280612,
-            "timeDiffPrev": 79634
+            "grade": 18,
+            "time": 724018,
+            "timeDiffBest": 113918,
+            "timeDiffTop": 279045,
+            "timeDiffPrev": 7954
           },
           {
             "rank": 5,
-            "name": "o",
-            "level": 999,
-            "grade": 6,
-            "time": 678964,
-            "timeDiffBest": 108964,
-            "timeDiffTop": 305218,
-            "timeDiffPrev": 24606
+            "name": "m",
+            "level": 574,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
           },
           {
             "rank": 6,
-            "name": "e",
-            "level": 590,
+            "name": "h",
+            "level": 544,
             "grade": null,
             "time": null,
             "timeDiffBest": null,
@@ -1046,8 +1046,8 @@
           },
           {
             "rank": 7,
-            "name": "h",
-            "level": 420,
+            "name": "f",
+            "level": 358,
             "grade": null,
             "time": null,
             "timeDiffBest": null,
@@ -1056,8 +1056,8 @@
           },
           {
             "rank": 8,
-            "name": "n",
-            "level": 324,
+            "name": "w",
+            "level": 110,
             "grade": null,
             "time": null,
             "timeDiffBest": null,
@@ -1073,92 +1073,92 @@
         "name": "2回戦 B組",
         "entries": [
           {
-            "name": "g",
-            "rawBestTime": 550000,
+            "name": "k",
+            "rawBestTime": 671110,
             "handicap": 0,
-            "bestTime": 550000,
-            "startOrder": 8,
-            "startTime": 230430,
+            "bestTime": 671110,
+            "startOrder": 3,
+            "startTime": 138890,
             "level": 999,
-            "grade": 6,
-            "time": 650620
+            "grade": 18,
+            "time": 748635
+          },
+          {
+            "name": "c",
+            "rawBestTime": 600000,
+            "handicap": 5,
+            "bestTime": 595000,
+            "startOrder": 7,
+            "startTime": 215000,
+            "level": 204,
+            "grade": null,
+            "time": null
+          },
+          {
+            "name": "n",
+            "rawBestTime": 810000,
+            "handicap": 0,
+            "bestTime": 810000,
+            "startOrder": 1,
+            "startTime": 0,
+            "level": 999,
+            "grade": 18,
+            "time": 681917
+          },
+          {
+            "name": "i",
+            "rawBestTime": 750000,
+            "handicap": 0,
+            "bestTime": 750000,
+            "startOrder": 2,
+            "startTime": 60000,
+            "level": 999,
+            "grade": 18,
+            "time": 611925
           },
           {
             "name": "r",
             "rawBestTime": 620300,
-            "handicap": 0,
-            "bestTime": 620300,
-            "startOrder": 7,
-            "startTime": 160130,
-            "level": 999,
-            "grade": 6,
-            "time": 750045
-          },
-          {
-            "name": "p",
-            "rawBestTime": 627650,
-            "handicap": 0,
-            "bestTime": 627650,
+            "handicap": -5,
+            "bestTime": 625300,
             "startOrder": 6,
-            "startTime": 152780,
-            "level": 123,
+            "startTime": 184700,
+            "level": 740,
             "grade": null,
             "time": null
           },
           {
             "name": "u",
             "rawBestTime": 632100,
-            "handicap": 0,
-            "bestTime": 632100,
-            "startOrder": 5,
-            "startTime": 148330,
-            "level": 999,
-            "grade": 6,
-            "time": 648743
-          },
-          {
-            "name": "t",
-            "rawBestTime": 785430,
             "handicap": 5,
-            "bestTime": 780430,
-            "startOrder": 1,
-            "startTime": 0,
-            "level": 999,
-            "grade": 6,
-            "time": 667466
-          },
-          {
-            "name": "m",
-            "rawBestTime": 754560,
-            "handicap": -5,
-            "bestTime": 759560,
-            "startOrder": 3,
-            "startTime": 20870,
-            "level": 344,
+            "bestTime": 627100,
+            "startOrder": 5,
+            "startTime": 182900,
+            "level": 514,
             "grade": null,
             "time": null
           },
           {
-            "name": "i",
-            "rawBestTime": 750000,
+            "name": "d",
+            "rawBestTime": 630000,
             "handicap": -10,
-            "bestTime": 760000,
-            "startOrder": 2,
-            "startTime": 20430,
-            "level": 999,
-            "grade": 6,
-            "time": 574702
+            "bestTime": 640000,
+            "startOrder": 4,
+            "startTime": 170000,
+            "level": 973,
+            "grade": null,
+            "time": null
           },
           {
-            "name": "v",
-            "rawBestTime": 639990,
-            "handicap": 5,
-            "bestTime": 634990,
-            "startOrder": 4,
-            "startTime": 145440,
+            "name": "a",
+            "rawBestTime": 540000,
+            "handicap": 0,
+            "bestTime": 540000,
+            "startOrder": 8,
+            "startTime": 270000,
             "level": 999,
-            "grade": 6,
-            "time": 614451
+            "grade": 18,
+            "time": 769384
           }
         ],
         "result": [
@@ -1166,66 +1166,66 @@
             "rank": 1,
             "name": "i",
             "level": 999,
-            "grade": 6,
-            "time": 574702,
-            "timeDiffBest": -185298,
+            "grade": 18,
+            "time": 611925,
+            "timeDiffBest": -138075,
             "timeDiffTop": null,
             "timeDiffPrev": null
           },
           {
             "rank": 2,
-            "name": "t",
+            "name": "n",
             "level": 999,
-            "grade": 6,
-            "time": 667466,
-            "timeDiffBest": -112964,
-            "timeDiffTop": 72334,
-            "timeDiffPrev": 72334
+            "grade": 18,
+            "time": 681917,
+            "timeDiffBest": -128083,
+            "timeDiffTop": 9992,
+            "timeDiffPrev": 9992
           },
           {
             "rank": 3,
-            "name": "v",
+            "name": "k",
             "level": 999,
-            "grade": 6,
-            "time": 614451,
-            "timeDiffBest": -20539,
-            "timeDiffTop": 164759,
-            "timeDiffPrev": 92425
+            "grade": 18,
+            "time": 748635,
+            "timeDiffBest": 77525,
+            "timeDiffTop": 215600,
+            "timeDiffPrev": 205608
           },
           {
             "rank": 4,
-            "name": "u",
+            "name": "a",
             "level": 999,
-            "grade": 6,
-            "time": 648743,
-            "timeDiffBest": 16643,
-            "timeDiffTop": 201941,
-            "timeDiffPrev": 37182
+            "grade": 18,
+            "time": 769384,
+            "timeDiffBest": 229384,
+            "timeDiffTop": 367459,
+            "timeDiffPrev": 151859
           },
           {
             "rank": 5,
-            "name": "g",
-            "level": 999,
-            "grade": 6,
-            "time": 650620,
-            "timeDiffBest": 100620,
-            "timeDiffTop": 285918,
-            "timeDiffPrev": 83977
+            "name": "d",
+            "level": 973,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
           },
           {
             "rank": 6,
             "name": "r",
-            "level": 999,
-            "grade": 6,
-            "time": 750045,
-            "timeDiffBest": 129745,
-            "timeDiffTop": 315043,
-            "timeDiffPrev": 29125
+            "level": 740,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffTop": null,
+            "timeDiffPrev": null
           },
           {
             "rank": 7,
-            "name": "m",
-            "level": 344,
+            "name": "u",
+            "level": 514,
             "grade": null,
             "time": null,
             "timeDiffBest": null,
@@ -1234,8 +1234,8 @@
           },
           {
             "rank": 8,
-            "name": "p",
-            "level": 123,
+            "name": "c",
+            "level": 204,
             "grade": null,
             "time": null,
             "timeDiffBest": null,
@@ -1251,35 +1251,24 @@
         "name": "準決勝",
         "entries": [
           {
-            "name": "q",
-            "rawBestTime": 556540,
+            "name": "n",
+            "rawBestTime": 810000,
             "handicap": 0,
-            "bestTime": 556540,
-            "startOrder": 8,
-            "startTime": 233460,
-            "level": 430,
+            "bestTime": 810000,
+            "startOrder": 1,
+            "startTime": 0,
+            "level": 421,
             "grade": null,
             "time": null
           },
           {
-            "name": "v",
-            "rawBestTime": 639990,
+            "name": "k",
+            "rawBestTime": 671110,
             "handicap": 0,
-            "bestTime": 639990,
+            "bestTime": 671110,
             "startOrder": 4,
-            "startTime": 150010,
-            "level": 999,
-            "grade": 6,
-            "time": 681106
-          },
-          {
-            "name": "w",
-            "rawBestTime": 780000,
-            "handicap": -10,
-            "bestTime": 790000,
-            "startOrder": 1,
-            "startTime": 0,
-            "level": 618,
+            "startTime": 138890,
+            "level": 172,
             "grade": null,
             "time": null
           },
@@ -1289,101 +1278,112 @@
             "handicap": -5,
             "bestTime": 755000,
             "startOrder": 3,
-            "startTime": 35000,
-            "level": 322,
-            "grade": null,
-            "time": null
+            "startTime": 55000,
+            "level": 999,
+            "grade": 18,
+            "time": 704255
+          },
+          {
+            "name": "a",
+            "rawBestTime": 540000,
+            "handicap": 0,
+            "bestTime": 540000,
+            "startOrder": 7,
+            "startTime": 270000,
+            "level": 999,
+            "grade": 18,
+            "time": 681652
           },
           {
             "name": "t",
             "rawBestTime": 785430,
-            "handicap": 0,
-            "bestTime": 785430,
+            "handicap": -10,
+            "bestTime": 795430,
             "startOrder": 2,
-            "startTime": 4570,
-            "level": 999,
-            "grade": 6,
-            "time": 713761
+            "startTime": 14570,
+            "level": 334,
+            "grade": null,
+            "time": null
           },
           {
-            "name": "d",
-            "rawBestTime": 630000,
+            "name": "j",
+            "rawBestTime": 610100,
             "handicap": 0,
-            "bestTime": 630000,
+            "bestTime": 610100,
             "startOrder": 6,
-            "startTime": 160000,
+            "startTime": 199900,
             "level": 999,
-            "grade": 5,
-            "time": 655345
+            "grade": 18,
+            "time": 719680
           },
           {
             "name": "s",
             "rawBestTime": 623450,
             "handicap": 0,
             "bestTime": 623450,
-            "startOrder": 7,
-            "startTime": 166550,
-            "level": 387,
+            "startOrder": 5,
+            "startTime": 186550,
+            "level": 165,
             "grade": null,
             "time": null
           },
           {
-            "name": "u",
-            "rawBestTime": 632100,
+            "name": "l",
+            "rawBestTime": 539000,
             "handicap": 0,
-            "bestTime": 632100,
-            "startOrder": 5,
-            "startTime": 157900,
-            "level": 999,
-            "grade": 6,
-            "time": 587267
+            "bestTime": 539000,
+            "startOrder": 8,
+            "startTime": 271000,
+            "level": 205,
+            "grade": null,
+            "time": null
           }
         ],
         "result": [
           {
             "rank": 1,
-            "name": "t",
+            "name": "i",
             "level": 999,
-            "grade": 6,
-            "time": 713761,
-            "timeDiffBest": -71669,
+            "grade": 18,
+            "time": 704255,
+            "timeDiffBest": -50745,
             "timeDiffTop": null,
             "timeDiffPrev": null
           },
           {
             "rank": 2,
-            "name": "u",
+            "name": "j",
             "level": 999,
-            "grade": 6,
-            "time": 587267,
-            "timeDiffBest": -44833,
-            "timeDiffTop": 26836,
-            "timeDiffPrev": 26836
+            "grade": 18,
+            "time": 719680,
+            "timeDiffBest": 109580,
+            "timeDiffTop": 160325,
+            "timeDiffPrev": 160325
           },
           {
             "rank": 3,
-            "name": "v",
+            "name": "a",
             "level": 999,
-            "grade": 6,
-            "time": 681106,
-            "timeDiffBest": 41116,
-            "timeDiffTop": 112785,
-            "timeDiffPrev": 85949
+            "grade": 18,
+            "time": 681652,
+            "timeDiffBest": 141652,
+            "timeDiffTop": 192397,
+            "timeDiffPrev": 32072
           },
           {
             "rank": 4,
-            "name": "d",
-            "level": 999,
-            "grade": 5,
-            "time": 655345,
-            "timeDiffBest": 25345,
+            "name": "n",
+            "level": 421,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
             "timeDiffTop": null,
             "timeDiffPrev": null
           },
           {
             "rank": 5,
-            "name": "w",
-            "level": 618,
+            "name": "t",
+            "level": 334,
             "grade": null,
             "time": null,
             "timeDiffBest": null,
@@ -1392,8 +1392,8 @@
           },
           {
             "rank": 6,
-            "name": "q",
-            "level": 430,
+            "name": "l",
+            "level": 205,
             "grade": null,
             "time": null,
             "timeDiffBest": null,
@@ -1402,8 +1402,8 @@
           },
           {
             "rank": 7,
-            "name": "s",
-            "level": 387,
+            "name": "k",
+            "level": 172,
             "grade": null,
             "time": null,
             "timeDiffBest": null,
@@ -1412,8 +1412,8 @@
           },
           {
             "rank": 8,
-            "name": "i",
-            "level": 322,
+            "name": "s",
+            "level": 165,
             "grade": null,
             "time": null,
             "timeDiffBest": null,
@@ -1429,79 +1429,79 @@
         "name": "決勝",
         "entries": [
           null,
+          null,
           {
-            "name": "v",
-            "rawBestTime": 639990,
+            "name": "a",
+            "rawBestTime": 540000,
             "handicap": 0,
-            "bestTime": 639990,
-            "startOrder": 2,
-            "startTime": 155440,
-            "level": 159,
-            "grade": null,
-            "time": null
+            "bestTime": 540000,
+            "startOrder": 4,
+            "startTime": 270000,
+            "level": 999,
+            "grade": 18,
+            "time": 711675
           },
           null,
           null,
           {
-            "name": "t",
-            "rawBestTime": 785430,
+            "name": "i",
+            "rawBestTime": 750000,
             "handicap": -10,
-            "bestTime": 795430,
+            "bestTime": 760000,
+            "startOrder": 2,
+            "startTime": 50000,
+            "level": 999,
+            "grade": 18,
+            "time": 653404
+          },
+          {
+            "name": "j",
+            "rawBestTime": 610100,
+            "handicap": -5,
+            "bestTime": 615100,
+            "startOrder": 3,
+            "startTime": 194900,
+            "level": 726,
+            "grade": null,
+            "time": null
+          },
+          {
+            "name": "n",
+            "rawBestTime": 810000,
+            "handicap": 0,
+            "bestTime": 810000,
             "startOrder": 1,
             "startTime": 0,
-            "level": 166,
+            "level": 35,
             "grade": null,
             "time": null
-          },
-          {
-            "name": "d",
-            "rawBestTime": 630000,
-            "handicap": 0,
-            "bestTime": 630000,
-            "startOrder": 4,
-            "startTime": 165430,
-            "level": 999,
-            "grade": 6,
-            "time": 705491
-          },
-          {
-            "name": "u",
-            "rawBestTime": 632100,
-            "handicap": -5,
-            "bestTime": 637100,
-            "startOrder": 3,
-            "startTime": 158330,
-            "level": 999,
-            "grade": 6,
-            "time": 620850
-          },
-          null
+          }
         ],
         "result": [
           {
             "rank": 1,
-            "name": "u",
+            "name": "i",
             "level": 999,
-            "grade": 6,
-            "time": 620850,
-            "timeDiffBest": -16250,
+            "grade": 18,
+            "time": 653404,
+            "timeDiffBest": -106596,
             "timeDiffTop": null,
             "timeDiffPrev": null
           },
           {
             "rank": 2,
-            "name": "d",
+            "name": "a",
             "level": 999,
-            "grade": 6,
-            "time": 705491,
-            "timeDiffBest": 75491,
-            "timeDiffTop": 91741,
-            "timeDiffPrev": 91741
+            "grade": 18,
+            "time": 711675,
+            "timeDiffBest": 171675,
+            "timeDiffTop": 278271,
+            "timeDiffPrev": 278271
           },
           {
             "rank": 3,
-            "name": "t",
-            "level": 166,
+            "name": "j",
+            "level": 726,
             "grade": null,
             "time": null,
             "timeDiffBest": null,
@@ -1510,8 +1510,8 @@
           },
           {
             "rank": 4,
-            "name": "v",
-            "level": 159,
+            "name": "n",
+            "level": 35,
             "grade": null,
             "time": null,
             "timeDiffBest": null,
@@ -1534,30 +1534,30 @@
         "comparison": [
           {
             "rank": 1,
-            "name": "n",
+            "name": "t",
             "level": 999,
-            "grade": 6,
-            "time": 676154,
-            "timeDiffBest": -133846,
+            "grade": 18,
+            "time": 655870,
+            "timeDiffBest": -129560,
             "timeDiffPrev": null
           },
           {
             "rank": 2,
-            "name": "i",
+            "name": "d",
             "level": 999,
-            "grade": 6,
-            "time": 726050,
-            "timeDiffBest": -23950,
-            "timeDiffPrev": 109896
+            "grade": 18,
+            "time": 615030,
+            "timeDiffBest": -14970,
+            "timeDiffPrev": 114590
           },
           {
             "rank": 3,
-            "name": "m",
+            "name": "r",
             "level": 999,
-            "grade": 6,
-            "time": 735485,
-            "timeDiffBest": -19075,
-            "timeDiffPrev": 4875
+            "grade": 18,
+            "time": 617812,
+            "timeDiffBest": -2488,
+            "timeDiffPrev": 12482
           }
         ]
       },
@@ -1566,30 +1566,30 @@
         "comparison": [
           {
             "rank": 1,
-            "name": "h",
+            "name": "w",
             "level": 999,
-            "grade": 6,
-            "time": 606207,
-            "timeDiffBest": -73793,
+            "grade": 18,
+            "time": 691502,
+            "timeDiffBest": -88498,
             "timeDiffPrev": null
           },
           {
             "rank": 2,
-            "name": "o",
+            "name": "s",
             "level": 999,
-            "grade": 6,
-            "time": 551946,
-            "timeDiffBest": -18054,
-            "timeDiffPrev": 55739
+            "grade": 18,
+            "time": 622490,
+            "timeDiffBest": -960,
+            "timeDiffPrev": 87538
           },
           {
             "rank": 3,
-            "name": "p",
+            "name": "i",
             "level": 999,
-            "grade": 6,
-            "time": 609718,
-            "timeDiffBest": -17932,
-            "timeDiffPrev": 122
+            "grade": 18,
+            "time": 753540,
+            "timeDiffBest": 3540,
+            "timeDiffPrev": 4500
           }
         ]
       },
@@ -1598,30 +1598,30 @@
         "comparison": [
           {
             "rank": 1,
-            "name": "u",
+            "name": "n",
             "level": 999,
-            "grade": 6,
-            "time": 623694,
-            "timeDiffBest": -8406,
+            "grade": 18,
+            "time": 746168,
+            "timeDiffBest": -63832,
             "timeDiffPrev": null
           },
           {
             "rank": 2,
-            "name": "d",
+            "name": "j",
             "level": 999,
-            "grade": 6,
-            "time": 639444,
-            "timeDiffBest": 9444,
-            "timeDiffPrev": 17850
+            "grade": 18,
+            "time": 635511,
+            "timeDiffBest": 25411,
+            "timeDiffPrev": 89243
           },
           {
             "rank": 3,
-            "name": "e",
-            "level": 911,
-            "grade": null,
-            "time": null,
-            "timeDiffBest": null,
-            "timeDiffPrev": null
+            "name": "l",
+            "level": 999,
+            "grade": 18,
+            "time": 688144,
+            "timeDiffBest": 149144,
+            "timeDiffPrev": 123733
           }
         ]
       },
@@ -1630,26 +1630,26 @@
         "comparison": [
           {
             "rank": 1,
-            "name": "g",
+            "name": "a",
             "level": 999,
-            "grade": 6,
-            "time": 575407,
-            "timeDiffBest": 25407,
+            "grade": 18,
+            "time": 581331,
+            "timeDiffBest": 41331,
             "timeDiffPrev": null
           },
           {
             "rank": 2,
-            "name": "r",
+            "name": "k",
             "level": 999,
-            "grade": 6,
-            "time": 675941,
-            "timeDiffBest": 55641,
-            "timeDiffPrev": 30234
+            "grade": 18,
+            "time": 734437,
+            "timeDiffBest": 63327,
+            "timeDiffPrev": 21996
           },
           {
             "rank": 3,
-            "name": "q",
-            "level": 549,
+            "name": "f",
+            "level": 692,
             "grade": null,
             "time": null,
             "timeDiffBest": null,
@@ -1662,26 +1662,26 @@
         "comparison": [
           {
             "rank": 1,
-            "name": "j",
+            "name": "g",
             "level": 999,
-            "grade": 6,
-            "time": 643168,
-            "timeDiffBest": 33068,
+            "grade": 18,
+            "time": 688794,
+            "timeDiffBest": 138794,
             "timeDiffPrev": null
           },
           {
             "rank": 2,
-            "name": "c",
+            "name": "q",
             "level": 999,
-            "grade": 6,
-            "time": 696179,
-            "timeDiffBest": 96179,
-            "timeDiffPrev": 63111
+            "grade": 18,
+            "time": 720011,
+            "timeDiffBest": 163471,
+            "timeDiffPrev": 24677
           },
           {
             "rank": 3,
-            "name": "b",
-            "level": 371,
+            "name": "c",
+            "level": 602,
             "grade": null,
             "time": null,
             "timeDiffBest": null,
@@ -1694,26 +1694,26 @@
         "comparison": [
           {
             "rank": 1,
-            "name": "s",
-            "level": 999,
-            "grade": 6,
-            "time": 688734,
-            "timeDiffBest": 65284,
+            "name": "h",
+            "level": 975,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
             "timeDiffPrev": null
           },
           {
             "rank": 2,
-            "name": "f",
-            "level": 999,
-            "grade": 6,
-            "time": 711942,
-            "timeDiffBest": 169942,
-            "timeDiffPrev": 104658
+            "name": "v",
+            "level": 632,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
+            "timeDiffPrev": null
           },
           {
             "rank": 3,
-            "name": "k",
-            "level": 369,
+            "name": "o",
+            "level": 442,
             "grade": null,
             "time": null,
             "timeDiffBest": null,
@@ -1726,17 +1726,17 @@
         "comparison": [
           {
             "rank": 1,
-            "name": "l",
-            "level": 999,
-            "grade": 6,
-            "time": 741669,
-            "timeDiffBest": 202669,
+            "name": "p",
+            "level": 555,
+            "grade": null,
+            "time": null,
+            "timeDiffBest": null,
             "timeDiffPrev": null
           },
           {
             "rank": 2,
-            "name": "a",
-            "level": 851,
+            "name": "e",
+            "level": 178,
             "grade": null,
             "time": null,
             "timeDiffBest": null,
@@ -1744,8 +1744,8 @@
           },
           {
             "rank": 3,
-            "name": "t",
-            "level": 302,
+            "name": "u",
+            "level": 143,
             "grade": null,
             "time": null,
             "timeDiffBest": null,
@@ -1758,8 +1758,8 @@
         "comparison": [
           {
             "rank": 1,
-            "name": "v",
-            "level": 170,
+            "name": "m",
+            "level": 163,
             "grade": null,
             "time": null,
             "timeDiffBest": null,
@@ -1767,8 +1767,8 @@
           },
           {
             "rank": 2,
-            "name": "w",
-            "level": 3,
+            "name": "b",
+            "level": 141,
             "grade": null,
             "time": null,
             "timeDiffBest": null,
@@ -1781,21 +1781,21 @@
         "comparison": [
           {
             "rank": 1,
-            "name": "w",
+            "name": "h",
             "level": 999,
-            "grade": 6,
-            "time": 556449,
-            "timeDiffBest": -223551,
+            "grade": 18,
+            "time": 551981,
+            "timeDiffBest": -128019,
             "timeDiffPrev": null
           },
           {
             "rank": 2,
-            "name": "t",
+            "name": "c",
             "level": 999,
-            "grade": 6,
-            "time": 730458,
-            "timeDiffBest": -54972,
-            "timeDiffPrev": 168579
+            "grade": 18,
+            "time": 543901,
+            "timeDiffBest": -56099,
+            "timeDiffPrev": 71920
           }
         ]
       },
@@ -1804,21 +1804,21 @@
         "comparison": [
           {
             "rank": 1,
-            "name": "v",
+            "name": "u",
             "level": 999,
-            "grade": 6,
-            "time": 555786,
-            "timeDiffBest": -84204,
+            "grade": 18,
+            "time": 549461,
+            "timeDiffBest": -82639,
             "timeDiffPrev": null
           },
           {
             "rank": 2,
-            "name": "s",
+            "name": "m",
             "level": 999,
-            "grade": 6,
-            "time": 669919,
-            "timeDiffBest": 46469,
-            "timeDiffPrev": 130673
+            "grade": 18,
+            "time": 723327,
+            "timeDiffBest": -31233,
+            "timeDiffPrev": 51406
           }
         ]
       },
@@ -1827,21 +1827,21 @@
         "comparison": [
           {
             "rank": 1,
-            "name": "w",
+            "name": "t",
             "level": 999,
-            "grade": 6,
-            "time": 578746,
-            "timeDiffBest": -196254,
+            "grade": 18,
+            "time": 630303,
+            "timeDiffBest": -165127,
             "timeDiffPrev": null
           },
           {
             "rank": 2,
             "name": "i",
             "level": 999,
-            "grade": 6,
-            "time": 574702,
-            "timeDiffBest": -185298,
-            "timeDiffPrev": 10956
+            "grade": 18,
+            "time": 611925,
+            "timeDiffBest": -138075,
+            "timeDiffPrev": 27052
           }
         ]
       },
@@ -1850,21 +1850,21 @@
         "comparison": [
           {
             "rank": 1,
-            "name": "t",
+            "name": "n",
             "level": 999,
-            "grade": 6,
-            "time": 667466,
-            "timeDiffBest": -112964,
+            "grade": 18,
+            "time": 681917,
+            "timeDiffBest": -128083,
             "timeDiffPrev": null
           },
           {
             "rank": 2,
-            "name": "q",
+            "name": "s",
             "level": 999,
-            "grade": 6,
-            "time": 547249,
-            "timeDiffBest": -9291,
-            "timeDiffPrev": 103673
+            "grade": 18,
+            "time": 646447,
+            "timeDiffBest": 22997,
+            "timeDiffPrev": 151080
           }
         ]
       },
@@ -1873,21 +1873,21 @@
         "comparison": [
           {
             "rank": 1,
-            "name": "v",
+            "name": "k",
             "level": 999,
-            "grade": 6,
-            "time": 614451,
-            "timeDiffBest": -20539,
+            "grade": 18,
+            "time": 748635,
+            "timeDiffBest": 77525,
             "timeDiffPrev": null
           },
           {
             "rank": 2,
-            "name": "s",
+            "name": "l",
             "level": 999,
-            "grade": 6,
-            "time": 623174,
-            "timeDiffBest": 4724,
-            "timeDiffPrev": 25263
+            "grade": 18,
+            "time": 644964,
+            "timeDiffBest": 105964,
+            "timeDiffPrev": 28439
           }
         ]
       },
@@ -1896,21 +1896,21 @@
         "comparison": [
           {
             "rank": 1,
-            "name": "u",
+            "name": "j",
             "level": 999,
-            "grade": 6,
-            "time": 648743,
-            "timeDiffBest": 16643,
+            "grade": 18,
+            "time": 724018,
+            "timeDiffBest": 113918,
             "timeDiffPrev": null
           },
           {
             "rank": 2,
-            "name": "d",
+            "name": "a",
             "level": 999,
-            "grade": 6,
-            "time": 714358,
-            "timeDiffBest": 84358,
-            "timeDiffPrev": 67715
+            "grade": 18,
+            "time": 769384,
+            "timeDiffBest": 229384,
+            "timeDiffPrev": 115466
           }
         ]
       }

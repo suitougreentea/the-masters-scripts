@@ -4,6 +4,7 @@ import { getAppropriatePresetName, getPreset } from "./preset.ts";
 import * as Api from "./api.ts";
 import { setSerializerValue, getSerializerValue } from "./serializer_dev.ts";
 import { CompetitionSetupOptions } from "../common/common_types.ts";
+import { grades } from "../common/grade.ts";
 
 export const shuffle = <T>(array: T[]) => {
   for (let i = array.length - 1; i >= 0; i--) {
@@ -89,7 +90,7 @@ export const populateStageScore = (players: (StagePlayerEntry | null)[]): StageS
       const level = Math.floor(Math.random() * 999);
       return { level, grade: null, time: null };
     }
-    const grade = Math.random() < 0.1 ? stringToGrade("S9") : stringToGrade("GM");
+    const grade = Math.random() < 0.1 ? grades.S9 : grades.GM;
     const time = 9 * 60 * 1000 + Math.floor(Math.random() * 4 * 60 * 1000);
     return { level: 999, grade, time };
   };

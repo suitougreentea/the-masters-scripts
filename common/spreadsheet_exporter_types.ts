@@ -1,3 +1,4 @@
+import { Grade } from "./grade.ts";
 import { Time } from "./time.ts";
 
 export type LeaderboardData = {
@@ -28,14 +29,14 @@ export type StagesData = {
       startOrder: number;
       startTime: number;
       level: number | null;
-      grade: number | null;
+      grade: Grade | null;
       time: number | null;
     } | null)[],
     result: {
       rank: number;
       name: string;
       level: number;
-      grade: number | null;
+      grade: Grade | null;
       time: number | null;
       timeDiffBest: number | null;
       timeDiffTop: number | null;
@@ -52,7 +53,7 @@ export type SupplementsData = {
       rank: number;
       name: string;
       level: number;
-      grade: number | null;
+      grade: Grade | null;
       time: number | null;
       timeDiffBest: number | null;
       timeDiffPrev: number | null;

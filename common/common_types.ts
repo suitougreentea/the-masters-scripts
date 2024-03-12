@@ -1,3 +1,5 @@
+import { Grade } from "./grade.ts";
+
 /**
  * * qualifierFinal: ポイント制予選+決勝 (ラウンド数は必ず2)
  * * tournament: トーナメント
@@ -104,7 +106,7 @@ export type StagePlayerEntry = {
   startOrder: number;
   startTime: number;
   level: number | null;
-  grade: number | null;
+  grade: Grade | null;
   time: number | null;
 };
 
@@ -112,7 +114,7 @@ export type StageResultEntry = {
   rank: number;
   name: string;
   level: number;
-  grade: number | null;
+  grade: Grade | null;
   time: number | null;
   timeDiffBest: number | null;
   timeDiffTop: number | null;
@@ -128,7 +130,7 @@ export type SupplementComparisonEntry = {
   rank: number;
   name: string;
   level: number;
-  grade: number | null;
+  grade: Grade | null;
   time: number | null;
   timeDiffBest: number | null;
   timeDiffPrev: number | null;
@@ -155,7 +157,7 @@ export type QualifierResultEntry = {
   points: number;
   numPlaces: number[];
   bestGameLevel: number;
-  bestGameGrade: number | null;
+  bestGameGrade: Grade | null;
   bestGameTimeDiffBest: number | null;
 };
 
@@ -166,7 +168,7 @@ export type QualifierResult = {
 export type StageScoreEntry = {
   name: string;
   level: number | null;
-  grade: number | null;
+  grade: Grade | null;
   time: number | null;
 };
 

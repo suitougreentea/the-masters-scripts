@@ -1,4 +1,4 @@
-import { gradeToString, grades, stringToGrade } from "./grade.ts";
+import { Grade, gradeToString, grades, tryStringToGrade } from "./grade.ts";
 import { dateToTime, stringToTime } from "./time.ts";
 
 function isNullOrEmptyString(string: unknown): string is null | "" {
@@ -56,7 +56,7 @@ export const spreadsheetValueToTime = (value: unknown): number | null => {
   return null;
 }
 
-export const spreadsheetValueToLevelOrGrade = (levelOrGrade: unknown): { level: number, grade: number | null } => {
+export const spreadsheetValueToLevelOrGrade = (levelOrGrade: unknown): { level: number, grade: Grade | null } => {
   // GMの場合は何も入力されない
   if (isNullOrEmptyString(levelOrGrade)) return { grade: grades.GM, level: 999 };
 
@@ -66,13 +66,13 @@ export const spreadsheetValueToLevelOrGrade = (levelOrGrade: unknown): { level: 
   const parsedLevel = Number(stringified);
   if (!isNaN(parsedLevel)) return { grade: null, level: parsedLevel };
 
-  const parsedGrade = stringToGrade(stringified);
+  const parsedGrade = tryStringToGrade(stringified);
   if (parsedGrade != null) return { grade: parsedGrade, level: 999 };
 
   throw new Error("Unknown Level/Grade: " + levelOrGrade);
 }
 
-export const levelOrGradeToSpreadsheetValue = (levelOrGrade: { level: number | null, grade: number | null }): string | number | null => {
+export const levelOrGradeToSpreadsheetValue = (levelOrGrade: { level: number | null, grade: Grade | null }): string | number | null => {
   if (levelOrGrade.grade != null) return gradeToString(levelOrGrade.grade);
   return levelOrGrade.level;
 }

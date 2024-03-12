@@ -53,7 +53,9 @@ if (import.meta.main) {
 
   const data: string[] = [];
   for await (const line of lineStream.readable) {
-    data.push(line);
+    if (line != "") {
+      data.push(line);
+    }
   }
 
   // 全部読み終わったので送信を開始

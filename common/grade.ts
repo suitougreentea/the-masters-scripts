@@ -1,21 +1,43 @@
 export const grades = {
-  "S4": 0,
-  "S5": 1,
-  "S6": 2,
-  "S7": 3,
-  "S8": 4,
-  "S9": 5,
-  "GM": 6,
+  "9": 0,
+  "8": 1,
+  "7": 2,
+  "6": 3,
+  "5": 4,
+  "4": 5,
+  "3": 6,
+  "2": 7,
+  "1": 8,
+  "S1": 9,
+  "S2": 10,
+  "S3": 11,
+  "S4": 12,
+  "S5": 13,
+  "S6": 14,
+  "S7": 15,
+  "S8": 16,
+  "S9": 17,
+  "GM": 18,
 } as const;
 
-const gradeTable = ["S4", "S5", "S6", "S7", "S8", "S9", "GM"];
+const gradeTable = [
+  "9", "8", "7", "6", "5", "4", "3", "2", "1",
+  "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "GM",
+] as const;
 
-export const gradeToString = (grade: number): string => {
+export type GradeString = (typeof gradeTable)[number]
+export type Grade = (typeof grades)[GradeString]
+
+export const gradeToString = (grade: Grade): GradeString => {
   return gradeTable[grade];
 }
 
-export const stringToGrade = (string: string): number | null => {
-  const index = gradeTable.indexOf(string);
+export const stringToGrade = (string: GradeString): Grade => {
+  return gradeTable.indexOf(string) as Grade;
+}
+
+export const tryStringToGrade = (string: string): Grade | null => {
+  const index = gradeTable.indexOf(string as unknown as GradeString);
   if (index == -1) return null;
-  return index as number;
+  return index as Grade;
 }

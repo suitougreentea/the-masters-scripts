@@ -12,6 +12,7 @@ import {
   StageSetupResult,
   SupplementComparisonData,
 } from "../../common/common_types.ts";
+import { Grade } from "../../common/grade.ts";
 
 export type RoundData = {
   roundIndex: number;
@@ -40,7 +41,7 @@ export type OcrResult = {
     frameTime: number;
     playing: boolean;
     level: number;
-    grade: number;
+    grade: Grade;
     gameTime: number;
     sections: {
       lap: number;

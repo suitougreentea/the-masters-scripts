@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "lib": ["deno.window", "dom"],
+    "types": [
+      "https://raw.githubusercontent.com/proudust/deno-gas-types/main/types/index.d.ts"
+    ]
+  },
+  "tasks": {
+    "test": "deno test",
+    "check": "deno check **/*.ts"
+  }
+}
