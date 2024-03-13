@@ -28,36 +28,6 @@ const chatSourceName = "chat";
 
 const ocrServer = new OcrServer(8517);
 
-let currentLoginPromise: Promise<void> | null = null;
-let currentLoginAbort: AbortController | null = null;
-
-server.registerRequestHandler("login", () => {
-  currentLoginAbort = new AbortController();
-  currentLoginPromise = localApi.auth({
-    abortController: currentLoginAbort,
-  });
-  (async () => {
-    try {
-      await currentLoginPromise;
-      server.broadcastMessage("loginResult", { success: true });
-    } catch {
-      server.broadcastMessage("loginResult", { success: false });
-    } finally {
-      currentLoginAbort = null;
-      currentLoginPromise = null;
-    }
-  })();
-  return { url: localApi.getAuthUrl() };
-});
-
-server.registerRequestHandler("cancelLogin", () => {
-  currentLoginAbort?.abort();
-});
-
-server.registerRequestHandler("checkLogin", async () => {
-  await localApi.checkAuth();
-});
-
 const currentRegisteredPlayersReplicant = server.getReplicant(
   "currentRegisteredPlayers",
 );

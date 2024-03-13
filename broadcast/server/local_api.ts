@@ -22,12 +22,4 @@ export class LocalApi {
     }
     return JSON.stringify(responseJson.body);
   }
-
-  getAuthUrl(): string {
-    return ""; 
-  }
-
-  async auth(_args: { abortController: AbortController; }) {}
-
-  async checkAuth() {}
 }

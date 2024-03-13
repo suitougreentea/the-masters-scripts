@@ -65,15 +65,11 @@ export type TypeDefinition = {
   };
 
   messages: {
-    loginResult: { params: { success: boolean } };
     startTimer: EmptyObject;
     stopTimer: EmptyObject;
   };
 
   requests: {
-    login: { result: { url: string } };
-    cancelLogin: EmptyObject;
-    checkLogin: EmptyObject;
     enterSetup: EmptyObject;
     getCurrentRegisteredPlayers: EmptyObject;
     registerPlayer: { params: { data: RegisteredPlayerEntry } };
