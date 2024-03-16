@@ -25,6 +25,24 @@ export const stringToTime = (str: string): number | null => {
   return Number(match[1]) * 60000 + Number(match[2]) * 1000 + Number(match[3].padEnd(3, "0"));
 }
 
+export function stringToTimeFuzzy(time: string): number | null {
+  const match = time.match(
+    /^(((\d{1,2}):(\d{1,2})[:\.](\d{1,2}))|((\d{1,2})(\d\d)(\d\d)))$/,
+  );
+  if (!match) return null;
+  const longTime = match.slice(3, 6);
+  const shortTime = match.slice(7, 10);
+  if (longTime[0] != null) {
+    return Number(longTime[0]) * 60000 + Number(longTime[1]) * 1000 +
+      Number(longTime[2].padEnd(2, "0")) * 10;
+  } else if (shortTime[0] != null) {
+    return Number(shortTime[0]) * 60000 + Number(shortTime[1]) * 1000 +
+      Number(shortTime[2]) * 10;
+  } else {
+    throw new Error();
+  }
+}
+
 /**
  * 時間を 0:00.00 形式の文字列に変換
  * @param time
@@ -35,6 +53,11 @@ export const timeToString = (time: number) => {
   const sec = Math.floor(time / 1000) % 60;
   const cent = Math.floor(time / 10) % 100;
   return String(min).padStart(2, "0") + ":" + String(sec).padStart(2, "0") + "." + String(cent).padStart(2, "0");
+}
+
+export function timeToStringNullable(ms: number | null): string | null {
+  if (ms == null) return null;
+  return timeToString(ms);
 }
 
 export const dateToTime = (date: Date): number => {

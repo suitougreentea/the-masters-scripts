@@ -1,7 +1,7 @@
 import { StagePlayerEntry } from "../../../common/common_types.ts";
+import { timeToStringNullable } from "../../../common/time.ts";
 import {
   formatLevelOrGradeNullable,
-  formatTimeNullable,
 } from "../../common/util.ts";
 import {
   classMap,
@@ -187,15 +187,15 @@ export class MastersStagePlayersElement extends LitElement {
           <tr>
             <td class=${sideClass}>${i + 1}</td>
             <td class=${sideClass}>${d.name}</td>
-            <td>${formatTimeNullable(d.rawBestTime)}</td>
+            <td>${timeToStringNullable(d.rawBestTime)}</td>
             <td>${renderHandicap(d.handicap)}</td>
-            <td>${formatTimeNullable(d.bestTime)}</td>
+            <td>${timeToStringNullable(d.bestTime)}</td>
             <td>${d.startOrder}</td>
-            <td>${formatTimeNullable(d.startTime)}</td>
+            <td>${timeToStringNullable(d.startTime)}</td>
             <td>${
           formatLevelOrGradeNullable({ level: d.level, grade: d.grade })
         }</td>
-            <td>${formatTimeNullable(d.time)}</td>
+            <td>${timeToStringNullable(d.time)}</td>
           </tr>
           `;
       })

@@ -1,5 +1,5 @@
 import { Grade, GradeString, gradeToString, stringToGrade } from "../../../common/grade.ts";
-import { formatTime } from "../../common/util.ts";
+import { timeToString } from "../../../common/time.ts";
 
 export const parseScoreEditorScore = (
   value: string,
@@ -39,10 +39,10 @@ export const formatScoreEditorScore = (
     return String(score.level);
   }
   if (score.grade != null && score.time != null) {
-    return `${gradeToString(score.grade)} ${formatTime(score.time)}`;
+    return `${gradeToString(score.grade)} ${timeToString(score.time)}`;
   }
   if (score.grade == null && score.time != null) {
-    return `GM ${formatTime(score.time)}`;
+    return `GM ${timeToString(score.time)}`;
   }
   return "";
 }

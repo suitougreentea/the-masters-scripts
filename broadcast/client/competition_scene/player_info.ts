@@ -3,7 +3,7 @@ import {
   StagePlayerEntry,
 } from "../../../common/common_types.ts";
 import { commonColors } from "../common/common_values.ts";
-import { formatTime, getDiffTime } from "../../common/util.ts";
+import { getDiffTime } from "../../common/util.ts";
 import {
   classMap,
   css,
@@ -13,6 +13,7 @@ import {
   map,
   property,
 } from "../deps.ts";
+import { timeToString } from "../../../common/time.ts";
 
 const ordinals = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"];
 
@@ -193,10 +194,10 @@ export class MastersPlayerInfoElement extends LitElement {
             <hr>
             <dl class="best-time">
               <dt>自己ベスト</dt>
-              <dd>${e != null ? formatTime(e.rawBestTime) : null}</dd>
+              <dd>${e != null ? timeToString(e.rawBestTime) : null}</dd>
               <dt>スタート</dt>
               <dd>
-                ${e != null ? formatTime(e.startTime) : null}
+                ${e != null ? timeToString(e.startTime) : null}
                 <br>
                 ${
               (() => {
@@ -215,7 +216,7 @@ export class MastersPlayerInfoElement extends LitElement {
               <dd>${e != null ? ordinals[e.startOrder - 1] : null}</dd>
               <dt>前の人から</dt>
               <dd>${
-              e != null ? `+${formatTime(getDiffTime(data, i))}` : null
+              e != null ? `+${timeToString(getDiffTime(data, i))}` : null
             }</dd>
             </dl>
             <hr>

@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "lib": ["deno.window", "dom"]
+  },
+  "exclude": [
+    "*.bundle.js"
+  ],
+  "imports": {
+    "@luca/esbuild-deno-loader": "jsr:@luca/esbuild-deno-loader@0.9.0",
+    "@std/http": "https://deno.land/std@0.219.0/http/mod.ts",
+    "esbuild": "https://deno.land/x/esbuild@v0.20.1/mod.js",
+    "@fluentui/web-components": "npm:@fluentui/web-components@2.5.17",
+    "lit": "npm:lit@3.1.2",
+    "ngrok": "npm:@ngrok/ngrok@1.2.0"
+  },
+  "tasks": {
+    "build": "deno run --allow-env --allow-net --allow-read --allow-run --allow-write build.ts build",
+    "build-watch": "deno run --allow-env --allow-net --allow-read --allow-run --allow-write build.ts watch",
+    "start": "deno run --allow-env --allow-ffi --allow-net --allow-read --allow-run --allow-write main.ts",
+    "start-watch": "deno run --watch --allow-env --allow-ffi --allow-net --allow-read --allow-run --allow-write main.ts",
+    "dev": "deno task build-watch & deno task start-watch --dev"
+  }
+}

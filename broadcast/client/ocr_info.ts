@@ -1,13 +1,7 @@
 import { denocg } from "./deps.ts";
 import { type TypeDefinition } from "../common/type_definition.ts";
+import { timeToString } from "../../common/time.ts";
 const client = await denocg.getClient<TypeDefinition>();
-
-export const timeToString = (time: number) => {
-  const min = Math.floor(time / 60000);
-  const sec = Math.floor(time / 1000) % 60;
-  const cent = Math.floor(time / 10) % 100;
-  return String(min).padStart(2, "0") + ":" + String(sec).padStart(2, "0") + "." + String(cent).padStart(2, "0");
-}
 
 const container = document.createElement("div");
 container.style.display = "flex";

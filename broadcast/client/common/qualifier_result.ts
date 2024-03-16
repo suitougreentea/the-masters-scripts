@@ -1,8 +1,8 @@
 import { QualifierResultEntry } from "../../../common/common_types.ts";
 import {
   formatLevelOrGradeNullable,
-  formatTimeNullable,
 } from "../../common/util.ts";
+import { timeToStringNullable } from "../../../common/time.ts";
 import {
   classMap,
   css,
@@ -154,7 +154,7 @@ export class MastersQualifierResultElement extends LitElement {
             grade: e.bestGameGrade,
           })
         }</td>
-            <td>${formatTimeNullable(e.bestGameTimeDiffBest)}</td>
+            <td>${timeToStringNullable(e.bestGameTimeDiffBest)}</td>
           </tr>
           `;
       })

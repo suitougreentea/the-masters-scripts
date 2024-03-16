@@ -13,40 +13,6 @@ export function parseGroup(group: string): number | null {
   return index;
 }
 
-export function formatTime(ms: number, positiveSign = false): string {
-  const sign = ms > 0 ? (positiveSign ? "+" : "") : ms < 0 ? "-" : "";
-  const abs = Math.abs(ms);
-  const min = Math.floor(abs / 60000);
-  const sec = Math.floor(abs / 1000) % 60;
-  const cent = Math.floor(abs / 10) % 100;
-
-  return sign + min + ":" + String(sec).padStart(2, "0") + "." +
-    String(cent).padStart(2, "0");
-}
-
-export function formatTimeNullable(ms: number | null): string | null {
-  if (ms == null) return null;
-  return formatTime(ms);
-}
-
-export function parseTime(time: string): number | null {
-  const match = time.match(
-    /^(((\d{1,2}):(\d{1,2})[:\.](\d{1,2}))|((\d{1,2})(\d\d)(\d\d)))$/,
-  );
-  if (!match) return null;
-  const longTime = match.slice(3, 6);
-  const shortTime = match.slice(7, 10);
-  if (longTime[0] != null) {
-    return Number(longTime[0]) * 60000 + Number(longTime[1]) * 1000 +
-      Number(longTime[2].padEnd(2, "0")) * 10;
-  } else if (shortTime[0] != null) {
-    return Number(shortTime[0]) * 60000 + Number(shortTime[1]) * 1000 +
-      Number(shortTime[2]) * 10;
-  } else {
-    throw new Error();
-  }
-}
-
 export function formatLevelOrGrade(
   levelOrGrade: { level: number; grade: Grade | null },
 ): string {

@@ -62,6 +62,7 @@ export type TypeDefinition = {
     currentResultSceneData: ResultSceneData | null;
     resultSceneActive: boolean;
     latestOcrResult: OcrResult | null;
+    registrationUrl: string | null;
   };
 
   messages: {

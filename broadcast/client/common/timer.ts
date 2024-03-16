@@ -2,7 +2,6 @@ import { StagePlayerEntry } from "../../../common/common_types.ts";
 import { commonColors } from "../common/common_values.ts";
 import {
   createPromiseSet,
-  formatTime,
   getDiffTime,
   PromiseSet,
 } from "../../common/util.ts";
@@ -15,6 +14,7 @@ import {
   map,
   tinycolor,
 } from "../deps.ts";
+import { timeToString } from "../../../common/time.ts";
 
 @customElement("masters-timer")
 export class MastersTimerElement extends LitElement {
@@ -241,7 +241,7 @@ export class MastersTimerElement extends LitElement {
         element.startOrder.innerText = this.#ordinals[player.startOrder - 1] +
           ":";
         element.diffTime.innerText = "+" +
-          formatTime(getDiffTime(this.#data, i));
+          timeToString(getDiffTime(this.#data, i));
         if (player.handicap > 0) {
           element.offset.innerText = `[Hdcp. +${player.handicap}]`;
           element.offset.style.color = commonColors.handicapTextDark.cssText;
@@ -298,7 +298,7 @@ export class MastersTimerElement extends LitElement {
       player.time.className = time == 0 && this.isRunning()
         ? "time time-hidden"
         : "time";
-      player.time.innerText = formatTime(time);
+      player.time.innerText = timeToString(time);
       player.gauge.style.width = (time / 200) + "px";
       let color = "#35a16b";
       if (time < 10000) color = "#faf500";
