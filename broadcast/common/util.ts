@@ -1,4 +1,5 @@
-import { StagePlayerEntry } from "./common_types.ts";
+import { StagePlayerEntry } from "../../common/common_types.ts";
+import { Grade, gradeToString, stringToGrade, tryStringToGrade } from "../../common/grade.ts";
 
 const groupTable = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
 
@@ -12,59 +13,15 @@ export function parseGroup(group: string): number | null {
   return index;
 }
 
-export function formatTime(ms: number, positiveSign = false): string {
-  const sign = ms > 0 ? (positiveSign ? "+" : "") : ms < 0 ? "-" : "";
-  const abs = Math.abs(ms);
-  const min = Math.floor(abs / 60000);
-  const sec = Math.floor(abs / 1000) % 60;
-  const cent = Math.floor(abs / 10) % 100;
-
-  return sign + min + ":" + String(sec).padStart(2, "0") + "." +
-    String(cent).padStart(2, "0");
-}
-
-export function formatTimeNullable(ms: number | null): string | null {
-  if (ms == null) return null;
-  return formatTime(ms);
-}
-
-export function parseTime(time: string): number | null {
-  const match = time.match(
-    /^(((\d{1,2}):(\d{1,2})[:\.](\d{1,2}))|((\d{1,2})(\d\d)(\d\d)))$/,
-  );
-  if (!match) return null;
-  const longTime = match.slice(3, 6);
-  const shortTime = match.slice(7, 10);
-  if (longTime[0] != null) {
-    return Number(longTime[0]) * 60000 + Number(longTime[1]) * 1000 +
-      Number(longTime[2].padEnd(2, "0")) * 10;
-  } else if (shortTime[0] != null) {
-    return Number(shortTime[0]) * 60000 + Number(shortTime[1]) * 1000 +
-      Number(shortTime[2]) * 10;
-  } else {
-    throw new Error();
-  }
-}
-
-const gradeTable = ["S4", "S5", "S6", "S7", "S8", "S9", "GM"];
-
-export function formatGrade(grade: number): string {
-  return gradeTable[grade];
-}
-
-export function parseGrade(grade: string): number {
-  return gradeTable.indexOf(grade);
-}
-
 export function formatLevelOrGrade(
-  levelOrGrade: { level: number; grade: number | null },
+  levelOrGrade: { level: number; grade: Grade | null },
 ): string {
-  if (levelOrGrade.grade != null) return formatGrade(levelOrGrade.grade);
+  if (levelOrGrade.grade != null) return gradeToString(levelOrGrade.grade);
   return String(levelOrGrade.level);
 }
 
 export function formatLevelOrGradeNullable(
-  levelOrGrade: { level: number | null; grade: number | null },
+  levelOrGrade: { level: number | null; grade: Grade | null },
 ): string | null {
   if (levelOrGrade.level == null) return null;
   return formatLevelOrGrade({
@@ -76,10 +33,10 @@ export function formatLevelOrGradeNullable(
 export function parseLevelOrGrade(
   levelOrGrade: string,
   emptyAsGm = false,
-): { level: number | null; grade: number | null } {
+): { level: number | null; grade: Grade | null } {
   if (levelOrGrade == "") {
     if (emptyAsGm) {
-      return { grade: parseGrade("GM"), level: 999 };
+      return { grade: stringToGrade("GM"), level: 999 };
     } else {
       return { grade: null, level: null };
     }
@@ -88,8 +45,8 @@ export function parseLevelOrGrade(
   const parsedLevel = Number(levelOrGrade);
   if (!isNaN(parsedLevel)) return { grade: null, level: parsedLevel };
 
-  const parsedGrade = parseGrade(levelOrGrade);
-  if (parsedGrade >= 0) return { grade: parsedGrade, level: 999 };
+  const parsedGrade = tryStringToGrade(levelOrGrade);
+  if (parsedGrade != null) return { grade: parsedGrade, level: 999 };
 
   return { grade: null, level: null };
 }

@@ -162,17 +162,6 @@ export class MastersDashboardElement extends LitElement {
     this._clientPromiseResolve(client);
   }
 
-  async checkLogin() {
-    try {
-      await this._dashboardContext.sendRequest("checkLogin");
-    } catch (e) {
-      await this._dashboardContext.alert(
-        "ログインに失敗しました。再ログインを試してください",
-      );
-      throw e;
-    }
-  }
-
   async restoreState() {
     const client = await this._dashboardContext.getClient();
     const metadata = (await client.getReplicant("currentCompetitionMetadata"))

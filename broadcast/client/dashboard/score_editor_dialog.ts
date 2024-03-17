@@ -1,8 +1,9 @@
 import {
   StagePlayerEntry,
   StageScoreEntry,
-} from "../../common/common_types.ts";
-import { formatGrade, formatTime, parseGrade } from "../../common/util.ts";
+} from "../../../common/common_types.ts";
+import { Grade } from "../../../common/grade.ts";
+import { formatScoreEditorScore, parseScoreEditorScore } from "../common/score_editor.ts";
 import {
   css,
   customElement,
@@ -20,7 +21,7 @@ import {
 type DataEntry = {
   name: string | null;
   level: number | null;
-  grade: number | null;
+  grade: Grade | null;
   time: number | null;
 };
 export type ScoreEditorDialogData = { score: StageScoreEntry[] };
@@ -73,7 +74,6 @@ export class MastersScoreEditorDialogElement extends LitElement {
     }
   }
 
-  // TODO: Experimental
   setData(data: ScoreEditorDialogData) {
     data.score.forEach((e) => {
       const index = this._data.findIndex(p => p.name == e.name);
@@ -99,6 +99,10 @@ export class MastersScoreEditorDialogElement extends LitElement {
     return { score };
   }
 
+  isEmpty(): boolean {
+    return this._data.every(e => e.level == null && e.grade == null && e.time == null);
+  }
+
   private _changeScore(playerIndex: number, newValue: string) {
     const newScore = [...this._data];
     const currentValues = newScore[playerIndex];
@@ -110,7 +114,7 @@ export class MastersScoreEditorDialogElement extends LitElement {
         time: null,
       };
     } else {
-      const parsedScore = this._parseScore(newValue.trim());
+      const parsedScore = parseScoreEditorScore(newValue.trim());
       if (parsedScore != null) {
         newScore[playerIndex] = { ...currentValues, ...parsedScore };
       } else {
@@ -120,55 +124,9 @@ export class MastersScoreEditorDialogElement extends LitElement {
     this._data = newScore;
   }
 
-  private _parseScore(
-    value: string,
-  ):
-    | { level: number | null; grade: number | null; time: number | null }
-    | null {
-    const levelMatch = value.match(/^\d{1,3}$/);
-    if (levelMatch) {
-      return { level: Number(levelMatch[0]), grade: null, time: null };
-    }
-    const gradeAndTimeMatch = value.match(
-      /^((S[456789]|GM) +)?(((\d{1,2}):(\d{1,2})[:\.](\d{1,2}))|((\d{1,2})(\d\d)(\d\d)))$/,
-    );
-    if (gradeAndTimeMatch) {
-      const grade = parseGrade(gradeAndTimeMatch[2] ?? "GM");
-      const longTime = gradeAndTimeMatch.slice(5, 8);
-      const shortTime = gradeAndTimeMatch.slice(9, 12);
-      let time: number;
-      if (longTime[0] != null) {
-        time = Number(longTime[0]) * 60000 + Number(longTime[1]) * 1000 +
-          Number(longTime[2].padEnd(2, "0")) * 10;
-      } else if (shortTime[0] != null) {
-        time = Number(shortTime[0]) * 60000 + Number(shortTime[1]) * 1000 +
-          Number(shortTime[2]) * 10;
-      } else {
-        throw new Error();
-      }
-      return { level: 999, grade, time };
-    }
-    return null;
-  }
-
-  private _formatScore(
-    score: { level: number | null; grade: number | null; time: number | null },
-  ): string {
-    if (score.level != null && score.grade == null && score.time == null) {
-      return String(score.level);
-    }
-    if (score.grade != null && score.time != null) {
-      return `${formatGrade(score.grade)} ${formatTime(score.time)}`;
-    }
-    if (score.grade == null && score.time != null) {
-      return `GM ${formatTime(score.time)}`;
-    }
-    return "";
-  }
-
   private _checkEnterKey(ev: KeyboardEvent, index: number) {
     if (ev.code == "Enter") {
-      if (this._parseScore((ev.target as FluentTextField).value) != null) {
+      if (parseScoreEditorScore((ev.target as FluentTextField).value) != null) {
         const textFields = this.renderRoot.querySelectorAll<FluentTextField>(
           "fluent-text-field",
         );
@@ -208,7 +166,7 @@ export class MastersScoreEditorDialogElement extends LitElement {
               <tr>
                 <td>${e.name}</td>
                 <td><fluent-text-field ?disabled=${disabled} .value=${
-          live(this._formatScore(e))
+          live(formatScoreEditorScore(e))
         } @change=${(ev: Event) =>
           this._changeScore(
             i,

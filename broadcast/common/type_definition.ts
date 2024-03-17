@@ -11,7 +11,8 @@ import {
   StageScoreData,
   StageSetupResult,
   SupplementComparisonData,
-} from "./common_types.ts";
+} from "../../common/common_types.ts";
+import { Grade } from "../../common/grade.ts";
 
 export type RoundData = {
   roundIndex: number;
@@ -35,13 +36,12 @@ export type ResultSceneData = {
   nextStageName: string | null;
 };
 
-// TODO: Experimental
 export type OcrResult = {
   status: {
     frameTime: number;
     playing: boolean;
     level: number;
-    grade: number;
+    grade: Grade;
     gameTime: number;
     sections: {
       lap: number;
@@ -61,20 +61,16 @@ export type TypeDefinition = {
     currentCompetitionSceneStageData: CompetitionSceneStageData | null;
     currentResultSceneData: ResultSceneData | null;
     resultSceneActive: boolean;
-    // TODO: Experimental
     latestOcrResult: OcrResult | null;
+    registrationUrl: string | null;
   };
 
   messages: {
-    loginResult: { params: { success: boolean } };
     startTimer: EmptyObject;
     stopTimer: EmptyObject;
   };
 
   requests: {
-    login: { result: { url: string } };
-    cancelLogin: EmptyObject;
-    checkLogin: EmptyObject;
     enterSetup: EmptyObject;
     getCurrentRegisteredPlayers: EmptyObject;
     registerPlayer: { params: { data: RegisteredPlayerEntry } };
@@ -101,7 +97,6 @@ export type TypeDefinition = {
     setResultSceneData: { params: { stageIndex: number } };
     unsetResultSceneData: EmptyObject;
     toggleResultScene: { params: { show: boolean } };
-    // TODO: Experimental
     resetOcrState: EmptyObject;
   };
 };

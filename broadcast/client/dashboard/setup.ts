@@ -17,13 +17,15 @@ import {
   CompetitionSetupOptions,
   Participant,
   RegisteredPlayerEntry,
-} from "../../common/common_types.ts";
+} from "../../../common/common_types.ts";
 import "./player_registration_dialog.ts";
 import "./participants_editor_dialog.ts";
 import { MastersPlayerRegistrationDialogElement } from "./player_registration_dialog.ts";
 import { MastersParticipantsEditorDialogElement } from "./participants_editor_dialog.ts";
-import { formatGroup, formatTime } from "../../common/util.ts";
+import { formatGroup } from "../../common/util.ts";
 import { commonColors } from "../common/common_values.ts";
+import { qrcode } from "../deps.ts";
+import { timeToString } from "../../../common/time.ts";
 
 @customElement("masters-setup")
 export class MastersSetupElement extends LitElement {
@@ -97,6 +99,11 @@ export class MastersSetupElement extends LitElement {
       text-align: center;
     }
 
+    .qr {
+      width: 200px;
+      height: 200px;
+    }
+
     #participants {
       table-layout: fixed;
       font-size: 14px;
@@ -153,6 +160,10 @@ export class MastersSetupElement extends LitElement {
   private _overridePreset = false;
   @state()
   private _participants: Participant[] = [];
+  @state()
+  private _registrationUrl: string | null = null;
+  @state()
+  private _registrationUrlQr: string | null = null;
 
   // @ts-ignore: ?
   @query("#competition-name", true)
@@ -184,6 +195,14 @@ export class MastersSetupElement extends LitElement {
     );
     currentParticipantsReplicant.subscribe((value) => {
       this._participants = value ?? [];
+    });
+
+    const registrationUrlReplicant = await client.getReplicant(
+      "registrationUrl"
+    );
+    registrationUrlReplicant.subscribe(async (value) => {
+      this._registrationUrl = value ?? null;
+      this._registrationUrlQr = value != null ? await qrcode(value) as unknown as string : null; // is type definition wrong?
     });
   }
 
@@ -264,6 +283,14 @@ export class MastersSetupElement extends LitElement {
           null || participant.firstRoundGroupIndex == null),
     }));
 
+    const registrationUrlQr = this._registrationUrlQr != null
+      ? html`<div>
+        <a target="_blank" href=${this._registrationUrl}>
+          <img class="qr" src=${this._registrationUrlQr}>
+        </a>
+      </div>`
+      : null;
+
     return html`
     <fluent-card class="container">
       <div>
@@ -291,7 +318,7 @@ export class MastersSetupElement extends LitElement {
         html`
             <tr>
               <td>${player.name}</td>
-              <td>${formatTime(player.bestTime)}</td>
+              <td>${timeToString(player.bestTime)}</td>
               <td>${
           player.comment.split("\n").map((line) => html`${line}<br>`)
         }</td>
@@ -332,6 +359,7 @@ export class MastersSetupElement extends LitElement {
           <fluent-text-field id="preset-name" value="">プリセット名:</fluent-text-field>
         </div>
         <h3>参加者</h3>
+        ${registrationUrlQr}
         <fluent-button appearance="accent" @click=${this._openParticipantsEditorDialog}>編集</fluent-button>
         <fluent-button @click=${this._refreshParticipants}>再読み込み</fluent-button>
         <table id="participants">

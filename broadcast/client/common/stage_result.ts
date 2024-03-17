@@ -1,7 +1,7 @@
-import { StageResultEntry } from "../../common/common_types.ts";
+import { StageResultEntry } from "../../../common/common_types.ts";
+import { timeToStringNullable } from "../../../common/time.ts";
 import {
   formatLevelOrGradeNullable,
-  formatTimeNullable,
 } from "../../common/util.ts";
 import {
   classMap,
@@ -138,10 +138,10 @@ export class MastersStageResultElement extends LitElement {
             <td>${
           formatLevelOrGradeNullable({ level: e.level, grade: e.grade })
         }</td>
-            <td>${formatTimeNullable(e.time)}</td>
-            <td>${formatTimeNullable(e.timeDiffBest)}</td>
-            <td>${formatTimeNullable(e.timeDiffPrev)}</td>
-            <td>${formatTimeNullable(e.timeDiffTop)}</td>
+            <td>${timeToStringNullable(e.time)}</td>
+            <td>${timeToStringNullable(e.timeDiffBest)}</td>
+            <td>${timeToStringNullable(e.timeDiffPrev)}</td>
+            <td>${timeToStringNullable(e.timeDiffTop)}</td>
           </tr>
           `;
       })

@@ -1,5 +1,6 @@
-import { RegisteredPlayerEntry } from "../../common/common_types.ts";
-import { formatTime, parseTime } from "../../common/util.ts";
+import { RegisteredPlayerEntry } from "../../../common/common_types.ts";
+import { stringToTimeFuzzy } from "../../../common/time.ts";
+import { timeToString } from "../../../common/time.ts";
 import {
   css,
   customElement,
@@ -97,9 +98,9 @@ export class MastersPlayerRegistrationDialogElement extends LitElement {
         </div>
         <div>
           <fluent-text-field .value=${
-      live(this._bestTime != null ? formatTime(this._bestTime) : "")
+      live(this._bestTime != null ? timeToString(this._bestTime) : "")
     } @change=${(ev: Event) => {
-      this._bestTime = parseTime((ev.target as FluentTextField).value);
+      this._bestTime = stringToTimeFuzzy((ev.target as FluentTextField).value);
       this.requestUpdate();
     }}>自己ベスト</fluent-text-field>
         </div>

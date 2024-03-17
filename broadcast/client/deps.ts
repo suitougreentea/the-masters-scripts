@@ -73,3 +73,6 @@ export {
   TextArea as FluentTextArea,
   TextField as FluentTextField,
 } from "https://esm.sh/@fluentui/web-components@2.5.12";
+
+// qrcode
+export { qrcode } from "https://deno.land/x/qrcode@v2.0.0/mod.ts";

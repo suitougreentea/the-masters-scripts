@@ -15,8 +15,8 @@ function onOpen() {
     .addItem("結果をエクスポート", "exportResult")
     .addSeparator()
     .addItem("サイドバーを表示", "showSidebar")
-    .addSeparator()
-    .addItem("Debug", "debugCommand")
+    //.addSeparator()
+    //.addItem("Debug", "debugCommand")
     .addToUi();
 }
 

@@ -1,12 +1,12 @@
-import { QualifierResult, QualifierScore } from "./common/common_types.ts";
-import { RoundData, TypeDefinition } from "./common/type_definition.ts";
+import { Participant, QualifierResult, QualifierScore, RegisteredPlayerEntry } from "../common/common_types.ts";
+import { OcrResult, RoundData, TypeDefinition } from "./common/type_definition.ts";
 import { ApiClient } from "./server/api_client.ts";
-import { AppsScriptApi } from "./server/apps_script_api.ts";
-import { denocg } from "./server/deps.ts";
+import { LocalApi } from "./server/local_api.ts";
+import { PQueue, denocg } from "./server/deps.ts";
 import { OBSController } from "./server/obs_controller.ts";
-// TODO: Experimental
-import { OcrResult } from "./common/type_definition.ts";
 import { OcrServer } from "./server/ocr_server.ts";
+import { UserServer, ActionHandler as UserServerActionHandler } from "./server/user_server.ts";
+import { QueryPlayerResult } from "../common/user_server_types.ts";
 
 export const config: denocg.ServerConfig<TypeDefinition> = {
   socketPort: 8515,
@@ -16,9 +16,9 @@ export const config: denocg.ServerConfig<TypeDefinition> = {
 
 const server = await denocg.launchServer(config);
 
-const appsScriptApi = new AppsScriptApi(8516, ApiClient.getScopes());
-await appsScriptApi.initialize();
-const apiClient = new ApiClient(appsScriptApi);
+const localApi = new LocalApi(8516, []);
+await localApi.initialize();
+const apiClient = new ApiClient(localApi);
 
 const obsConfigText = await Deno.readTextFile("./obs-websocket-conf.json");
 const obsConfig = JSON.parse(obsConfigText);
@@ -27,36 +27,6 @@ const obs = new OBSController(obsConfig.address, obsConfig.password);
 const competitionSceneName = "competition";
 const resultSceneName = "result";
 const chatSourceName = "chat";
-
-let currentLoginPromise: Promise<void> | null = null;
-let currentLoginAbort: AbortController | null = null;
-
-server.registerRequestHandler("login", () => {
-  currentLoginAbort = new AbortController();
-  currentLoginPromise = appsScriptApi.auth({
-    abortController: currentLoginAbort,
-  });
-  (async () => {
-    try {
-      await currentLoginPromise;
-      server.broadcastMessage("loginResult", { success: true });
-    } catch {
-      server.broadcastMessage("loginResult", { success: false });
-    } finally {
-      currentLoginAbort = null;
-      currentLoginPromise = null;
-    }
-  })();
-  return { url: appsScriptApi.getAuthUrl() };
-});
-
-server.registerRequestHandler("cancelLogin", () => {
-  currentLoginAbort?.abort();
-});
-
-server.registerRequestHandler("checkLogin", async () => {
-  await appsScriptApi.checkAuth();
-});
 
 const currentRegisteredPlayersReplicant = server.getReplicant(
   "currentRegisteredPlayers",
@@ -82,12 +52,18 @@ const getCurrentRegisteredPlayers = async () => {
   currentRegisteredPlayersReplicant.setValue(players);
 };
 
-const getCurrentParticipants = async () => {
-  const participants = await apiClient.runCommand(
-    "mastersGetParticipants",
-    [],
+const registerPlayer = async (data: RegisteredPlayerEntry) => {
+  await apiClient.runCommand(
+    "mastersRegisterPlayer",
+    [data],
   );
-  currentParticipantsReplicant.setValue(participants);
+};
+
+const updatePlayer = async (oldName: string, data: RegisteredPlayerEntry) => {
+  await apiClient.runCommand(
+    "mastersUpdatePlayer",
+    [oldName, data],
+  );
 };
 
 server.registerRequestHandler("enterSetup", async () => {
@@ -100,18 +76,12 @@ server.registerRequestHandler("getCurrentRegisteredPlayers", async () => {
 });
 
 server.registerRequestHandler("registerPlayer", async (params) => {
-  await apiClient.runCommand(
-    "mastersRegisterPlayer",
-    [params.data],
-  );
+  await registerPlayer(params.data);
   await getCurrentRegisteredPlayers();
 });
 
 server.registerRequestHandler("updatePlayer", async (params) => {
-  await apiClient.runCommand(
-    "mastersUpdatePlayer",
-    [params.oldName, params.data],
-  );
+  await updatePlayer(params.oldName, params.data);
   await getCurrentRegisteredPlayers();
 });
 
@@ -119,11 +89,38 @@ server.registerRequestHandler("getCurrentParticipants", async () => {
   await getCurrentParticipants();
 });
 
-server.registerRequestHandler("setParticipants", async (params) => {
+const getCurrentParticipants = async () => {
+  const participants = await apiClient.runCommand(
+    "mastersGetParticipants",
+    [],
+  );
+  currentParticipantsReplicant.setValue(participants);
+};
+
+const setParticipants = async (participants: Participant[]) => {
   await apiClient.runCommand(
     "mastersSetParticipants",
-    [params.participants],
+    [participants],
   );
+};
+
+const addParticipantQueue = new PQueue({ concurrency: 1 });
+const addParticipant = async (name: string) => {
+  await addParticipantQueue.add(async () => {
+    const participants = await apiClient.runCommand(
+      "mastersGetParticipants",
+      []
+    );
+    participants.push({ name, firstRoundGroupIndex: null });
+    await apiClient.runCommand(
+      "mastersSetParticipants",
+      [participants]
+    );
+  });
+};
+
+server.registerRequestHandler("setParticipants", async (params) => {
+  await setParticipants(params.participants);
   await getCurrentParticipants();
 });
 
@@ -461,13 +458,63 @@ resultSceneActiveReplicant.subscribe(async (value) => {
   }
 });
 
-// TODO: Experimental
+//
+// OCR Server / Data
+//
+
 const ocrServer = new OcrServer(8517);
+
 const latestOcrResultReplicant = server.getReplicant("latestOcrResult");
+
 ocrServer.addEventListener("data", (ev) => {
   latestOcrResultReplicant.setValue((ev as CustomEvent).detail as OcrResult);
 });
+
 server.registerRequestHandler("resetOcrState", () => {
+  // TODO: 関数を抜けるタイミングで、OCRから送られてくるデータがリセットされているとは限らない
+  // (一瞬リセット前のデータが送られてくるかも)
   latestOcrResultReplicant.setValue(null);
   ocrServer.requestReset();
 });
+
+//
+// User Server / Data
+//
+
+const registrationUrlReplicant = server.getReplicant("registrationUrl");
+
+const userServerHandler: UserServerActionHandler = {
+  open: (url: string) => {
+    registrationUrlReplicant.setValue(url);
+  },
+  close: (url: string) => {
+    if (registrationUrlReplicant.getValue() == url) {
+      registrationUrlReplicant.setValue(null);
+    }
+  },
+  queryPlayer: async (name: string): Promise<QueryPlayerResult> => {
+    await getCurrentRegisteredPlayers();
+    await getCurrentParticipants();
+    const players = currentRegisteredPlayersReplicant.getValue();
+    const registeredPlayerEntry = players?.find(e => e.name == name) ?? null;
+    const participants = currentParticipantsReplicant.getValue();
+    const participating = participants?.find(e => e.name == name) != null;
+    return {
+      registeredPlayerEntry,
+      participating,
+    }
+  },
+  registerPlayer: async (entry: RegisteredPlayerEntry) => {
+    await registerPlayer(entry);
+    await getCurrentRegisteredPlayers();
+  },
+  updatePlayer: async (oldName: string, entry: RegisteredPlayerEntry) => {
+    await updatePlayer(oldName, entry);
+    await getCurrentRegisteredPlayers();
+  },
+  addParticipant: async (name: string) => {
+    await addParticipant(name);
+    await getCurrentParticipants();
+  },
+};
+const userServer = new UserServer(8519, userServerHandler);

@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "./"
+		},
+		{
+			"path": "../common"
+		}
+	],
+	"settings": {
+		"deno.config": "./deno.json",
+		"deno.enable": true
+	}
+}

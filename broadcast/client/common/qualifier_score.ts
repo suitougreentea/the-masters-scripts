@@ -1,7 +1,7 @@
 import {
   QualifierScoreEntry,
   StageMetadata,
-} from "../../common/common_types.ts";
+} from "../../../common/common_types.ts";
 import {
   classMap,
   css,

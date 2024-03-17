@@ -1,7 +1,7 @@
-import { SupplementComparisonEntry } from "../../common/common_types.ts";
+import { SupplementComparisonEntry } from "../../../common/common_types.ts";
+import { timeToStringNullable } from "../../../common/time.ts";
 import {
   formatLevelOrGradeNullable,
-  formatTimeNullable,
 } from "../../common/util.ts";
 import {
   css,
@@ -117,9 +117,9 @@ export class MastersSupplementComparisonElement extends LitElement {
             <td>${
           formatLevelOrGradeNullable({ level: e.level, grade: e.grade })
         }</td>
-            <td>${formatTimeNullable(e.time)}</td>
-            <td>${formatTimeNullable(e.timeDiffBest)}</td>
-            <td>${formatTimeNullable(e.timeDiffPrev)}</td>
+            <td>${timeToStringNullable(e.time)}</td>
+            <td>${timeToStringNullable(e.timeDiffBest)}</td>
+            <td>${timeToStringNullable(e.timeDiffPrev)}</td>
           </tr>
           `;
       })

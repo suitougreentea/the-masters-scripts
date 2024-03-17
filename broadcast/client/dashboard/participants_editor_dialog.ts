@@ -1,4 +1,4 @@
-import { Participant } from "../../common/common_types.ts";
+import { Participant } from "../../../common/common_types.ts";
 import { formatGroup, parseGroup } from "../../common/util.ts";
 import { commonColors } from "../common/common_values.ts";
 import {

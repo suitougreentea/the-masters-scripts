@@ -7,3 +7,6 @@ export {
   type OBSRequestTypes,
   type OBSResponseTypes,
 } from "https://esm.sh/obs-websocket-js@5.0.2";
+
+// p_queue dependency
+export { default as PQueue } from "https://deno.land/x/p_queue@1.0.1/mod.ts";

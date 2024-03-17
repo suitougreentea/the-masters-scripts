@@ -16,7 +16,7 @@ import {
   StageScoreEntry,
   StageSetupResult,
   SupplementComparisonMetadata,
-} from "../../common/common_types.ts";
+} from "../../../common/common_types.ts";
 import "../common/qualifier_result.ts";
 import "../common/qualifier_score.ts";
 import "../common/stage_players.ts";
@@ -32,6 +32,7 @@ import {
   MastersScoreEditorDialogElement,
   ScoreEditorDialogData,
 } from "./score_editor_dialog.ts";
+import { ocrResultToStageScoreEntries } from "../common/ocr_util.ts";
 
 @customElement("masters-round")
 export class MastersRoundElement extends LitElement {
@@ -131,7 +132,6 @@ export class MastersRoundElement extends LitElement {
   @query("masters-score-editor-dialog", true)
   private _scoreEditorDialog!: MastersScoreEditorDialogElement;
 
-  // TODO: Experimental
   private _latestOcrResult?: OcrResult | null;
 
   async firstUpdated() {
@@ -148,7 +148,6 @@ export class MastersRoundElement extends LitElement {
     currentRoundDataReplicant.subscribe((value) => {
       this._currentRoundData = value;
     });
-    // TODO: Experimental
     const latestOcrResultReplicant = await client.getReplicant("latestOcrResult");
     latestOcrResultReplicant.subscribe((value) => {
       this._latestOcrResult = value;
@@ -163,7 +162,6 @@ export class MastersRoundElement extends LitElement {
       "sendStageDataToCompetitionScene",
       { stageIndex },
     );
-    await this._dashboardContext.sendRequest("resetOcrState"); // TODO: Experimental
     this._dashboardContext.requestStopTimer();
     await this._dashboardContext.sendRequest("toggleResultScene", {
       show: false,
@@ -184,71 +182,13 @@ export class MastersRoundElement extends LitElement {
     );
   }
 
+  // TODO: 初期値の入れ方に一貫性がない
   private _editStageScore(stageIndex: number) {
     const currentStageData = this._currentRoundData!.stageData[stageIndex];
     this._scoreEditorDialog.open(stageIndex, currentStageData.players);
 
-    // TODO: Experimental
-    const oldScore: StageScoreEntry[] = currentStageData.result.map((result) => {
-      const name = result.name;
-      let grade: number | null;
-      let level: number | null;
-      let time: number | null;
-      if (result.level < 999) {
-        grade = null;
-        level = result.level;
-        time = null;
-      } else if (result.grade != null && result.grade < 6) {
-        // -S9
-        grade = result.grade;
-        level = null;
-        time = result.time;
-      } else {
-        // GM
-        grade = null;
-        level = null;
-        time = result.time;
-      }
-      return {
-        name,
-        grade,
-        level,
-        time,
-      };
-    })
-
-    if (oldScore.length == 0 && this._latestOcrResult != null) {
-      const initialScore: StageScoreEntry[] = [];
-      currentStageData.players.forEach((player, i) => {
-        if (player == null) return;
-        const status = this._latestOcrResult!.status[i];
-        if (status.level == 0) return;
-        let grade: number | null;
-        let level: number | null;
-        let time: number | null;
-        if (status.level < 999) {
-          grade = null;
-          level = status.level;
-          time = null;
-        } else if (status.grade < 18) {
-          // -S9
-          grade = Math.max(status.grade - 12, 0); // TODO: support all grades
-          level = null;
-          time = status.gameTime;
-        } else {
-          // GM
-          grade = null;
-          level = null;
-          time = status.gameTime;
-        }
-        initialScore.push({
-          name: player.name,
-          grade,
-          level,
-          time,
-        });
-      })
-      this._scoreEditorDialog.setData({ score: initialScore });
+    if (this._scoreEditorDialog.isEmpty() && this._latestOcrResult != null) {
+      this._scoreEditorDialog.setData({ score: ocrResultToStageScoreEntries(this._latestOcrResult!, currentStageData.players) });
     }
   }
 
