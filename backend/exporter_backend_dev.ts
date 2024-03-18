@@ -5,11 +5,11 @@ const inMemoryData: Record<string, any> = {};
 
 export const getByFilename = (filename: string) => {
   return inMemoryData[filename];
-}
+};
 
 const setByFilename = (filename: string, content: any) => {
   inMemoryData[filename] = content;
-}
+};
 
 export class InMemoryExporterBackend implements ExporterBackend {
   exportCompetition(input: Input): Promise<string> {

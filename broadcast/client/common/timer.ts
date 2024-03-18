@@ -200,7 +200,7 @@ export class MastersTimerElement extends LitElement {
     this.#intervalId = setInterval(() => {
       this.#tickTimer();
       this.#updateRender();
-    } , 10);
+    }, 10);
     this.#elements.forEach((e) => {
       e.startOrder.style.display = "none";
       e.diffTime.style.display = "none";
@@ -318,7 +318,13 @@ export class MastersTimerElement extends LitElement {
         const finished = status.level == 999;
         const stopping = status.level % 100 == 99;
         player.gauge.style.width = (status.level / 999 * 325) + "px";
-        player.gauge.style.background = finished ? "#cbf266" : dead ? "#7f878f" : stopping ? "#ff9900" : "#66ccff";
+        player.gauge.style.background = finished
+          ? "#cbf266"
+          : dead
+          ? "#7f878f"
+          : stopping
+          ? "#ff9900"
+          : "#66ccff";
       }
     } else {
       player.id.className = "id id-inactive";

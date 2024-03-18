@@ -1,8 +1,14 @@
-import { StagePlayerEntry, StageScoreEntry } from "../../../common/common_types.ts";
+import {
+  StagePlayerEntry,
+  StageScoreEntry,
+} from "../../../common/common_types.ts";
 import { Grade } from "../../../common/grade.ts";
 import { OcrResult } from "../../common/type_definition.ts";
 
-export const ocrResultToStageScoreEntries = (result: OcrResult, players: (StagePlayerEntry | null)[]): StageScoreEntry[] => {
+export const ocrResultToStageScoreEntries = (
+  result: OcrResult,
+  players: (StagePlayerEntry | null)[],
+): StageScoreEntry[] => {
   const entries: StageScoreEntry[] = [];
 
   players.forEach((player, i) => {
@@ -29,7 +35,7 @@ export const ocrResultToStageScoreEntries = (result: OcrResult, players: (StageP
       level,
       time,
     });
-  })
+  });
 
   return entries;
-}
+};

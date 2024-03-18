@@ -1561,7 +1561,7 @@ export function getPreset(name: string): Preset {
 }
 
 export function getAllPresetNames(): string[] {
-  return presets.map(e => e.name);
+  return presets.map((e) => e.name);
 }
 
 export function getAppropriatePresetName(numPlayers: number): string | null {

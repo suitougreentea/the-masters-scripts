@@ -52,8 +52,12 @@ export class PlayersStore {
     const index = this.#registeredPlayers.findIndex((e) => e.name == oldName);
     if (index < 0) throw new Error("No matching player found");
     if (oldName != player.name) {
-      const dupeCheck = this.#registeredPlayers.findIndex((e) => e.name == player.name);
-      if (dupeCheck >= 0) throw new Error("A player with the same name already exists");
+      const dupeCheck = this.#registeredPlayers.findIndex((e) =>
+        e.name == player.name
+      );
+      if (dupeCheck >= 0) {
+        throw new Error("A player with the same name already exists");
+      }
     }
     this.#registeredPlayers[index] = player;
     this.#serialize();

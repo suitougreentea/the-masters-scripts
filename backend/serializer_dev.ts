@@ -8,15 +8,15 @@ const getSerializer = <T>(name: string) => {
   const created = new InMemorySerializer(name);
   serializers.set(name, created);
   return created as InMemorySerializer<T>;
-}
+};
 
 export const getSerializerValue = <T>(name: string) => {
   return getSerializer<T>(name).deserialize();
-}
+};
 
 export const setSerializerValue = <T>(name: string, value: T | null) => {
   return getSerializer<T>(name).setValue(value);
-}
+};
 
 export class InMemorySerializerManager implements SerializerManager {
   getSerializer<T>(name: string) {

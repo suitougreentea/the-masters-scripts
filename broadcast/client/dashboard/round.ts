@@ -148,10 +148,12 @@ export class MastersRoundElement extends LitElement {
     currentRoundDataReplicant.subscribe((value) => {
       this._currentRoundData = value;
     });
-    const latestOcrResultReplicant = await client.getReplicant("latestOcrResult");
+    const latestOcrResultReplicant = await client.getReplicant(
+      "latestOcrResult",
+    );
     latestOcrResultReplicant.subscribe((value) => {
       this._latestOcrResult = value;
-    })
+    });
   }
 
   private async _sendToTimer(stageIndex: number) {
@@ -188,7 +190,12 @@ export class MastersRoundElement extends LitElement {
     this._scoreEditorDialog.open(stageIndex, currentStageData.players);
 
     if (this._scoreEditorDialog.isEmpty() && this._latestOcrResult != null) {
-      this._scoreEditorDialog.setData({ score: ocrResultToStageScoreEntries(this._latestOcrResult!, currentStageData.players) });
+      this._scoreEditorDialog.setData({
+        score: ocrResultToStageScoreEntries(
+          this._latestOcrResult!,
+          currentStageData.players,
+        ),
+      });
     }
   }
 

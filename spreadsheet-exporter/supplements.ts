@@ -6,7 +6,11 @@ import {
   resizeSheet,
   timeToSpreadsheetValue,
 } from "../common/spreadsheet_util.ts";
-import { getScoreResultTemplate, getScoreTableTemplate, getSupplementComparisonTemplate } from "./templates.ts";
+import {
+  getScoreResultTemplate,
+  getScoreTableTemplate,
+  getSupplementComparisonTemplate,
+} from "./templates.ts";
 
 export const createSupplementsSheet = (
   ss: GoogleAppsScript.Spreadsheet.Spreadsheet,

@@ -21,7 +21,7 @@ Deno.test("Whole competition completes", async (t) => {
         name: `Preset ${presetName}, ${numPlayers} players`,
         async fn() {
           await automateWholeCompetition(numPlayers, false, presetName, true);
-        }
+        },
       });
     }
   }

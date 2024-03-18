@@ -10,15 +10,15 @@ container.style.flexWrap = "wrap";
 document.body.appendChild(container);
 
 const infoPres: HTMLPreElement[] = [];
-for (let i = 0; i < 8 ; i++) {
-  const infoPre = document.createElement("pre")
+for (let i = 0; i < 8; i++) {
+  const infoPre = document.createElement("pre");
   infoPre.style.margin = "10px";
   container.appendChild(infoPre);
   infoPres.push(infoPre);
 }
 
 const replicant = await client.getReplicant("latestOcrResult");
-replicant.subscribe(value => {
+replicant.subscribe((value) => {
   if (value == null) return;
   const { status } = value;
 
@@ -32,9 +32,11 @@ replicant.subscribe(value => {
     text += "---------------------------\n";
     text += "         [lap]     [split] \n";
     s.sections.forEach((section, i) => {
-      const level0 = `${i * 100}`.padStart(3, "0")
-      const level1 = `${i == 9 ? "999" : (i + 1) * 100}`
-      text += `${level0}-${level1}  ${timeToString(section.lap)}  ${timeToString(section.split)}\n`;
+      const level0 = `${i * 100}`.padStart(3, "0");
+      const level1 = `${i == 9 ? "999" : (i + 1) * 100}`;
+      text += `${level0}-${level1}  ${timeToString(section.lap)}  ${
+        timeToString(section.split)
+      }\n`;
     });
 
     infoPre.innerText = text;

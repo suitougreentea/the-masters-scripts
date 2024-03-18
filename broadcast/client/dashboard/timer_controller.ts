@@ -96,10 +96,12 @@ export class MastersTimerControllerElement extends LitElement {
       this._stop();
     });
 
-    const latestOcrResultReplicant = await client.getReplicant("latestOcrResult");
+    const latestOcrResultReplicant = await client.getReplicant(
+      "latestOcrResult",
+    );
     latestOcrResultReplicant.subscribe((value) => {
       this._timerWrapper.setOcrResult(value);
-    })
+    });
 
     this._initializedPromise.resolve();
   }

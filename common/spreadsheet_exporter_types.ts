@@ -4,23 +4,23 @@ import { Time } from "./time.ts";
 export type LeaderboardData = {
   // must be sorted by bestTime
   list: {
-    rank: number,
-    name: string,
-    bestTime: Time,
+    rank: number;
+    name: string;
+    bestTime: Time;
   }[];
 };
 
 export type ParticipantsData = {
   list: {
-    name: string,
-    bestTime: Time,
-    firstRoundGroupIndex: number,
+    name: string;
+    bestTime: Time;
+    firstRoundGroupIndex: number;
   }[];
 };
 
 export type StagesData = {
   list: {
-    name: string,
+    name: string;
     entries: ({
       name: string;
       rawBestTime: number;
@@ -31,7 +31,7 @@ export type StagesData = {
       level: number | null;
       grade: Grade | null;
       time: number | null;
-    } | null)[],
+    } | null)[];
     result: {
       rank: number;
       name: string;
@@ -41,14 +41,14 @@ export type StagesData = {
       timeDiffBest: number | null;
       timeDiffTop: number | null;
       timeDiffPrev: number | null;
-    }[],
+    }[];
     borderlines: number[];
   }[];
 };
 
 export type SupplementsData = {
   supplementComparisons: {
-    name: string,
+    name: string;
     comparison: {
       rank: number;
       name: string;
@@ -57,15 +57,15 @@ export type SupplementsData = {
       time: number | null;
       timeDiffBest: number | null;
       timeDiffPrev: number | null;
-    }[],
-  }[],
+    }[];
+  }[];
   qualifierScore: {
     players: {
       name: string;
       totalPoints: number;
       stageResults: { stageIndex: number; rankIndex: number; points: number }[];
-    }[]
-  } | null,
+    }[];
+  } | null;
   qualifierResult: {
     players: {
       rank: number;
@@ -75,12 +75,12 @@ export type SupplementsData = {
       bestGameLevel: number;
       bestGameGrade: number | null;
       bestGameTimeDiffBest: number | null;
-    }[]
-  } | null,
+    }[];
+  } | null;
 };
 
 export type Input = {
-  name: string,
+  name: string;
   leaderboard: LeaderboardData;
   participants: ParticipantsData;
   stages: StagesData;
@@ -88,6 +88,6 @@ export type Input = {
 };
 
 export type Data = {
-  credential: string,
+  credential: string;
   input: Input;
 };

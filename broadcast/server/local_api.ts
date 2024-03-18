@@ -4,7 +4,11 @@ export class LocalApi {
 
   async initialize() {}
 
-  async runCommand(_scriptId: string, functionName: string, args: string[]): Promise<unknown> {
+  async runCommand(
+    _scriptId: string,
+    functionName: string,
+    args: string[],
+  ): Promise<unknown> {
     if (functionName != "mastersCallApiAsJson") return {};
     const apiFunctionName = args[0];
     const apiArgs = JSON.parse(args[1]);

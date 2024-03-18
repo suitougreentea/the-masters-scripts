@@ -1,5 +1,10 @@
 import { StagePlayerEntry } from "../../common/common_types.ts";
-import { Grade, gradeToString, stringToGrade, tryStringToGrade } from "../../common/grade.ts";
+import {
+  Grade,
+  gradeToString,
+  stringToGrade,
+  tryStringToGrade,
+} from "../../common/grade.ts";
 
 const groupTable = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
 

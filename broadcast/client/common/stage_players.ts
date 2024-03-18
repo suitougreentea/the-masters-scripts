@@ -1,8 +1,6 @@
 import { StagePlayerEntry } from "../../../common/common_types.ts";
 import { timeToStringNullable } from "../../../common/time.ts";
-import {
-  formatLevelOrGradeNullable,
-} from "../../common/util.ts";
+import { formatLevelOrGradeNullable } from "../../common/util.ts";
 import {
   classMap,
   css,

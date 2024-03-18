@@ -21,23 +21,40 @@ export const grades = {
 } as const;
 
 const gradeTable = [
-  "9", "8", "7", "6", "5", "4", "3", "2", "1",
-  "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "GM",
+  "9",
+  "8",
+  "7",
+  "6",
+  "5",
+  "4",
+  "3",
+  "2",
+  "1",
+  "S1",
+  "S2",
+  "S3",
+  "S4",
+  "S5",
+  "S6",
+  "S7",
+  "S8",
+  "S9",
+  "GM",
 ] as const;
 
-export type GradeString = (typeof gradeTable)[number]
-export type Grade = (typeof grades)[GradeString]
+export type GradeString = (typeof gradeTable)[number];
+export type Grade = (typeof grades)[GradeString];
 
 export const gradeToString = (grade: Grade): GradeString => {
   return gradeTable[grade];
-}
+};
 
 export const stringToGrade = (string: GradeString): Grade => {
   return gradeTable.indexOf(string) as Grade;
-}
+};
 
 export const tryStringToGrade = (string: string): Grade | null => {
   const index = gradeTable.indexOf(string as unknown as GradeString);
   if (index == -1) return null;
   return index as Grade;
-}
+};

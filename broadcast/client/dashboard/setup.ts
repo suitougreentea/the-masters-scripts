@@ -198,11 +198,13 @@ export class MastersSetupElement extends LitElement {
     });
 
     const registrationUrlReplicant = await client.getReplicant(
-      "registrationUrl"
+      "registrationUrl",
     );
     registrationUrlReplicant.subscribe(async (value) => {
       this._registrationUrl = value ?? null;
-      this._registrationUrlQr = value != null ? await qrcode(value) as unknown as string : null; // is type definition wrong?
+      this._registrationUrlQr = value != null
+        ? await qrcode(value) as unknown as string
+        : null; // is type definition wrong?
     });
   }
 

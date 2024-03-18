@@ -1,8 +1,8 @@
 import { RegisteredPlayerEntry } from "./common_types.ts";
 
 export type QueryPlayerResult = {
-  registeredPlayerEntry: RegisteredPlayerEntry | null,
-  participating: boolean,
+  registeredPlayerEntry: RegisteredPlayerEntry | null;
+  participating: boolean;
 };
 
 export type RegisterPlayerArgs = {

@@ -1,11 +1,15 @@
-import { Grade, gradeToString, grades, tryStringToGrade } from "./grade.ts";
+import { Grade, grades, gradeToString, tryStringToGrade } from "./grade.ts";
 import { dateToTime, stringToTime } from "./time.ts";
 
 function isNullOrEmptyString(string: unknown): string is null | "" {
   return string == null || string == "";
 }
 
-export const resizeSheet = (sheet: GoogleAppsScript.Spreadsheet.Sheet, rows: number, columns: number) => {
+export const resizeSheet = (
+  sheet: GoogleAppsScript.Spreadsheet.Sheet,
+  rows: number,
+  columns: number,
+) => {
   const oldRows = sheet.getMaxRows();
   const oldColumns = sheet.getMaxColumns();
 
@@ -19,30 +23,50 @@ export const resizeSheet = (sheet: GoogleAppsScript.Spreadsheet.Sheet, rows: num
   } else if (columns < oldColumns) {
     sheet.deleteColumns(columns + 1, oldColumns - columns);
   }
-}
+};
 
-export const setColumnWidths = (sheet: GoogleAppsScript.Spreadsheet.Sheet, widths: number[]) => {
+export const setColumnWidths = (
+  sheet: GoogleAppsScript.Spreadsheet.Sheet,
+  widths: number[],
+) => {
   widths.forEach((width, i) => sheet.setColumnWidth(i + 1, width));
-}
+};
 
 export type TemplateInfo = {
+  row: number;
+  column: number;
+  numRows: number;
+  numColumns: number;
+};
+
+export const pasteTemplate = (
+  destSheet: GoogleAppsScript.Spreadsheet.Sheet,
   row: number,
   column: number,
-  numRows: number,
-  numColumns: number,
-}
+  templatesSheet: GoogleAppsScript.Spreadsheet.Sheet,
+  templateInfo: TemplateInfo,
+  type: GoogleAppsScript.Spreadsheet.CopyPasteType,
+) => {
+  const templateRange = templatesSheet.getRange(
+    templateInfo.row,
+    templateInfo.column,
+    templateInfo.numRows,
+    templateInfo.numColumns,
+  );
 
-export const pasteTemplate = (destSheet: GoogleAppsScript.Spreadsheet.Sheet, row: number, column: number, templatesSheet: GoogleAppsScript.Spreadsheet.Sheet, templateInfo: TemplateInfo, type: GoogleAppsScript.Spreadsheet.CopyPasteType) => {
-  const templateRange = templatesSheet.getRange(templateInfo.row, templateInfo.column, templateInfo.numRows, templateInfo.numColumns);
-
-  const destRange = destSheet.getRange(row, column, templateInfo.numRows, templateInfo.numColumns);
+  const destRange = destSheet.getRange(
+    row,
+    column,
+    templateInfo.numRows,
+    templateInfo.numColumns,
+  );
   templateRange.copyTo(destRange, type, false);
-}
+};
 
 export const timeToSpreadsheetValue = (time: number | null): number | null => {
   if (time == null) return null;
   return time / (24 * 60 * 60 * 1000);
-}
+};
 
 export const spreadsheetValueToTime = (value: unknown): number | null => {
   if (value == null) return null;
@@ -54,11 +78,15 @@ export const spreadsheetValueToTime = (value: unknown): number | null => {
     return stringToTime(value);
   }
   return null;
-}
+};
 
-export const spreadsheetValueToLevelOrGrade = (levelOrGrade: unknown): { level: number, grade: Grade | null } => {
+export const spreadsheetValueToLevelOrGrade = (
+  levelOrGrade: unknown,
+): { level: number; grade: Grade | null } => {
   // GMの場合は何も入力されない
-  if (isNullOrEmptyString(levelOrGrade)) return { grade: grades.GM, level: 999 };
+  if (isNullOrEmptyString(levelOrGrade)) {
+    return { grade: grades.GM, level: 999 };
+  }
 
   // 一度stringに
   const stringified = String(levelOrGrade);
@@ -70,9 +98,11 @@ export const spreadsheetValueToLevelOrGrade = (levelOrGrade: unknown): { level: 
   if (parsedGrade != null) return { grade: parsedGrade, level: 999 };
 
   throw new Error("Unknown Level/Grade: " + levelOrGrade);
-}
+};
 
-export const levelOrGradeToSpreadsheetValue = (levelOrGrade: { level: number | null, grade: Grade | null }): string | number | null => {
+export const levelOrGradeToSpreadsheetValue = (
+  levelOrGrade: { level: number | null; grade: Grade | null },
+): string | number | null => {
   if (levelOrGrade.grade != null) return gradeToString(levelOrGrade.grade);
   return levelOrGrade.level;
-}
+};

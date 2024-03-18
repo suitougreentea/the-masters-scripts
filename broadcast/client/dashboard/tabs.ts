@@ -91,8 +91,7 @@ export class MastersTabsElement extends LitElement {
         `${result.exportedUrl}に結果がエクスポートされました`,
       );
       if (await this._dashboardContext.confirm("結果をツイートしますか？")) {
-        const message =
-          `${competitionName}の結果です。\n${result.exportedUrl}`;
+        const message = `${competitionName}の結果です。\n${result.exportedUrl}`;
         window.open(
           `https://twitter.com/intent/tweet?text=${encodeURI(message)}`,
         );

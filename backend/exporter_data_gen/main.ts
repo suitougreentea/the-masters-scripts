@@ -9,12 +9,22 @@ if (import.meta.main) {
   }
   const numPlayers = Number(Deno.args[0]);
 
-  setSerializerValue("players", JSON.parse(Deno.readTextFileSync(import.meta.dirname + "/../data_test/players.json")));
+  setSerializerValue(
+    "players",
+    JSON.parse(
+      Deno.readTextFileSync(import.meta.dirname + "/../data_test/players.json"),
+    ),
+  );
 
   configureInject();
   modifyInjectInMemory();
 
-  const { exportUrl } = await automateWholeCompetition(numPlayers, false, undefined, true);
+  const { exportUrl } = await automateWholeCompetition(
+    numPlayers,
+    false,
+    undefined,
+    true,
+  );
   const data = getByFilename(exportUrl!);
   const filename = `generated_${numPlayers}.json`;
   Deno.writeTextFileSync(filename, JSON.stringify(data, undefined, 2));

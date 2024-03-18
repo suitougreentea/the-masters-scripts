@@ -1,8 +1,17 @@
-import { assertEquals, assertGreater, assertLess } from "https://deno.land/std@0.215.0/assert/mod.ts";
-import { compareStageScore, compareQualifierScore } from "./competition.ts";
+import {
+  assertEquals,
+  assertGreater,
+  assertLess,
+} from "https://deno.land/std@0.215.0/assert/mod.ts";
+import { compareQualifierScore, compareStageScore } from "./competition.ts";
 import { grades } from "../common/grade.ts";
 
-const testComparer = <T>(comparer: (a: T, b: T) => number, a: T, b: T, expectedResult: number) => {
+const testComparer = <T>(
+  comparer: (a: T, b: T) => number,
+  a: T,
+  b: T,
+  expectedResult: number,
+) => {
   if (expectedResult == 0) {
     assertEquals(comparer(a, b), 0);
   } else if (expectedResult > 0) {
@@ -35,7 +44,7 @@ Deno.test("compareStageScore() for well-formed scores", () => {
       level: 999,
       timeDiffBest: 50,
     },
-    0
+    0,
   );
 
   // same grade (<GM), same time
@@ -53,7 +62,7 @@ Deno.test("compareStageScore() for well-formed scores", () => {
       level: 999,
       timeDiffBest: -50,
     },
-    0
+    0,
   );
 
   // same level
@@ -71,7 +80,7 @@ Deno.test("compareStageScore() for well-formed scores", () => {
       level: 800,
       timeDiffBest: null,
     },
-    0
+    0,
   );
 
   // GM, time comparison
@@ -89,7 +98,7 @@ Deno.test("compareStageScore() for well-formed scores", () => {
       level: 999,
       timeDiffBest: 50,
     },
-    1
+    1,
   );
 
   // GM vs <GM
@@ -107,7 +116,7 @@ Deno.test("compareStageScore() for well-formed scores", () => {
       level: 999,
       timeDiffBest: -50,
     },
-    1
+    1,
   );
 
   // <GM vs <<GM
@@ -125,7 +134,7 @@ Deno.test("compareStageScore() for well-formed scores", () => {
       level: 999,
       timeDiffBest: 0,
     },
-    1
+    1,
   );
 
   // GM vs level
@@ -143,7 +152,7 @@ Deno.test("compareStageScore() for well-formed scores", () => {
       level: 998,
       timeDiffBest: null,
     },
-    1
+    1,
   );
 
   // <GM vs level
@@ -161,7 +170,7 @@ Deno.test("compareStageScore() for well-formed scores", () => {
       level: 998,
       timeDiffBest: null,
     },
-    1
+    1,
   );
 
   // level vs level
@@ -179,7 +188,7 @@ Deno.test("compareStageScore() for well-formed scores", () => {
       level: 997,
       timeDiffBest: null,
     },
-    1
+    1,
   );
 });
 
@@ -203,7 +212,7 @@ Deno.test("compareStageScore() for ill-formed scores", () => {
       level: 999,
       timeDiffBest: null,
     },
-    1
+    1,
   );
 
   testComparer(
@@ -220,7 +229,7 @@ Deno.test("compareStageScore() for ill-formed scores", () => {
       level: 999,
       timeDiffBest: null,
     },
-    0
+    0,
   );
 });
 
@@ -248,7 +257,7 @@ Deno.test("compareQualifierScore()", () => {
       bestGameLevel: 999,
       bestGameTimeDiffBest: 0,
     },
-    0
+    0,
   );
 
   // by points
@@ -270,7 +279,7 @@ Deno.test("compareQualifierScore()", () => {
       bestGameLevel: 999,
       bestGameTimeDiffBest: 0,
     },
-    1
+    1,
   );
 
   // by numPlaces
@@ -292,7 +301,7 @@ Deno.test("compareQualifierScore()", () => {
       bestGameLevel: 999,
       bestGameTimeDiffBest: 0,
     },
-    1
+    1,
   );
 
   // by best game (time)
@@ -314,7 +323,7 @@ Deno.test("compareQualifierScore()", () => {
       bestGameLevel: 999,
       bestGameTimeDiffBest: 0,
     },
-    1
+    1,
   );
 
   // by best game (grade)
@@ -336,7 +345,7 @@ Deno.test("compareQualifierScore()", () => {
       bestGameLevel: 999,
       bestGameTimeDiffBest: -100,
     },
-    1
+    1,
   );
 
   // by best game (level)
@@ -358,6 +367,6 @@ Deno.test("compareQualifierScore()", () => {
       bestGameLevel: 998,
       bestGameTimeDiffBest: null,
     },
-    1
+    1,
   );
 });

@@ -42,4 +42,4 @@ currentCompetitionMetadataReplicant.subscribe((value) => {
 const latestOcrResultReplicant = await client.getReplicant("latestOcrResult");
 latestOcrResultReplicant.subscribe((value) => {
   competition.setOcrResult(value);
-})
+});

@@ -7,7 +7,7 @@ type Message = {
 } | {
   op: 1;
   rid?: string;
-}
+};
 
 export class OcrServer extends EventTarget {
   #port: number;
@@ -17,35 +17,34 @@ export class OcrServer extends EventTarget {
     super();
     this.#port = port;
 
-    Deno.serve({ port: this.#port },
-      (req) => {
-        if (req.headers.get("upgrade") != "websocket") {
-          return new Response(null, { status: 501 });
-        }
+    Deno.serve({ port: this.#port }, (req) => {
+      if (req.headers.get("upgrade") != "websocket") {
+        return new Response(null, { status: 501 });
+      }
 
-        const { socket, response } = Deno.upgradeWebSocket(req);
+      const { socket, response } = Deno.upgradeWebSocket(req);
 
-        socket.addEventListener("open", () => {
-          console.log("OCR client connected");
-          this.#clients.add(socket);
-        });
-        socket.addEventListener("message", (event) => {
-          try {
-            const decoded = JSON.parse(event.data) as Message;
-            if (decoded.op == 0) {
-              this.dispatchEvent(new CustomEvent("data", { detail: decoded.d }))
-            }
-          } catch (e) {
-            console.error(e);
-          }
-        });
-        socket.addEventListener("close", () => {
-          console.log("OCR client disconnected");
-          this.#clients.delete(socket);
-        })
-
-        return response;
+      socket.addEventListener("open", () => {
+        console.log("OCR client connected");
+        this.#clients.add(socket);
       });
+      socket.addEventListener("message", (event) => {
+        try {
+          const decoded = JSON.parse(event.data) as Message;
+          if (decoded.op == 0) {
+            this.dispatchEvent(new CustomEvent("data", { detail: decoded.d }));
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      });
+      socket.addEventListener("close", () => {
+        console.log("OCR client disconnected");
+        this.#clients.delete(socket);
+      });
+
+      return response;
+    });
   }
 
   requestReset() {
@@ -54,6 +53,6 @@ export class OcrServer extends EventTarget {
         op: 1,
       });
       socket.send(message);
-    })
+    });
   }
 }

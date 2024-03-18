@@ -24,26 +24,31 @@ export function runServerScript(name: string, args: any): any {
           reject();
         }
       })
-      .withFailureHandler((error) => reject(error))[name].apply(null, [JSON.stringify(args)]);
+      .withFailureHandler((error) => reject(error))[name].apply(null, [
+        JSON.stringify(args),
+      ]);
   });
 }
 
 let startTime = -1;
 let elapsedTime = 0;
 let intervalId = -1;
-const getEmptyData = (): TimerData => [...new Array(8)].map(_ => ({
-  name: "",
-  startTime: 0,
-}));
+const getEmptyData = (): TimerData =>
+  [...new Array(8)].map((_) => ({
+    name: "",
+    startTime: 0,
+  }));
 let currentData = getEmptyData();
 
 const timerContainer = document.querySelector<HTMLDivElement>("#timer")!;
-const timerPlayerTemplate = document.querySelector<HTMLTemplateElement>("#timer-player")!;
+const timerPlayerTemplate = document.querySelector<HTMLTemplateElement>(
+  "#timer-player",
+)!;
 const timerPlayers: {
-  id: HTMLDivElement,
-  name: HTMLDivElement,
-  time: HTMLDivElement,
-  gauge: HTMLDivElement,
+  id: HTMLDivElement;
+  name: HTMLDivElement;
+  time: HTMLDivElement;
+  gauge: HTMLDivElement;
 }[] = [];
 for (let i = 0; i < 8; i++) {
   const player = document.importNode(timerPlayerTemplate.content, true);
@@ -56,7 +61,9 @@ for (let i = 0; i < 8; i++) {
   timerPlayers.push({ id, name, time, gauge });
 }
 
-const spreadsheetInput = document.querySelector<HTMLInputElement>("#spreadsheet")!;
+const spreadsheetInput = document.querySelector<HTMLInputElement>(
+  "#spreadsheet",
+)!;
 const gameInput = document.querySelector<HTMLInputElement>("#game")!;
 const getButton = document.querySelector<HTMLButtonElement>("#get")!;
 
@@ -66,7 +73,10 @@ const resetButton = document.querySelector<HTMLButtonElement>("#reset")!;
 const getData = (url: string, gameIndex: number) => {
   withLoader(async () => {
     try {
-      const data = await runServerScript("getData", { spreadsheet: url, game: gameIndex });
+      const data = await runServerScript("getData", {
+        spreadsheet: url,
+        game: gameIndex,
+      });
       currentData = data;
     } catch (e) {
       console.error(e);
@@ -74,13 +84,13 @@ const getData = (url: string, gameIndex: number) => {
     }
     updateRender();
   });
-}
+};
 
-const startTimer = () =>  {
+const startTimer = () => {
   startTime = performance.now();
   intervalId = setInterval(tickTimer, 10);
   startButton.disabled = true;
-}
+};
 
 const stopTimer = () => {
   startTime = -1;
@@ -89,13 +99,13 @@ const stopTimer = () => {
   intervalId = -1;
   startButton.disabled = false;
   updateRender();
-}
+};
 
 const tickTimer = () => {
   const now = performance.now();
   elapsedTime = now - startTime;
   updateRender();
-}
+};
 
 const updateRender = () => {
   for (let i = 0; i < 8; i++) {
@@ -111,7 +121,7 @@ const updateRender = () => {
       setPlayerTime(i, null);
     }
   }
-}
+};
 
 const setPlayerTime = (index: number, time: number | null) => {
   const player = timerPlayers[index];
@@ -130,7 +140,7 @@ const setPlayerTime = (index: number, time: number | null) => {
     player.time.innerText = "";
     player.gauge.style.width = "0px";
   }
-}
+};
 
 getButton.onclick = (_) => {
   const spreadsheet = spreadsheetInput.value;
@@ -151,5 +161,6 @@ const formatTime = (ms: number) => {
   const sec = Math.floor(ms / 1000) % 60;
   const cent = Math.floor(ms / 10) % 100;
 
-  return min + ":" + String(sec).padStart(2, "0") + "." + String(cent).padStart(2, "0");
-}
+  return min + ":" + String(sec).padStart(2, "0") + "." +
+    String(cent).padStart(2, "0");
+};

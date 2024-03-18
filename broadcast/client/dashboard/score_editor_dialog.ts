@@ -3,7 +3,10 @@ import {
   StageScoreEntry,
 } from "../../../common/common_types.ts";
 import { Grade } from "../../../common/grade.ts";
-import { formatScoreEditorScore, parseScoreEditorScore } from "../common/score_editor.ts";
+import {
+  formatScoreEditorScore,
+  parseScoreEditorScore,
+} from "../common/score_editor.ts";
 import {
   css,
   customElement,
@@ -76,7 +79,7 @@ export class MastersScoreEditorDialogElement extends LitElement {
 
   setData(data: ScoreEditorDialogData) {
     data.score.forEach((e) => {
-      const index = this._data.findIndex(p => p.name == e.name);
+      const index = this._data.findIndex((p) => p.name == e.name);
       if (index >= 0) {
         this._data[index].level = e.level;
         this._data[index].grade = e.grade;
@@ -100,7 +103,9 @@ export class MastersScoreEditorDialogElement extends LitElement {
   }
 
   isEmpty(): boolean {
-    return this._data.every(e => e.level == null && e.grade == null && e.time == null);
+    return this._data.every((e) =>
+      e.level == null && e.grade == null && e.time == null
+    );
   }
 
   private _changeScore(playerIndex: number, newValue: string) {

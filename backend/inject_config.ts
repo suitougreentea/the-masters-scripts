@@ -10,8 +10,11 @@ import {
   CompetitionStore,
   injectKey as competitionStoreKey,
 } from "./competition_store.ts";
-import { injectKey as exporterKey, Exporter } from "./exporter.ts";
-import { injectKey as exporterBackendKey, SpreadsheetExporterBackend } from "./exporter_backend.ts";
+import { Exporter, injectKey as exporterKey } from "./exporter.ts";
+import {
+  injectKey as exporterBackendKey,
+  SpreadsheetExporterBackend,
+} from "./exporter_backend.ts";
 import { InMemoryExporterBackend } from "./exporter_backend_dev.ts";
 
 export const configureInject = () => {
@@ -26,8 +29,8 @@ export const configureInject = () => {
 export const modifyInjectInMemory = () => {
   register(serializerManagerKey, InMemorySerializerManager);
   register(exporterBackendKey, InMemoryExporterBackend);
-}
+};
 
 export const modifyInjectLocal = () => {
   register(exporterBackendKey, InMemoryExporterBackend);
-}
+};

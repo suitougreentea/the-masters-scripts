@@ -17,5 +17,8 @@ const script = result.outputFiles[0].text;
 const html = await Deno.readTextFile("page.html");
 const css = await Deno.readTextFile("page.css");
 
-const outHtml = html.replace(`import "./page.ts";`, script).replace(`@import url("./page.css");`, css);
+const outHtml = html.replace(`import "./page.ts";`, script).replace(
+  `@import url("./page.css");`,
+  css,
+);
 await Deno.writeTextFile("dist/page.html", outHtml);

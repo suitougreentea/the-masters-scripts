@@ -1,11 +1,23 @@
-import { Participant, QualifierResult, QualifierScore, RegisteredPlayerEntry } from "../common/common_types.ts";
-import { OcrResult, RoundData, TypeDefinition } from "./common/type_definition.ts";
+import {
+  Participant,
+  QualifierResult,
+  QualifierScore,
+  RegisteredPlayerEntry,
+} from "../common/common_types.ts";
+import {
+  OcrResult,
+  RoundData,
+  TypeDefinition,
+} from "./common/type_definition.ts";
 import { ApiClient } from "./server/api_client.ts";
 import { LocalApi } from "./server/local_api.ts";
-import { PQueue, denocg } from "./server/deps.ts";
+import { denocg, PQueue } from "./server/deps.ts";
 import { OBSController } from "./server/obs_controller.ts";
 import { OcrServer } from "./server/ocr_server.ts";
-import { UserServer, ActionHandler as UserServerActionHandler } from "./server/user_server.ts";
+import {
+  ActionHandler as UserServerActionHandler,
+  UserServer,
+} from "./server/user_server.ts";
 import { QueryPlayerResult } from "../common/user_server_types.ts";
 
 export const config: denocg.ServerConfig<TypeDefinition> = {
@@ -109,12 +121,12 @@ const addParticipant = async (name: string) => {
   await addParticipantQueue.add(async () => {
     const participants = await apiClient.runCommand(
       "mastersGetParticipants",
-      []
+      [],
     );
     participants.push({ name, firstRoundGroupIndex: null });
     await apiClient.runCommand(
       "mastersSetParticipants",
-      [participants]
+      [participants],
     );
   });
 };
@@ -496,13 +508,13 @@ const userServerHandler: UserServerActionHandler = {
     await getCurrentRegisteredPlayers();
     await getCurrentParticipants();
     const players = currentRegisteredPlayersReplicant.getValue();
-    const registeredPlayerEntry = players?.find(e => e.name == name) ?? null;
+    const registeredPlayerEntry = players?.find((e) => e.name == name) ?? null;
     const participants = currentParticipantsReplicant.getValue();
-    const participating = participants?.find(e => e.name == name) != null;
+    const participating = participants?.find((e) => e.name == name) != null;
     return {
       registeredPlayerEntry,
       participating,
-    }
+    };
   },
   registerPlayer: async (entry: RegisteredPlayerEntry) => {
     await registerPlayer(entry);

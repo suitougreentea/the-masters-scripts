@@ -1,4 +1,9 @@
-import { Grade, GradeString, gradeToString, stringToGrade } from "../../../common/grade.ts";
+import {
+  Grade,
+  GradeString,
+  gradeToString,
+  stringToGrade,
+} from "../../../common/grade.ts";
 import { timeToString } from "../../../common/time.ts";
 
 export const parseScoreEditorScore = (
@@ -30,7 +35,7 @@ export const parseScoreEditorScore = (
     return { level: 999, grade, time };
   }
   return null;
-}
+};
 
 export const formatScoreEditorScore = (
   score: { level: number | null; grade: Grade | null; time: number | null },
@@ -45,4 +50,4 @@ export const formatScoreEditorScore = (
     return `GM ${timeToString(score.time)}`;
   }
   return "";
-}
+};

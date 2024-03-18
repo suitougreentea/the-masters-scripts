@@ -12,16 +12,22 @@ export class SpreadsheetExporterBackend implements ExporterBackend {
   #credential: string;
 
   constructor() {
-    this.#entrypoint = Deno.readTextFileSync(import.meta.dirname + "/.exporter-entrypoint");
-    this.#credential = Deno.readTextFileSync(import.meta.dirname + "/.exporter-credential");
+    this.#entrypoint = Deno.readTextFileSync(
+      import.meta.dirname + "/.exporter-entrypoint",
+    );
+    this.#credential = Deno.readTextFileSync(
+      import.meta.dirname + "/.exporter-credential",
+    );
   }
 
   async exportCompetition(input: Input): Promise<string> {
     const response = await fetch(this.#entrypoint, {
       method: "POST",
-      body: JSON.stringify({ credential: this.#credential, input } satisfies Data),
+      body: JSON.stringify(
+        { credential: this.#credential, input } satisfies Data,
+      ),
     });
-    const responseBody = await response.json()
+    const responseBody = await response.json();
     if (responseBody.error != null) {
       throw new Error(responseBody.error);
     }

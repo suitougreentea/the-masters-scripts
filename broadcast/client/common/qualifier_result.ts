@@ -1,7 +1,5 @@
 import { QualifierResultEntry } from "../../../common/common_types.ts";
-import {
-  formatLevelOrGradeNullable,
-} from "../../common/util.ts";
+import { formatLevelOrGradeNullable } from "../../common/util.ts";
 import { timeToStringNullable } from "../../../common/time.ts";
 import {
   classMap,

@@ -8,7 +8,11 @@ if (Deno.args[0] == "--local") {
   modifyInjectLocal();
 }
 
-type MapMaybePromise<T extends { [key: string]: ((...args: any[]) => any) }> = { [K in keyof T]: T[K] | ((...args: Parameters<T[K]>) => Promise<ReturnType<T[K]>>) }
+type MapMaybePromise<T extends { [key: string]: (...args: any[]) => any }> = {
+  [K in keyof T]:
+    | T[K]
+    | ((...args: Parameters<T[K]>) => Promise<ReturnType<T[K]>>);
+};
 const apiFunctions = Api as MapMaybePromise<ApiFunctions>;
 
 Deno.serve({ port: 8518 }, async (req) => {
@@ -17,7 +21,9 @@ Deno.serve({ port: 8518 }, async (req) => {
     const functionName = message.functionName as keyof ApiFunctions;
     const args = message.args as any[];
     const returnValueMaybePromise = apiFunctions[functionName](...args);
-    const returnValue = returnValueMaybePromise instanceof Promise ? await returnValueMaybePromise : returnValueMaybePromise
+    const returnValue = returnValueMaybePromise instanceof Promise
+      ? await returnValueMaybePromise
+      : returnValueMaybePromise;
     const response = {
       "body": returnValue,
     };
