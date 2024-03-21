@@ -494,6 +494,7 @@ server.registerRequestHandler("resetOcrState", () => {
 //
 
 const registrationUrlReplicant = server.getReplicant("registrationUrl");
+registrationUrlReplicant.setValue(null);
 
 const userServerHandler: UserServerActionHandler = {
   open: (url: string) => {
@@ -529,4 +530,4 @@ const userServerHandler: UserServerActionHandler = {
     await getCurrentParticipants();
   },
 };
-const userServer = new UserServer(8519, userServerHandler);
+const _userServer = new UserServer(8519, userServerHandler);
