@@ -57,7 +57,7 @@ export const timeToString = (time: number) => {
   const min = Math.floor(time / 60000);
   const sec = Math.floor(time / 1000) % 60;
   const cent = Math.floor(time / 10) % 100;
-  return String(min).padStart(2, "0") + ":" + String(sec).padStart(2, "0") +
+  return String(min) + ":" + String(sec).padStart(2, "0") +
     "." + String(cent).padStart(2, "0");
 };
 
