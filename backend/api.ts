@@ -129,7 +129,7 @@ export function mastersSetupCompetition(options: CompetitionSetupOptions) {
 
   const rounds = setupResult.metadata.rounds.map((round) => {
     const stages: StageData[] = round.stages.map((_) => ({
-      players: [],
+      players: [...new Array(8)],
       result: [],
     }));
     const supplementComparison: SupplementComparisonData[] = round
