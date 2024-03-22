@@ -29,6 +29,7 @@ replicant.subscribe((value) => {
     text += `${s.playing ? "PLAYING" : "NOT PLAYING"}\n`;
     text += `Level: ${s.level}\n`;
     text += `Time: ${timeToString(s.gameTime)}\n`;
+    text += `Health: ${s.health}\n`;
     text += "---------------------------\n";
     text += "         [lap]     [split] \n";
     s.sections.forEach((section, i) => {

@@ -2,6 +2,7 @@ import {
   RegisteredPlayerEntry,
   StagePlayerEntry,
 } from "../../../common/common_types.ts";
+import { OcrResult } from "../../common/type_definition.ts"; // TODO: Experimental
 import { commonColors } from "../common/common_values.ts";
 import { getDiffTime } from "../../common/util.ts";
 import {
@@ -87,6 +88,30 @@ export class MastersPlayerInfoElement extends LitElement {
       opacity: 0.3;
     }
 
+    /* TODO: Experimental */
+    @keyframes health-animation {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
+    }
+    .health {
+      position: absolute;
+      top: 10px;
+      width: 150px;
+      height: 30px;
+      background: linear-gradient(0deg, var(--health-color), transparent);
+      animation: health-animation 1s linear 0s infinite alternate;
+    }
+    .player:nth-child(odd) .health {
+      left: 60px;
+    }
+    .player:nth-child(even) .health {
+      right: 60px;
+    }
+
     .name {
       position: absolute;
       top: 10px;
@@ -168,8 +193,34 @@ export class MastersPlayerInfoElement extends LitElement {
   @property()
   registeredPlayers: RegisteredPlayerEntry[] = [];
 
+  // TODO: Experimental
+  private _healthDivs: HTMLDivElement[] = [];
+
   private _createEmptyData(): (StagePlayerEntry | null)[] {
     return [...new Array(8)].map((_) => null);
+  }
+
+  firstUpdated() {
+    // TODO: Experimental
+    this._healthDivs = [];
+    this.renderRoot.querySelectorAll(".health").forEach(e => this._healthDivs.push(e as HTMLDivElement));
+  }
+
+  setOcrResult(result?: OcrResult | null) {
+    this._healthDivs.forEach(e => {
+      e.style.setProperty("--health-color", "transparent");
+    });
+
+    if (result == null) return;
+    result.status.forEach((status, i) => {
+      const healthColor
+        = status.health == "CAUTION"
+        ? "rgb(150, 150, 0)"
+        : status.health == "DANGER"
+        ? "rgb(180, 0, 0)"
+        : "transparent"
+      this._healthDivs[i].style.setProperty("--health-color", healthColor);
+    })
   }
 
   render() {
@@ -185,6 +236,8 @@ export class MastersPlayerInfoElement extends LitElement {
           <div class=${
           classMap({ "id": true, "id-inactive": !isDataEmpty && e == null })
         }>${i + 1}</div>
+          <!-- TODO: Experimental -->
+          <div class="health"></div>
           <div class="name">${e?.name}</div>
           ${
           this.showDetail && e != null

@@ -75,6 +75,22 @@ export class MastersTimerElement extends LitElement {
     opacity: 0.3;
   }
 
+  /* TODO: Experimental */
+  @keyframes health-animation {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  .health {
+    grid-area: 1 / 2 / auto / auto;
+    height: 20px;
+    background: linear-gradient(0deg, var(--health-color), transparent);
+    animation: health-animation 1s linear 0s infinite alternate;
+  }
+
   .name {
     grid-area: 1 / 2 / auto / auto;
     font-size: 20px;
@@ -134,6 +150,7 @@ export class MastersTimerElement extends LitElement {
   #elements: {
     id: HTMLDivElement;
     backgroundTime: HTMLDivElement;
+    health: HTMLDivElement; // TODO: Experimental
     name: HTMLDivElement;
     time: HTMLDivElement;
     gauge: HTMLDivElement;
@@ -160,6 +177,7 @@ export class MastersTimerElement extends LitElement {
       const backgroundTime = player.querySelector<HTMLDivElement>(
         ".background-time",
       )!;
+      const health = player.querySelector<HTMLDivElement>(".health")!; // TODO: Experimental
       const name = player.querySelector<HTMLDivElement>(".name")!;
       const time = player.querySelector<HTMLDivElement>(".time")!;
       const gauge = player.querySelector<HTMLDivElement>(".gauge")!;
@@ -169,6 +187,7 @@ export class MastersTimerElement extends LitElement {
       this.#elements.push({
         id,
         backgroundTime,
+        health, // TODO: Experimental
         name,
         time,
         gauge,
@@ -308,6 +327,7 @@ export class MastersTimerElement extends LitElement {
         color = tinycolor.mix("#ff2800", "#faf500", u * 100).toRgbString();
       }
       player.gauge.style.background = color;
+      player.health.style.setProperty("--health-color", "transparent"); // TODO: Experimental
 
       if (this.isStarted() && time == 0 && this.#currentOcrResult != null) {
         const status = this.#currentOcrResult.status[index];
@@ -325,6 +345,14 @@ export class MastersTimerElement extends LitElement {
           : stopping
           ? "#ff9900"
           : "#66ccff";
+        // TODO: Experimental
+        const healthColor
+          = status.health == "CAUTION"
+          ? "rgb(150, 150, 0)"
+          : status.health == "DANGER"
+          ? "rgb(180, 0, 0)"
+          : "transparent"
+        player.health.style.setProperty("--health-color", healthColor);
       }
     } else {
       player.id.className = "id id-inactive";
@@ -348,6 +376,8 @@ export class MastersTimerElement extends LitElement {
           <div class="background-right"></div>
           <div class="border"></div>
           <div class="id">${i + 1}:</div>
+          <!-- TODO: Experimental -->
+          <div class="health"></div>
           <div class="name"></div>
           <div class="time"></div>
           <div class="gauge"></div>

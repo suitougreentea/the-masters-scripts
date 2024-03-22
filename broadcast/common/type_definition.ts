@@ -47,6 +47,8 @@ export type OcrResult = {
       lap: number;
       split: number;
     }[];
+    // TODO: experimental
+    health?: string;
   }[];
 };
 

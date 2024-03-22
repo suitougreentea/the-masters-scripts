@@ -122,6 +122,9 @@ export class MastersCompetitionElement extends LitElement {
 
   setOcrResult(result?: OcrResult | null) {
     this.#timerWrapper.setOcrResult(result);
+
+    // TODO: Experimental
+    this.#playerInfo.setOcrResult(result);
   }
 
   render() {
