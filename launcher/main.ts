@@ -70,6 +70,7 @@ const checkLoop = async (func: () => Promise<boolean>, interval: number, count: 
 };
 
 const skipBuild = Deno.args.indexOf("--skip-build") >= 0;
+const skipUserController = Deno.args.indexOf("--skip-user-controller") >= 0;
 
 if (!skipBuild) {
   console.log("Building Broadcast");
@@ -145,21 +146,23 @@ if (broadcastUserServerConnectionCheck) {
   if (!confirm("Continue?")) Deno.exit(1);
 }
 
-console.log("Launching UserClient");
-spawn("UserClient", Deno.execPath(), ["task", "start"], import.meta.dirname + "/../user-client/");
-const userClientConnectionCheck = await checkLoop(async () => {
-  try {
-    const response = await fetch("http://localhost:8520/", { signal: createTimeoutAbortSignal(2000) });
-    return response.status == 401 || response.status == 404;
-  } catch {
-    return false;
+if (!skipUserController) {
+  console.log("Launching UserClient");
+  spawn("UserClient", Deno.execPath(), ["task", "start"], import.meta.dirname + "/../user-client/");
+  const userClientConnectionCheck = await checkLoop(async () => {
+    try {
+      const response = await fetch("http://localhost:8520/", { signal: createTimeoutAbortSignal(2000) });
+      return response.status == 401 || response.status == 404;
+    } catch {
+      return false;
+    }
+  }, 1000, 5);
+  if (userClientConnectionCheck) {
+    console.log("Connection to UserClient OK");
+  } else {
+    console.error("Connection to UserClient FALIED");
+    if (!confirm("Continue?")) Deno.exit(1);
   }
-}, 1000, 5);
-if (userClientConnectionCheck) {
-  console.log("Connection to UserClient OK");
-} else {
-  console.error("Connection to UserClient FALIED");
-  if (!confirm("Continue?")) Deno.exit(1);
 }
 
 console.log("Opening Broadcast dashboard");
