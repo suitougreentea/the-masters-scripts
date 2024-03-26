@@ -54,10 +54,12 @@ export function stringToTimeFuzzy(time: string): number | null {
  * @returns
  */
 export const timeToString = (time: number) => {
-  const min = Math.floor(time / 60000);
-  const sec = Math.floor(time / 1000) % 60;
-  const cent = Math.floor(time / 10) % 100;
-  return String(min) + ":" + String(sec).padStart(2, "0") +
+  const sign = time > 0 ? "" : time < 0 ? "-" : "";
+  const abs = Math.abs(time);
+  const min = Math.floor(abs / 60000);
+  const sec = Math.floor(abs / 1000) % 60;
+  const cent = Math.floor(abs / 10) % 100;
+  return sign + String(min) + ":" + String(sec).padStart(2, "0") +
     "." + String(cent).padStart(2, "0");
 };
 
