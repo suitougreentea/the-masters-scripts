@@ -13,79 +13,79 @@ jobs:
 
       - name: Check backend
         run: cd backend; deno task check
-        continue-on-error: true
+        if: success() || failure()
       - name: Lint backend
         run: cd backend; deno lint
-        continue-on-error: true
+        if: success() || failure()
       - name: Fmt backend
         run: cd backend; deno fmt --check
-        continue-on-error: true
+        if: success() || failure()
       - name: Test backend
         run: cd backend; deno task test
-        continue-on-error: true
+        if: success() || failure()
 
       - name: Check broadcast
         run: cd broadcast; deno task check
-        continue-on-error: true
+        if: success() || failure()
       - name: Lint broadcast
         run: cd broadcast; deno lint
-        continue-on-error: true
+        if: success() || failure()
       - name: Fmt broadcast
         run: cd broadcast; deno fmt --check
-        continue-on-error: true
+        if: success() || failure()
       - name: Test broadcast
         run: cd broadcast; deno task test
-        continue-on-error: true
+        if: success() || failure()
 
       - name: Check common
         run: cd common; deno task check
-        continue-on-error: true
+        if: success() || failure()
       - name: Lint common
         run: cd common; deno lint
-        continue-on-error: true
+        if: success() || failure()
       - name: Fmt common
         run: cd common; deno fmt --check
-        continue-on-error: true
+        if: success() || failure()
       - name: Test common
         run: cd common; deno task test
-        continue-on-error: true
+        if: success() || failure()
 
       - name: Check fallback-timer
         run: cd fallback-timer; deno task check
-        continue-on-error: true
+        if: success() || failure()
       - name: Lint fallback-timer
         run: cd fallback-timer; deno lint
-        continue-on-error: true
+        if: success() || failure()
       - name: Fmt fallback-timer
         run: cd fallback-timer; deno fmt --check
-        continue-on-error: true
+        if: success() || failure()
 
       - name: Check launcher
         run: cd launcher; deno task check
-        continue-on-error: true
+        if: success() || failure()
       - name: Lint launcher
         run: cd launcher; deno lint
-        continue-on-error: true
+        if: success() || failure()
       - name: Fmt launcher
         run: cd launcher; deno fmt --check
-        continue-on-error: true
+        if: success() || failure()
 
       - name: Check spreadsheet-exporter
         run: cd spreadsheet-exporter; deno task check
-        continue-on-error: true
+        if: success() || failure()
       - name: Lint spreadsheet-exporter
         run: cd spreadsheet-exporter; deno lint
-        continue-on-error: true
+        if: success() || failure()
       - name: Fmt spreadsheet-exporter
         run: cd spreadsheet-exporter; deno fmt --check
-        continue-on-error: true
+        if: success() || failure()
 
       - name: Check user-controller
         run: cd user-controller; deno task check
-        continue-on-error: true
+        if: success() || failure()
       - name: Lint user-controller
         run: cd user-controller; deno lint
-        continue-on-error: true
+        if: success() || failure()
       - name: Fmt user-controller
         run: cd user-controller; deno fmt --check
-        continue-on-error: true
+        if: success() || failure()
