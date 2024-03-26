@@ -138,8 +138,8 @@ export class MastersStageResultElement extends LitElement {
         }</td>
             <td>${timeToStringNullable(e.time)}</td>
             <td>${timeToStringNullable(e.timeDiffBest)}</td>
-            <td>${timeToStringNullable(e.timeDiffPrev)}</td>
             <td>${timeToStringNullable(e.timeDiffTop)}</td>
+            <td>${timeToStringNullable(e.timeDiffPrev)}</td>
           </tr>
           `;
       })
