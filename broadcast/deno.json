@@ -4,7 +4,8 @@
     "lib": ["dom", "deno.ns", "deno.unstable"]
   },
   "exclude": [
-    "./client/*.bundle.js"
+    "./client/*.bundle.js",
+    "./replicants.json"
   ],
   "tasks": {
     "build": "deno run --allow-env --allow-net --allow-read --allow-run --allow-write build.ts build",
@@ -12,7 +13,8 @@
     "start": "deno run --allow-env --allow-net --allow-read --allow-write main.ts",
     "start-watch": "deno run --watch --allow-env --allow-net --allow-read --allow-write main.ts",
     "dev": "deno task build-watch & deno task start-watch",
-    "check": "deno check main.ts build.ts client/dashboard.ts client/competition_scene.ts client/result_scene.ts",
+    "check": "deno check **/*.ts",
+    "test": "deno test",
     "ocr-client-mock": "deno run --allow-net --allow-read ocr_client_mock/main.ts"
   }
 }

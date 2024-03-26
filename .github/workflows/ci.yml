@@ -1,0 +1,91 @@
+name: ci
+
+on: [push]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: "1.41.3"
+
+      - name: Check backend
+        run: cd backend; deno task check
+        continue-on-error: true
+      - name: Lint backend
+        run: cd backend; deno lint
+        continue-on-error: true
+      - name: Fmt backend
+        run: cd backend; deno fmt --check
+        continue-on-error: true
+      - name: Test backend
+        run: cd backend; deno task test
+        continue-on-error: true
+
+      - name: Check broadcast
+        run: cd broadcast; deno task check
+        continue-on-error: true
+      - name: Lint broadcast
+        run: cd broadcast; deno lint
+        continue-on-error: true
+      - name: Fmt broadcast
+        run: cd broadcast; deno fmt --check
+        continue-on-error: true
+      - name: Test broadcast
+        run: cd broadcast; deno task test
+        continue-on-error: true
+
+      - name: Check common
+        run: cd common; deno task check
+        continue-on-error: true
+      - name: Lint common
+        run: cd common; deno lint
+        continue-on-error: true
+      - name: Fmt common
+        run: cd common; deno fmt --check
+        continue-on-error: true
+      - name: Test common
+        run: cd common; deno task test
+        continue-on-error: true
+
+      - name: Check fallback-timer
+        run: cd fallback-timer; deno task check
+        continue-on-error: true
+      - name: Lint fallback-timer
+        run: cd fallback-timer; deno lint
+        continue-on-error: true
+      - name: Fmt fallback-timer
+        run: cd fallback-timer; deno fmt --check
+        continue-on-error: true
+
+      - name: Check launcher
+        run: cd launcher; deno task check
+        continue-on-error: true
+      - name: Lint launcher
+        run: cd launcher; deno lint
+        continue-on-error: true
+      - name: Fmt launcher
+        run: cd launcher; deno fmt --check
+        continue-on-error: true
+
+      - name: Check spreadsheet-exporter
+        run: cd spreadsheet-exporter; deno task check
+        continue-on-error: true
+      - name: Lint spreadsheet-exporter
+        run: cd spreadsheet-exporter; deno lint
+        continue-on-error: true
+      - name: Fmt spreadsheet-exporter
+        run: cd spreadsheet-exporter; deno fmt --check
+        continue-on-error: true
+
+      - name: Check user-controller
+        run: cd user-controller; deno task check
+        continue-on-error: true
+      - name: Lint user-controller
+        run: cd user-controller; deno lint
+        continue-on-error: true
+      - name: Fmt user-controller
+        run: cd user-controller; deno fmt --check
+        continue-on-error: true

@@ -5,6 +5,7 @@
   "tasks": {
     "start": "deno run --allow-net --allow-read --allow-write main.ts",
     "dev": "deno run --allow-net --allow-read --allow-write --watch main.ts",
+    "check": "deno check **/*.ts",
     "test": "deno test --allow-read",
     "exporter-data-gen": "deno run --allow-read --allow-write exporter_data_gen/main.ts"
   }

@@ -19,6 +19,7 @@
     "build-watch": "deno run --allow-env --allow-net --allow-read --allow-run --allow-write build.ts watch",
     "start": "deno run --allow-env --allow-ffi --allow-net --allow-read --allow-run --allow-write main.ts",
     "start-watch": "deno run --watch --allow-env --allow-ffi --allow-net --allow-read --allow-run --allow-write main.ts",
-    "dev": "deno task build-watch & deno task start-watch --dev"
+    "dev": "deno task build-watch & deno task start-watch --dev",
+    "check": "deno check **/*.ts"
   }
 }
