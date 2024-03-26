@@ -1,5 +1,5 @@
 import { commonColors } from "../common/common_values.ts";
-import { css, customElement, html, LitElement, property } from "../deps.ts";
+import { css, customElement, html, LitElement, property, state } from "../deps.ts";
 
 @customElement("masters-title")
 export class MastersTitleElement extends LitElement {
@@ -27,18 +27,44 @@ export class MastersTitleElement extends LitElement {
   @property()
   value?: string;
 
-  render() {
-    const date = new Date();
+  @state()
+  private _dateString?: string;
+  private _dateUpdateInterval?: number;
 
+  connectedCallback() {
+    super.connectedCallback();
+    this._updateDate();
+    this._dateUpdateInterval = setInterval(() => this._updateDate(), 1000);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    if (this._dateUpdateInterval != null) {
+      clearInterval(this._dateUpdateInterval);
+      this._dateUpdateInterval = undefined;
+    }
+  }
+
+  private _updateDate() {
+    this._dateString
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    // deno-fmt-ignore
+    this._dateString = `${year}/${month}/${day} (${weekday}) ${hours}:${String(minutes).padStart(2, "0")}`;
+  }
+
+  render() {
+    // deno-fmt-ignore
     return html`
     <div class="container">
       <div>
         <span class="title">${this.value ?? ""}</span>
-        <span class="date">${date.getFullYear()}/${
-      date.getMonth() + 1
-    }/${date.getDate()} (${
-      date.toLocaleDateString("en-US", { weekday: "short" })
-    })</span>
+        <span class="date">${this._dateString}</span>
       </div>
       <div>
         <span class="location">@Retropia22</span>
