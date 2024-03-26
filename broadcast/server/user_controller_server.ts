@@ -4,7 +4,7 @@ import {
   QueryPlayerResult,
   RegisterPlayerArgs,
   UpdatePlayerArgs,
-} from "../../common/user_server_types.ts";
+} from "../../common/user_controller_server_types.ts";
 
 export type ActionHandler = {
   open(url: string): void;
@@ -51,7 +51,7 @@ const createKeepAliveResponse = (
   return response;
 };
 
-export class UserServer {
+export class UserControllerServer {
   #port: number;
   #actionHandler: ActionHandler;
 

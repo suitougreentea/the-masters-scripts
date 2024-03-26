@@ -81,12 +81,12 @@ if (!skipBuild) {
     console.error("Building Broadcast FAILED");
     if (!confirm("Continue?")) Deno.exit(1);
   }
-  console.log("Building UserClient");
-  const userClientBuilder = await spawn("UserClient Builder", Deno.execPath(), ["task", "build"], import.meta.dirname + "/../user-client/");
-  if (userClientBuilder) {
-    console.log("Building UserClient OK");
+  console.log("Building User Controller");
+  const userControllerBuilder = await spawn("User Controller Builder", Deno.execPath(), ["task", "build"], import.meta.dirname + "/../user-controller/");
+  if (userControllerBuilder) {
+    console.log("Building User Controller OK");
   } else {
-    console.error("Building UserClient FAILED");
+    console.error("Building User Controller FAILED");
     if (!confirm("Continue?")) Deno.exit(1);
   }
 }
@@ -130,8 +130,8 @@ if (broadcastConnectionCheck) {
   console.error("Connection to Broadcast FAILED");
   if (!confirm("Continue?")) Deno.exit(1);
 }
-console.log("Checking connection to Broadcast UserServer");
-const broadcastUserServerConnectionCheck = await checkLoop(async () => {
+console.log("Checking connection to Broadcast User Controller Server");
+const broadcastUserControllerServerConnectionCheck = await checkLoop(async () => {
   try {
     const response = await fetch("http://localhost:8519/", { signal: createTimeoutAbortSignal(2000) });
     return response.status == 405;
@@ -139,17 +139,17 @@ const broadcastUserServerConnectionCheck = await checkLoop(async () => {
     return false;
   }
 }, 1000, 5);
-if (broadcastUserServerConnectionCheck) {
-  console.log("Connection to Broadcast UserServer OK");
+if (broadcastUserControllerServerConnectionCheck) {
+  console.log("Connection to Broadcast User Controller Server OK");
 } else {
-  console.error("Connection to Broadcast UserServer FALIED");
+  console.error("Connection to Broadcast User Controller Server FALIED");
   if (!confirm("Continue?")) Deno.exit(1);
 }
 
 if (!skipUserController) {
-  console.log("Launching UserClient");
-  spawn("UserClient", Deno.execPath(), ["task", "start"], import.meta.dirname + "/../user-client/");
-  const userClientConnectionCheck = await checkLoop(async () => {
+  console.log("Launching User Controller");
+  spawn("User Controller", Deno.execPath(), ["task", "start"], import.meta.dirname + "/../user-controller/");
+  const userControllerConnectionCheck = await checkLoop(async () => {
     try {
       const response = await fetch("http://localhost:8520/", { signal: createTimeoutAbortSignal(2000) });
       return response.status == 401 || response.status == 404;
@@ -157,10 +157,10 @@ if (!skipUserController) {
       return false;
     }
   }, 1000, 5);
-  if (userClientConnectionCheck) {
-    console.log("Connection to UserClient OK");
+  if (userControllerConnectionCheck) {
+    console.log("Connection to User Controller OK");
   } else {
-    console.error("Connection to UserClient FALIED");
+    console.error("Connection to User Controller FALIED");
     if (!confirm("Continue?")) Deno.exit(1);
   }
 }

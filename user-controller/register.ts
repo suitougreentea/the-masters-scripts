@@ -8,7 +8,7 @@ import {
   QueryPlayerResult,
   RegisterPlayerArgs,
   UpdatePlayerArgs,
-} from "../common/user_server_types.ts";
+} from "../common/user_controller_server_types.ts";
 import {
   fluentButton,
   fluentTextArea,

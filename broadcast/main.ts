@@ -15,10 +15,10 @@ import { denocg, PQueue } from "./server/deps.ts";
 import { OBSController } from "./server/obs_controller.ts";
 import { OcrServer } from "./server/ocr_server.ts";
 import {
-  ActionHandler as UserServerActionHandler,
-  UserServer,
-} from "./server/user_server.ts";
-import { QueryPlayerResult } from "../common/user_server_types.ts";
+  ActionHandler as UserControllerServerActionHandler,
+  UserControllerServer,
+} from "./server/user_controller_server.ts";
+import { QueryPlayerResult } from "../common/user_controller_server_types.ts";
 
 export const config: denocg.ServerConfig<TypeDefinition> = {
   socketPort: 8515,
@@ -490,13 +490,13 @@ server.registerRequestHandler("resetOcrState", () => {
 });
 
 //
-// User Server / Data
+// User Controller Server / Data
 //
 
 const registrationUrlReplicant = server.getReplicant("registrationUrl");
 registrationUrlReplicant.setValue(null);
 
-const userServerHandler: UserServerActionHandler = {
+const userControllerServerHandler: UserControllerServerActionHandler = {
   open: (url: string) => {
     registrationUrlReplicant.setValue(url);
   },
@@ -530,4 +530,4 @@ const userServerHandler: UserServerActionHandler = {
     await getCurrentParticipants();
   },
 };
-const _userServer = new UserServer(8519, userServerHandler);
+const _userControllerServer = new UserControllerServer(8519, userControllerServerHandler);
