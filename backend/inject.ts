@@ -1,13 +1,19 @@
 // Simple dependency injection container using TC39 decorator
 
 const __brand = Symbol();
-type InjectKey<T> = symbol & { [__brand]: T }
+type InjectKey<T> = symbol & { [__brand]: T };
 const injectKeys = new Map<symbol, InjectKey<unknown>>();
 
 type Constructor<Args extends unknown[], T> = new (...params: Args) => T;
-const injectCtorMap = new Map<Constructor<unknown[], unknown>, InjectKey<unknown>[]>();
+const injectCtorMap = new Map<
+  Constructor<unknown[], unknown>,
+  InjectKey<unknown>[]
+>();
 
-const constructors = new Map<InjectKey<unknown>, Constructor<unknown[], unknown>>();
+const constructors = new Map<
+  InjectKey<unknown>,
+  Constructor<unknown[], unknown>
+>();
 const singletonMap = new Map<InjectKey<unknown>, unknown>();
 
 export const createKey = <T>(symbol: symbol): InjectKey<T> => {
@@ -18,15 +24,19 @@ export const createKey = <T>(symbol: symbol): InjectKey<T> => {
   return created;
 };
 
-export const injectCtor =
-  <Args extends unknown[]>(keys: [...{ [K in keyof Args]: InjectKey<Args[K]> }]) =>
-  (ctor: Constructor<Args, unknown>, context: ClassDecoratorContext) => {
-    context.addInitializer(() => {
-      injectCtorMap.set(ctor as Constructor<unknown[], unknown>, keys);
-    });
-  };
+export const injectCtor = <Args extends unknown[]>(
+  keys: [...{ [K in keyof Args]: InjectKey<Args[K]> }],
+) =>
+(ctor: Constructor<Args, unknown>, context: ClassDecoratorContext) => {
+  context.addInitializer(() => {
+    injectCtorMap.set(ctor as Constructor<unknown[], unknown>, keys);
+  });
+};
 
-export const register = <T, Args extends unknown[]>(key: InjectKey<T>, ctor: Constructor<Args, T>) => {
+export const register = <T, Args extends unknown[]>(
+  key: InjectKey<T>,
+  ctor: Constructor<Args, T>,
+) => {
   constructors.set(key, ctor as Constructor<unknown[], unknown>);
 };
 

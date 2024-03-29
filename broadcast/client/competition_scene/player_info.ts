@@ -203,24 +203,25 @@ export class MastersPlayerInfoElement extends LitElement {
   firstUpdated() {
     // TODO: Experimental
     this._healthDivs = [];
-    this.renderRoot.querySelectorAll(".health").forEach(e => this._healthDivs.push(e as HTMLDivElement));
+    this.renderRoot.querySelectorAll(".health").forEach((e) =>
+      this._healthDivs.push(e as HTMLDivElement)
+    );
   }
 
   setOcrResult(result?: OcrResult | null) {
-    this._healthDivs.forEach(e => {
+    this._healthDivs.forEach((e) => {
       e.style.setProperty("--health-color", "transparent");
     });
 
     if (result == null) return;
     result.status.forEach((status, i) => {
-      const healthColor
-        = status.health == "CAUTION"
+      const healthColor = status.health == "CAUTION"
         ? "rgb(150, 150, 0)"
         : status.health == "DANGER"
         ? "rgb(180, 0, 0)"
-        : "transparent"
+        : "transparent";
       this._healthDivs[i].style.setProperty("--health-color", healthColor);
-    })
+    });
   }
 
   render() {

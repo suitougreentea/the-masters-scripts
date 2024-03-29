@@ -346,12 +346,11 @@ export class MastersTimerElement extends LitElement {
           ? "#ff9900"
           : "#66ccff";
         // TODO: Experimental
-        const healthColor
-          = status.health == "CAUTION"
+        const healthColor = status.health == "CAUTION"
           ? "rgb(150, 150, 0)"
           : status.health == "DANGER"
           ? "rgb(180, 0, 0)"
-          : "transparent"
+          : "transparent";
         player.health.style.setProperty("--health-color", healthColor);
       }
     } else {

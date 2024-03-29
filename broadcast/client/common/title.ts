@@ -1,5 +1,12 @@
 import { commonColors } from "../common/common_values.ts";
-import { css, customElement, html, LitElement, property, state } from "../deps.ts";
+import {
+  css,
+  customElement,
+  html,
+  LitElement,
+  property,
+  state,
+} from "../deps.ts";
 
 @customElement("masters-title")
 export class MastersTitleElement extends LitElement {
@@ -46,7 +53,7 @@ export class MastersTitleElement extends LitElement {
   }
 
   private _updateDate() {
-    this._dateString
+    this._dateString;
     const date = new Date();
     const year = date.getFullYear();
     const month = date.getMonth() + 1;

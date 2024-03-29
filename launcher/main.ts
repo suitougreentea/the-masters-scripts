@@ -8,7 +8,7 @@ class MergedWriterStream<W> extends WritableStream<W> {
     const sink: UnderlyingSink<W> = {
       write(chunk) {
         writer.write(chunk);
-      }
+      },
     };
     super(sink);
   }
@@ -26,7 +26,12 @@ class PrependNameStream extends TransformStream<string, string> {
   }
 }
 
-const spawn = async (name: string, execPath: string, args: string[], cwd: string): Promise<boolean> => {
+const spawn = async (
+  name: string,
+  execPath: string,
+  args: string[],
+  cwd: string,
+): Promise<boolean> => {
   const command = new Deno.Command(
     execPath,
     {
@@ -34,7 +39,7 @@ const spawn = async (name: string, execPath: string, args: string[], cwd: string
       cwd,
       stdout: "piped",
       stderr: "piped",
-    }
+    },
   );
   const process = command.spawn();
 
@@ -51,20 +56,24 @@ const spawn = async (name: string, execPath: string, args: string[], cwd: string
     .pipeThrough(new TextEncoderStream())
     .pipeTo(new MergedWriterStream(stderrWriter));
 
-  return (await process.status).success
-}
+  return (await process.status).success;
+};
 
 const createTimeoutAbortSignal = (timeout: number) => {
   const controller = new AbortController();
   setTimeout(() => controller.abort(), timeout);
   return controller.signal;
-}
+};
 
-const checkLoop = async (func: () => Promise<boolean>, interval: number, count: number): Promise<boolean> => {
+const checkLoop = async (
+  func: () => Promise<boolean>,
+  interval: number,
+  count: number,
+): Promise<boolean> => {
   for (let i = 0; i < count; i++) {
     const result = await func();
     if (result) return true;
-    await new Promise(r => setTimeout(r, interval));
+    await new Promise((r) => setTimeout(r, interval));
   }
   return false;
 };
@@ -74,7 +83,12 @@ const skipUserController = Deno.args.indexOf("--skip-user-controller") >= 0;
 
 if (!skipBuild) {
   console.log("Building Broadcast");
-  const broadcastBuilderSuccess = await spawn("Broadcast Builder", Deno.execPath(), ["task", "build"], import.meta.dirname + "/../broadcast/");
+  const broadcastBuilderSuccess = await spawn(
+    "Broadcast Builder",
+    Deno.execPath(),
+    ["task", "build"],
+    import.meta.dirname + "/../broadcast/",
+  );
   if (broadcastBuilderSuccess) {
     console.log("Building Broadcast OK");
   } else {
@@ -82,7 +96,12 @@ if (!skipBuild) {
     if (!confirm("Continue?")) Deno.exit(1);
   }
   console.log("Building User Controller");
-  const userControllerBuilder = await spawn("User Controller Builder", Deno.execPath(), ["task", "build"], import.meta.dirname + "/../user-controller/");
+  const userControllerBuilder = await spawn(
+    "User Controller Builder",
+    Deno.execPath(),
+    ["task", "build"],
+    import.meta.dirname + "/../user-controller/",
+  );
   if (userControllerBuilder) {
     console.log("Building User Controller OK");
   } else {
@@ -92,20 +111,32 @@ if (!skipBuild) {
 }
 
 console.log("Launching Backend");
-spawn("Backend", Deno.execPath(), ["task", "start"], import.meta.dirname + "/../backend/");
+spawn(
+  "Backend",
+  Deno.execPath(),
+  ["task", "start"],
+  import.meta.dirname + "/../backend/",
+);
 console.log("Checking connection to Backend");
-const backendConnectionCheck = await checkLoop(async () => {
-  try {
-    const response = await fetch("http://localhost:8518/", {
-      method: "POST",
-      body: JSON.stringify({ functionName: "mastersGetRegisteredPlayers", args: [] }),
-      signal: createTimeoutAbortSignal(2000),
-    });
-    return response.status == 200;
-  } catch {
-    return false;
-  }
-}, 1000, 5);
+const backendConnectionCheck = await checkLoop(
+  async () => {
+    try {
+      const response = await fetch("http://localhost:8518/", {
+        method: "POST",
+        body: JSON.stringify({
+          functionName: "mastersGetRegisteredPlayers",
+          args: [],
+        }),
+        signal: createTimeoutAbortSignal(2000),
+      });
+      return response.status == 200;
+    } catch {
+      return false;
+    }
+  },
+  1000,
+  5,
+);
 if (backendConnectionCheck) {
   console.log("Connection to Backend OK");
 } else {
@@ -114,16 +145,27 @@ if (backendConnectionCheck) {
 }
 
 console.log("Launching Broadcast");
-spawn("Broadcast", Deno.execPath(), ["task", "start"], import.meta.dirname + "/../broadcast/");
+spawn(
+  "Broadcast",
+  Deno.execPath(),
+  ["task", "start"],
+  import.meta.dirname + "/../broadcast/",
+);
 console.log("Checking connection to Broadcast");
-const broadcastConnectionCheck = await checkLoop(async () => {
-  try {
-    const response = await fetch("http://localhost:8514/", { signal: createTimeoutAbortSignal(2000) });
-    return response.status == 404;
-  } catch {
-    return false;
-  }
-}, 1000, 5);
+const broadcastConnectionCheck = await checkLoop(
+  async () => {
+    try {
+      const response = await fetch("http://localhost:8514/", {
+        signal: createTimeoutAbortSignal(2000),
+      });
+      return response.status == 404;
+    } catch {
+      return false;
+    }
+  },
+  1000,
+  5,
+);
 if (broadcastConnectionCheck) {
   console.log("Connection to Broadcast OK");
 } else {
@@ -131,14 +173,20 @@ if (broadcastConnectionCheck) {
   if (!confirm("Continue?")) Deno.exit(1);
 }
 console.log("Checking connection to Broadcast User Controller Server");
-const broadcastUserControllerServerConnectionCheck = await checkLoop(async () => {
-  try {
-    const response = await fetch("http://localhost:8519/", { signal: createTimeoutAbortSignal(2000) });
-    return response.status == 405;
-  } catch {
-    return false;
-  }
-}, 1000, 5);
+const broadcastUserControllerServerConnectionCheck = await checkLoop(
+  async () => {
+    try {
+      const response = await fetch("http://localhost:8519/", {
+        signal: createTimeoutAbortSignal(2000),
+      });
+      return response.status == 405;
+    } catch {
+      return false;
+    }
+  },
+  1000,
+  5,
+);
 if (broadcastUserControllerServerConnectionCheck) {
   console.log("Connection to Broadcast User Controller Server OK");
 } else {
@@ -148,15 +196,26 @@ if (broadcastUserControllerServerConnectionCheck) {
 
 if (!skipUserController) {
   console.log("Launching User Controller");
-  spawn("User Controller", Deno.execPath(), ["task", "start"], import.meta.dirname + "/../user-controller/");
-  const userControllerConnectionCheck = await checkLoop(async () => {
-    try {
-      const response = await fetch("http://localhost:8520/", { signal: createTimeoutAbortSignal(2000) });
-      return response.status == 401 || response.status == 404;
-    } catch {
-      return false;
-    }
-  }, 1000, 5);
+  spawn(
+    "User Controller",
+    Deno.execPath(),
+    ["task", "start"],
+    import.meta.dirname + "/../user-controller/",
+  );
+  const userControllerConnectionCheck = await checkLoop(
+    async () => {
+      try {
+        const response = await fetch("http://localhost:8520/", {
+          signal: createTimeoutAbortSignal(2000),
+        });
+        return response.status == 401 || response.status == 404;
+      } catch {
+        return false;
+      }
+    },
+    1000,
+    5,
+  );
   if (userControllerConnectionCheck) {
     console.log("Connection to User Controller OK");
   } else {
@@ -167,4 +226,8 @@ if (!skipUserController) {
 
 console.log("Opening Broadcast dashboard");
 // TODO: windows only!
-spawn("Dashboard launcher", "cmd", ["/c", "start", "http://localhost:8514/dashboard.html"], import.meta.dirname!.toString());
+spawn("Dashboard launcher", "cmd", [
+  "/c",
+  "start",
+  "http://localhost:8514/dashboard.html",
+], import.meta.dirname!.toString());

@@ -1,6 +1,7 @@
 ## Setup
 
-(This isn't necessary when you only run in dev mode) `.ngrok-authtoken`: ngrok authtoken
+(This isn't necessary when you only run in dev mode) `.ngrok-authtoken`: ngrok
+authtoken
 
 ## Run
 

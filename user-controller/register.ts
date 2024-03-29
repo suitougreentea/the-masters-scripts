@@ -11,9 +11,9 @@ import {
 } from "../common/user_controller_server_types.ts";
 import {
   fluentButton,
+  fluentProgressRing,
   fluentTextArea,
   fluentTextField,
-  fluentProgressRing,
   provideFluentDesignSystem,
   TextArea,
   TextField,
@@ -106,7 +106,7 @@ export class MastersPlayerInfoElement extends LitElement {
   @state()
   private _showLoader: boolean = false;
   @state()
-  private _currentMessage: { type: number, message: string } | null = null;
+  private _currentMessage: { type: number; message: string } | null = null;
 
   private _oldName: string | null = null;
   private _currentMessageTimeout: number | null = null;
@@ -227,7 +227,7 @@ export class MastersPlayerInfoElement extends LitElement {
       <div class="loader">
         <fluent-progress-ring class="spinner"></fluent-progress-ring>
       </div>
-      `
+      `;
     }
 
     return html`
@@ -235,7 +235,8 @@ export class MastersPlayerInfoElement extends LitElement {
       <div class="row">
         <fluent-text-field
           .value=${live(this._name)}
-          @change=${(ev: Event) => this._name = (ev.target as TextField).value.trim()}
+          @change=${(ev: Event) =>
+      this._name = (ev.target as TextField).value.trim()}
         >
           ${
       this._oldName == null
@@ -283,12 +284,14 @@ export class MastersPlayerInfoElement extends LitElement {
         >${this._participating ? "参加登録済" : "参加登録"}</fluent-button>
       </div>
       <div
-        class="${classMap({
-          "message": true,
-          "message-hidden": this._currentMessage == null,
-          "message-info": this._currentMessage?.type == 0,
-          "message-error": this._currentMessage?.type == 1,
-        })}"
+        class="${
+      classMap({
+        "message": true,
+        "message-hidden": this._currentMessage == null,
+        "message-info": this._currentMessage?.type == 0,
+        "message-error": this._currentMessage?.type == 1,
+      })
+    }"
       >
         ${this._currentMessage?.message}
       </div>

@@ -530,4 +530,7 @@ const userControllerServerHandler: UserControllerServerActionHandler = {
     await getCurrentParticipants();
   },
 };
-const _userControllerServer = new UserControllerServer(8519, userControllerServerHandler);
+const _userControllerServer = new UserControllerServer(
+  8519,
+  userControllerServerHandler,
+);
