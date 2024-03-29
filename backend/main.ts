@@ -8,6 +8,7 @@ if (Deno.args[0] == "--local") {
   modifyInjectLocal();
 }
 
+// deno-lint-ignore no-explicit-any
 type MapMaybePromise<T extends { [key: string]: (...args: any[]) => any }> = {
   [K in keyof T]:
     | T[K]
@@ -19,8 +20,10 @@ Deno.serve({ port: 8518 }, async (req) => {
   try {
     const message = await req.json();
     const functionName = message.functionName as keyof ApiFunctions;
-    const args = message.args as any[];
-    const returnValueMaybePromise = apiFunctions[functionName](...args);
+    // deno-lint-ignore no-explicit-any
+    const apiFunction = apiFunctions[functionName] as (...args: any[]) => any;
+    const args = message.args;
+    const returnValueMaybePromise = apiFunction(...args);
     const returnValue = returnValueMaybePromise instanceof Promise
       ? await returnValueMaybePromise
       : returnValueMaybePromise;

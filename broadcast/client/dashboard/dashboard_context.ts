@@ -56,12 +56,12 @@ export class DashboardContext extends EventTarget {
   // TODO: Modal実装
   async confirm(message: string): Promise<boolean> {
     await Promise.resolve();
-    return window.confirm(message);
+    return confirm(message);
   }
 
   async alert(message: string) {
     await Promise.resolve();
-    return window.alert(message);
+    return alert(message);
   }
 }
 

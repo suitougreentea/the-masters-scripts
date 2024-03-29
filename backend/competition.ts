@@ -820,10 +820,10 @@ function setupSubsequentRoundWithTournament(
           });
         }
       } else {
-        const numWinners = dependentStageMetadata[0].numWinners;
-        const unevenNumWinners = dependentStageMetadata.some((e) =>
-          e.numWinners != numWinners
-        );
+        // const numWinners = dependentStageMetadata[0].numWinners;
+        // const unevenNumWinners = dependentStageMetadata.some((e) =>
+        //   e.numWinners != numWinners
+        // );
         const hasWildcard = dependentStageMetadata[0].hasWildcard;
         if (dependentStageMetadata.some((e) => e.hasWildcard != hasWildcard)) {
           throw new Error(); // 負けを並べるとき、ワイルドカード有無が揃ってない場合は未対応
@@ -832,9 +832,9 @@ function setupSubsequentRoundWithTournament(
         const numMaxLosers = Math.max(
           ...dependentStageMetadata.map((e) => e.numLosers),
         );
-        const unevenNumLosers = dependentStageMetadata.some((e) =>
-          e.numLosers != numMaxLosers
-        );
+        // const unevenNumLosers = dependentStageMetadata.some((e) =>
+        //   e.numLosers != numMaxLosers
+        // );
 
         if (hasWildcard) {
           const wildcardResults: SupplementComparisonEntryStub[] = [];

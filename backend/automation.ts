@@ -6,7 +6,6 @@ import {
   StageSetupPlayerEntry,
   StageSetupResult,
 } from "../common/common_types.ts";
-import { stringToGrade } from "../common/grade.ts";
 import { getAppropriatePresetName, getPreset } from "./preset.ts";
 import * as Api from "./api.ts";
 import { getSerializerValue, setSerializerValue } from "./serializer_dev.ts";

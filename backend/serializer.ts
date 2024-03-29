@@ -14,7 +14,7 @@ export interface Serializer<T> {
 }
 
 export class FileSerializerManager {
-  #serializers = new Map<string, Serializer<any>>();
+  #serializers = new Map<string, Serializer<unknown>>();
 
   getSerializer<T>(name: string) {
     const serializer = this.#serializers.get(name);

@@ -44,16 +44,14 @@ if (import.meta.main) {
   };
 
   // gzip圧縮されたテキストファイルを解凍しバッファに保存
-  const fileStream = await Deno.open(fileName, { read: true });
-  const decompressionStream = new DecompressionStream("gzip");
-  const textDecoderStream = new TextDecoderStream();
-  const lineStream = new TextLineStream();
-  fileStream.readable.pipeThrough(decompressionStream);
-  decompressionStream.readable.pipeThrough(textDecoderStream);
-  textDecoderStream.readable.pipeThrough(lineStream);
+  const lines = (await Deno.open(fileName, { read: true })).readable
+    .pipeThrough(new DecompressionStream("gzip"))
+    .pipeThrough(new TextDecoderStream())
+    .pipeThrough(new TextLineStream());
 
   const data: string[] = [];
-  for await (const line of lineStream.readable) {
+  // @ts-ignore: Deno type checker sometimes misses AsyncIterator of ReadableStream
+  for await (const line of lines) {
     if (line != "") {
       data.push(line);
     }

@@ -11,7 +11,7 @@ export async function withLoader(action: () => Promise<void>) {
   }
 }
 
-export function runServerScript(name: string, args: any): any {
+export function runServerScript(name: string, args: unknown): unknown {
   return new Promise((resolve, reject) => {
     google.script.run
       .withSuccessHandler((result) => {
@@ -76,7 +76,7 @@ const getData = (url: string, gameIndex: number) => {
       const data = await runServerScript("getData", {
         spreadsheet: url,
         game: gameIndex,
-      });
+      }) as TimerData;
       currentData = data;
     } catch (e) {
       console.error(e);

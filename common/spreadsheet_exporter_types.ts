@@ -73,7 +73,7 @@ export type SupplementsData = {
       points: number;
       numPlaces: number[];
       bestGameLevel: number;
-      bestGameGrade: number | null;
+      bestGameGrade: Grade | null;
       bestGameTimeDiffBest: number | null;
     }[];
   } | null;

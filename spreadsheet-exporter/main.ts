@@ -4,7 +4,8 @@ import { createParticipantsSheet } from "./participants.ts";
 import { createStagesSheet } from "./stages.ts";
 import { createSupplementsSheet } from "./supplements.ts";
 
-declare let global: Record<string, (...args: any[]) => void>;
+// deno-lint-ignore no-explicit-any
+declare let global: Record<string, (...args: any[]) => any>;
 
 const createCredentialHash = (data: { credential: string; salt: string }) => {
   return Utilities.computeDigest(
@@ -46,14 +47,14 @@ const doExport = (input: Input): string => {
   ).getActiveSheet();
   const templatesSheet = templatesSourceSheet.copyTo(ss);
 
-  const participantsSheet = createParticipantsSheet(ss, input.participants);
-  const stageSheet = createStagesSheet(ss, input.stages, templatesSheet);
-  const supplementsSheet = createSupplementsSheet(
+  const _participantsSheet = createParticipantsSheet(ss, input.participants);
+  const _stageSheet = createStagesSheet(ss, input.stages, templatesSheet);
+  const _supplementsSheet = createSupplementsSheet(
     ss,
     input.supplements,
     templatesSheet,
   );
-  const leaderboardSheet = createLeaderboardSheet(ss, input.leaderboard);
+  const _leaderboardSheet = createLeaderboardSheet(ss, input.leaderboard);
   ss.deleteSheet(defaultSheet);
   ss.deleteSheet(templatesSheet);
 
@@ -73,7 +74,7 @@ global.doPost = (e: GoogleAppsScript.Events.DoPost) => {
 
   try {
     const data = JSON.parse(e.postData.contents);
-    let result: any;
+    let result: unknown;
     if (e.queryString == "") {
       result = handler(data);
     } else if (e.queryString == "createCredentialHash") {

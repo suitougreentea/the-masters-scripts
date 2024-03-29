@@ -1,6 +1,7 @@
 import { spreadsheetValueToTime } from "../common/spreadsheet_util.ts";
 
-declare let global: Record<string, (...args: any[]) => void>;
+// deno-lint-ignore no-explicit-any
+declare let global: Record<string, (...args: any[]) => any>;
 
 global.doGet = (_: GoogleAppsScript.Events.DoGet) => {
   return HtmlService.createHtmlOutputFromFile("page");

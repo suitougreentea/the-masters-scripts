@@ -1,55 +1,53 @@
 // Simple dependency injection container using TC39 decorator
 
-type InjectKey<T> = {
-  symbol: symbol;
-  _phantom: Record<never, never> & T; // actually {}
-};
-const injectKeys = new Map<symbol, InjectKey<any>>();
+const __brand = Symbol();
+type InjectKey<T> = symbol & { [__brand]: T }
+const injectKeys = new Map<symbol, InjectKey<unknown>>();
 
-type Constructor<T> = new (...params: any[]) => T;
-const injectCtorMap = new Map<Constructor<any>, InjectKey<any>[]>();
+type Constructor<Args extends unknown[], T> = new (...params: Args) => T;
+const injectCtorMap = new Map<Constructor<unknown[], unknown>, InjectKey<unknown>[]>();
 
-const constructors = new Map<InjectKey<any>, Constructor<any>>();
-const singletonMap = new Map<InjectKey<any>, any>();
+const constructors = new Map<InjectKey<unknown>, Constructor<unknown[], unknown>>();
+const singletonMap = new Map<InjectKey<unknown>, unknown>();
 
 export const createKey = <T>(symbol: symbol): InjectKey<T> => {
-  const key = injectKeys.get(symbol);
+  const key = injectKeys.get(symbol) as InjectKey<T> | undefined;
   if (key != null) return key;
-  const created = { symbol } as unknown as InjectKey<T>;
+  const created = symbol as InjectKey<T>;
   injectKeys.set(symbol, created);
   return created;
 };
 
 export const injectCtor =
-  (keys: InjectKey<any>[]) =>
-  (ctor: Constructor<any>, context: ClassDecoratorContext) => {
+  <Args extends unknown[]>(keys: [...{ [K in keyof Args]: InjectKey<Args[K]> }]) =>
+  (ctor: Constructor<Args, unknown>, context: ClassDecoratorContext) => {
     context.addInitializer(() => {
-      injectCtorMap.set(ctor, keys);
+      injectCtorMap.set(ctor as Constructor<unknown[], unknown>, keys);
     });
   };
 
-export const register = <T>(key: InjectKey<T>, ctor: Constructor<T>) => {
-  constructors.set(key, ctor);
+export const register = <T, Args extends unknown[]>(key: InjectKey<T>, ctor: Constructor<Args, T>) => {
+  constructors.set(key, ctor as Constructor<unknown[], unknown>);
 };
 
 export const resolve = <T>(key: InjectKey<T>): T => {
-  const instance = singletonMap.get(key);
+  const instance = singletonMap.get(key) as T | undefined;
   if (instance != null) return instance;
 
   const ctor = constructors.get(key);
   if (ctor == null) {
     throw new Error(
-      `Constructor for key ${key.symbol.description} is not registered.`,
+      `Constructor for key ${key.description} is not registered.`,
     );
   }
 
   const dependencies = injectCtorMap.get(ctor);
-  let ctorArgs: any[] = [];
+  let ctorArgs: unknown[] = [];
   if (dependencies != null) {
     ctorArgs = dependencies.map((e) => resolve(e));
   }
 
-  const created = new ctor(...ctorArgs);
+  const created = new ctor(...ctorArgs) as T;
   singletonMap.set(key, created);
   return created;
 };

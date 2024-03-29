@@ -13,7 +13,6 @@ import { OcrResult, RoundData } from "../../common/type_definition.ts";
 import {
   StageMetadata,
   StageScoreData,
-  StageScoreEntry,
   StageSetupResult,
   SupplementComparisonMetadata,
 } from "../../../common/common_types.ts";

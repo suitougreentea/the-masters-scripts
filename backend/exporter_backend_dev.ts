@@ -1,13 +1,13 @@
 import { Input } from "../common/spreadsheet_exporter_types.ts";
 import { ExporterBackend } from "./exporter_backend.ts";
 
-const inMemoryData: Record<string, any> = {};
+const inMemoryData: Record<string, unknown> = {};
 
 export const getByFilename = (filename: string) => {
   return inMemoryData[filename];
 };
 
-const setByFilename = (filename: string, content: any) => {
+const setByFilename = (filename: string, content: unknown) => {
   inMemoryData[filename] = content;
 };
 

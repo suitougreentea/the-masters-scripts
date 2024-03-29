@@ -1,5 +1,4 @@
 import {
-  ApiFunctions,
   CompetitionMetadata,
   CompetitionSetupOptions,
   Participant,

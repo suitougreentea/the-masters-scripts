@@ -1,7 +1,7 @@
 import { Serializer } from "./serializer.ts";
 import { SerializerManager } from "./serializer.ts";
 
-const serializers = new Map<string, InMemorySerializer<any>>();
+const serializers = new Map<string, InMemorySerializer<unknown>>();
 const getSerializer = <T>(name: string) => {
   const serializer = serializers.get(name);
   if (serializer != null) return serializer as InMemorySerializer<T>;
