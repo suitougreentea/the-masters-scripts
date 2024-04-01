@@ -14,7 +14,6 @@ import {
   state,
   styleMap,
 } from "../deps.ts";
-import "./system_menu.ts";
 import "./timer_controller.ts";
 import "./tabs.ts";
 import "./setup.ts";
@@ -57,11 +56,6 @@ export class MastersDashboardElement extends LitElement {
       grid-template-rows: auto auto auto 1fr;
       background-color: rgb(249, 249, 249);
       border-left: 1px solid gray;
-    }
-
-    #system-menu {
-      padding: 8px;
-      border-bottom: 1px solid gray;
     }
 
     #menu {
@@ -243,7 +237,6 @@ export class MastersDashboardElement extends LitElement {
         </div>
       </div>
       <div id="sidebar">
-        <masters-system-menu id="system-menu"></masters-system-menu>
         <div id="menu">
           <fluent-switch ?current-checked=${
       live(this._timerVisible)
