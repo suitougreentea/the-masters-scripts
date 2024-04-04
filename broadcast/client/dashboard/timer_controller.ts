@@ -153,7 +153,9 @@ export class MastersTimerControllerElement extends LitElement {
   }
 
   private async _confirmReset() {
-    const shouldReset = await this._dashboardContext.confirm("OCRの現在の状態もリセットされます。よろしいですか？");
+    const shouldReset = await this._dashboardContext.confirm(
+      "OCRの現在の状態もリセットされます。よろしいですか？",
+    );
     if (!shouldReset) return;
     this._reset();
   }
