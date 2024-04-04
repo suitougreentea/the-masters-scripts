@@ -28,8 +28,8 @@ currentRegisteredPlayersReplicant.subscribe((value) => {
 client.addMessageListener("startTimer", () => {
   competition.startTimer();
 });
-client.addMessageListener("stopTimer", () => {
-  competition.stopTimer();
+client.addMessageListener("resetTimer", () => {
+  competition.resetTimer();
 });
 
 const currentCompetitionMetadataReplicant = await client.getReplicant(

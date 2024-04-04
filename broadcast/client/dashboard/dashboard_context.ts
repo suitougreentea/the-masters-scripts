@@ -45,8 +45,8 @@ export class DashboardContext extends EventTarget {
     }
   }
 
-  requestStopTimer() {
-    this.dispatchEvent(new Event("stop-timer"));
+  requestResetTimer() {
+    this.dispatchEvent(new Event("reset-timer"));
   }
 
   requestActivateTimer() {

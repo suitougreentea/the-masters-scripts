@@ -31,8 +31,6 @@ import { timeToString } from "../../../common/time.ts";
 export class MastersSetupElement extends LitElement {
   static styles = css`
     .container {
-      width: calc(100vw - 312px);
-      height: calc(100vh - 32px);
       overflow-y: scroll;
       padding: 8px;
       display: flex;

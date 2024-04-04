@@ -16,9 +16,9 @@ export class TimerWrapper {
     this.#timer.start();
   }
 
-  stop() {
+  reset() {
     if (!this.#timer.isRunning()) return;
-    this.#timer.stop();
+    this.#timer.reset();
     if (this.#pendingSet) {
       this.#timer.setData(this.#data);
       this.#pendingSet = false;

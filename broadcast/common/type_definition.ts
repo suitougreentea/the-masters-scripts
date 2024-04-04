@@ -69,7 +69,7 @@ export type TypeDefinition = {
 
   messages: {
     startTimer: EmptyObject;
-    stopTimer: EmptyObject;
+    resetTimer: EmptyObject;
   };
 
   requests: {

@@ -35,7 +35,11 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
     }
 
     .dialog-buttons {
-      text-align: right;
+      display: flex;
+    }
+
+    .dialog-buttons .spacer {
+      flex-grow: 1;
     }
 
     .type {
@@ -149,6 +153,11 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
     if (updated) {
       this.dispatchEvent(new Event("update-data"));
     }
+  }
+
+  private _closeWithoutReorder() {
+    this._dialog.hidden = true;
+    this.dispatchEvent(new Event("send-to-timer"));
   }
 
   getData(): PlayerNamesEditorData {
@@ -291,7 +300,9 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
       });
     };
 
+    let isDirty = false;
     let isInvalid = false;
+    // deno-fmt-ignore
     return html`
     <fluent-dialog id="dialog-edit-player-names" hidden trap-focus modal style="--dialog-width: 400px; --dialog-height: 440px;">
       <div class="dialog-container">
@@ -318,6 +329,7 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
               rightSide.push({ ...leftSide[index] });
             }
           });
+          isDirty = rightSide.some(e => e.name != null);
           isInvalid = leftSide.some((e) => !e.moved);
 
           return html`
@@ -360,6 +372,7 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
             </div>
             `;
         } else if (this._mode == "reset") {
+          isDirty = true;
           return html`
             <table>
               <thead>
@@ -400,10 +413,22 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
       })()
     }
         <div class="dialog-buttons">
-          <fluent-button appearance="accent" @click=${() =>
-      this._close(true)} ?disabled=${isInvalid}>OK</fluent-button>
-          <fluent-button @click=${() =>
-      this._close(false)}>キャンセル</fluent-button>
+          <fluent-button
+            @click=${() => this._closeWithoutReorder()}
+            ?disabled=${isDirty}>
+            このまま登録
+          </fluent-button>
+          <div class="spacer"></div>
+          <fluent-button
+            appearance="accent"
+            @click=${() => this._close(true)}
+            ?disabled=${isInvalid}>
+            OK
+          </fluent-button>
+          <fluent-button
+            @click=${() => this._close(false)}>
+            キャンセル
+          </fluent-button>
         </div>
       </div>
     </fluent-dialog>

@@ -227,7 +227,7 @@ export class MastersTimerElement extends LitElement {
     });
   }
 
-  stop() {
+  reset() {
     if (!this.isRunning()) return;
 
     clearInterval(this.#intervalId!);

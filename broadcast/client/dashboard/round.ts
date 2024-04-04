@@ -37,8 +37,6 @@ import { ocrResultToStageScoreEntries } from "../common/ocr_util.ts";
 export class MastersRoundElement extends LitElement {
   static styles = css`
     .container {
-      width: calc(100vw - 312px);
-      height: calc(100vh - 32px);
       overflow-y: scroll;
       padding: 8px;
     }
@@ -178,7 +176,7 @@ export class MastersRoundElement extends LitElement {
       "sendStageDataToCompetitionScene",
       { stageIndex },
     );
-    this._dashboardContext.requestStopTimer();
+    this._dashboardContext.requestResetTimer();
     await this._dashboardContext.sendRequest("toggleResultScene", {
       show: false,
     });
@@ -345,15 +343,23 @@ export class MastersRoundElement extends LitElement {
       </div>
     </fluent-card>
 
-    <masters-player-names-editor-dialog @update-data=${(e: Event) => {
-      const editor = e.target as MastersPlayerNamesEditorDialogElement;
-      this._updateStagePlayerNames(editor.stageIndex, editor.getData());
-      this._sendToTimer(editor.stageIndex);
-    }}></masters-player-names-editor-dialog>
-    <masters-score-editor-dialog @update-data=${(e: Event) => {
-      const editor = e.target as MastersScoreEditorDialogElement;
-      this._updateStageScore(editor.stageIndex, editor.getData());
-    }}></masters-score-editor-dialog>
+    <masters-player-names-editor-dialog
+      @update-data=${(e: Event) => {
+        const editor = e.target as MastersPlayerNamesEditorDialogElement;
+        this._updateStagePlayerNames(editor.stageIndex, editor.getData());
+        this._sendToTimer(editor.stageIndex);
+      }}
+      @send-to-timer=${(e: Event) => {
+        const editor = e.target as MastersPlayerNamesEditorDialogElement;
+        this._sendToTimer(editor.stageIndex);
+      }}>
+    </masters-player-names-editor-dialog>
+    <masters-score-editor-dialog
+      @update-data=${(e: Event) => {
+        const editor = e.target as MastersScoreEditorDialogElement;
+        this._updateStageScore(editor.stageIndex, editor.getData());
+      }}>
+    </masters-score-editor-dialog>
     `;
   }
 }

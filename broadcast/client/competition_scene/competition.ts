@@ -114,9 +114,9 @@ export class MastersCompetitionElement extends LitElement {
     this.#playerInfo.showDetail = false;
   }
 
-  stopTimer() {
+  resetTimer() {
     if (this.#timerWrapper == null) return;
-    this.#timerWrapper.stop();
+    this.#timerWrapper.reset();
     this.#playerInfo.showDetail = true;
   }
 

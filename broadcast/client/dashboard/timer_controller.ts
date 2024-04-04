@@ -6,6 +6,7 @@ import {
   LitElement,
   query,
   state,
+  styleMap,
 } from "../deps.ts";
 import "./timer_controller.ts";
 import "../common/timer.ts";
@@ -20,29 +21,41 @@ export class MastersTimerControllerElement extends LitElement {
   static styles = css`
   .toolbar-container {
     display: flex;
+    justify-content: space-between;
+    background-color: ${commonColors.background};
+    color: ${commonColors.textDark};
   }
 
-  .toolbar {
-    background-image: linear-gradient(45deg, ${commonColors.background} 88%, transparent 88%);
+  .toolbar-left {
     width: 480px;
     height: 36px;
     padding: 8px 8px 4px;
   }
 
-  .toolbar2 {
+  .toolbar-right {
+    width: 200px;
     height: 36px;
-    padding: 4px;
+    padding: 8px 8px 4px;
+    text-align: right;
   }
 
-  .toolbar span,
-  .toolbar2 span {
+  .toolbar-left span,
+  .toolbar-right span {
     display: inline-block;
-    transform: translateY(5px); /* TODO */
+    transform: translateY(6px); /* TODO */
+  }
+
+  .open-button {
+    cursor: pointer;
+  }
+
+  .close-button {
+    cursor: pointer;
+    margin-right: 8px;
   }
 
   #name {
     margin-left: 8px;
-    color: ${commonColors.textDark};
   }
 
   .timer-container {
@@ -61,8 +74,9 @@ export class MastersTimerControllerElement extends LitElement {
   private _timer!: MastersTimerElement;
 
   @state()
+  private _timerVisible = false;
+  @state()
   private _name = "";
-
   @state()
   private _showingResult = false;
 
@@ -92,8 +106,13 @@ export class MastersTimerControllerElement extends LitElement {
       this._showingResult = value ?? false;
     });
 
-    this._dashboardContext.addEventListener("stop-timer", () => {
-      this._stop();
+    this._dashboardContext.addEventListener("activate-timer", () => {
+      if (!this._timerVisible) {
+        this._timerVisible = true;
+      }
+    });
+    this._dashboardContext.addEventListener("reset-timer", () => {
+      this._reset();
     });
 
     const latestOcrResultReplicant = await client.getReplicant(
@@ -110,6 +129,14 @@ export class MastersTimerControllerElement extends LitElement {
     await this._initializedPromise.promise;
   }
 
+  private _openTimer() {
+    this._timerVisible = true;
+  }
+
+  private _closeTimer() {
+    this._timerVisible = false;
+  }
+
   private async _start() {
     const client = await this._dashboardContext.getClient();
     this._timerWrapper.start();
@@ -117,12 +144,18 @@ export class MastersTimerControllerElement extends LitElement {
     this.dispatchEvent(new Event("start"));
   }
 
-  private async _stop() {
+  private async _reset() {
     await this._dashboardContext.sendRequest("resetOcrState");
     const client = await this._dashboardContext.getClient();
-    this._timerWrapper.stop();
-    client.broadcastMessage("stopTimer");
-    this.dispatchEvent(new Event("stop"));
+    this._timerWrapper.reset();
+    client.broadcastMessage("resetTimer");
+    this.dispatchEvent(new Event("reset"));
+  }
+
+  private async _confirmReset() {
+    const shouldReset = await this._dashboardContext.confirm("OCRの現在の状態もリセットされます。よろしいですか？");
+    if (!shouldReset) return;
+    this._reset();
   }
 
   private async _hideResult() {
@@ -132,27 +165,38 @@ export class MastersTimerControllerElement extends LitElement {
   }
 
   render() {
+    const timerContainerStyle = styleMap({
+      display: this._timerVisible ? null : "none",
+    });
+
+    // deno-fmt-ignore
     return html`
     <div class="container">
       <div class="toolbar-container">
-        <div class="toolbar">
-          <fluent-button appearance="accent" id="start" @click="${this._start}">Start</fluent-button>
-          <fluent-button @click="${this._stop}">Reset</fluent-button>
-          <span id="name">${this._name}</span>
+        <div class="toolbar-left">
+          ${this._timerVisible
+            ? html`
+            <span class="close-button" @click=${this._closeTimer}>✖</span>
+            <fluent-button appearance="accent" @click=${this._start}>Start</fluent-button>
+            <fluent-button @click=${this._confirmReset}>Reset</fluent-button>
+            <span id="name">${this._name}</span>
+            `
+            : html`
+            <span class="open-button" @click=${this._openTimer}>▶ タイマーを表示</span>
+            `
+          }
         </div>
-        <div class="toolbar2">
-          ${
-      this._showingResult
-        ? html`
-          <span>[リザルト画面表示中]</span>
-          <!--<fluent-button @click="${this._hideResult}" ?disabled=${!this
-          ._showingResult}>戻る</fluent-button>-->
-          `
-        : null
-    }
+        <div class="toolbar-right">
+          ${this._showingResult
+            ? html`
+            <span>[リザルト画面表示中]</span>
+            <!--<fluent-button @click=${this._hideResult} ?disabled=${!this._showingResult}>戻る</fluent-button>-->
+            `
+            : null
+          }
         </div>
       </div>
-      <div class="timer-container">
+      <div class="timer-container" style=${timerContainerStyle}>
         <masters-timer id="timer"></masters-timer>
       </div>
     </div>
