@@ -10,7 +10,7 @@ if (import.meta.main) {
 
   if (!fileName || !serverAddress) {
     throw new Error(
-      "Usage: node client.js <server_address> <file_name> [rate=15] [speed=1]",
+      `Usage: deno run main.ts <server_address> <file_name> [rate=15] [speed=1]`,
     );
   }
 
