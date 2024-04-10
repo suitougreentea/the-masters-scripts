@@ -1,0 +1,24 @@
+{
+  "players": [
+    {
+      "bestTime": 637760,
+      "handicap": -5
+    },
+    null,
+    {
+      "bestTime": 624560,
+      "handicap": 0
+    },
+    null,
+    null,
+    {
+      "bestTime": 593910,
+      "handicap": -10
+    },
+    null,
+    {
+      "bestTime": 547610,
+      "handicap": 0
+    }
+  ]
+}

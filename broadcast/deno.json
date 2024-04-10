@@ -15,6 +15,7 @@
     "dev": "deno task build-watch & deno task start-watch",
     "check": "deno check **/*.ts",
     "test": "deno test",
-    "ocr-client-mock": "deno run --allow-net --allow-read ocr_client_mock/main.ts"
+    "ocr-client-mock": "deno run --allow-net --allow-read ocr_client_mock/main.ts",
+    "ocr-client-mock-backend-setup": "deno run --allow-net --allow-read ocr_client_mock/backend_setup.ts"
   }
 }

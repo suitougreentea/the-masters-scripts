@@ -1,0 +1,36 @@
+{
+  "players": [
+    {
+      "bestTime": 628310,
+      "handicap": 5
+    },
+    {
+      "bestTime": 550760,
+      "handicap": 0
+    },
+    {
+      "bestTime": 637760,
+      "handicap": 5
+    },
+    {
+      "bestTime": 593910,
+      "handicap": 0
+    },
+    {
+      "bestTime": 651480,
+      "handicap": 5
+    },
+    {
+      "bestTime": 547610,
+      "handicap": 0
+    },
+    {
+      "bestTime": 740010,
+      "handicap": 5
+    },
+    {
+      "bestTime": 618650,
+      "handicap": 0
+    }
+  ]
+}
