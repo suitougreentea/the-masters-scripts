@@ -2,6 +2,7 @@ import {
   consume,
   css,
   customElement,
+  FluentMenu,
   FluentTabs,
   html,
   LitElement,
@@ -25,6 +26,24 @@ export class MastersTabsElement extends LitElement {
   #competition-name {
     font-weight: bold;
   }
+
+  .end-bar {
+    display: flex;
+  }
+
+  .end-bar-grow {
+    flex-grow: 1;
+  }
+
+  .menu {
+    display: none;
+    position: absolute;
+    z-index: 100;
+  }
+
+  .menu-visible {
+    display: block;
+  }
   `;
 
   @consume({ context: dashboardContext })
@@ -44,6 +63,10 @@ export class MastersTabsElement extends LitElement {
   get activeTabName() {
     return this._activeTabName;
   }
+
+  // @ts-ignore: ?
+  @query("#advanced-menu", true)
+  private _advancedMenu!: FluentMenu;
 
   async firstUpdated() {
     const client = await this._dashboardContext.getClient();
@@ -112,7 +135,7 @@ export class MastersTabsElement extends LitElement {
   private async _confirmFinishCompetitionWithoutExport() {
     if (
       await this._dashboardContext.confirm(
-        "エクスポートして終了しますか？\n※「大会設定を再読み込み」から復元することができます。",
+        "エクスポートせずに終了しますか？\n※「大会設定を再読み込み」から復元することができます。",
       )
     ) {
       await this._dashboardContext.sendRequest(
@@ -129,6 +152,20 @@ export class MastersTabsElement extends LitElement {
       );
       this.dispatchEvent(new Event("finish-competition"));
     }
+  }
+
+  private _openAdvancedMenu(ev: MouseEvent) {
+    ev.stopPropagation();
+    this._advancedMenu.classList.add("menu-visible");
+    this._advancedMenu.style.right = `${innerWidth - ev.pageX}px`;
+    this._advancedMenu.style.top = `${ev.pageY}px`;
+    const clickListener = (ev: MouseEvent) => {
+      if (ev.button == 0) {
+        this._advancedMenu.classList.remove("menu-visible");
+        removeEventListener("click", clickListener);
+      }
+    };
+    addEventListener("click", clickListener); // TODO: clicking in iframe does not fire event
   }
 
   render() {
@@ -151,14 +188,21 @@ export class MastersTabsElement extends LitElement {
     }
     </fluent-tabs>
     <span class="end">
-      <fluent-button @click=${this._reloadCompetitionMetadata}>大会設定を再読み込み</fluent-button>
-      <fluent-button appearance="accent" .disabled=${!this
-      ._hasMetadata} @click=${() =>
-      this
-        ._confirmFinishCompetitionWithExport()}>エクスポートして終了</fluent-button>
-      <fluent-button .disabled=${!this._hasMetadata} @click=${() =>
-      this
-        ._confirmFinishCompetitionWithoutExport()}>エクスポートせずに終了</fluent-button>
+      <div class="end-bar">
+        <fluent-button
+          class="end-bar-grow"
+          appearance="accent"
+          .disabled=${!this._hasMetadata}
+          @click=${this._confirmFinishCompetitionWithExport}>大会を終了</fluent-button>
+        <fluent-button @click="${this._openAdvancedMenu}">...</fluent-button>
+      </div>
+      <fluent-menu id="advanced-menu" class="menu">
+        <fluent-menu-item
+          .disabled=${!this._hasMetadata}
+          @click=${this._confirmFinishCompetitionWithoutExport}>エクスポートせずに大会を終了</fluent-menu-item>
+        <fluent-menu-item
+          @click=${this._reloadCompetitionMetadata}>大会設定を再読み込み</fluent-menu-item>
+      </fluent-menu>
     </span>
     `;
   }
