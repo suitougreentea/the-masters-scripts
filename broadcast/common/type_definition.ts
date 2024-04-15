@@ -36,6 +36,7 @@ export type ResultSceneData = {
   nextStageName: string | null;
 };
 
+// TODO: ocr_info以外に直接渡さないようにする
 export type OcrResult = {
   status: {
     frameTime: number;
@@ -52,6 +53,12 @@ export type OcrResult = {
   }[];
 };
 
+// TODO: 配信に乗るプレイヤー毎の情報をここに全部乗せたい
+export type PlayingPlayerData = {
+  standingRankIndex?: number;
+  standingFinal?: boolean;
+};
+
 type EmptyObject = Record<keyof unknown, never>;
 
 export type TypeDefinition = {
@@ -64,6 +71,7 @@ export type TypeDefinition = {
     currentResultSceneData: ResultSceneData | null;
     resultSceneActive: boolean;
     latestOcrResult: OcrResult | null;
+    playingPlayerData: PlayingPlayerData[] | null;
     registrationUrl: string | null;
   };
 

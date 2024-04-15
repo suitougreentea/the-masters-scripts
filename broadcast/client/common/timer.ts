@@ -5,7 +5,7 @@ import {
   getDiffTime,
   PromiseSet,
 } from "../../common/util.ts";
-import { OcrResult } from "../../common/type_definition.ts";
+import { OcrResult, PlayingPlayerData } from "../../common/type_definition.ts";
 import {
   css,
   customElement,
@@ -142,6 +142,15 @@ export class MastersTimerElement extends LitElement {
     text-shadow: 0 0 5px black;
     transform: translateY(1px);
   }
+
+  /* TODO: Experimental */
+  .standing {
+    grid-area: 1 / 4 / auto / span 2;
+    font-size: 16px;
+    text-shadow: 0 0 5px black;
+    margin-left: 2px;
+    transform: translateY(1px);
+  }
   `;
 
   #ordinals = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"];
@@ -157,12 +166,14 @@ export class MastersTimerElement extends LitElement {
     startOrder: HTMLDivElement;
     diffTime: HTMLDivElement;
     offset: HTMLDivElement;
+    standing: HTMLDivElement; // TODO: Experimental
   }[] = [];
   #data: (StagePlayerEntry | null)[];
   #intervalId: number | null = null;
   #startTime = -1;
   #elapsedTime = 0;
   #currentOcrResult: OcrResult | null = null;
+  #currentPlayingPlayerData: PlayingPlayerData[] | null = null;
 
   constructor() {
     super();
@@ -184,6 +195,7 @@ export class MastersTimerElement extends LitElement {
       const startOrder = player.querySelector<HTMLDivElement>(".start-order")!;
       const diffTime = player.querySelector<HTMLDivElement>(".diff-time")!;
       const offset = player.querySelector<HTMLDivElement>(".offset")!;
+      const standing = player.querySelector<HTMLDivElement>(".standing")!; // TODO: Experimental
       this.#elements.push({
         id,
         backgroundTime,
@@ -194,6 +206,7 @@ export class MastersTimerElement extends LitElement {
         startOrder,
         diffTime,
         offset,
+        standing, // TODO: Experimental
       });
     }
 
@@ -224,6 +237,7 @@ export class MastersTimerElement extends LitElement {
       e.startOrder.style.display = "none";
       e.diffTime.style.display = "none";
       e.offset.style.display = "none";
+      e.standing.style.display = ""; // TODO: Experimental
     });
   }
 
@@ -236,6 +250,7 @@ export class MastersTimerElement extends LitElement {
       e.startOrder.style.display = "";
       e.diffTime.style.display = "";
       e.offset.style.display = "";
+      e.standing.style.display = "none"; // TODO: Experimental
     });
     this.#reset();
   }
@@ -284,6 +299,10 @@ export class MastersTimerElement extends LitElement {
 
   setOcrResult(result?: OcrResult | null) {
     this.#currentOcrResult = result ?? null;
+  }
+
+  setPlayingPlayerData(data?: PlayingPlayerData[] | null) {
+    this.#currentPlayingPlayerData = data ?? null;
   }
 
   #createEmptyData(): (StagePlayerEntry | null)[] {
@@ -353,12 +372,28 @@ export class MastersTimerElement extends LitElement {
           : "transparent";
         player.health.style.setProperty("--health-color", healthColor);
       }
+
+      // TODO: Experimental
+      if (this.isStarted() && this.#currentPlayingPlayerData != null) {
+        const data = this.#currentPlayingPlayerData[index];
+        if (data.standingRankIndex != null && data.standingFinal != null) {
+          const ordinal = this.#ordinals[data.standingRankIndex];
+          player.standing.innerText = data.standingFinal
+            ? `${ordinal} [確]`
+            : `${ordinal}`;
+        } else {
+          player.standing.innerText = "";
+        }
+      } else {
+        player.standing.innerText = "";
+      }
     } else {
       player.id.className = "id id-inactive";
       player.backgroundTime.className = "background-time";
       player.time.className = "time";
       player.time.innerText = "";
       player.gauge.style.width = "0px";
+      player.standing.innerText = ""; // TODO: Experimental
     }
   }
 
@@ -383,6 +418,8 @@ export class MastersTimerElement extends LitElement {
           <div class="start-order"></div>
           <div class="diff-time"></div>
           <div class="offset"></div>
+          <!-- TODO: Experimental -->
+          <div class="standing"></div>
         </div>
         `)
     }

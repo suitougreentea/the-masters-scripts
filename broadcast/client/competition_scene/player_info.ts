@@ -2,7 +2,7 @@ import {
   RegisteredPlayerEntry,
   StagePlayerEntry,
 } from "../../../common/common_types.ts";
-import { OcrResult } from "../../common/type_definition.ts"; // TODO: Experimental
+import { OcrResult, PlayingPlayerData } from "../../common/type_definition.ts"; // TODO: Experimental
 import { commonColors } from "../common/common_values.ts";
 import { getDiffTime } from "../../common/util.ts";
 import {
@@ -112,6 +112,11 @@ export class MastersPlayerInfoElement extends LitElement {
       right: 60px;
     }
 
+    /* TODO: Experimental */
+    .standing {
+      display: none;
+    }
+
     .name {
       position: absolute;
       top: 10px;
@@ -195,6 +200,7 @@ export class MastersPlayerInfoElement extends LitElement {
 
   // TODO: Experimental
   private _healthDivs: HTMLDivElement[] = [];
+  private _standingDivs: HTMLDivElement[] = [];
 
   private _createEmptyData(): (StagePlayerEntry | null)[] {
     return [...new Array(8)].map((_) => null);
@@ -205,6 +211,10 @@ export class MastersPlayerInfoElement extends LitElement {
     this._healthDivs = [];
     this.renderRoot.querySelectorAll(".health").forEach((e) =>
       this._healthDivs.push(e as HTMLDivElement)
+    );
+    this._standingDivs = [];
+    this.renderRoot.querySelectorAll(".standing").forEach((e) =>
+      this._standingDivs.push(e as HTMLDivElement)
     );
   }
 
@@ -224,6 +234,17 @@ export class MastersPlayerInfoElement extends LitElement {
     });
   }
 
+  setPlayingPlayerData(data?: PlayingPlayerData[] | null) {
+    if (data == null) {
+      this._standingDivs.forEach((div) => div.innerHTML = "");
+      return;
+    }
+    data.forEach((e, i) => {
+      this._standingDivs[i].innerText =
+        `${e.standingRankIndex}, ${e.standingFinal}`;
+    });
+  }
+
   render() {
     const data = this.data ?? this._createEmptyData();
     const isDataEmpty = data.every((e) => e == null);
@@ -237,8 +258,8 @@ export class MastersPlayerInfoElement extends LitElement {
           <div class=${
           classMap({ "id": true, "id-inactive": !isDataEmpty && e == null })
         }>${i + 1}</div>
-          <!-- TODO: Experimental -->
-          <div class="health"></div>
+          <!-- TODO: Experimental --><div class="health"></div>
+          <!-- TODO: Experimental --><div class="standing"></div>
           <div class="name">${e?.name}</div>
           ${
           this.showDetail && e != null

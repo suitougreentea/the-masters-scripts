@@ -1,4 +1,4 @@
-import { Grade, grades } from "../../../common/grade.ts";
+import { Grade, grades } from "../../common/grade.ts";
 
 // * クリア時のタイムはスタートタイムも含めて順位計算の考慮に入れる
 //   (リアルタイムで999に達成したタイミングを使うわけではない)

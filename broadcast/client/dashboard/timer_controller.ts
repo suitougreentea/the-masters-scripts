@@ -122,6 +122,13 @@ export class MastersTimerControllerElement extends LitElement {
       this._timerWrapper.setOcrResult(value);
     });
 
+    const playingPlayerDataReplicant = await client.getReplicant(
+      "playingPlayerData",
+    );
+    playingPlayerDataReplicant.subscribe((value) => {
+      this._timerWrapper.setPlayingPlayerData(value);
+    });
+
     this._initializedPromise.resolve();
   }
 

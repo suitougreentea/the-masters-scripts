@@ -6,6 +6,7 @@ import {
 } from "../common/common_types.ts";
 import {
   OcrResult,
+  PlayingPlayerData,
   RoundData,
   TypeDefinition,
 } from "./common/type_definition.ts";
@@ -19,6 +20,7 @@ import {
   UserControllerServer,
 } from "./server/user_controller_server.ts";
 import { QueryPlayerResult } from "../common/user_controller_server_types.ts";
+import { calculateStandings, StandingInput } from "./server/standings.ts";
 
 export const config: denocg.ServerConfig<TypeDefinition> = {
   socketPort: 8515,
@@ -534,3 +536,55 @@ const _userControllerServer = new UserControllerServer(
   8519,
   userControllerServerHandler,
 );
+
+//
+// Playing Player Data
+//
+
+const playingPlayerDataReplicant = server.getReplicant("playingPlayerData");
+
+const updatePlayingPlayerData = () => {
+  const currentCompetitionSceneStageData =
+    currentCompetitionSceneStageDataReplicant.getValue();
+  const ocrResult = latestOcrResultReplicant.getValue();
+
+  if (currentCompetitionSceneStageData == null || ocrResult == null) {
+    playingPlayerDataReplicant.setValue(null);
+    return;
+  }
+
+  const players = currentCompetitionSceneStageData.stageData.players;
+
+  const standingInput: (StandingInput & { playerIndex: number })[] = [];
+  players.forEach((player, playerIndex) => {
+    if (player == null) return;
+    const status = ocrResult.status[playerIndex];
+    standingInput.push({
+      playerIndex,
+      playing: status.playing,
+      level: status.level,
+      grade: status.grade,
+      time: status.gameTime,
+      startTime: player.startTime,
+    });
+  });
+  const standingInfo = calculateStandings(standingInput);
+
+  const result: PlayingPlayerData[] = players.map((player, playerIndex) => {
+    if (player == null) return {};
+    const standingIndex = standingInput.findIndex((e) =>
+      e.playerIndex == playerIndex
+    );
+    const standing = standingInfo[standingIndex];
+    return {
+      standingRankIndex: standing.rankIndex,
+      standingFinal: standing.final,
+    };
+  });
+  playingPlayerDataReplicant.setValue(result);
+};
+
+currentCompetitionSceneStageDataReplicant.subscribe(() =>
+  updatePlayingPlayerData()
+);
+latestOcrResultReplicant.subscribe(() => updatePlayingPlayerData());

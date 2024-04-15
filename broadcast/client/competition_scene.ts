@@ -43,3 +43,10 @@ const latestOcrResultReplicant = await client.getReplicant("latestOcrResult");
 latestOcrResultReplicant.subscribe((value) => {
   competition.setOcrResult(value);
 });
+
+const playingPlayerDataReplicant = await client.getReplicant(
+  "playingPlayerData",
+);
+playingPlayerDataReplicant.subscribe((value) => {
+  competition.setPlayingPlayerData(value);
+});
