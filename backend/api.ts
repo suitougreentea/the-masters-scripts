@@ -14,9 +14,11 @@ import {
   SupplementComparisonEntry,
 } from "../common/common_types.ts";
 import {
+  constructQualifierResultEntryStubs,
   constructStageResultEntryStub,
   finalizeRound,
   getDependencyForRound,
+  getQualifierResult,
   getStageResult,
   isQualifierRound,
   NotReadyError,
@@ -140,6 +142,7 @@ export function mastersSetupCompetition(options: CompetitionSetupOptions) {
         players: participants.map((p) => ({
           name: p.name,
           totalPoints: 0,
+          provisionalRankIndex: -1,
           stageResults: [],
         })),
       };
@@ -311,6 +314,24 @@ export function mastersSetStageScore(
         stageResults,
       };
     });
+
+    // calculate and set provisioning standings
+    const stageData = metadata.rounds[roundIndex].stages.map((_, stageIndex) =>
+      competitionStore.value.getStageData(roundIndex, stageIndex)
+    );
+    const stageResults = stageData.map((e) => e.result);
+    const numPlayersPerGroup =
+      metadata.rounds[roundIndex].stages[0].fixedPlayerIndices!.length;
+    const qualifierResultStubs = constructQualifierResultEntryStubs(
+      stageResults,
+      numPlayersPerGroup,
+    );
+    const qualifierResult = getQualifierResult(qualifierResultStubs);
+    qualifierResult.forEach((result) => {
+      const player = newPlayers.find((e) => e.name == result.name);
+      player!.provisionalRankIndex = result.rank - 1;
+    });
+
     const newQualifierScore = {
       players: newPlayers,
     };

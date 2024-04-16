@@ -13,6 +13,7 @@ export const commonColors = {
   tableCellBorder: css`rgb(199, 200, 201)`,
   tableLightGray: css`rgb(239, 240, 241)`,
   tableHighlight: css`rgb(255, 200, 200)`,
+  tableHighlight2: css`rgb(255, 255, 200)`,
   backgroundP1: css`rgb(167, 231, 207)`,
   backgroundP2: css`rgb(255, 235, 173)`,
 };

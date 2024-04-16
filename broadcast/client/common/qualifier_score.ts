@@ -69,6 +69,10 @@ export class MastersQualifierScoreElement extends LitElement {
   .active {
     background-color: ${commonColors.tableHighlight};
   }
+
+  .points-high {
+    background-color: ${commonColors.tableHighlight2};
+  }
   `;
 
   @property()
@@ -77,50 +81,46 @@ export class MastersQualifierScoreElement extends LitElement {
   stageMetadata: StageMetadata[] = [];
 
   render() {
+    // deno-fmt-ignore
     return html`
     <table>
       <colgroup>
         <col>
         <col>
-        ${
-      map(this.stageMetadata, () => {
-        return html`<col></col>`;
-      })
-    }
+        ${map(this.stageMetadata, () => {
+          return html`<col></col>`;
+        })}
       </colgroup>
       <thead>
         <tr>
           <th>名前</th>
           <th>Pts.</th>
-          ${
-      map(this.stageMetadata, (_, i) => {
-        return html`<th>${(i + 1) % 10}</th>`;
-      })
-    }
+          ${map(this.stageMetadata, (_, i) => {
+            return html`<th>${(i + 1) % 10}</th>`;
+          })}
         </tr>
       </thead>
       <tbody>
-        ${
-      map(this.data, (e, playerIndex) => {
-        return html`
+        ${map(this.data, (e, playerIndex) => {
+          const pointsClass = classMap({
+            "points-high": 0 <= e.provisionalRankIndex && e.provisionalRankIndex <= 3,
+          });
+          return html`
           <tr>
             <td>${e.name}</td>
-            <td>${e.totalPoints}</td>
-            ${
-          map(this.stageMetadata, (metadata, stageIndex) => {
-            const cellClass = classMap({
-              active: metadata.fixedPlayerIndices!.indexOf(playerIndex) >= 0,
-            });
-            const stageResult = e.stageResults.find((stageResult) =>
-              stageIndex == stageResult.stageIndex
-            );
-            return html`<td class=${cellClass}>${stageResult?.points}</td>`;
-          })
-        }
+            <td class=${pointsClass}>${e.totalPoints}</td>
+            ${map(this.stageMetadata, (metadata, stageIndex) => {
+              const cellClass = classMap({
+                active: metadata.fixedPlayerIndices!.indexOf(playerIndex) >= 0,
+              });
+              const stageResult = e.stageResults.find((stageResult) =>
+                stageIndex == stageResult.stageIndex
+              );
+              return html`<td class=${cellClass}>${stageResult?.points}</td>`;
+            })}
           </tr>
           `;
-      })
-    }
+        })}
       </tbody>
     </table>
     `;

@@ -998,50 +998,10 @@ function finalizeQualifierRound(
     stageResults.some((stageResult) => stageResult.length != numPlayersPerGroup)
   ) throw new NotReadyError();
 
-  // プレイヤーごとの情報
-  const qualifierPlayerData: {
-    name: string;
-    participatingStageResults: StageResultEntry[];
-  }[] = [];
-  stageResults.forEach((stageResult) => {
-    stageResult.forEach((e) => {
-      let entry = qualifierPlayerData.find((q) => q.name == e.name);
-      if (entry == null) {
-        entry = {
-          name: e.name,
-          participatingStageResults: [],
-        };
-        qualifierPlayerData.push(entry);
-      }
-
-      entry.participatingStageResults.push(e);
-    });
-  });
-
-  const qualifierResultStubs: QualifierResultEntryStub[] = qualifierPlayerData
-    .map((e) => {
-      let points = 0;
-      const numPlaces = new Array(4).fill(0);
-      e.participatingStageResults.forEach((resultEntry) => {
-        // タイのときは同点入ってる
-        points += numPlayersPerGroup - resultEntry.rank + 1;
-        numPlaces[resultEntry.rank - 1]++;
-      });
-
-      e.participatingStageResults.sort(compareStageScore);
-      const bestResult =
-        e.participatingStageResults[e.participatingStageResults.length - 1];
-
-      return {
-        name: e.name,
-        points,
-        numPlaces,
-        bestGameGrade: bestResult.grade,
-        bestGameLevel: bestResult.level,
-        bestGameTimeDiffBest: bestResult.timeDiffBest,
-      };
-    });
-
+  const qualifierResultStubs = constructQualifierResultEntryStubs(
+    stageResults,
+    numPlayersPerGroup,
+  );
   const qualifierResult = getQualifierResult(qualifierResultStubs);
   return {
     type: "qualifierResult",
@@ -1402,7 +1362,57 @@ function getSupplementComparison(
   return result;
 }
 
-function getQualifierResult(
+export function constructQualifierResultEntryStubs(
+  stageResults: StageResultEntry[][],
+  numPlayersPerGroup: number,
+): QualifierResultEntryStub[] {
+  const qualifierPlayerData: {
+    name: string;
+    participatingStageResults: StageResultEntry[];
+  }[] = [];
+  stageResults.forEach((stageResult) => {
+    stageResult.forEach((e) => {
+      let entry = qualifierPlayerData.find((q) => q.name == e.name);
+      if (entry == null) {
+        entry = {
+          name: e.name,
+          participatingStageResults: [],
+        };
+        qualifierPlayerData.push(entry);
+      }
+
+      entry.participatingStageResults.push(e);
+    });
+  });
+
+  const qualifierResultStubs: QualifierResultEntryStub[] = qualifierPlayerData
+    .map((e) => {
+      let points = 0;
+      const numPlaces = new Array(4).fill(0);
+      e.participatingStageResults.forEach((resultEntry) => {
+        // タイのときは同点入ってる
+        points += numPlayersPerGroup - resultEntry.rank + 1;
+        numPlaces[resultEntry.rank - 1]++;
+      });
+
+      e.participatingStageResults.sort(compareStageScore);
+      const bestResult =
+        e.participatingStageResults[e.participatingStageResults.length - 1];
+
+      return {
+        name: e.name,
+        points,
+        numPlaces,
+        bestGameGrade: bestResult.grade,
+        bestGameLevel: bestResult.level,
+        bestGameTimeDiffBest: bestResult.timeDiffBest,
+      };
+    });
+
+  return qualifierResultStubs;
+}
+
+export function getQualifierResult(
   scores: QualifierResultEntryStub[],
 ): QualifierResultEntry[] {
   const sorted = [...scores];

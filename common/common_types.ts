@@ -144,6 +144,7 @@ export type SupplementComparisonData = {
 export type QualifierScoreEntry = {
   name: string;
   totalPoints: number;
+  provisionalRankIndex: number;
   stageResults: { stageIndex: number; rankIndex: number; points: number }[];
 };
 
