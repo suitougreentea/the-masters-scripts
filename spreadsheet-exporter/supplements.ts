@@ -82,6 +82,13 @@ export const createSupplementsSheet = (
     });
     scoreTableRange.setValues(scoreTableValues);
 
+    // highlight winners
+    qualifierResult.players.forEach((e, i) => {
+      if (i >= 4) return;
+      const playerIndex = qualifierScore.players.findIndex(p => p.name == e.name);
+      sh.getRange(3 + playerIndex, tableColumn + 1).setBackground("#FFFFC8");
+    });
+
     const scoreResultRange = sh.getRange(3, resultColumn, numPlayers, 9);
     const scoreResultValues = qualifierResult.players.map((e) => {
       return [
