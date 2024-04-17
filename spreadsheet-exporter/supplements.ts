@@ -85,7 +85,9 @@ export const createSupplementsSheet = (
     // highlight winners
     qualifierResult.players.forEach((e, i) => {
       if (i >= 4) return;
-      const playerIndex = qualifierScore.players.findIndex(p => p.name == e.name);
+      const playerIndex = qualifierScore.players.findIndex((p) =>
+        p.name == e.name
+      );
       sh.getRange(3 + playerIndex, tableColumn + 1).setBackground("#FFFFC8");
     });
 
