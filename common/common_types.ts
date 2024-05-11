@@ -98,6 +98,23 @@ export type StageSetupPlayerEntry = {
   handicap: number;
 };
 
+export type TimeDetail = {
+  moveTime: number,
+  burnTime: number,
+  levelStopTime: number,
+  minoCount: number,
+  clearCount: [number, number, number, number],
+  sections: {
+    lap: number,
+    split: number,
+    moveTime: number,
+    burnTime: number,
+    levelStopTime: number,
+    minoCount: number,
+    clearCount: [number, number, number, number],
+  }[];
+};
+
 export type StagePlayerEntry = {
   name: string;
   rawBestTime: number;
@@ -108,6 +125,7 @@ export type StagePlayerEntry = {
   level: number | null;
   grade: Grade | null;
   time: number | null;
+  timeDetail?: TimeDetail;
 };
 
 export type StageResultEntry = {
@@ -166,11 +184,19 @@ export type QualifierResult = {
   result: QualifierResultEntry[];
 };
 
+export type StageScoreValue = {
+  level: number | null;
+  grade: Grade | null;
+  time: number | null;
+  timeDetail?: TimeDetail;
+};
+
 export type StageScoreEntry = {
   name: string;
   level: number | null;
   grade: Grade | null;
   time: number | null;
+  timeDetail?: TimeDetail;
 };
 
 export type StageScoreData = {

@@ -9,6 +9,7 @@ import {
   StageData,
   StageMetadata,
   StageScoreData,
+  StageScoreValue,
   StageSetupResult,
   SupplementComparisonData,
 } from "../../common/common_types.ts";
@@ -36,21 +37,40 @@ export type ResultSceneData = {
   nextStageName: string | null;
 };
 
+export type OcrPlayerStatus = {
+  frameTime: number;
+  playing: boolean;
+  level: number;
+  grade: Grade;
+  gameTime: number;
+  // TODO: experimental
+  health?: string;
+  moveTime: number;
+  burnTime: number;
+  levelStopTime: number;
+  minoCount: number;
+  clearCount: [number, number, number, number];
+  sections: {
+    lap: number;
+    split: number;
+    moveTime: number;
+    burnTime: number;
+    levelStopTime: number;
+    minoCount: number;
+    clearCount: [number, number, number, number];
+  }[];
+};
+
+export type ScoreHistory = {
+  players: {
+    history: StageScoreValue[];
+    current?: StageScoreValue;
+  }[];
+};
+
 // TODO: ocr_info以外に直接渡さないようにする
 export type OcrResult = {
-  status: {
-    frameTime: number;
-    playing: boolean;
-    level: number;
-    grade: Grade;
-    gameTime: number;
-    sections: {
-      lap: number;
-      split: number;
-    }[];
-    // TODO: experimental
-    health?: string;
-  }[];
+  status: OcrPlayerStatus[];
 };
 
 // TODO: 配信に乗るプレイヤー毎の情報をここに全部乗せたい
@@ -107,6 +127,7 @@ export type TypeDefinition = {
     setResultSceneData: { params: { stageIndex: number } };
     unsetResultSceneData: EmptyObject;
     toggleResultScene: { params: { show: boolean } };
+    getScoreHistory: { result: { history: ScoreHistory } };
     resetOcrState: EmptyObject;
   };
 };

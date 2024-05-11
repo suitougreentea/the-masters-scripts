@@ -3,8 +3,10 @@ import {
   QualifierResult,
   QualifierScore,
   RegisteredPlayerEntry,
+  StageScoreValue,
 } from "../common/common_types.ts";
 import {
+  OcrPlayerStatus,
   OcrResult,
   PlayingPlayerData,
   RoundData,
@@ -21,6 +23,10 @@ import {
 } from "./server/user_controller_server.ts";
 import { QueryPlayerResult } from "../common/user_controller_server_types.ts";
 import { calculateStandings, StandingInput } from "./server/standings.ts";
+import { createPerPlayerStreams } from "./server/ocr_processor.ts";
+import { createResultCollector } from "./server/ocr_processor.ts";
+import { createMergedStream } from "./server/ocr_processor.ts";
+import { convertOcrPlayerStatusToStageScoreValue } from "./client/common/ocr_util.ts";
 
 export const config: denocg.ServerConfig<TypeDefinition> = {
   socketPort: 8515,
@@ -480,8 +486,55 @@ const ocrServer = new OcrServer(8517);
 
 const latestOcrResultReplicant = server.getReplicant("latestOcrResult");
 
+const { onNext, playerStreams } = createPerPlayerStreams();
+
 ocrServer.addEventListener("data", (ev) => {
-  latestOcrResultReplicant.setValue((ev as CustomEvent).detail as OcrResult);
+  const data = (ev as CustomEvent<OcrResult>).detail;
+  latestOcrResultReplicant.setValue(data);
+  onNext(data);
+});
+
+const resultHistory: OcrPlayerStatus[][] = [...new Array(8)].map((_) => []);
+const addToResultHistory = (playerIndex: number, result: OcrPlayerStatus) => {
+  const target = resultHistory[playerIndex];
+  if (target.length == 4) {
+    target.splice(0, 1);
+  }
+  target.push(result);
+};
+
+const streams = playerStreams.map((e) =>
+  e.pipeThrough(createResultCollector())
+);
+streams.forEach((stream, playerIndex) => {
+  (async () => {
+    // @ts-ignore: can be removed in future
+    for await (const result of stream) {
+      addToResultHistory(playerIndex, result);
+      console.log(`Player #${playerIndex}: added result to history`);
+    }
+  })();
+});
+
+server.registerRequestHandler("getScoreHistory", () => {
+  const players = resultHistory.map((playerHistory, playerIndex) => {
+    const currentStatus = latestOcrResultReplicant.getValue()?.status
+      ?.[playerIndex];
+    const history: StageScoreValue[] = [];
+    playerHistory.forEach((e) => {
+      const converted = convertOcrPlayerStatusToStageScoreValue(e);
+      if (converted != null) history.push(converted);
+    });
+    return {
+      history,
+      current: currentStatus != null
+        ? convertOcrPlayerStatusToStageScoreValue(currentStatus)
+        : undefined,
+    };
+  });
+  return {
+    history: { players },
+  };
 });
 
 server.registerRequestHandler("resetOcrState", () => {

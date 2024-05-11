@@ -9,7 +9,7 @@ import {
   query,
   state,
 } from "../deps.ts";
-import { OcrResult, RoundData } from "../../common/type_definition.ts";
+import { RoundData } from "../../common/type_definition.ts";
 import {
   StageMetadata,
   StageScoreData,
@@ -31,7 +31,6 @@ import {
   MastersScoreEditorDialogElement,
   ScoreEditorDialogData,
 } from "./score_editor_dialog.ts";
-import { ocrResultToStageScoreEntries } from "../common/ocr_util.ts";
 
 @customElement("masters-round")
 export class MastersRoundElement extends LitElement {
@@ -144,8 +143,6 @@ export class MastersRoundElement extends LitElement {
   @query("masters-score-editor-dialog", true)
   private _scoreEditorDialog!: MastersScoreEditorDialogElement;
 
-  private _latestOcrResult?: OcrResult | null;
-
   async firstUpdated() {
     const client = await this._dashboardContext.getClient();
     const currentCompetitionMetadataReplicant = await client.getReplicant(
@@ -159,12 +156,6 @@ export class MastersRoundElement extends LitElement {
     );
     currentRoundDataReplicant.subscribe((value) => {
       this._currentRoundData = value;
-    });
-    const latestOcrResultReplicant = await client.getReplicant(
-      "latestOcrResult",
-    );
-    latestOcrResultReplicant.subscribe((value) => {
-      this._latestOcrResult = value;
     });
   }
 
@@ -196,19 +187,16 @@ export class MastersRoundElement extends LitElement {
     );
   }
 
-  // TODO: 初期値の入れ方に一貫性がない
-  private _editStageScore(stageIndex: number) {
+  private async _editStageScore(stageIndex: number) {
     const currentStageData = this._currentRoundData!.stageData[stageIndex];
-    this._scoreEditorDialog.open(stageIndex, currentStageData.players);
-
-    if (this._scoreEditorDialog.isEmpty() && this._latestOcrResult != null) {
-      this._scoreEditorDialog.setData({
-        score: ocrResultToStageScoreEntries(
-          this._latestOcrResult!,
-          currentStageData.players,
-        ),
-      });
-    }
+    const scoreHistory = await this._dashboardContext.sendRequest(
+      "getScoreHistory",
+    );
+    this._scoreEditorDialog.open(
+      stageIndex,
+      currentStageData.players,
+      scoreHistory.history,
+    );
   }
 
   private async _updateStagePlayerNames(

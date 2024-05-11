@@ -1,5 +1,5 @@
+import { StageScoreValue } from "../../../common/common_types.ts";
 import {
-  Grade,
   GradeString,
   gradeToString,
   stringToGrade,
@@ -8,9 +8,7 @@ import { timeToString } from "../../../common/time.ts";
 
 export const parseScoreEditorScore = (
   value: string,
-):
-  | { level: number | null; grade: Grade | null; time: number | null }
-  | null => {
+): StageScoreValue | null => {
   const levelMatch = value.match(/^\d{1,3}$/);
   if (levelMatch) {
     return { level: Number(levelMatch[0]), grade: null, time: null };
@@ -38,7 +36,7 @@ export const parseScoreEditorScore = (
 };
 
 export const formatScoreEditorScore = (
-  score: { level: number | null; grade: Grade | null; time: number | null },
+  score: StageScoreValue,
 ): string => {
   if (score.level != null && score.grade == null && score.time == null) {
     return String(score.level);
