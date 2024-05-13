@@ -263,6 +263,7 @@ export function mastersSetStageScore(
       level: entry.level,
       grade: entry.grade,
       time: entry.time,
+      timeDetail: entry.timeDetail,
     };
   });
 
