@@ -25,8 +25,8 @@ export class OcrServer extends EventTarget {
       const { socket, response } = Deno.upgradeWebSocket(req);
 
       socket.addEventListener("open", () => {
-        console.log("OCR client connected");
         this.#clients.add(socket);
+        this.dispatchEvent(new CustomEvent("connect"));
       });
       socket.addEventListener("message", (event) => {
         try {
@@ -39,8 +39,8 @@ export class OcrServer extends EventTarget {
         }
       });
       socket.addEventListener("close", () => {
-        console.log("OCR client disconnected");
         this.#clients.delete(socket);
+        this.dispatchEvent(new CustomEvent("disconnect"));
       });
 
       return response;
@@ -54,5 +54,9 @@ export class OcrServer extends EventTarget {
       });
       socket.send(message);
     });
+  }
+
+  hasClient() {
+    return this.#clients.size > 0;
   }
 }

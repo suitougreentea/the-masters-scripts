@@ -91,6 +91,7 @@ export type TypeDefinition = {
     currentResultSceneData: ResultSceneData | null;
     resultSceneActive: boolean;
     latestOcrResult: OcrResult | null;
+    ocrConnected: boolean;
     playingPlayerData: PlayingPlayerData[] | null;
     registrationUrl: string | null;
   };

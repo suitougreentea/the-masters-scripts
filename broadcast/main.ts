@@ -483,9 +483,20 @@ resultSceneActiveReplicant.subscribe(async (value) => {
 
 const ocrServer = new OcrServer(8517);
 
+const ocrConnectedReplicant = server.getReplicant("ocrConnected");
+ocrConnectedReplicant.setValue(false);
 const latestOcrResultReplicant = server.getReplicant("latestOcrResult");
 
 const { onNext, playerStreams } = createPerPlayerStreams();
+
+ocrServer.addEventListener("connect", () => {
+  console.log("OCR client connected");
+  ocrConnectedReplicant.setValue(ocrServer.hasClient());
+});
+ocrServer.addEventListener("disconnect", () => {
+  console.log("OCR client disconnected");
+  ocrConnectedReplicant.setValue(ocrServer.hasClient());
+});
 
 ocrServer.addEventListener("data", (ev) => {
   const data = (ev as CustomEvent<OcrResult>).detail;

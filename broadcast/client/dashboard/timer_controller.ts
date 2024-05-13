@@ -79,6 +79,8 @@ export class MastersTimerControllerElement extends LitElement {
   private _name = "";
   @state()
   private _showingResult = false;
+  @state()
+  private _ocrConnected = false;
 
   private _timerWrapper!: TimerWrapper;
 
@@ -104,6 +106,13 @@ export class MastersTimerControllerElement extends LitElement {
     );
     resultSceneActiveReplicant.subscribe((value) => {
       this._showingResult = value ?? false;
+    });
+
+    const ocrConnectedReplicant = await client.getReplicant(
+      "ocrConnected",
+    );
+    ocrConnectedReplicant.subscribe((value) => {
+      this._ocrConnected = value ?? false;
     });
 
     this._dashboardContext.addEventListener("activate-timer", () => {
@@ -201,6 +210,10 @@ export class MastersTimerControllerElement extends LitElement {
             <span>[リザルト画面表示中]</span>
             <!--<fluent-button @click=${this._hideResult} ?disabled=${!this._showingResult}>戻る</fluent-button>-->
             `
+            : null
+          }
+          ${!this._ocrConnected
+            ? html`<span>[OCR未接続]</span>`
             : null
           }
         </div>
