@@ -25,7 +25,6 @@ import { QueryPlayerResult } from "../common/user_controller_server_types.ts";
 import { calculateStandings, StandingInput } from "./server/standings.ts";
 import { createPerPlayerStreams } from "./server/ocr_processor.ts";
 import { createResultCollector } from "./server/ocr_processor.ts";
-import { createMergedStream } from "./server/ocr_processor.ts";
 import { convertOcrPlayerStatusToStageScoreValue } from "./client/common/ocr_util.ts";
 
 export const config: denocg.ServerConfig<TypeDefinition> = {

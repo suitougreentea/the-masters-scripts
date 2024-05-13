@@ -55,6 +55,7 @@ export const createMergedStream = <T>(
     start(controller) {
       streams.forEach((stream, i) => {
         (async () => {
+          // @ts-ignore: can be removed in future
           for await (const data of stream) {
             currentData = [...currentData];
             currentData[i] = data;

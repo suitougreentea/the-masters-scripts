@@ -99,19 +99,19 @@ export type StageSetupPlayerEntry = {
 };
 
 export type TimeDetail = {
-  moveTime: number,
-  burnTime: number,
-  levelStopTime: number,
-  minoCount: number,
-  clearCount: [number, number, number, number],
+  moveTime: number;
+  burnTime: number;
+  levelStopTime: number;
+  minoCount: number;
+  clearCount: [number, number, number, number];
   sections: {
-    lap: number,
-    split: number,
-    moveTime: number,
-    burnTime: number,
-    levelStopTime: number,
-    minoCount: number,
-    clearCount: [number, number, number, number],
+    lap: number;
+    split: number;
+    moveTime: number;
+    burnTime: number;
+    levelStopTime: number;
+    minoCount: number;
+    clearCount: [number, number, number, number];
   }[];
 };
 
