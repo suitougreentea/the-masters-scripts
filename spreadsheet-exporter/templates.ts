@@ -62,3 +62,10 @@ export const getScoreResultTemplate = (numPlayers: number): TemplateInfo => {
   }
   throw new Error("Unsupported numPlayers");
 };
+
+export const getTimeDetailTemplate = (): TemplateInfo => ({
+  row: 124,
+  column: 1,
+  numRows: 13,
+  numColumns: 12,
+});

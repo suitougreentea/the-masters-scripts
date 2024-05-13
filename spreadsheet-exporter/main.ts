@@ -3,6 +3,7 @@ import { createLeaderboardSheet } from "./leaderboard.ts";
 import { createParticipantsSheet } from "./participants.ts";
 import { createStagesSheet } from "./stages.ts";
 import { createSupplementsSheet } from "./supplements.ts";
+import { createTimesSheet } from "./times.ts";
 
 // deno-lint-ignore no-explicit-any
 declare let global: Record<string, (...args: any[]) => any>;
@@ -54,6 +55,7 @@ const doExport = (input: Input): string => {
     input.supplements,
     templatesSheet,
   );
+  const _timesSheet = createTimesSheet(ss, input.stages, templatesSheet);
   const _leaderboardSheet = createLeaderboardSheet(ss, input.leaderboard);
   ss.deleteSheet(defaultSheet);
   ss.deleteSheet(templatesSheet);

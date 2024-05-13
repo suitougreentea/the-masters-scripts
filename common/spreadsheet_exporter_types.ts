@@ -18,6 +18,23 @@ export type ParticipantsData = {
   }[];
 };
 
+export type TimeDetailData = {
+  moveTime: number,
+  burnTime: number,
+  levelStopTime: number,
+  minoCount: number,
+  clearCount: [number, number, number, number],
+  sections: {
+    lap: number,
+    split: number,
+    moveTime: number,
+    burnTime: number,
+    levelStopTime: number,
+    minoCount: number,
+    clearCount: [number, number, number, number],
+  }[];
+};
+
 export type StagesData = {
   list: {
     name: string;
@@ -31,6 +48,7 @@ export type StagesData = {
       level: number | null;
       grade: Grade | null;
       time: number | null;
+      timeDetail?: TimeDetailData;
     } | null)[];
     result: {
       rank: number;

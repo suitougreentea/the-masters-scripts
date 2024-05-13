@@ -15,6 +15,7 @@ import {
   ParticipantsData,
   StagesData,
   SupplementsData,
+  TimeDetailData,
 } from "../common/spreadsheet_exporter_types.ts";
 
 export const injectKey = createKey<Exporter>(Symbol("Exporter"));
@@ -87,6 +88,24 @@ export class Exporter {
         );
         const entries = stageData.players.map((p) => {
           if (p == null) return null;
+          const timeDetail: TimeDetailData | undefined = p.timeDetail != null
+            ? {
+              moveTime: p.timeDetail.moveTime,
+              burnTime: p.timeDetail.burnTime,
+              levelStopTime: p.timeDetail.levelStopTime,
+              minoCount: p.timeDetail.minoCount,
+              clearCount: [...p.timeDetail.clearCount],
+              sections: p.timeDetail.sections.map((s) => ({
+                lap: s.lap,
+                split: s.split,
+                moveTime: s.moveTime,
+                burnTime: s.burnTime,
+                levelStopTime: s.levelStopTime,
+                minoCount: s.minoCount,
+                clearCount: [...s.clearCount],
+              })),
+            }
+            : undefined;
           return {
             name: p.name,
             rawBestTime: p.rawBestTime,
@@ -97,6 +116,7 @@ export class Exporter {
             level: p.level,
             grade: p.grade,
             time: p.time,
+            timeDetail,
           };
         });
 
