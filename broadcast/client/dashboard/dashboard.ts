@@ -218,6 +218,7 @@ export class MastersDashboardElement extends LitElement {
     const roundStyle = styleMap({
       display: roundPageActive ? null : "none",
     });
+    // deno-fmt-ignore
     return html`
     <div class="container">
       <div id="timer">

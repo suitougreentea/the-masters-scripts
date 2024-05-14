@@ -137,6 +137,7 @@ export class MastersStagePlayersElement extends LitElement {
       }
       return null;
     };
+    // deno-fmt-ignore
     return html`
     <table>
       <colgroup>
@@ -163,10 +164,8 @@ export class MastersStagePlayersElement extends LitElement {
         </tr>
       </thead>
       <tbody>
-        ${
-      map(this.data, (e, i) => {
-        const d = e ??
-          {
+        ${map(this.data, (e, i) => {
+          const d = e ?? {
             name: null,
             bestTime: null,
             handicap: 0,
@@ -177,11 +176,11 @@ export class MastersStagePlayersElement extends LitElement {
             grade: null,
             time: null,
           };
-        const sideClass = classMap({
-          p1: d.startOrder != null && 1 <= d.startOrder && d.startOrder <= 4,
-          p2: d.startOrder != null && 5 <= d.startOrder && d.startOrder <= 8,
-        });
-        return html`
+          const sideClass = classMap({
+            p1: d.startOrder != null && 1 <= d.startOrder && d.startOrder <= 4,
+            p2: d.startOrder != null && 5 <= d.startOrder && d.startOrder <= 8,
+          });
+          return html`
           <tr>
             <td class=${sideClass}>${i + 1}</td>
             <td class=${sideClass}>${d.name}</td>
@@ -190,14 +189,11 @@ export class MastersStagePlayersElement extends LitElement {
             <td>${timeToStringNullable(d.bestTime)}</td>
             <td>${d.startOrder}</td>
             <td>${timeToStringNullable(d.startTime)}</td>
-            <td>${
-          formatLevelOrGradeNullable({ level: d.level, grade: d.grade })
-        }</td>
+            <td>${formatLevelOrGradeNullable({ level: d.level, grade: d.grade })}</td>
             <td>${timeToStringNullable(d.time)}</td>
           </tr>
           `;
-      })
-    }
+        })}
       </tbody>
     </table>
     `;

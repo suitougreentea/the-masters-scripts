@@ -88,34 +88,42 @@ export class MastersPlayerRegistrationDialogElement extends LitElement {
   render() {
     const isInvalid = this._bestTime == null;
 
+    // deno-fmt-ignore
     return html`
     <fluent-dialog id="dialog-player-registration" hidden trap-focus modal style="--dialog-width: 400px; --dialog-height: 325px;">
       <div class="dialog-container">
         <div>
-          <fluent-text-field .value=${live(this._name)} @change=${(ev: Event) =>
-      this._name =
-        (ev.target as FluentTextField).value}>名前</fluent-text-field>
+          <fluent-text-field
+            .value=${live(this._name)}
+            @change=${(ev: Event) => this._name = (ev.target as FluentTextField).value}>
+            名前
+          </fluent-text-field>
         </div>
         <div>
-          <fluent-text-field .value=${
-      live(this._bestTime != null ? timeToString(this._bestTime) : "")
-    } @change=${(ev: Event) => {
-      this._bestTime = stringToTimeFuzzy((ev.target as FluentTextField).value);
-      this.requestUpdate();
-    }}>自己ベスト</fluent-text-field>
+          <fluent-text-field
+            .value=${live(this._bestTime != null ? timeToString(this._bestTime) : "")}
+            @change=${(ev: Event) => { this._bestTime = stringToTimeFuzzy((ev.target as FluentTextField).value); this.requestUpdate(); }}>
+            自己ベスト
+          </fluent-text-field>
         </div>
         <div>
-          <fluent-text-area .value=${live(this._comment)} @change=${(
-      ev: Event,
-    ) =>
-      this._comment =
-        (ev.target as FluentTextField).value}>コメント</fluent-text-area>
+          <fluent-text-area
+            .value=${live(this._comment)}
+            @change=${(ev: Event) => this._comment = (ev.target as FluentTextField).value}>
+            コメント
+          </fluent-text-area>
         </div>
         <div class="dialog-buttons">
-          <fluent-button appearance="accent" @click=${() =>
-      this._close(true)} ?disabled=${isInvalid}>OK</fluent-button>
-          <fluent-button @click=${() =>
-      this._close(false)}>キャンセル</fluent-button>
+          <fluent-button
+            appearance="accent"
+            @click=${() => this._close(true)}
+            ?disabled=${isInvalid}>
+            OK
+          </fluent-button>
+          <fluent-button
+            @click=${() => this._close(false)}>
+            キャンセル
+          </fluent-button>
         </div>
       </div>
     </fluent-dialog>

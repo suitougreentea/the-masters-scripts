@@ -15,6 +15,7 @@ export class MastersChatElement extends LitElement {
   `;
 
   render() {
+    // deno-fmt-ignore
     return html`
     <div class="container">
       <iframe src="https://www.twitch.tv/embed/piertgm/chat?parent=localhost">

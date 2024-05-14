@@ -169,23 +169,20 @@ export class MastersTabsElement extends LitElement {
   }
 
   render() {
+    // deno-fmt-ignore
     return html`
     <span class="start">
       <span id="competition-name">${this._competitionName}</span>
     </span>
     <fluent-tabs class="container" orientation="vertical" @change=${this._onTabChange}>
       <fluent-tab slot="tab" id="setup">セットアップ</fluent-tab>
-      ${
-      map(
-        this._roundNames,
-        (e, i) => html`<fluent-tab slot="tab" id="round${i}">${e}</fluent-tab>`,
-      )
-    }
+      ${map(this._roundNames, (e, i) =>
+        html`<fluent-tab slot="tab" id="round${i}">${e}</fluent-tab>`,
+      )}
       <fluent-tab-panel slot="tabpanel"></fluent-tab-panel>
-      ${
-      map(this._roundNames, () =>
-        html`<fluent-tab-panel slot="tabpanel"></fluent-tab-panel>`)
-    }
+      ${map(this._roundNames, () =>
+        html`<fluent-tab-panel slot="tabpanel"></fluent-tab-panel>`
+      )}
     </fluent-tabs>
     <span class="end">
       <div class="end-bar">

@@ -133,6 +133,7 @@ export class MastersCompetitionElement extends LitElement {
   }
 
   render() {
+    // deno-fmt-ignore
     return html`
     <div class="container">
       <masters-title id="title"></masters-title>

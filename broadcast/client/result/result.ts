@@ -204,20 +204,16 @@ export class MastersResultElement extends LitElement {
       }
     }
 
+    // deno-fmt-ignore
     return html`
     <div class="container">
       <masters-title id="title" .value=${this.title}></masters-title>
-      <div class=${
-      classMap({ "result-container": true, "single": !hasRoundColumn })
-    }>
-        ${
-      (() => {
-        if (this.data != null) {
-          const stageMetadata =
-            this.data.roundData.metadata.stages[this.data.currentStageIndex];
-          const stageData =
-            this.data.roundData.stageData[this.data.currentStageIndex];
-          return html`
+      <div class=${classMap({ "result-container": true, "single": !hasRoundColumn })}>
+        ${(() => {
+          if (this.data != null) {
+            const stageMetadata = this.data.roundData.metadata.stages[this.data.currentStageIndex];
+            const stageData = this.data.roundData.stageData[this.data.currentStageIndex];
+            return html`
             <div class="stage-result-container">
               <div>
                 <div class="heading">${stageMetadata.name} プレイヤー</div>
@@ -229,104 +225,64 @@ export class MastersResultElement extends LitElement {
               </div>
             </div>
             `;
-        }
-        return null;
-      })()
-    }
-        ${
-      (() => {
-        if (hasRoundColumn) {
-          const roundData = this.data!.roundData;
-          return html`
+          }
+          return null;
+        })()}
+        ${(() => {
+          if (hasRoundColumn) {
+            const roundData = this.data!.roundData;
+            return html`
             <div class="round-result-container">
-              ${
-            (() => {
-              if (roundData.qualifierScore) {
-                return html`
+              ${(() => {
+                if (roundData.qualifierScore) {
+                  return html`
                   <div>
                     <div class="heading">予選スコア</div>
                     <masters-qualifier-score .data=${roundData.qualifierScore.players} .stageMetadata=${roundData.metadata.stages}></masters-qualifier-score>
                   </div>
                   `;
-              }
-              return null;
-            })()
-          }
-              ${
-            (() => {
-              if (
-                roundData.qualifierResult != null &&
-                roundData.qualifierResult.result.length > 0
-              ) {
-                return html`
+                }
+                return null;
+              })()}
+              ${(() => {
+                if (roundData.qualifierResult != null && roundData.qualifierResult.result.length > 0) {
+                  return html`
                   <div>
                     <div class="heading">予選リザルト</div>
                     <masters-qualifier-result .data=${roundData.qualifierResult.result}></masters-qualifier-result>
                   </div>
                   `;
-              }
-              return null;
-            })()
-          }
-              ${
-            map(
-              roundData.supplementComparisons,
-              (supplementComparison, supplementComparisonIndex) => {
-                const supplementComparisonMetadata = roundData.metadata
-                  .supplementComparisons[supplementComparisonIndex];
-                if (supplementComparison.comparison.length > 0) {
-                  return html`
-                  <div>
-                    <div class="heading">${supplementComparisonMetadata.name}</div>
-                    <masters-supplement-comparison .data=${supplementComparison.comparison}></masters-supplement-comparison>
-                  </div>
-                  `;
                 }
                 return null;
-              },
-            )
-          }
-              ${
-            /*map(roundData.stageData, (stageData, stageIndex) => {
-                const stageMetadata = roundData.metadata.stages[stageIndex];
-                return html`
-                <div>
-                  <div class="heading">${stageMetadata.name} プレイヤー</div>
-                  <masters-stage-players .data=${stageData.players}></masters-stage-players>
-                </div>
-                `;
-              })*/
-            null}
-              ${
-            /*map(roundData.stageData, (stageData, stageIndex) => {
-                const stageMetadata = roundData.metadata.stages[stageIndex];
-                if (stageData.result.length > 0) {
-                  return html`
-                  <div>
-                    <div class="heading">${stageMetadata.name} リザルト</div>
-                    <masters-stage-result .data=${stageData.result} .numWinners=${stageMetadata.numWinners} .hasWildcard=${stageMetadata.hasWildcard}></masters-stage-result>
-                  </div>
-                  `;
-                }
-                return null;
-              })*/
-            null}
+              })()}
+              ${map(
+                roundData.supplementComparisons,
+                (supplementComparison, supplementComparisonIndex) => {
+                  const supplementComparisonMetadata = roundData.metadata.supplementComparisons[supplementComparisonIndex];
+                  if (supplementComparison.comparison.length > 0) {
+                    return html`
+                    <div>
+                      <div class="heading">${supplementComparisonMetadata.name}</div>
+                      <masters-supplement-comparison .data=${supplementComparison.comparison}></masters-supplement-comparison>
+                    </div>
+                    `;
+                  }
+                  return null;
+                },
+              )}
             </div>
             `;
-        }
-        return null;
-      })()
-    }
+          }
+          return null;
+        })()}
       </div>
-      ${
-      (() => {
+      ${(() => {
         if (this.data?.nextStageName != null) {
           return html`<div class="next-stage-name"><span>Next &gt;&gt; </span><span>${this.data.nextStageName}</span></div>`;
         } else {
           return html`<div class="next-stage-name"></div>`;
         }
-      })()
-    }
+      })()}
     </div>
     `;
   }

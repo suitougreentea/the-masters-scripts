@@ -223,6 +223,7 @@ export class MastersPlayerInfoElement extends LitElement {
   render() {
     let loader = html``;
     if (this._showLoader) {
+      // deno-fmt-ignore
       loader = html`
       <div class="loader">
         <fluent-progress-ring class="spinner"></fluent-progress-ring>
@@ -230,19 +231,17 @@ export class MastersPlayerInfoElement extends LitElement {
       `;
     }
 
+    // deno-fmt-ignore
     return html`
     <div id="root">
       <div class="row">
         <fluent-text-field
           .value=${live(this._name)}
-          @change=${(ev: Event) =>
-      this._name = (ev.target as TextField).value.trim()}
-        >
-          ${
-      this._oldName == null
-        ? "プレイヤー名"
-        : `プレイヤー名 (これまで: ${this._oldName})`
-    }
+          @change=${(ev: Event) => this._name = (ev.target as TextField).value.trim()}>
+          ${this._oldName == null
+            ? "プレイヤー名"
+            : `プレイヤー名 (これまで: ${this._oldName})`
+          }
         </fluent-text-field>
       </div>
       <div class="row">
@@ -254,45 +253,43 @@ export class MastersPlayerInfoElement extends LitElement {
       <div class="row">
         <fluent-text-field
           ?disabled=${!this._queryCompleted}
-          .value=${
-      live(this._bestTime != null ? timeToString(this._bestTime) : "")
-    }
+          .value=${live(this._bestTime != null ? timeToString(this._bestTime) : "")}
           @change=${(ev: Event) => {
-      this._bestTime = stringToTimeFuzzy((ev.target as TextField).value);
-      this.requestUpdate();
-    }}
-        >自己ベスト</fluent-text-field>
+            this._bestTime = stringToTimeFuzzy((ev.target as TextField).value);
+            this.requestUpdate();
+          }}>
+          自己ベスト
+        </fluent-text-field>
       </div>
       <div class="row">
         <fluent-text-area
           ?disabled=${!this._queryCompleted}
           .value=${live(this._comment)}
-          @change=${(ev: Event) =>
-      this._comment = (ev.target as TextArea).value}
-        >コメント</fluent-text-area>
+          @change=${(ev: Event) => this._comment = (ev.target as TextArea).value}>
+          コメント
+        </fluent-text-area>
       </div>
       <div class="row">
         <fluent-button appearance="accent"
           ?disabled=${!this._queryCompleted}
-          @click=${this._registerOrUpdatePlayer}
-        >${this._oldName == null ? "情報の登録" : "情報の更新"}</fluent-button>
+          @click=${this._registerOrUpdatePlayer}>
+          ${this._oldName == null ? "情報の登録" : "情報の更新"}
+        </fluent-button>
       </div>
       <div class="row">
         <fluent-button appearance="accent"
           ?disabled=${this._oldName == null || this._participating}
-          @click=${this._participate}
-        >${this._participating ? "参加登録済" : "参加登録"}</fluent-button>
+          @click=${this._participate}>
+          ${this._participating ? "参加登録済" : "参加登録"}
+        </fluent-button>
       </div>
       <div
-        class="${
-      classMap({
-        "message": true,
-        "message-hidden": this._currentMessage == null,
-        "message-info": this._currentMessage?.type == 0,
-        "message-error": this._currentMessage?.type == 1,
-      })
-    }"
-      >
+        class=${classMap({
+          "message": true,
+          "message-hidden": this._currentMessage == null,
+          "message-info": this._currentMessage?.type == 0,
+          "message-error": this._currentMessage?.type == 1,
+        })}>
         ${this._currentMessage?.message}
       </div>
       ${loader}

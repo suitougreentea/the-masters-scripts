@@ -306,74 +306,70 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
     return html`
     <fluent-dialog id="dialog-edit-player-names" hidden trap-focus modal style="--dialog-width: 400px; --dialog-height: 440px;">
       <div class="dialog-container">
-        <fluent-radio-group class="type" .value=${live(this._mode)} @change=${(
-      e: Event,
-    ) => this._mode = (e.target as FluentRadioGroup).value as Mode}>
+        <fluent-radio-group
+          class="type"
+          .value=${live(this._mode)}
+          @change=${(e: Event) => this._mode = (e.target as FluentRadioGroup).value as Mode}>
           <fluent-radio value="reorder">並べ替え</fluent-radio>
           <fluent-radio value="reset">再設定</fluent-radio>
         </fluent-radio-group>
-        ${
-      (() => {
-        if (this._mode == "reorder") {
-          const leftSide = this._reorderPlayers.map((e) => ({
-            ...e,
-            moved: false,
-          }));
-          const rightSide: ReorderPlayerEntry[] = [];
-          this._reorderPositions.forEach((name) => {
-            if (name == null) {
-              rightSide.push({ name: null, startOrder: -1 });
-            } else {
-              const index = leftSide.findIndex((e) => e.name == name);
-              leftSide[index].moved = true;
-              rightSide.push({ ...leftSide[index] });
-            }
-          });
-          isDirty = rightSide.some(e => e.name != null);
-          isInvalid = leftSide.some((e) => !e.moved);
+        ${(() => {
+          if (this._mode == "reorder") {
+            const leftSide = this._reorderPlayers.map((e) => ({
+              ...e,
+              moved: false,
+            }));
+            const rightSide: ReorderPlayerEntry[] = [];
+            this._reorderPositions.forEach((name) => {
+              if (name == null) {
+                rightSide.push({ name: null, startOrder: -1 });
+              } else {
+                const index = leftSide.findIndex((e) => e.name == name);
+                leftSide[index].moved = true;
+                rightSide.push({ ...leftSide[index] });
+              }
+            });
+            isDirty = rightSide.some(e => e.name != null);
+            isInvalid = leftSide.some((e) => !e.moved);
 
-          return html`
+            return html`
             <div class="reorder-container">
               <div class="left-side"
                 @dragenter=${this._enterDragLeft}
-                @dragover=${this._overDragLeft}
-              >
-                ${
-            map(leftSide, (e, i) => {
-              return html`<div class=${
-                playerSideClass(e.startOrder, e.moved)
-              } draggable=${!e.moved ? "true" : "false"}
+                @dragover=${this._overDragLeft}>
+                ${map(leftSide, (e, i) => {
+                  return html`
+                  <div
+                    class=${playerSideClass(e.startOrder, e.moved)}
+                    draggable=${!e.moved ? "true" : "false"}
                     @dragstart=${(ev: DragEvent) => this._startDragLeft(ev, i)}
                     @dragend=${(ev: DragEvent) => this._endDragLeft(ev, i)}
                   >${e.name}</div>`;
-            })
-          }
+                })}
               </div>
               <div class="middle-side">→</div>
               <div class="right-side">
-                ${
-            map(rightSide, (e, i) => {
-              return html`
+                ${map(rightSide, (e, i) => {
+                  return html`
                   <div>
                     <div class="position">${i + 1}</div>
-                    <div class=${
-                playerSideClass(e.startOrder, false)
-              } draggable=${e.name != null ? "true" : "false"}
-                    @dragstart=${(ev: DragEvent) => this._startDragRight(ev, i)}
-                    @dragend=${(ev: DragEvent) => this._endDragRight(ev, i)}
-                    @dragenter=${(ev: DragEvent) => this._enterDragRight(ev, i)}
-                    @dragover=${(ev: DragEvent) => this._overDragRight(ev, i)}
+                    <div
+                      class=${playerSideClass(e.startOrder, false)}
+                      draggable=${e.name != null ? "true" : "false"}
+                      @dragstart=${(ev: DragEvent) => this._startDragRight(ev, i)}
+                      @dragend=${(ev: DragEvent) => this._endDragRight(ev, i)}
+                      @dragenter=${(ev: DragEvent) => this._enterDragRight(ev, i)}
+                      @dragover=${(ev: DragEvent) => this._overDragRight(ev, i)}
                     >${e.name}</div>
                   </div>
                   `;
-            })
-          }
+                })}
               </div>
             </div>
             `;
-        } else if (this._mode == "reset") {
-          isDirty = true;
-          return html`
+          } else if (this._mode == "reset") {
+            isDirty = true;
+            return html`
             <table>
               <thead>
                 <tr>
@@ -382,36 +378,29 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
                 </tr>
               </thead>
               <tbody>
-                ${
-            map(this._resetData, (e, i) => {
-              return html`
+                ${map(this._resetData, (e, i) => {
+                  return html`
                   <tr>
-                    <td><fluent-text-field .value=${
-                live(e.name ?? "")
-              } @change=${(e: Event) =>
-                this._changeResetEntry(
-                  i,
-                  "name",
-                  (e.target as FluentTextField).value,
-                )}></fluent-text-field></td>
-                    <td><fluent-text-field .value=${
-                live(formatHandicap(e.handicap))
-              } @change=${(e: Event) =>
-                this._changeResetEntry(
-                  i,
-                  "handicap",
-                  (e.target as FluentTextField).value,
-                )}></fluent-text-field></td>
+                    <td>
+                      <fluent-text-field
+                        .value=${live(e.name ?? "")}
+                        @change=${(e: Event) => this._changeResetEntry(i, "name", (e.target as FluentTextField).value)}>
+                      </fluent-text-field>
+                    </td>
+                    <td>
+                      <fluent-text-field
+                        .value=${live(formatHandicap(e.handicap))}
+                        @change=${(e: Event) => this._changeResetEntry(i, "handicap", (e.target as FluentTextField).value)}>
+                      </fluent-text-field>
+                    </td>
                   </tr>`;
-            })
-          }
+                })}
               </tbody>
             <table>
             `;
-        }
-        return null;
-      })()
-    }
+          }
+          return null;
+        })()}
         <div class="dialog-buttons">
           <fluent-button
             @click=${() => this._closeWithoutReorder()}

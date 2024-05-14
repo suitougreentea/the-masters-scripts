@@ -61,6 +61,7 @@ export class MastersRoundNameElement extends LitElement {
     const japaneseName = this.name ?? "";
     const englishName = this.#translateName(japaneseName);
 
+    // deno-fmt-ignore
     return html`
     <div class="container">
       <div class="ja">${japaneseName}</span>

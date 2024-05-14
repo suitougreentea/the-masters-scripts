@@ -86,6 +86,7 @@ export class MastersSupplementComparisonElement extends LitElement {
   data: SupplementComparisonEntry[] = [];
 
   render() {
+    // deno-fmt-ignore
     return html`
     <table>
       <colgroup>
@@ -106,22 +107,18 @@ export class MastersSupplementComparisonElement extends LitElement {
         </tr>
       </thead>
       <tbody>
-        ${
-      map(this.data, (e) => {
-        return html`
+        ${map(this.data, (e) => {
+          return html`
           <tr>
             <td>${e.rank}</td>
             <td>${e.name}</td>
-            <td>${
-          formatLevelOrGradeNullable({ level: e.level, grade: e.grade })
-        }</td>
+            <td>${formatLevelOrGradeNullable({ level: e.level, grade: e.grade })}</td>
             <td>${timeToStringNullable(e.time)}</td>
             <td>${timeToStringNullable(e.timeDiffBest)}</td>
             <td>${timeToStringNullable(e.timeDiffPrev)}</td>
           </tr>
           `;
-      })
-    }
+        })}
       </tbody>
     </table>
     `;

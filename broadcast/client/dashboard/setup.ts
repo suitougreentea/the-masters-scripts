@@ -283,7 +283,9 @@ export class MastersSetupElement extends LitElement {
           null || participant.firstRoundGroupIndex == null),
     }));
 
-    const registrationUrlQr = this._registrationUrlQr != null
+    // deno-fmt-ignore
+    const registrationUrlQr =
+      this._registrationUrlQr != null
       ? html`<div>
         <a target="_blank" href=${this._registrationUrl}>
           <img class="qr" src=${this._registrationUrlQr}>
@@ -291,6 +293,7 @@ export class MastersSetupElement extends LitElement {
       </div>`
       : null;
 
+    // deno-fmt-ignore
     return html`
     <fluent-card class="container">
       <div>
@@ -313,22 +316,16 @@ export class MastersSetupElement extends LitElement {
             </tr>
           </thead>
           <tbody>
-            ${
-      map(sortedRegisteredPlayers, (player) =>
-        html`
-            <tr>
-              <td>${player.name}</td>
-              <td>${timeToString(player.bestTime)}</td>
-              <td>${
-          player.comment.split("\n").map((line) => html`${line}<br>`)
-        }</td>
-              <td><fluent-button @click=${() =>
-          this._openPlayerUpdateDialog(
-            player.originalIndex,
-          )}>編集</fluent-button></td>
-            </tr>
-            `)
-    }
+            ${map(sortedRegisteredPlayers, (player) =>
+              html`
+              <tr>
+                <td>${player.name}</td>
+                <td>${timeToString(player.bestTime)}</td>
+                <td>${player.comment.split("\n").map((line) => html`${line}<br>`)}</td>
+                <td><fluent-button @click=${() => this._openPlayerUpdateDialog(player.originalIndex)}>編集</fluent-button></td>
+              </tr>
+              `
+            )}
           </tbody>
         </table>
       </div>
@@ -339,23 +336,23 @@ export class MastersSetupElement extends LitElement {
           <fluent-text-field id="competition-name" value="The Masters xxx">大会名:</fluent-text-field>
         </div>
         <div>
-          <fluent-checkbox @change=${(e: Event) =>
-      this._manual = (e.target as HTMLInputElement)
-        .checked} ?checked=${this._manual}>マニュアルモード</fluent-checkbox>
+          <fluent-checkbox
+            @change=${(e: Event) => this._manual = (e.target as HTMLInputElement).checked}
+            ?checked=${this._manual}>
+            マニュアルモード
+          </fluent-checkbox>
         </div>
         <div style=${styleMap({ display: this._manual ? null : "none" })}>
           <fluent-number-field id="manual-num-games"  value="10">試合数:</fluent-number-field>
         </div>
         <div style=${styleMap({ display: this._manual ? "none" : null })}>
-          <fluent-checkbox @change=${(e: Event) =>
-      this._overridePreset = (e.target as HTMLInputElement)
-        .checked} ?checked=${this._overridePreset}>プリセット名を手動で指定</fluent-checkbox>
+          <fluent-checkbox
+            @change=${(e: Event) => this._overridePreset = (e.target as HTMLInputElement).checked}
+            ?checked=${this._overridePreset}>
+            プリセット名を手動で指定
+          </fluent-checkbox>
         </div>
-        <div style=${
-      styleMap({
-        display: this._manual || !this._overridePreset ? "none" : null,
-      })
-    }>
+        <div style=${styleMap({ display: this._manual || !this._overridePreset ? "none" : null })}>
           <fluent-text-field id="preset-name" value="">プリセット名:</fluent-text-field>
         </div>
         <h3>参加者</h3>
@@ -376,19 +373,14 @@ export class MastersSetupElement extends LitElement {
             </tr>
           </thead>
           <tbody>
-            ${
-      map(participants, (participant) =>
-        html`
-            <tr class=${classMap({ error: participant.error })}>
-              <td>${participant.name}</td>
-              <td>${
-          participant.firstRoundGroupIndex != null
-            ? formatGroup(participant.firstRoundGroupIndex)
-            : "-"
-        }</td>
-            </tr>
-            `)
-    }
+            ${map(participants, (participant) =>
+              html`
+              <tr class=${classMap({ error: participant.error })}>
+                <td>${participant.name}</td>
+                <td>${participant.firstRoundGroupIndex != null ? formatGroup(participant.firstRoundGroupIndex) : "-"}</td>
+              </tr>
+              `
+            )}
           </tbody>
         </table>
         <fluent-button appearance="accent" @click=${this._confirmStartCompetition}>大会開始</fluent-button>

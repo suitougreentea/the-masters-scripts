@@ -101,6 +101,7 @@ export class MastersStageResultElement extends LitElement {
   hasWildcard = false;
 
   render() {
+    // deno-fmt-ignore
     return html`
     <table>
       <colgroup>
@@ -123,27 +124,23 @@ export class MastersStageResultElement extends LitElement {
         </tr>
       </thead>
       <tbody>
-        ${
-      map(this.data, (e, i) => {
-        const rowClass = classMap({
-          "winners-end": i == this.numWinners - 1,
-          "wildcard-end": this.hasWildcard && i == this.numWinners,
-        });
-        return html`
+        ${map(this.data, (e, i) => {
+          const rowClass = classMap({
+            "winners-end": i == this.numWinners - 1,
+            "wildcard-end": this.hasWildcard && i == this.numWinners,
+          });
+          return html`
           <tr class=${rowClass}>
             <td>${e.rank}</td>
             <td>${e.name}</td>
-            <td>${
-          formatLevelOrGradeNullable({ level: e.level, grade: e.grade })
-        }</td>
+            <td>${formatLevelOrGradeNullable({ level: e.level, grade: e.grade })}</td>
             <td>${timeToStringNullable(e.time)}</td>
             <td>${timeToStringNullable(e.timeDiffBest)}</td>
             <td>${timeToStringNullable(e.timeDiffTop)}</td>
             <td>${timeToStringNullable(e.timeDiffPrev)}</td>
           </tr>
           `;
-      })
-    }
+        })}
       </tbody>
     </table>
     `;

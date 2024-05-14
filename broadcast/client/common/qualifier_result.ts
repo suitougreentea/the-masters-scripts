@@ -106,6 +106,7 @@ export class MastersQualifierResultElement extends LitElement {
   data: QualifierResultEntry[] = [];
 
   render() {
+    // deno-fmt-ignore
     return html`
     <table>
       <colgroup>
@@ -132,12 +133,11 @@ export class MastersQualifierResultElement extends LitElement {
         </tr>
       </thead>
       <tbody>
-        ${
-      map(this.data, (e, i) => {
-        const rowClass = classMap({
-          "winners-end": i == 3,
-        });
-        return html`
+        ${map(this.data, (e, i) => {
+          const rowClass = classMap({
+            "winners-end": i == 3,
+          });
+          return html`
           <tr class=${rowClass}>
             <td>${e.rank}</td>
             <td>${e.name}</td>
@@ -146,17 +146,11 @@ export class MastersQualifierResultElement extends LitElement {
             <td>${e.numPlaces[1]}</td>
             <td>${e.numPlaces[2]}</td>
             <td>${e.numPlaces[3]}</td>
-            <td>${
-          formatLevelOrGradeNullable({
-            level: e.bestGameLevel,
-            grade: e.bestGameGrade,
-          })
-        }</td>
+            <td>${formatLevelOrGradeNullable({ level: e.bestGameLevel, grade: e.bestGameGrade })}</td>
             <td>${timeToStringNullable(e.bestGameTimeDiffBest)}</td>
           </tr>
           `;
-      })
-    }
+        })}
       </tbody>
     </table>
     `;

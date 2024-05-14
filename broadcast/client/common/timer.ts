@@ -398,11 +398,11 @@ export class MastersTimerElement extends LitElement {
   }
 
   render() {
+    // deno-fmt-ignore
     return html`
     <div class="container">
       <div class="container-inner">
-      ${
-      map(this.#data, (_, i) =>
+      ${map(this.#data, (_, i) =>
         html`
         <div class="player">
           <div class="background-left"></div>
@@ -421,8 +421,8 @@ export class MastersTimerElement extends LitElement {
           <!-- TODO: Experimental -->
           <div class="standing"></div>
         </div>
-        `)
-    }
+        `
+      )}
       </div>
     </div>
     `;
