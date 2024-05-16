@@ -9,7 +9,7 @@ const result = await build({
   outfile: "page.js",
   target: "es2017",
   plugins: [
-    ...denoPlugins(),
+    ...denoPlugins({ configPath: `${import.meta.dirname}/deno.json` }),
   ],
 });
 

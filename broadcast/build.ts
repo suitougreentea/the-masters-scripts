@@ -19,7 +19,7 @@ const options: esbuild.BuildOptions = {
   outdir: "./client",
   outExtension: { ".js": ".bundle.js" },
   metafile: true,
-  plugins: [...denoPlugins()],
+  plugins: [...denoPlugins({ configPath: `${import.meta.dirname}/deno.json` })],
 };
 
 if (watch) {
