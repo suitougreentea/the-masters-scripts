@@ -1,13 +1,7 @@
-import {
-  classMap,
-  css,
-  customElement,
-  html,
-  LitElement,
-  map,
-  property,
-  query,
-} from "../deps.ts";
+import { css, html, LitElement } from "lit";
+import { customElement, property, query } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { map } from "lit/directives/map.js";
 import "../common/qualifier_result.ts";
 import "../common/qualifier_score.ts";
 import "../common/stage_players.ts";

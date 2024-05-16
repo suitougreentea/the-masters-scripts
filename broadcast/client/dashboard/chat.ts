@@ -1,4 +1,5 @@
-import { css, customElement, html, LitElement } from "../deps.ts";
+import { css, html, LitElement } from "lit";
+import { customElement } from "lit/decorators.js";
 
 @customElement("masters-chat")
 export class MastersChatElement extends LitElement {

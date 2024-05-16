@@ -1,14 +1,9 @@
 import { SupplementComparisonEntry } from "../../../common/common_types.ts";
 import { timeToStringNullable } from "../../../common/time.ts";
 import { formatLevelOrGradeNullable } from "../../common/util.ts";
-import {
-  css,
-  customElement,
-  html,
-  LitElement,
-  map,
-  property,
-} from "../deps.ts";
+import { css, html, LitElement } from "lit";
+import { customElement, property } from "lit/decorators.js";
+import { map } from "lit/directives/map.js";
 import { commonColors } from "./common_values.ts";
 
 @customElement("masters-supplement-comparison")

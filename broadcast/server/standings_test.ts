@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std@0.215.0/assert/mod.ts";
+import { assertEquals } from "@std/assert";
 import { calculateStandings, StandingInfo } from "./standings.ts";
 import { GradeString, stringToGrade } from "../../common/grade.ts";
 

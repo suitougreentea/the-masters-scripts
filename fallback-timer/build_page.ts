@@ -1,5 +1,5 @@
-import { denoPlugins } from "https://deno.land/x/esbuild_deno_loader@0.9.0/mod.ts";
-import { build } from "https://deno.land/x/esbuild@v0.20.0/mod.js";
+import { denoPlugins } from "@luca/esbuild-deno-loader";
+import { build } from "esbuild";
 
 const result = await build({
   bundle: true,

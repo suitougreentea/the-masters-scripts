@@ -6,14 +6,10 @@ import {
   PromiseSet,
 } from "../../common/util.ts";
 import { OcrResult, PlayingPlayerData } from "../../common/type_definition.ts";
-import {
-  css,
-  customElement,
-  html,
-  LitElement,
-  map,
-  tinycolor,
-} from "../deps.ts";
+import { css, html, LitElement } from "lit";
+import { customElement } from "lit/decorators.js";
+import { map } from "lit/directives/map.js";
+import tinycolor from "tinycolor2";
 import { timeToString } from "../../../common/time.ts";
 
 @customElement("masters-timer")

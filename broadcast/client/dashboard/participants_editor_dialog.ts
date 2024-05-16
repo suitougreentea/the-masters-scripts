@@ -1,19 +1,12 @@
 import { Participant } from "../../../common/common_types.ts";
 import { formatGroup, parseGroup } from "../../common/util.ts";
 import { commonColors } from "../common/common_values.ts";
-import {
-  classMap,
-  css,
-  customElement,
-  FluentDialog,
-  FluentTextField,
-  html,
-  LitElement,
-  live,
-  map,
-  query,
-  state,
-} from "../deps.ts";
+import { css, html, LitElement } from "lit";
+import { customElement, query, state } from "lit/decorators.js";
+import { map } from "lit/directives/map.js";
+import { classMap } from "lit/directives/class-map.js";
+import { live } from "lit/directives/live.js";
+import { Dialog, TextField } from "@fluentui/web-components";
 
 @customElement("masters-participants-editor-dialog")
 export class MastersParticipantsEditorDialogElement extends LitElement {
@@ -60,7 +53,7 @@ export class MastersParticipantsEditorDialogElement extends LitElement {
 
   // @ts-ignore: ?
   @query("fluent-dialog", true)
-  private _dialog!: FluentDialog;
+  private _dialog!: Dialog;
 
   open(participants: Participant[], registeredNames: string[]) {
     this._participants = participants;
@@ -181,14 +174,14 @@ export class MastersParticipantsEditorDialogElement extends LitElement {
                   <td>
                     <fluent-text-field
                       .value=${live(participant.name)}
-                      @change=${(ev: Event) => this._changeName(i, (ev.target as FluentTextField).value)}
+                      @change=${(ev: Event) => this._changeName(i, (ev.target as TextField).value)}
                       @keydown=${this._checkEnterKey}>
                     </fluent-text-field>
                   </td>
                   <td>
                     <fluent-text-field
                       .value=${live(participant.firstRoundGroupIndex != null ? formatGroup(participant.firstRoundGroupIndex) : "")}
-                      @change=${(ev: Event) => { this._changeFirstRoundGroup(i, (ev.target as FluentTextField).value); this.requestUpdate(); }}
+                      @change=${(ev: Event) => { this._changeFirstRoundGroup(i, (ev.target as TextField).value); this.requestUpdate(); }}
                       @keydown=${this._checkEnterKey}></fluent-text-field>
                   </td>
                 </tr>

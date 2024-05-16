@@ -5,6 +5,9 @@
       "https://raw.githubusercontent.com/proudust/deno-gas-types/main/types/index.d.ts"
     ]
   },
+  "imports": {
+    "@std/assert": "https://deno.land/std@0.215.0/assert/mod.ts"
+  },
   "tasks": {
     "test": "deno test",
     "check": "deno check **/*.ts"

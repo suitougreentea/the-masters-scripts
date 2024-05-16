@@ -1,4 +1,4 @@
-import { css } from "../deps.ts";
+import { css } from "lit";
 
 export const commonColors = {
   background: css`rgb(35, 36, 37)`,

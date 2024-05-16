@@ -1,4 +1,4 @@
-import { TextLineStream } from "https://deno.land/std@0.141.0/streams/mod.ts";
+import { TextLineStream } from "@std/streams";
 
 const stdoutWriter = Deno.stdout.writable.getWriter();
 const stderrWriter = Deno.stderr.writable.getWriter();

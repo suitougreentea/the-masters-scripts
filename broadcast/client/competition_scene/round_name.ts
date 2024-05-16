@@ -1,5 +1,6 @@
 import { commonColors } from "../common/common_values.ts";
-import { css, customElement, html, LitElement, property } from "../deps.ts";
+import { css, html, LitElement } from "lit";
+import { customElement, property } from "lit/decorators.js";
 
 @customElement("masters-round-name")
 export class MastersRoundNameElement extends LitElement {

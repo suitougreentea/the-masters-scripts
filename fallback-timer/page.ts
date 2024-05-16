@@ -1,4 +1,4 @@
-import { default as tinycolor } from "https://esm.sh/tinycolor2@1.6.0";
+import { default as tinycolor } from "tinycolor2";
 import { type TimerData } from "./main.ts";
 
 const loader = document.querySelector<HTMLDivElement>("#loader")!;

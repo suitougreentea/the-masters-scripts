@@ -1,15 +1,10 @@
 import { QualifierResultEntry } from "../../../common/common_types.ts";
 import { formatLevelOrGradeNullable } from "../../common/util.ts";
 import { timeToStringNullable } from "../../../common/time.ts";
-import {
-  classMap,
-  css,
-  customElement,
-  html,
-  LitElement,
-  map,
-  property,
-} from "../deps.ts";
+import { css, html, LitElement } from "lit";
+import { customElement, property } from "lit/decorators.js";
+import { map } from "lit/directives/map.js";
+import { classMap } from "lit/directives/class-map.js";
 import { commonColors } from "./common_values.ts";
 
 @customElement("masters-qualifier-result")

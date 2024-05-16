@@ -1,15 +1,8 @@
-import {
-  consume,
-  css,
-  customElement,
-  FluentMenu,
-  FluentTabs,
-  html,
-  LitElement,
-  map,
-  query,
-  state,
-} from "../deps.ts";
+import { css, html, LitElement } from "lit";
+import { customElement, query, state } from "lit/decorators.js";
+import { map } from "lit/directives/map.js";
+import { consume } from "@lit-labs/context";
+import { Menu, Tabs } from "@fluentui/web-components";
 import { DashboardContext, dashboardContext } from "./dashboard_context.ts";
 
 @customElement("masters-tabs")
@@ -58,7 +51,7 @@ export class MastersTabsElement extends LitElement {
 
   // @ts-ignore: ?
   @query("fluent-tabs", true)
-  private _fluentTabs!: FluentTabs;
+  private _fluentTabs!: Tabs;
   private _activeTabName = "setup";
   get activeTabName() {
     return this._activeTabName;
@@ -66,7 +59,7 @@ export class MastersTabsElement extends LitElement {
 
   // @ts-ignore: ?
   @query("#advanced-menu", true)
-  private _advancedMenu!: FluentMenu;
+  private _advancedMenu!: Menu;
 
   async firstUpdated() {
     const client = await this._dashboardContext.getClient();
@@ -92,7 +85,7 @@ export class MastersTabsElement extends LitElement {
 
   private _onTabChange(e: Event) {
     e.preventDefault();
-    this._activeTabName = (e.target as FluentTabs).activeid!;
+    this._activeTabName = (e.target as Tabs).activeid!;
     this.dispatchEvent(new Event("change-active-tab"));
   }
 

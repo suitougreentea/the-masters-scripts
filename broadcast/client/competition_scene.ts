@@ -1,9 +1,10 @@
-import { denocg } from "./deps.ts";
+import "./register_fluentui_elements.ts";
+import { getClient } from "denocg/client";
 import { type TypeDefinition } from "../common/type_definition.ts";
 import "./competition_scene/competition.ts";
 import { MastersCompetitionElement } from "./competition_scene/competition.ts";
 
-const client = await denocg.getClient<TypeDefinition>();
+const client = await getClient<TypeDefinition>();
 
 const competition = document.querySelector<MastersCompetitionElement>(
   "masters-competition",

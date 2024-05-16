@@ -3,20 +3,12 @@ import {
   StageSetupPlayerEntry,
 } from "../../../common/common_types.ts";
 import { commonColors } from "../common/common_values.ts";
-import {
-  classMap,
-  css,
-  customElement,
-  FluentDialog,
-  FluentRadioGroup,
-  FluentTextField,
-  html,
-  LitElement,
-  live,
-  map,
-  query,
-  state,
-} from "../deps.ts";
+import { css, html, LitElement } from "lit";
+import { customElement, query, state } from "lit/decorators.js";
+import { map } from "lit/directives/map.js";
+import { classMap } from "lit/directives/class-map.js";
+import { live } from "lit/directives/live.js";
+import { Dialog, RadioGroup, TextField } from "@fluentui/web-components";
 
 type Mode = "reorder" | "reset";
 type ReorderPlayerEntry = { name: string | null; startOrder: number };
@@ -121,7 +113,7 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
 
   // @ts-ignore: ?
   @query("fluent-dialog", true)
-  private _dialog!: FluentDialog;
+  private _dialog!: Dialog;
 
   open(
     stageIndex: number,
@@ -309,7 +301,7 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
         <fluent-radio-group
           class="type"
           .value=${live(this._mode)}
-          @change=${(e: Event) => this._mode = (e.target as FluentRadioGroup).value as Mode}>
+          @change=${(e: Event) => this._mode = (e.target as RadioGroup).value as Mode}>
           <fluent-radio value="reorder">並べ替え</fluent-radio>
           <fluent-radio value="reset">再設定</fluent-radio>
         </fluent-radio-group>
@@ -384,13 +376,13 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
                     <td>
                       <fluent-text-field
                         .value=${live(e.name ?? "")}
-                        @change=${(e: Event) => this._changeResetEntry(i, "name", (e.target as FluentTextField).value)}>
+                        @change=${(e: Event) => this._changeResetEntry(i, "name", (e.target as TextField).value)}>
                       </fluent-text-field>
                     </td>
                     <td>
                       <fluent-text-field
                         .value=${live(formatHandicap(e.handicap))}
-                        @change=${(e: Event) => this._changeResetEntry(i, "handicap", (e.target as FluentTextField).value)}>
+                        @change=${(e: Event) => this._changeResetEntry(i, "handicap", (e.target as TextField).value)}>
                       </fluent-text-field>
                     </td>
                   </tr>`;

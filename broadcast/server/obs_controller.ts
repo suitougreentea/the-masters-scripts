@@ -1,4 +1,7 @@
-import { OBSRequestTypes, OBSResponseTypes, OBSWebSocket } from "./deps.ts";
+import OBSWebSocket, {
+  OBSRequestTypes,
+  OBSResponseTypes,
+} from "obs-websocket-js";
 
 export class OBSController extends EventTarget {
   #address: string;

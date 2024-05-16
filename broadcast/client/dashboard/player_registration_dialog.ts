@@ -1,17 +1,10 @@
 import { RegisteredPlayerEntry } from "../../../common/common_types.ts";
 import { stringToTimeFuzzy } from "../../../common/time.ts";
 import { timeToString } from "../../../common/time.ts";
-import {
-  css,
-  customElement,
-  FluentDialog,
-  FluentTextField,
-  html,
-  LitElement,
-  live,
-  query,
-  state,
-} from "../deps.ts";
+import { css, html, LitElement } from "lit";
+import { customElement, query, state } from "lit/decorators.js";
+import { live } from "lit/directives/live.js";
+import { Dialog, TextField } from "@fluentui/web-components";
 
 @customElement("masters-player-registration-dialog")
 export class MastersPlayerRegistrationDialogElement extends LitElement {
@@ -48,7 +41,7 @@ export class MastersPlayerRegistrationDialogElement extends LitElement {
 
   // @ts-ignore: ?
   @query("fluent-dialog", true)
-  private _dialog!: FluentDialog;
+  private _dialog!: Dialog;
 
   openRegister() {
     this._oldName = null;
@@ -95,21 +88,21 @@ export class MastersPlayerRegistrationDialogElement extends LitElement {
         <div>
           <fluent-text-field
             .value=${live(this._name)}
-            @change=${(ev: Event) => this._name = (ev.target as FluentTextField).value}>
+            @change=${(ev: Event) => this._name = (ev.target as TextField).value}>
             名前
           </fluent-text-field>
         </div>
         <div>
           <fluent-text-field
             .value=${live(this._bestTime != null ? timeToString(this._bestTime) : "")}
-            @change=${(ev: Event) => { this._bestTime = stringToTimeFuzzy((ev.target as FluentTextField).value); this.requestUpdate(); }}>
+            @change=${(ev: Event) => { this._bestTime = stringToTimeFuzzy((ev.target as TextField).value); this.requestUpdate(); }}>
             自己ベスト
           </fluent-text-field>
         </div>
         <div>
           <fluent-text-area
             .value=${live(this._comment)}
-            @change=${(ev: Event) => this._comment = (ev.target as FluentTextField).value}>
+            @change=${(ev: Event) => this._comment = (ev.target as TextField).value}>
             コメント
           </fluent-text-area>
         </div>

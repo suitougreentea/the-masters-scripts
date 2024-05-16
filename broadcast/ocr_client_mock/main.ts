@@ -1,5 +1,5 @@
 // Data and original script courtesy of @jshimada3256 (X)
-import { TextLineStream } from "https://deno.land/std@0.141.0/streams/mod.ts";
+import { TextLineStream } from "@std/streams";
 
 if (import.meta.main) {
   // コマンドライン引数からファイル名とWebSocketサーバのアドレスを取得

@@ -1,17 +1,11 @@
 import { TypeDefinition } from "../../common/type_definition.ts";
 import { createPromiseSet } from "../../common/util.ts";
 import { DashboardContext, dashboardContext } from "./dashboard_context.ts";
-import {
-  css,
-  customElement,
-  denocg,
-  html,
-  LitElement,
-  provide,
-  query,
-  state,
-  styleMap,
-} from "../deps.ts";
+import { css, html, LitElement } from "lit";
+import { customElement, query, state } from "lit/decorators.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { provide } from "@lit-labs/context";
+import { Client } from "denocg/client";
 import "./timer_controller.ts";
 import "./tabs.ts";
 import "./setup.ts";
@@ -104,7 +98,7 @@ export class MastersDashboardElement extends LitElement {
 
   private _dashboardContext: DashboardContext;
   private _clientPromiseResolve!: (
-    client: denocg.Client<TypeDefinition>,
+    client: Client<TypeDefinition>,
   ) => void;
   @provide({ context: dashboardContext })
   private _dashboardContextForProvide: DashboardContext; // TODO: 自分で読むとundefinedになってる気がする
@@ -122,7 +116,7 @@ export class MastersDashboardElement extends LitElement {
     super();
 
     const { promise, resolve } = createPromiseSet<
-      denocg.Client<TypeDefinition>
+      Client<TypeDefinition>
     >();
     this._dashboardContext = new DashboardContext(promise);
     this._dashboardContextForProvide = this._dashboardContext;
@@ -146,7 +140,7 @@ export class MastersDashboardElement extends LitElement {
     await this._initializedPromise.promise;
   }
 
-  provideDenoCGClient(client: denocg.Client<TypeDefinition>) {
+  provideDenoCGClient(client: Client<TypeDefinition>) {
     this._clientPromiseResolve(client);
   }
 

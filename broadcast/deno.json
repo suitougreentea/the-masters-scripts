@@ -7,6 +7,26 @@
     "./client/*.bundle.js",
     "./replicants.json"
   ],
+  "imports": {
+    "@std/assert": "https://deno.land/std@0.215.0/assert/mod.ts",
+    "@std/streams": "https://deno.land/std@0.141.0/streams/mod.ts",
+    "esbuild": "https://deno.land/x/esbuild@v0.20.1/mod.js",
+    "@luca/esbuild-deno-loader": "jsr:@luca/esbuild-deno-loader@0.9.0",
+    "denocg/server": "https://deno.land/x/denocg@v0.0.7/server/mod.ts",
+    "denocg/client": "https://deno.land/x/denocg@v0.0.7/client/mod.ts",
+    "obs-websocket-js": "https://esm.sh/obs-websocket-js@5.0.2",
+    "p_queue": "https://deno.land/x/p_queue@1.0.1/mod.ts",
+    "lit": "https://esm.sh/v111/lit@2.6.1",
+    "lit/decorators.js": "https://esm.sh/v111/lit@2.6.1/decorators",
+    "lit/directives/map.js": "https://esm.sh/v111/lit@2.6.1/directives/map",
+    "lit/directives/class-map.js": "https://esm.sh/v111/lit@2.6.1/directives/class-map",
+    "lit/directives/style-map.js": "https://esm.sh/v111/lit@2.6.1/directives/style-map",
+    "lit/directives/live.js": "https://esm.sh/v111/lit@2.6.1/directives/live",
+    "@lit-labs/context": "https://esm.sh/v111/@lit-labs/context@0.2.0?deps=lit@2.6.1",
+    "tinycolor2": "https://esm.sh/tinycolor2@1.6.0",
+    "@fluentui/web-components": "https://esm.sh/@fluentui/web-components@2.5.12",
+    "qrcode": "https://deno.land/x/qrcode@v2.0.0/mod.ts"
+  },
   "tasks": {
     "build": "deno run --allow-env --allow-net --allow-read --allow-run --allow-write build.ts build",
     "build-watch": "deno run --allow-env --allow-net --allow-read --allow-run --allow-write build.ts watch",

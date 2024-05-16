@@ -8,18 +8,11 @@ import {
   formatScoreEditorScore,
   parseScoreEditorScore,
 } from "../common/score_editor.ts";
-import {
-  css,
-  customElement,
-  FluentButton,
-  FluentSelect,
-  FluentTextField,
-  html,
-  LitElement,
-  live,
-  map,
-  state,
-} from "../deps.ts";
+import { css, html, LitElement } from "lit";
+import { customElement, state } from "lit/decorators.js";
+import { map } from "lit/directives/map.js";
+import { live } from "lit/directives/live.js";
+import { Button, Select, TextField } from "@fluentui/web-components";
 
 type ScoreChoice = {
   type: "previous" | "history" | "current";
@@ -220,11 +213,11 @@ export class MastersScoreEditorDialogElement extends LitElement {
 
   private _checkEnterKey(ev: KeyboardEvent, index: number) {
     if (ev.code == "Enter") {
-      if (parseScoreEditorScore((ev.target as FluentTextField).value) != null) {
-        const textFields = this.renderRoot.querySelectorAll<FluentTextField>(
+      if (parseScoreEditorScore((ev.target as TextField).value) != null) {
+        const textFields = this.renderRoot.querySelectorAll<TextField>(
           "fluent-text-field",
         );
-        const okButton = this.renderRoot.querySelector<FluentButton>(
+        const okButton = this.renderRoot.querySelector<Button>(
           ".dialog-buttons fluent-button:first-child",
         )!;
         for (let targetIndex = index + 1; targetIndex < 8; targetIndex++) {
@@ -269,7 +262,7 @@ export class MastersScoreEditorDialogElement extends LitElement {
                     <fluent-select
                       ?disabled=${disabled}
                       .value=${e?.scoreChoiceIndex != null ? String(e?.scoreChoiceIndex) : null}
-                      @change=${(ev: Event) => this._changeScoreChoice(i, (ev.target as FluentSelect).value)}>
+                      @change=${(ev: Event) => this._changeScoreChoice(i, (ev.target as Select).value)}>
                       <fluent-option value="-1">-</fluent-option>
                       ${map(e?.scoreChoices ?? [], (choice, choiceIndex) => {
                         return html`
@@ -282,7 +275,7 @@ export class MastersScoreEditorDialogElement extends LitElement {
                     <fluent-text-field
                       ?disabled=${disabled}
                       .value=${live(e?.score != null ? formatScoreEditorScore(e.score) : null)}
-                      @change=${(ev: Event) => this._changeScore(i, (ev.target as FluentTextField).value)}
+                      @change=${(ev: Event) => this._changeScore(i, (ev.target as TextField).value)}
                       @keydown=${(ev: KeyboardEvent) => this._checkEnterKey(ev, i)}>
                     </fluent-text-field>
                   </td>

@@ -5,15 +5,10 @@ import {
 import { OcrResult, PlayingPlayerData } from "../../common/type_definition.ts"; // TODO: Experimental
 import { commonColors } from "../common/common_values.ts";
 import { getDiffTime } from "../../common/util.ts";
-import {
-  classMap,
-  css,
-  customElement,
-  html,
-  LitElement,
-  map,
-  property,
-} from "../deps.ts";
+import { css, html, LitElement } from "lit";
+import { customElement, property } from "lit/decorators.js";
+import { map } from "lit/directives/map.js";
+import { classMap } from "lit/directives/class-map.js";
 import { timeToString } from "../../../common/time.ts";
 
 const ordinals = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"];

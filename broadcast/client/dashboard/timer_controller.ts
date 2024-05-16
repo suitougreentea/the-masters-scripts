@@ -1,13 +1,7 @@
-import {
-  consume,
-  css,
-  customElement,
-  html,
-  LitElement,
-  query,
-  state,
-  styleMap,
-} from "../deps.ts";
+import { css, html, LitElement } from "lit";
+import { customElement, query, state } from "lit/decorators.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { consume } from "@lit-labs/context";
 import "./timer_controller.ts";
 import "../common/timer.ts";
 import { MastersTimerElement } from "../common/timer.ts";

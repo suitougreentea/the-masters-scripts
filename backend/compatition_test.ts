@@ -1,8 +1,4 @@
-import {
-  assertEquals,
-  assertGreater,
-  assertLess,
-} from "https://deno.land/std@0.215.0/assert/mod.ts";
+import { assertEquals, assertGreater, assertLess } from "@std/assert";
 import { compareQualifierScore, compareStageScore } from "./competition.ts";
 import { grades } from "../common/grade.ts";
 

@@ -1,14 +1,8 @@
 import { DashboardContext, dashboardContext } from "./dashboard_context.ts";
-import {
-  consume,
-  css,
-  customElement,
-  html,
-  LitElement,
-  map,
-  query,
-  state,
-} from "../deps.ts";
+import { css, html, LitElement } from "lit";
+import { customElement, query, state } from "lit/decorators.js";
+import { map } from "lit/directives/map.js";
+import { consume } from "@lit-labs/context";
 import { RoundData } from "../../common/type_definition.ts";
 import {
   StageMetadata,

@@ -1,18 +1,11 @@
 import { DashboardContext, dashboardContext } from "./dashboard_context.ts";
-import {
-  classMap,
-  consume,
-  css,
-  customElement,
-  FluentNumberField,
-  FluentTextField,
-  html,
-  LitElement,
-  map,
-  query,
-  state,
-  styleMap,
-} from "../deps.ts";
+import { css, html, LitElement } from "lit";
+import { customElement, query, state } from "lit/decorators.js";
+import { map } from "lit/directives/map.js";
+import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { consume } from "@lit-labs/context";
+import { NumberField, TextField } from "@fluentui/web-components";
 import {
   CompetitionSetupOptions,
   Participant,
@@ -24,7 +17,7 @@ import { MastersPlayerRegistrationDialogElement } from "./player_registration_di
 import { MastersParticipantsEditorDialogElement } from "./participants_editor_dialog.ts";
 import { formatGroup } from "../../common/util.ts";
 import { commonColors } from "../common/common_values.ts";
-import { qrcode } from "../deps.ts";
+import { qrcode } from "qrcode";
 import { timeToString } from "../../../common/time.ts";
 
 @customElement("masters-setup")
@@ -165,13 +158,13 @@ export class MastersSetupElement extends LitElement {
 
   // @ts-ignore: ?
   @query("#competition-name", true)
-  private _competitionNameTextField!: FluentTextField;
+  private _competitionNameTextField!: TextField;
   // @ts-ignore: ?
   @query("#manual-num-games", true)
-  private _manualNumberOfGamesNumberField!: FluentNumberField;
+  private _manualNumberOfGamesNumberField!: NumberField;
   // @ts-ignore: ?
   @query("#preset-name", true)
-  private _presetNameTextField!: FluentTextField;
+  private _presetNameTextField!: TextField;
   // @ts-ignore: ?
   @query("masters-player-registration-dialog", true)
   private _playerRegistrationDialog!: MastersPlayerRegistrationDialogElement;

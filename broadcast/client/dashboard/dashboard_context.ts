@@ -1,16 +1,17 @@
 import { TypeDefinition } from "../../common/type_definition.ts";
-import { createContext, denocg } from "../deps.ts";
+import { Client, Types } from "denocg/client";
+import { createContext } from "@lit-labs/context";
 
 export class DashboardContext extends EventTarget {
-  #clientPromise: Promise<denocg.Client<TypeDefinition>>;
+  #clientPromise: Promise<Client<TypeDefinition>>;
   #requestInProgress = true;
 
-  constructor(clientPromise: Promise<denocg.Client<TypeDefinition>>) {
+  constructor(clientPromise: Promise<Client<TypeDefinition>>) {
     super();
     this.#clientPromise = clientPromise;
   }
 
-  getClient(): Promise<denocg.Client<TypeDefinition>> {
+  getClient(): Promise<Client<TypeDefinition>> {
     return this.#clientPromise;
   }
 
@@ -18,11 +19,11 @@ export class DashboardContext extends EventTarget {
     return this.#requestInProgress;
   }
 
-  async sendRequest<TKey extends denocg.Types.RequestName<TypeDefinition>>(
-    ...[name, params]: denocg.Types.RequestParams<TypeDefinition, TKey> extends
+  async sendRequest<TKey extends Types.RequestName<TypeDefinition>>(
+    ...[name, params]: Types.RequestParams<TypeDefinition, TKey> extends
       undefined ? [name: TKey, params?: undefined]
-      : [name: TKey, params: denocg.Types.RequestParams<TypeDefinition, TKey>]
-  ): Promise<denocg.Types.RequestResult<TypeDefinition, TKey>> {
+      : [name: TKey, params: Types.RequestParams<TypeDefinition, TKey>]
+  ): Promise<Types.RequestResult<TypeDefinition, TKey>> {
     try {
       this.#requestInProgress = true;
       this.dispatchEvent(new Event("request-started"));

@@ -1,5 +1,5 @@
-import * as esbuild from "https://deno.land/x/esbuild@v0.17.5/mod.js";
-import { denoPlugins } from "https://deno.land/x/esbuild_deno_loader@0.8.1/mod.ts";
+import * as esbuild from "esbuild";
+import { denoPlugins } from "@luca/esbuild-deno-loader";
 
 const mode = Deno.args[0];
 if (mode != "build" && mode != "watch") throw new Error("Invalid command");

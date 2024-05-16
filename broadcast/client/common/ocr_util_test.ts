@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std@0.215.0/assert/mod.ts";
+import { assertEquals } from "@std/assert";
 import { ocrResultToStageScoreEntries } from "./ocr_util.ts";
 import { OcrPlayerStatus } from "../../common/type_definition.ts";
 import { StagePlayerEntry } from "../../../common/common_types.ts";

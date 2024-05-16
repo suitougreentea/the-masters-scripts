@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std@0.215.0/assert/mod.ts";
+import { assertEquals } from "@std/assert";
 import { parseScoreEditorScore } from "./score_editor.ts";
 import { formatScoreEditorScore } from "./score_editor.ts";
 import { createTime } from "../../../common/time.ts";

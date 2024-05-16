@@ -9,6 +9,11 @@
   "exclude": [
     "./dist/"
   ],
+  "imports": {
+    "@luca/esbuild-deno-loader": "jsr:@luca/esbuild-deno-loader@0.9.0",
+    "esbuild": "https://deno.land/x/esbuild@v0.20.1/mod.js",
+    "tinycolor2": "https://esm.sh/tinycolor2@1.6.0"
+  },
   "tasks": {
     "build": "deno run --allow-env --allow-net --allow-read --allow-run --allow-write https://raw.githubusercontent.com/proudust/gas-deno-starter/52dde15fc902f911f12e974f7fea7a31f3538519/_build.ts",
     "build-page": "deno run --allow-env --allow-read --allow-run --allow-write build_page.ts",

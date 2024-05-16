@@ -14,7 +14,8 @@ import {
 } from "./common/type_definition.ts";
 import { ApiClient } from "./server/api_client.ts";
 import { LocalApi } from "./server/local_api.ts";
-import { denocg, PQueue } from "./server/deps.ts";
+import { launchServer, ServerConfig } from "denocg/server";
+import PQueue from "p_queue";
 import { OBSController } from "./server/obs_controller.ts";
 import { OcrServer } from "./server/ocr_server.ts";
 import {
@@ -27,13 +28,13 @@ import { createPerPlayerStreams } from "./server/ocr_processor.ts";
 import { createResultCollector } from "./server/ocr_processor.ts";
 import { convertOcrPlayerStatusToStageScoreValue } from "./client/common/ocr_util.ts";
 
-export const config: denocg.ServerConfig<TypeDefinition> = {
+export const config: ServerConfig<TypeDefinition> = {
   socketPort: 8515,
   assetsPort: 8514,
   assetsRoot: "./client",
 };
 
-const server = await denocg.launchServer(config);
+const server = await launchServer(config);
 
 const localApi = new LocalApi(8516, []);
 await localApi.initialize();

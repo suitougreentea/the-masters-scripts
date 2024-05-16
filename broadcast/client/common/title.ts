@@ -1,12 +1,6 @@
 import { commonColors } from "../common/common_values.ts";
-import {
-  css,
-  customElement,
-  html,
-  LitElement,
-  property,
-  state,
-} from "../deps.ts";
+import { css, html, LitElement } from "lit";
+import { customElement, property, state } from "lit/decorators.js";
 
 @customElement("masters-title")
 export class MastersTitleElement extends LitElement {
