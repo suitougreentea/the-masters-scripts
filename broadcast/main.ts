@@ -131,6 +131,9 @@ const addParticipant = async (name: string) => {
       "mastersGetParticipants",
       [],
     );
+    if (participants.find((e) => e.name == name) != null) {
+      return;
+    }
     participants.push({ name, firstRoundGroupIndex: null });
     await apiClient.runCommand(
       "mastersSetParticipants",

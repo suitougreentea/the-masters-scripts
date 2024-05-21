@@ -173,9 +173,10 @@ export class MastersPlayerInfoElement extends LitElement {
     }
   }
 
-  private async _registerOrUpdatePlayer() {
+  private async _register() {
     await this._withLoaderAndMessage(async () => {
       await this._registerOrUpdatePlayerCore();
+      await this._participateCore();
       await this._findPlayerCore();
       return "登録完了";
     });
@@ -202,13 +203,6 @@ export class MastersPlayerInfoElement extends LitElement {
       );
     }
     this._oldName = this._name;
-  }
-
-  private async _participate() {
-    await this._withLoaderAndMessage(async () => {
-      await this._participateCore();
-      return "登録完了";
-    });
   }
 
   private async _participateCore() {
@@ -272,15 +266,8 @@ export class MastersPlayerInfoElement extends LitElement {
       <div class="row">
         <fluent-button appearance="accent"
           ?disabled=${!this._queryCompleted}
-          @click=${this._registerOrUpdatePlayer}>
-          ${this._oldName == null ? "情報の登録" : "情報の更新"}
-        </fluent-button>
-      </div>
-      <div class="row">
-        <fluent-button appearance="accent"
-          ?disabled=${this._oldName == null || this._participating}
-          @click=${this._participate}>
-          ${this._participating ? "参加登録済" : "参加登録"}
+          @click=${this._register}>
+          登録
         </fluent-button>
       </div>
       <div
