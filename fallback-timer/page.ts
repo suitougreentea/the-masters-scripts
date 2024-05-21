@@ -1,4 +1,4 @@
-import { default as tinycolor } from "tinycolor2";
+import tinycolor from "tinycolor2";
 import { type TimerData } from "./main.ts";
 
 const loader = document.querySelector<HTMLDivElement>("#loader")!;

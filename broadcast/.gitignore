@@ -1,7 +1,5 @@
 /client/**/*.bundle.js
 
-/deno.lock
-
 /server.log
 /replicants.json
 

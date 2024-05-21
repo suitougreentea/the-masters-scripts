@@ -1,5 +1,5 @@
 import { getCookies, serveFile, setCookie } from "@std/http";
-import ngrok from "ngrok";
+import ngrok from "@ngrok/ngrok";
 
 if (import.meta.main) {
   const devMode = Deno.args.indexOf("--dev") >= 0;

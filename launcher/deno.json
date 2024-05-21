@@ -1,7 +1,5 @@
 {
-  "imports": {
-    "@std/streams": "https://deno.land/std@0.141.0/streams/mod.ts"
-  },
+  "imports": { "@std/streams": "jsr:@std/streams@^0.224.0" },
   "tasks": {
     "start": "deno run --allow-net --allow-read --allow-run main.ts",
     "check": "deno check **/*.ts"
