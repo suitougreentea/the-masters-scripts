@@ -1,4 +1,4 @@
-import "./register_fluentui_elements.ts";
+import "./common/register_fluentui_elements.ts";
 import { getClient } from "denocg/client";
 import { type TypeDefinition } from "../common/type_definition.ts";
 import "./dashboard/dashboard.ts";
