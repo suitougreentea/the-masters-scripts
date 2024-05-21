@@ -20,6 +20,12 @@ const options: esbuild.BuildOptions = {
   outExtension: { ".js": ".bundle.js" },
   metafile: true,
   plugins: [...denoPlugins({ configPath: `${import.meta.dirname}/deno.json` })],
+  tsconfigRaw: {
+    compilerOptions: {
+      experimentalDecorators: true,
+      useDefineForClassFields: false,
+    },
+  },
 };
 
 if (watch) {

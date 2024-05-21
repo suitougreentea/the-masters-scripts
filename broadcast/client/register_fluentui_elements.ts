@@ -13,6 +13,7 @@ import {
   fluentSwitch,
   fluentTab,
   fluentTabPanel,
+  fluentTabs,
   fluentTextArea,
   fluentTextField,
   provideFluentDesignSystem,
@@ -34,7 +35,7 @@ provideFluentDesignSystem().register(
   fluentSwitch(),
   fluentTab(),
   fluentTabPanel(),
-  fluentTab(),
+  fluentTabs(),
   fluentTextArea(),
   fluentTextField(),
 );
