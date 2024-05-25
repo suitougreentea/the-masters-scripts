@@ -13,7 +13,6 @@ import {
   TypeDefinition,
 } from "./common/type_definition.ts";
 import { ApiClient } from "./server/api_client.ts";
-import { LocalApi } from "./server/local_api.ts";
 import { launchServer, ServerConfig } from "denocg/server";
 import PQueue from "p_queue";
 import { OBSController } from "./server/obs_controller.ts";
@@ -36,9 +35,7 @@ export const config: ServerConfig<TypeDefinition> = {
 
 const server = await launchServer(config);
 
-const localApi = new LocalApi(8516, []);
-await localApi.initialize();
-const apiClient = new ApiClient(localApi);
+const apiClient = new ApiClient();
 
 const obsConfigText = await Deno.readTextFile("./obs-websocket-conf.json");
 const obsConfig = JSON.parse(obsConfigText);
