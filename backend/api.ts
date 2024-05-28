@@ -34,7 +34,7 @@ import { injectKey as competitionStoreKey } from "./competition_store.ts";
 import { injectKey as exporterKey } from "./exporter.ts";
 
 const lazy = <T>(ctor: () => T): { value: T } => {
-  let instance: T | null = null;
+  let instance: T;
   return {
     get value() {
       if (instance == null) instance = ctor();
@@ -48,25 +48,26 @@ const competitionStore = lazy(() => resolve(competitionStoreKey));
 const exporter = lazy(() => resolve(exporterKey));
 
 const stageSetupResultToStagePlayers = (setupResult: StageSetupResult) => {
-  const stagePlayers: (StagePlayerEntry | null)[] = setupResult.entries.map(
-    (e) => {
-      const playerInfo = playersStore.value.getPlayer(e.name);
-      if (playerInfo == null) throw new Error();
-      const rawBestTime = playerInfo.bestTime;
-      return {
-        name: e.name,
-        rawBestTime,
-        handicap: e.handicap,
-        bestTime: rawBestTime - e.handicap * 1000,
-        startOrder: 0,
-        startTime: 0,
-        level: null,
-        grade: null,
-        time: null,
-      };
-    },
-  );
-  while (stagePlayers.length < 8) stagePlayers.push(null);
+  const stagePlayers: (StagePlayerEntry | undefined)[] = setupResult.entries
+    .map(
+      (e) => {
+        const playerInfo = playersStore.value.getPlayer(e.name);
+        if (playerInfo == null) throw new Error();
+        const rawBestTime = playerInfo.bestTime;
+        return {
+          name: e.name,
+          rawBestTime,
+          handicap: e.handicap,
+          bestTime: rawBestTime - e.handicap * 1000,
+          startOrder: 0,
+          startTime: 0,
+          level: undefined,
+          grade: undefined,
+          time: undefined,
+        };
+      },
+    );
+  while (stagePlayers.length < 8) stagePlayers.push(undefined);
   const stagePlayersSorted = stagePlayers.filter((e) =>
     e != null
   ) as StagePlayerEntry[];
@@ -135,8 +136,8 @@ export function mastersSetupCompetition(options: CompetitionSetupOptions) {
     }));
     const supplementComparison: SupplementComparisonData[] = round
       .supplementComparisons.map((c) => ({ rankId: c.rankId, comparison: [] }));
-    let qualifierScore: QualifierScore | null = null;
-    let qualifierResult: QualifierResult | null = null;
+    let qualifierScore: QualifierScore | undefined;
+    let qualifierResult: QualifierResult | undefined;
     if (setupResult.metadata.type == "qualifierFinal") {
       qualifierScore = {
         players: participants.map((p) => ({
@@ -164,7 +165,7 @@ export async function mastersExportCompetition(): Promise<{ url: string }> {
 
 export function mastersGetCurrentCompetitionMetadata():
   | CompetitionMetadata
-  | null {
+  | undefined {
   return competitionStore.value.getMetadata();
 }
 
@@ -223,15 +224,15 @@ export function mastersGetQualifierResult(): QualifierResult {
 export function mastersReorderStagePlayers(
   roundIndex: number,
   stageIndex: number,
-  names: (string | null)[],
+  names: (string | undefined)[],
 ) {
   const oldStageData = competitionStore.value.getStageData(
     roundIndex,
     stageIndex,
   );
   const newPlayers = names.map((name) => {
-    if (name == null) return null;
-    return oldStageData.players.find((e) => e?.name == name) ?? null;
+    if (name == null) return undefined;
+    return oldStageData.players.find((e) => e?.name == name);
   });
   const newStageData = {
     players: newPlayers,
@@ -253,7 +254,7 @@ export function mastersSetStageScore(
   );
 
   const newPlayers = oldStageData.players.map((player) => {
-    if (player == null) return null;
+    if (player == null) return undefined;
 
     const entry = score.players.find((e) => e.name == player.name);
     if (entry == null) return { ...player };

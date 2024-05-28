@@ -53,8 +53,8 @@ export const stringToGrade = (string: GradeString): Grade => {
   return gradeTable.indexOf(string) as Grade;
 };
 
-export const tryStringToGrade = (string: string): Grade | null => {
+export const tryStringToGrade = (string: string): Grade | undefined => {
   const index = gradeTable.indexOf(string as unknown as GradeString);
-  if (index == -1) return null;
+  if (index == -1) return undefined;
   return index as Grade;
 };

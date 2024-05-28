@@ -5,24 +5,24 @@ import { createTime } from "../../../common/time.ts";
 import { grades } from "../../../common/grade.ts";
 
 Deno.test("parseScoreEditorScore() works", () => {
-  assertEquals(parseScoreEditorScore(""), null);
-  assertEquals(parseScoreEditorScore("invalid"), null);
+  assertEquals(parseScoreEditorScore(""), undefined);
+  assertEquals(parseScoreEditorScore("invalid"), undefined);
   assertEquals(parseScoreEditorScore("1"), {
     level: 1,
-    grade: null,
-    time: null,
+    grade: undefined,
+    time: undefined,
   });
   assertEquals(parseScoreEditorScore("12"), {
     level: 12,
-    grade: null,
-    time: null,
+    grade: undefined,
+    time: undefined,
   });
   assertEquals(parseScoreEditorScore("443"), {
     level: 443,
-    grade: null,
-    time: null,
+    grade: undefined,
+    time: undefined,
   });
-  assertEquals(parseScoreEditorScore("1000"), null);
+  assertEquals(parseScoreEditorScore("1000"), undefined);
   assertEquals(parseScoreEditorScore("95432"), {
     level: 999,
     grade: grades.GM,
@@ -63,8 +63,8 @@ Deno.test("parseScoreEditorScore() works", () => {
     grade: grades.S9,
     time: createTime(9, 59, 59),
   });
-  assertEquals(parseScoreEditorScore("GM"), null);
-  assertEquals(parseScoreEditorScore("S9"), null);
+  assertEquals(parseScoreEditorScore("GM"), undefined);
+  assertEquals(parseScoreEditorScore("S9"), undefined);
   assertEquals(parseScoreEditorScore("1 123456"), {
     level: 999,
     grade: grades["1"],
@@ -74,15 +74,15 @@ Deno.test("parseScoreEditorScore() works", () => {
 
 Deno.test("formatScoreEditorScore() works", () => {
   assertEquals(
-    formatScoreEditorScore({ level: 1, grade: null, time: null }),
+    formatScoreEditorScore({ level: 1, grade: undefined, time: undefined }),
     "1",
   );
   assertEquals(
-    formatScoreEditorScore({ level: 12, grade: null, time: null }),
+    formatScoreEditorScore({ level: 12, grade: undefined, time: undefined }),
     "12",
   );
   assertEquals(
-    formatScoreEditorScore({ level: 443, grade: null, time: null }),
+    formatScoreEditorScore({ level: 443, grade: undefined, time: undefined }),
     "443",
   );
   assertEquals(

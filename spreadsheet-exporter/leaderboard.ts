@@ -5,7 +5,7 @@ import { resizeSheet } from "../common/spreadsheet_util.ts";
 import { createTime, Time } from "../common/time.ts";
 import { applyHeaderStyle } from "./styles.ts";
 
-const getColorByBestTime = (bestTime: Time) => {
+const getColorByBestTime = (bestTime: Time): string | undefined => {
   if (bestTime < createTime(9, 0, 0)) return "#F2CDCC";
   if (bestTime < createTime(9, 10, 0)) return "#FBE5CF";
   if (bestTime < createTime(9, 20, 0)) return "#FFF2CF";
@@ -15,7 +15,7 @@ const getColorByBestTime = (bestTime: Time) => {
   if (bestTime < createTime(10, 30, 0)) return "#D0E2F2";
   if (bestTime < createTime(11, 0, 0)) return "#D8D2E8";
   if (bestTime < createTime(12, 0, 0)) return "#E9D2DB";
-  return null;
+  return undefined;
 };
 
 export const createLeaderboardSheet = (

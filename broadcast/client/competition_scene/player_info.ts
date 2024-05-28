@@ -185,7 +185,7 @@ export class MastersPlayerInfoElement extends LitElement {
     `;
 
   @property()
-  data?: (StagePlayerEntry | null)[] = this._createEmptyData();
+  data?: (StagePlayerEntry | undefined)[] = this._createEmptyData();
 
   @property()
   showDetail? = true;
@@ -197,8 +197,8 @@ export class MastersPlayerInfoElement extends LitElement {
   private _healthDivs: HTMLDivElement[] = [];
   private _standingDivs: HTMLDivElement[] = [];
 
-  private _createEmptyData(): (StagePlayerEntry | null)[] {
-    return [...new Array(8)].map((_) => null);
+  private _createEmptyData(): (StagePlayerEntry | undefined)[] {
+    return [...new Array(8)].map((_) => undefined);
   }
 
   firstUpdated() {
@@ -213,7 +213,7 @@ export class MastersPlayerInfoElement extends LitElement {
     );
   }
 
-  setOcrResult(result?: OcrResult | null) {
+  setOcrResult(result: OcrResult | undefined) {
     this._healthDivs.forEach((e) => {
       e.style.setProperty("--health-color", "transparent");
     });
@@ -229,7 +229,7 @@ export class MastersPlayerInfoElement extends LitElement {
     });
   }
 
-  setPlayingPlayerData(data?: PlayingPlayerData[] | null) {
+  setPlayingPlayerData(data: PlayingPlayerData[] | undefined) {
     if (data == null) {
       this._standingDivs.forEach((div) => div.innerHTML = "");
       return;
@@ -261,10 +261,10 @@ export class MastersPlayerInfoElement extends LitElement {
               <hr>
               <dl class="best-time">
                 <dt>自己ベスト</dt>
-                <dd>${e != null ? timeToString(e.rawBestTime) : null}</dd>
+                <dd>${e != null ? timeToString(e.rawBestTime) : undefined}</dd>
                 <dt>スタート</dt>
                 <dd>
-                  ${e != null ? timeToString(e.startTime) : null}
+                  ${e != null ? timeToString(e.startTime) : undefined}
                   <br>
                   ${(() => {
                     const handicap = e?.handicap ?? 0;
@@ -278,9 +278,9 @@ export class MastersPlayerInfoElement extends LitElement {
                   })()}
                 </dd>
                 <dt>スタート順</dt>
-                <dd>${e != null ? ordinals[e.startOrder - 1] : null}</dd>
+                <dd>${e != null ? ordinals[e.startOrder - 1] : undefined}</dd>
                 <dt>前の人から</dt>
-                <dd>${e != null ? `+${timeToString(getDiffTime(data, i))}` : null}</dd>
+                <dd>${e != null ? `+${timeToString(getDiffTime(data, i))}` : undefined}</dd>
               </dl>
               <hr>
               <div class="free">
@@ -288,7 +288,7 @@ export class MastersPlayerInfoElement extends LitElement {
               </div>
             </div>
             `
-            : null
+            : undefined
           }
         </div>
         `

@@ -54,11 +54,22 @@ export const createStagesSheet = (
 
     const entriesRange = sh.getRange(baseRow + 2, 2, entries.length, 8);
     const entriesValues = entries.map((e) => {
-      if (e == null) return [null, null, null, null, null, null, null, null];
+      if (e == null) {
+        return [
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ];
+      }
       return [
         e.name,
         timeToSpreadsheetValue(e.rawBestTime),
-        e.handicap != 0 ? e.handicap : null,
+        e.handicap != 0 ? e.handicap : undefined,
         timeToSpreadsheetValue(e.bestTime),
         e.startOrder,
         timeToSpreadsheetValue(e.startTime),

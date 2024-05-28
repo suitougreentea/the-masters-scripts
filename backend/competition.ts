@@ -134,7 +134,7 @@ function setupCompetitionManual(
   name: string,
   numGames: number,
 ): CompetitionSetupResult {
-  const rounds: RoundMetadata[] = new Array(numGames).fill(null).map((
+  const rounds: RoundMetadata[] = [...new Array(numGames)].map((
     _,
     i,
   ) => ({
@@ -1097,7 +1097,7 @@ export function getNumOverallStages(metadata: CompetitionMetadata): number {
 export function overallStageIndexToRoundGroupIndex(
   metadata: CompetitionMetadata,
   overallStageIndex: number,
-): { roundIndex: number; groupIndex: number } | null {
+): { roundIndex: number; groupIndex: number } | undefined {
   let startIndex = 0;
   for (let i = 0; i < metadata.rounds.length; i++) {
     const round = metadata.rounds[i];
@@ -1110,15 +1110,15 @@ export function overallStageIndexToRoundGroupIndex(
     }
     startIndex += numGroups;
   }
-  return null;
+  return undefined;
 }
 
 export function roundGroupIndexToOverallStageIndex(
   metadata: CompetitionMetadata,
   roundGroup: { roundIndex: number; groupIndex: number },
-): number | null {
+): number | undefined {
   const { roundIndex, groupIndex } = roundGroup;
-  if (roundIndex < 0 || metadata.rounds.length <= roundIndex) return null;
+  if (roundIndex < 0 || metadata.rounds.length <= roundIndex) return undefined;
   let startIndex = 0;
   for (let i = 0; i < roundIndex - 1; i++) {
     const round = metadata.rounds[i];
@@ -1270,7 +1270,9 @@ export function constructStageResultEntryStub(
     level: player.level != null ? player.level : 0,
     grade: player.grade,
     time: player.time,
-    timeDiffBest: player.time != null ? player.time - player.bestTime : null,
+    timeDiffBest: player.time != null
+      ? player.time - player.bestTime
+      : undefined,
   };
 }
 
@@ -1289,9 +1291,9 @@ export function getStageResult(
   const topScore = sorted[0];
   for (let i = 0; i < sorted.length; i++) {
     const currentScore = sorted[i];
-    const prevScore = i > 0 ? sorted[i - 1] : null;
+    const prevScore = i > 0 ? sorted[i - 1] : undefined;
 
-    let timeDiffTop: number | null = null;
+    let timeDiffTop: number | undefined;
     if (
       i > 0 && currentScore.grade == grades.GM && topScore.grade == grades.GM
     ) {
@@ -1302,7 +1304,7 @@ export function getStageResult(
     }
 
     // 段位が同じときのみ比較する
-    let timeDiffPrev: number | null = null;
+    let timeDiffPrev: number | undefined;
     if (
       prevScore != null &&
       (currentScore.grade != null && currentScore.grade == prevScore.grade)
@@ -1335,10 +1337,10 @@ function getSupplementComparison(
   const result: SupplementComparisonEntry[] = [];
   for (let i = 0; i < sorted.length; i++) {
     const currentScore = sorted[i];
-    const prevScore = i > 0 ? sorted[i - 1] : null;
+    const prevScore = i > 0 ? sorted[i - 1] : undefined;
 
     // 段位が同じときのみ比較する
-    let timeDiffPrev: number | null = null;
+    let timeDiffPrev: number | undefined;
     if (
       prevScore != null &&
       (currentScore.grade != null && currentScore.grade == prevScore.grade)
@@ -1388,7 +1390,7 @@ export function constructQualifierResultEntryStubs(
   const qualifierResultStubs: QualifierResultEntryStub[] = qualifierPlayerData
     .map((e) => {
       let points = 0;
-      const numPlaces = new Array(4).fill(0);
+      const numPlaces: number[] = new Array(4).fill(0);
       e.participatingStageResults.forEach((resultEntry) => {
         // タイのときは同点入ってる
         points += numPlayersPerGroup - resultEntry.rank + 1;
@@ -1421,7 +1423,7 @@ export function getQualifierResult(
   const result: QualifierResultEntry[] = [];
   for (let i = 0; i < sorted.length; i++) {
     const currentScore = sorted[i];
-    const prevScore = i > 0 ? sorted[i - 1] : null;
+    const prevScore = i > 0 ? sorted[i - 1] : undefined;
 
     let rank: number;
     if (

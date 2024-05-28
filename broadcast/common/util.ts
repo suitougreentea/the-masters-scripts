@@ -12,23 +12,23 @@ export function formatGroup(groupIndex: number): string {
   return groupTable[groupIndex];
 }
 
-export function parseGroup(group: string): number | null {
+export function parseGroup(group: string): number | undefined {
   const index = groupTable.indexOf(group.toUpperCase());
-  if (index < 0) return null;
+  if (index < 0) return undefined;
   return index;
 }
 
 export function formatLevelOrGrade(
-  levelOrGrade: { level: number; grade: Grade | null },
+  levelOrGrade: { level: number; grade?: Grade },
 ): string {
   if (levelOrGrade.grade != null) return gradeToString(levelOrGrade.grade);
   return String(levelOrGrade.level);
 }
 
 export function formatLevelOrGradeNullable(
-  levelOrGrade: { level: number | null; grade: Grade | null },
-): string | null {
-  if (levelOrGrade.level == null) return null;
+  levelOrGrade: { level?: number; grade?: Grade },
+): string | undefined {
+  if (levelOrGrade.level == null) return undefined;
   return formatLevelOrGrade({
     level: levelOrGrade.level,
     grade: levelOrGrade.grade,
@@ -38,26 +38,26 @@ export function formatLevelOrGradeNullable(
 export function parseLevelOrGrade(
   levelOrGrade: string,
   emptyAsGm = false,
-): { level: number | null; grade: Grade | null } {
+): { level?: number; grade?: Grade } {
   if (levelOrGrade == "") {
     if (emptyAsGm) {
       return { grade: stringToGrade("GM"), level: 999 };
     } else {
-      return { grade: null, level: null };
+      return { grade: undefined, level: undefined };
     }
   }
 
   const parsedLevel = Number(levelOrGrade);
-  if (!isNaN(parsedLevel)) return { grade: null, level: parsedLevel };
+  if (!isNaN(parsedLevel)) return { grade: undefined, level: parsedLevel };
 
   const parsedGrade = tryStringToGrade(levelOrGrade);
   if (parsedGrade != null) return { grade: parsedGrade, level: 999 };
 
-  return { grade: null, level: null };
+  return { grade: undefined, level: undefined };
 }
 
 export function getDiffTime(
-  players: (StagePlayerEntry | null)[],
+  players: (StagePlayerEntry | undefined)[],
   playerIndex: number,
 ): number {
   const player = players[playerIndex];

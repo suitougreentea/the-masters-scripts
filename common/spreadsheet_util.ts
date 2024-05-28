@@ -63,13 +63,13 @@ export const pasteTemplate = (
   templateRange.copyTo(destRange, type, false);
 };
 
-export const timeToSpreadsheetValue = (time: number | null): number | null => {
-  if (time == null) return null;
+export const timeToSpreadsheetValue = (time: number | undefined): number | undefined => {
+  if (time == null) return undefined;
   return time / (24 * 60 * 60 * 1000);
 };
 
-export const spreadsheetValueToTime = (value: unknown): number | null => {
-  if (value == null) return null;
+export const spreadsheetValueToTime = (value: unknown): number | undefined => {
+  if (value == null) return undefined;
   if (value instanceof Date) return dateToTime(value);
   if (typeof value == "number") {
     return value * 24 * 60 * 60 * 1000;
@@ -77,12 +77,12 @@ export const spreadsheetValueToTime = (value: unknown): number | null => {
   if (typeof value == "string") {
     return stringToTime(value);
   }
-  return null;
+  return undefined;
 };
 
 export const spreadsheetValueToLevelOrGrade = (
   levelOrGrade: unknown,
-): { level: number; grade: Grade | null } => {
+): { level: number; grade?: Grade } => {
   // GMの場合は何も入力されない
   if (isNullOrEmptyString(levelOrGrade)) {
     return { grade: grades.GM, level: 999 };
@@ -92,7 +92,7 @@ export const spreadsheetValueToLevelOrGrade = (
   const stringified = String(levelOrGrade);
 
   const parsedLevel = Number(stringified);
-  if (!isNaN(parsedLevel)) return { grade: null, level: parsedLevel };
+  if (!isNaN(parsedLevel)) return { grade: undefined, level: parsedLevel };
 
   const parsedGrade = tryStringToGrade(stringified);
   if (parsedGrade != null) return { grade: parsedGrade, level: 999 };
@@ -101,8 +101,8 @@ export const spreadsheetValueToLevelOrGrade = (
 };
 
 export const levelOrGradeToSpreadsheetValue = (
-  levelOrGrade: { level: number | null; grade: Grade | null },
-): string | number | null => {
+  levelOrGrade: { level: number | undefined; grade: Grade | undefined },
+): string | number | undefined => {
   if (levelOrGrade.grade != null) return gradeToString(levelOrGrade.grade);
   return levelOrGrade.level;
 };

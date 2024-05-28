@@ -14,7 +14,7 @@ export const getSerializerValue = <T>(name: string) => {
   return getSerializer<T>(name).deserialize();
 };
 
-export const setSerializerValue = <T>(name: string, value: T | null) => {
+export const setSerializerValue = <T>(name: string, value: T | undefined) => {
   return getSerializer<T>(name).setValue(value);
 };
 
@@ -26,7 +26,7 @@ export class InMemorySerializerManager implements SerializerManager {
 
 export class InMemorySerializer<T> implements Serializer<T> {
   #name: string;
-  #serializedValue: T | null = null;
+  #serializedValue?: T;
 
   constructor(name: string) {
     this.#name = name;
@@ -36,11 +36,11 @@ export class InMemorySerializer<T> implements Serializer<T> {
     this.#serializedValue = value;
   }
 
-  deserialize(): T | null {
+  deserialize(): T | undefined {
     return this.#serializedValue;
   }
 
-  setValue(value: T | null) {
+  setValue(value: T | undefined) {
     this.#serializedValue = value;
   }
 }

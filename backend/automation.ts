@@ -40,7 +40,7 @@ export const populateParticipants = (
   numPlayers: number,
   presetName?: string,
 ): Participant[] => {
-  const preset = presetName != null ? getPreset(presetName) : null;
+  const preset = presetName != null ? getPreset(presetName) : undefined;
   const manual = preset == null;
 
   const playersStoreValue = getSerializerValue("players") as {
@@ -103,20 +103,20 @@ export const populateStageSetupResultFromParticipants = (
 };
 
 export const populatePlayerReorderList = (
-  players: (StagePlayerEntry | null)[],
-): (string | null)[] => {
-  const names = players.map((e) => e != null ? e?.name : null);
+  players: (StagePlayerEntry | undefined)[],
+): (string | undefined)[] => {
+  const names = players.map((e) => e?.name);
   shuffle(names);
   return names;
 };
 
 export const populateStageScore = (
-  players: (StagePlayerEntry | null)[],
+  players: (StagePlayerEntry | undefined)[],
 ): StageScoreData => {
   const score = () => {
     if (Math.random() < 0.4) {
       const level = Math.floor(Math.random() * 999);
-      return { level, grade: null, time: null };
+      return { level, grade: undefined, time: undefined };
     }
     const grade = Math.random() < 0.1 ? grades.S9 : grades.GM;
     const time = 9 * 60 * 1000 + Math.floor(Math.random() * 4 * 60 * 1000);

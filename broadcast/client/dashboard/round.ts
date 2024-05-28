@@ -127,7 +127,7 @@ export class MastersRoundElement extends LitElement {
   @state()
   private _manualMode = false;
   @state()
-  private _currentRoundData?: RoundData | null = null;
+  private _currentRoundData?: RoundData = undefined;
 
   // @ts-ignore: ?
   @query("masters-player-names-editor-dialog", true)
@@ -298,7 +298,7 @@ export class MastersRoundElement extends LitElement {
         .stageMetadata=${this._currentRoundData.metadata.stages}>
       </masters-qualifier-score>
       `
-      : null
+      : undefined
     }
     ${this._currentRoundData?.qualifierResult != null
       ? html`
@@ -307,7 +307,7 @@ export class MastersRoundElement extends LitElement {
         .data=${this._currentRoundData.qualifierResult.result}>
       </masters-qualifier-result>
       `
-      : null
+      : undefined
     }
     ${map(this._currentRoundData?.supplementComparisons ?? [], (e, i) => {
       const comparisonMetadata: SupplementComparisonMetadata =

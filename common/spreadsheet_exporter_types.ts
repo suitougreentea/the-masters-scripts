@@ -45,20 +45,20 @@ export type StagesData = {
       bestTime: number;
       startOrder: number;
       startTime: number;
-      level: number | null;
-      grade: Grade | null;
-      time: number | null;
+      level?: number;
+      grade?: Grade;
+      time?: number;
       timeDetail?: TimeDetailData;
-    } | null)[];
+    } | undefined)[];
     result: {
       rank: number;
       name: string;
       level: number;
-      grade: Grade | null;
-      time: number | null;
-      timeDiffBest: number | null;
-      timeDiffTop: number | null;
-      timeDiffPrev: number | null;
+      grade?: Grade;
+      time?: number;
+      timeDiffBest?: number;
+      timeDiffTop?: number;
+      timeDiffPrev?: number;
     }[];
     borderlines: number[];
   }[];
@@ -71,30 +71,30 @@ export type SupplementsData = {
       rank: number;
       name: string;
       level: number;
-      grade: Grade | null;
-      time: number | null;
-      timeDiffBest: number | null;
-      timeDiffPrev: number | null;
+      grade?: Grade;
+      time?: number;
+      timeDiffBest?: number;
+      timeDiffPrev?: number;
     }[];
   }[];
-  qualifierScore: {
+  qualifierScore?: {
     players: {
       name: string;
       totalPoints: number;
       stageResults: { stageIndex: number; rankIndex: number; points: number }[];
     }[];
-  } | null;
-  qualifierResult: {
+  };
+  qualifierResult?: {
     players: {
       rank: number;
       name: string;
       points: number;
       numPlaces: number[];
       bestGameLevel: number;
-      bestGameGrade: Grade | null;
-      bestGameTimeDiffBest: number | null;
+      bestGameGrade?: Grade;
+      bestGameTimeDiffBest?: number;
     }[];
-  } | null;
+  };
 };
 
 export type Input = {

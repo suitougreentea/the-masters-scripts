@@ -152,9 +152,9 @@ export class MastersSetupElement extends LitElement {
   @state()
   private _participants: Participant[] = [];
   @state()
-  private _registrationUrl: string | null = null;
+  private _registrationUrl?: string = undefined;
   @state()
-  private _registrationUrlQr: string | null = null;
+  private _registrationUrlQr?: string = undefined;
 
   // @ts-ignore: ?
   @query("#competition-name", true)
@@ -192,10 +192,10 @@ export class MastersSetupElement extends LitElement {
       "registrationUrl",
     );
     registrationUrlReplicant.subscribe(async (value) => {
-      this._registrationUrl = value ?? null;
+      this._registrationUrl = value;
       this._registrationUrlQr = value != null
         ? await qrcode(value) as unknown as string
-        : null; // is type definition wrong?
+        : undefined; // is type definition wrong?
     });
   }
 
@@ -213,7 +213,7 @@ export class MastersSetupElement extends LitElement {
   }
 
   private async _registerOrUpdatePlayer(
-    oldName: string | null,
+    oldName: string | undefined,
     data: RegisteredPlayerEntry,
   ) {
     if (oldName == null) {
@@ -284,7 +284,7 @@ export class MastersSetupElement extends LitElement {
           <img class="qr" src=${this._registrationUrlQr}>
         </a>
       </div>`
-      : null;
+      : undefined;
 
     // deno-fmt-ignore
     return html`
@@ -335,17 +335,17 @@ export class MastersSetupElement extends LitElement {
             マニュアルモード
           </fluent-checkbox>
         </div>
-        <div style=${styleMap({ display: this._manual ? null : "none" })}>
+        <div style=${styleMap({ display: this._manual ? undefined : "none" })}>
           <fluent-number-field id="manual-num-games"  value="10">試合数:</fluent-number-field>
         </div>
-        <div style=${styleMap({ display: this._manual ? "none" : null })}>
+        <div style=${styleMap({ display: this._manual ? "none" : undefined })}>
           <fluent-checkbox
             @change=${(e: Event) => this._overridePreset = (e.target as HTMLInputElement).checked}
             ?checked=${this._overridePreset}>
             プリセット名を手動で指定
           </fluent-checkbox>
         </div>
-        <div style=${styleMap({ display: this._manual || !this._overridePreset ? "none" : null })}>
+        <div style=${styleMap({ display: this._manual || !this._overridePreset ? "none" : undefined })}>
           <fluent-text-field id="preset-name" value="">プリセット名:</fluent-text-field>
         </div>
         <h3>参加者</h3>

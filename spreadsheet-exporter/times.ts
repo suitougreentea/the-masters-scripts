@@ -72,17 +72,17 @@ export const createTimesSheet = (
           ];
         } else {
           return [
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
           ];
         }
       });
@@ -91,7 +91,7 @@ export const createTimesSheet = (
       const totalValues = [[
         entry.level,
         timeToSpreadsheetValue(entry.time),
-        null,
+        undefined,
         entry.timeDetail.minoCount,
         entry.timeDetail.clearCount[0],
         entry.timeDetail.clearCount[1],

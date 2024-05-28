@@ -98,7 +98,7 @@ export class MastersCompetitionElement extends LitElement {
     this.#roundName.name = name;
   }
 
-  setTimerData(data?: (StagePlayerEntry | null)[]) {
+  setTimerData(data: (StagePlayerEntry | undefined)[] | undefined) {
     this.#timerWrapper.setData(data);
     this.#playerInfo.data = data;
     this.#timer.style.display = data != null ? "unset" : "none";
@@ -121,14 +121,14 @@ export class MastersCompetitionElement extends LitElement {
     this.#playerInfo.showDetail = true;
   }
 
-  setOcrResult(result?: OcrResult | null) {
+  setOcrResult(result: OcrResult | undefined) {
     this.#timerWrapper.setOcrResult(result);
 
     // TODO: Experimental
     this.#playerInfo.setOcrResult(result);
   }
 
-  setPlayingPlayerData(data?: PlayingPlayerData[] | null) {
+  setPlayingPlayerData(data: PlayingPlayerData[] | undefined) {
     this.#timerWrapper.setPlayingPlayerData(data);
     this.#playerInfo.setPlayingPlayerData(data);
   }

@@ -112,13 +112,13 @@ export class MastersResultElement extends LitElement {
   title = "";
 
   @property()
-  data: ResultSceneData | null = null;
+  data?: ResultSceneData = undefined;
 
   // @ts-ignore: ?
   @query(".round-result-container", false)
   private _roundResultContainer?: HTMLDivElement;
 
-  private _scrollHandle: { stop: () => void } | null = null;
+  private _scrollHandle?: { stop: () => void } = undefined;
 
   constructor() {
     super();
@@ -134,7 +134,7 @@ export class MastersResultElement extends LitElement {
 
   async updated() {
     this._scrollHandle?.stop();
-    this._scrollHandle = null;
+    this._scrollHandle = undefined;
     const roundResultContainer = this._roundResultContainer;
     if (roundResultContainer == null) return;
 
@@ -220,7 +220,7 @@ export class MastersResultElement extends LitElement {
             </div>
             `;
           }
-          return null;
+          return undefined;
         })()}
         ${(() => {
           if (hasRoundColumn) {
@@ -236,7 +236,7 @@ export class MastersResultElement extends LitElement {
                   </div>
                   `;
                 }
-                return null;
+                return undefined;
               })()}
               ${(() => {
                 if (roundData.qualifierResult != null && roundData.qualifierResult.result.length > 0) {
@@ -247,7 +247,7 @@ export class MastersResultElement extends LitElement {
                   </div>
                   `;
                 }
-                return null;
+                return undefined;
               })()}
               ${map(
                 roundData.supplementComparisons,
@@ -261,13 +261,13 @@ export class MastersResultElement extends LitElement {
                     </div>
                     `;
                   }
-                  return null;
+                  return undefined;
                 },
               )}
             </div>
             `;
           }
-          return null;
+          return undefined;
         })()}
       </div>
       ${(() => {

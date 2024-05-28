@@ -204,19 +204,19 @@ export class MastersDashboardElement extends LitElement {
     const roundPageActive = this._currentActivePage.startsWith("round");
 
     const loaderStyle = styleMap({
-      display: this._requestInProgress ? null : "none",
+      display: this._requestInProgress ? undefined : "none",
     });
     const setupStyle = styleMap({
-      display: setupPageActive ? null : "none",
+      display: setupPageActive ? undefined : "none",
     });
     const roundStyle = styleMap({
-      display: roundPageActive ? null : "none",
+      display: roundPageActive ? undefined : "none",
     });
     // deno-fmt-ignore
     return html`
     <div class="container">
       <div id="timer">
-        <masters-timer-controller id="timer-controller" style=${/*timerStyle*/ null}></masters-timer-controller>
+        <masters-timer-controller id="timer-controller" style=${/*timerStyle*/ undefined}></masters-timer-controller>
       </div>
       <div id="content">
         <masters-setup id="setup" style=${setupStyle} @setup-completed=${this._onSetupCompleted}></masters-setup>

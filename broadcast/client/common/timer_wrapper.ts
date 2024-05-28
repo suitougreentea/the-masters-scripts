@@ -5,7 +5,7 @@ import { PlayingPlayerData } from "../../common/type_definition.ts";
 
 export class TimerWrapper {
   #timer: MastersTimerElement;
-  #data?: (StagePlayerEntry | null)[];
+  #data?: (StagePlayerEntry | undefined)[];
   #pendingSet = false;
 
   constructor(timer: MastersTimerElement) {
@@ -26,7 +26,7 @@ export class TimerWrapper {
     }
   }
 
-  setData(data?: (StagePlayerEntry | null)[]) {
+  setData(data: (StagePlayerEntry | undefined)[] | undefined) {
     this.#data = data;
     if (this.#timer.isRunning()) {
       this.#pendingSet = true;
@@ -35,11 +35,11 @@ export class TimerWrapper {
     }
   }
 
-  setOcrResult(result?: OcrResult | null) {
+  setOcrResult(result: OcrResult | undefined) {
     this.#timer.setOcrResult(result);
   }
 
-  setPlayingPlayerData(data?: PlayingPlayerData[] | null) {
+  setPlayingPlayerData(data: PlayingPlayerData[] | undefined) {
     this.#timer.setPlayingPlayerData(data);
   }
 }

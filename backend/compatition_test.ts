@@ -66,15 +66,15 @@ Deno.test("compareStageScore() for well-formed scores", () => {
     compareStageScore,
     {
       ...dummy,
-      grade: null,
+      grade: undefined,
       level: 800,
-      timeDiffBest: null,
+      timeDiffBest: undefined,
     },
     {
       ...dummy,
-      grade: null,
+      grade: undefined,
       level: 800,
-      timeDiffBest: null,
+      timeDiffBest: undefined,
     },
     0,
   );
@@ -144,9 +144,9 @@ Deno.test("compareStageScore() for well-formed scores", () => {
     },
     {
       ...dummy,
-      grade: null,
+      grade: undefined,
       level: 998,
-      timeDiffBest: null,
+      timeDiffBest: undefined,
     },
     1,
   );
@@ -162,9 +162,9 @@ Deno.test("compareStageScore() for well-formed scores", () => {
     },
     {
       ...dummy,
-      grade: null,
+      grade: undefined,
       level: 998,
-      timeDiffBest: null,
+      timeDiffBest: undefined,
     },
     1,
   );
@@ -174,15 +174,15 @@ Deno.test("compareStageScore() for well-formed scores", () => {
     compareStageScore,
     {
       ...dummy,
-      grade: null,
+      grade: undefined,
       level: 998,
-      timeDiffBest: null,
+      timeDiffBest: undefined,
     },
     {
       ...dummy,
-      grade: null,
+      grade: undefined,
       level: 997,
-      timeDiffBest: null,
+      timeDiffBest: undefined,
     },
     1,
   );
@@ -206,7 +206,7 @@ Deno.test("compareStageScore() for ill-formed scores", () => {
       ...dummy,
       grade: grades.GM,
       level: 999,
-      timeDiffBest: null,
+      timeDiffBest: undefined,
     },
     1,
   );
@@ -217,13 +217,13 @@ Deno.test("compareStageScore() for ill-formed scores", () => {
       ...dummy,
       grade: grades.GM,
       level: 999,
-      timeDiffBest: null,
+      timeDiffBest: undefined,
     },
     {
       ...dummy,
       grade: grades.GM,
       level: 999,
-      timeDiffBest: null,
+      timeDiffBest: undefined,
     },
     0,
   );
@@ -359,9 +359,9 @@ Deno.test("compareQualifierScore()", () => {
       ...dummy,
       points: 10,
       numPlaces: [2, 0, 1, 0],
-      bestGameGrade: null,
+      bestGameGrade: undefined,
       bestGameLevel: 998,
-      bestGameTimeDiffBest: null,
+      bestGameTimeDiffBest: undefined,
     },
     1,
   );

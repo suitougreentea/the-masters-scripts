@@ -79,7 +79,7 @@ export class MastersParticipantsEditorDialogElement extends LitElement {
   private _changeName(index: number, input: string) {
     const participants = [...this._participants];
     if (index >= this._participants.length) {
-      participants.push({ name: input, firstRoundGroupIndex: null });
+      participants.push({ name: input, firstRoundGroupIndex: undefined });
     } else {
       participants[index] = { ...participants[index], name: input };
     }
@@ -147,7 +147,7 @@ export class MastersParticipantsEditorDialogElement extends LitElement {
     // one empty slot for new entry
     const participantsForRender = [...this._participants, {
       name: "",
-      firstRoundGroupIndex: null,
+      firstRoundGroupIndex: undefined,
     }].map((participant, i) => ({
       ...participant,
       error: i != this._participants.length &&

@@ -19,19 +19,19 @@ export const injectKey = createKey<CompetitionStore>(
 type RoundData = {
   stages: StageData[];
   supplementComparison: SupplementComparisonData[];
-  qualifierResult: QualifierResult | null;
-  qualifierScore: QualifierScore | null;
+  qualifierResult?: QualifierResult;
+  qualifierScore?: QualifierScore;
 };
 
 type Type = {
-  metadata: CompetitionMetadata | null;
+  metadata?: CompetitionMetadata;
   rounds: RoundData[];
 };
 
 @injectCtor([serializerManagerKey])
 export class CompetitionStore {
   #serializer: Serializer<Type>;
-  #metadata: CompetitionMetadata | null = null;
+  #metadata?: CompetitionMetadata;
   #rounds: RoundData[] = [];
 
   constructor(serializerManager: SerializerManager) {
@@ -43,7 +43,7 @@ export class CompetitionStore {
 
   #deserialize() {
     const deserialized = this.#serializer.deserialize();
-    this.#metadata = deserialized?.metadata ?? null;
+    this.#metadata = deserialized?.metadata;
     this.#rounds = deserialized?.rounds ?? [];
   }
 
@@ -55,7 +55,7 @@ export class CompetitionStore {
   }
 
   reset() {
-    this.#metadata = null;
+    this.#metadata = undefined;
     this.#rounds = [];
     this.#serialize();
   }
@@ -64,7 +64,7 @@ export class CompetitionStore {
     return this.#metadata;
   }
 
-  setMetadata(metadata: CompetitionMetadata | null) {
+  setMetadata(metadata?: CompetitionMetadata) {
     this.#metadata = metadata;
     this.#serialize();
   }

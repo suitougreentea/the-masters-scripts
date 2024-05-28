@@ -11,11 +11,11 @@ import { live } from "lit/directives/live.js";
 import { Dialog, RadioGroup, TextField } from "@fluentui/web-components";
 
 type Mode = "reorder" | "reset";
-type ReorderPlayerEntry = { name: string | null; startOrder: number };
-type ResetDataEntry = { name: string | null; handicap: number };
+type ReorderPlayerEntry = { name?: string; startOrder: number };
+type ResetDataEntry = { name?: string; handicap: number };
 export type PlayerNamesEditorData = {
   mode: "reorder";
-  players: (string | null)[];
+  players: (string | undefined)[];
 } | { mode: "reset"; players: StageSetupPlayerEntry[] };
 
 @customElement("masters-player-names-editor-dialog")
@@ -102,13 +102,13 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
   @state()
   private _reorderPlayers: ReorderPlayerEntry[] = [];
   @state()
-  private _reorderPositions: (string | null)[] = [];
+  private _reorderPositions: (string | undefined)[] = [];
   @state()
   private _resetData: ResetDataEntry[] = [];
 
-  private _currentDragSide: "left" | "right" | null = null;
+  private _currentDragSide?: "left" | "right" = undefined;
   private _currentDragIndex = -1;
-  private _currentDropSide: "left" | "right" | null = null;
+  private _currentDropSide?: "left" | "right" = undefined;
   private _currentDropIndex = -1;
 
   // @ts-ignore: ?
@@ -117,7 +117,7 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
 
   open(
     stageIndex: number,
-    data: (StagePlayerEntry | null)[],
+    data: (StagePlayerEntry | undefined)[],
     initialMode: Mode,
   ) {
     this._stageIndex = stageIndex;
@@ -129,10 +129,19 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
         startOrder: e.startOrder,
       });
     });
-    this._reorderPositions = [null, null, null, null, null, null, null, null];
+    this._reorderPositions = [
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+    ];
     this._resetData = data.map((e) => {
       return {
-        name: e?.name ?? null,
+        name: e?.name,
         handicap: e?.handicap ?? 0,
       };
     });
@@ -180,7 +189,7 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
     if (column == "name") {
       newData[playerIndex] = {
         ...currentValues,
-        name: newValue != "" ? newValue : null,
+        name: newValue != "" ? newValue : undefined,
       };
     } else if (column == "handicap") {
       const parsed = Number(newValue);
@@ -211,9 +220,9 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
       }
     }
 
-    this._currentDragSide = null;
+    this._currentDragSide = undefined;
     this._currentDragIndex = -1;
-    this._currentDropSide = null;
+    this._currentDropSide = undefined;
     this._currentDropIndex = -1;
   }
 
@@ -248,20 +257,20 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
           const reorderPositions = [...this._reorderPositions];
           reorderPositions[this._currentDropIndex] =
             reorderPositions[this._currentDragIndex];
-          reorderPositions[this._currentDragIndex] = null;
+          reorderPositions[this._currentDragIndex] = undefined;
           this._reorderPositions = reorderPositions;
         }
         if (this._currentDropSide == "left") {
           const reorderPositions = [...this._reorderPositions];
-          reorderPositions[this._currentDragIndex] = null;
+          reorderPositions[this._currentDragIndex] = undefined;
           this._reorderPositions = reorderPositions;
         }
       }
     }
 
-    this._currentDragSide = null;
+    this._currentDragSide = undefined;
     this._currentDragIndex = -1;
-    this._currentDropSide = null;
+    this._currentDropSide = undefined;
     this._currentDropIndex = -1;
   }
 
@@ -314,7 +323,7 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
             const rightSide: ReorderPlayerEntry[] = [];
             this._reorderPositions.forEach((name) => {
               if (name == null) {
-                rightSide.push({ name: null, startOrder: -1 });
+                rightSide.push({ name: undefined, startOrder: -1 });
               } else {
                 const index = leftSide.findIndex((e) => e.name == name);
                 leftSide[index].moved = true;
@@ -391,7 +400,7 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
             <table>
             `;
           }
-          return null;
+          return undefined;
         })()}
         <div class="dialog-buttons">
           <fluent-button

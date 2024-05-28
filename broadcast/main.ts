@@ -131,7 +131,7 @@ const addParticipant = async (name: string) => {
     if (participants.find((e) => e.name == name) != null) {
       return;
     }
-    participants.push({ name, firstRoundGroupIndex: null });
+    participants.push({ name, firstRoundGroupIndex: undefined });
     await apiClient.runCommand(
       "mastersSetParticipants",
       [participants],
@@ -145,8 +145,8 @@ server.registerRequestHandler("setParticipants", async (params) => {
 });
 
 server.registerRequestHandler("setupCompetition", async (params) => {
-  currentRoundDataReplicant.setValue(null);
-  currentCompetitionMetadataReplicant.setValue(null);
+  currentRoundDataReplicant.setValue(undefined);
+  currentCompetitionMetadataReplicant.setValue(undefined);
 
   await apiClient.runCommand("mastersSetupCompetition", [params.options]);
 });
@@ -306,7 +306,7 @@ server.registerRequestHandler("finalizeCurrentRoundIfCompleted", async () => {
 });
 
 server.registerRequestHandler("leaveCurrentRound", () => {
-  currentRoundDataReplicant.setValue(null);
+  currentRoundDataReplicant.setValue(undefined);
 });
 
 server.registerRequestHandler("refreshStage", async ({ stageIndex }) => {
@@ -368,17 +368,17 @@ server.registerRequestHandler(
 server.registerRequestHandler("finishCompetitionWithExport", async () => {
   const { url } = await apiClient.runCommand("mastersExportCompetition", []);
 
-  currentRoundDataReplicant.setValue(null);
-  currentCompetitionMetadataReplicant.setValue(null);
-  currentParticipantsReplicant.setValue(null);
+  currentRoundDataReplicant.setValue(undefined);
+  currentCompetitionMetadataReplicant.setValue(undefined);
+  currentParticipantsReplicant.setValue(undefined);
 
   return { exportedUrl: url };
 });
 
 server.registerRequestHandler("finishCompetitionWithoutExport", () => {
-  currentRoundDataReplicant.setValue(null);
-  currentCompetitionMetadataReplicant.setValue(null);
-  currentParticipantsReplicant.setValue(null);
+  currentRoundDataReplicant.setValue(undefined);
+  currentCompetitionMetadataReplicant.setValue(undefined);
+  currentParticipantsReplicant.setValue(undefined);
 });
 
 server.registerRequestHandler(
@@ -397,7 +397,7 @@ server.registerRequestHandler(
 );
 
 server.registerRequestHandler("unsetCompetitionSceneStageData", () => {
-  currentCompetitionSceneStageDataReplicant.setValue(null);
+  currentCompetitionSceneStageDataReplicant.setValue(undefined);
 });
 
 currentCompetitionSceneStageDataReplicant.subscribe(async (value) => {
@@ -443,7 +443,7 @@ server.registerRequestHandler("setResultSceneData", ({ stageIndex }) => {
     nextStageRoundIndex++;
     nextStageStageIndex = 0;
   }
-  let nextStageName = null;
+  let nextStageName: string | undefined = undefined;
   if (nextStageRoundIndex < metadata.rounds.length) {
     nextStageName =
       metadata.rounds[nextStageRoundIndex].stages[nextStageStageIndex].name;
@@ -457,7 +457,7 @@ server.registerRequestHandler("setResultSceneData", ({ stageIndex }) => {
 });
 
 server.registerRequestHandler("unsetResultSceneData", () => {
-  currentResultSceneDataReplicant.setValue(null);
+  currentResultSceneDataReplicant.setValue(undefined);
 });
 
 server.registerRequestHandler("toggleResultScene", ({ show }) => {
@@ -551,7 +551,7 @@ server.registerRequestHandler("getScoreHistory", () => {
 server.registerRequestHandler("resetOcrState", () => {
   // TODO: 関数を抜けるタイミングで、OCRから送られてくるデータがリセットされているとは限らない
   // (一瞬リセット前のデータが送られてくるかも)
-  latestOcrResultReplicant.setValue(null);
+  latestOcrResultReplicant.setValue(undefined);
   ocrServer.requestReset();
 });
 
@@ -560,7 +560,7 @@ server.registerRequestHandler("resetOcrState", () => {
 //
 
 const registrationUrlReplicant = server.getReplicant("registrationUrl");
-registrationUrlReplicant.setValue(null);
+registrationUrlReplicant.setValue(undefined);
 
 const userControllerServerHandler: UserControllerServerActionHandler = {
   open: (url: string) => {
@@ -568,14 +568,14 @@ const userControllerServerHandler: UserControllerServerActionHandler = {
   },
   close: (url: string) => {
     if (registrationUrlReplicant.getValue() == url) {
-      registrationUrlReplicant.setValue(null);
+      registrationUrlReplicant.setValue(undefined);
     }
   },
   queryPlayer: async (name: string): Promise<QueryPlayerResult> => {
     await getCurrentRegisteredPlayers();
     await getCurrentParticipants();
     const players = currentRegisteredPlayersReplicant.getValue();
-    const registeredPlayerEntry = players?.find((e) => e.name == name) ?? null;
+    const registeredPlayerEntry = players?.find((e) => e.name == name);
     const participants = currentParticipantsReplicant.getValue();
     const participating = participants?.find((e) => e.name == name) != null;
     return {
@@ -613,7 +613,7 @@ const updatePlayingPlayerData = () => {
   const ocrResult = latestOcrResultReplicant.getValue();
 
   if (currentCompetitionSceneStageData == null || ocrResult == null) {
-    playingPlayerDataReplicant.setValue(null);
+    playingPlayerDataReplicant.setValue(undefined);
     return;
   }
 

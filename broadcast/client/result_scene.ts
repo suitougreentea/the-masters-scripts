@@ -22,5 +22,5 @@ const currentResultSceneDataReplicant = await client.getReplicant(
   "currentResultSceneData",
 );
 currentResultSceneDataReplicant.subscribe((value) => {
-  result.data = value ?? null;
+  result.data = value;
 });

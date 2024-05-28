@@ -87,7 +87,7 @@ export class Exporter {
           e.stageIndex,
         );
         const entries = stageData.players.map((p) => {
-          if (p == null) return null;
+          if (p == null) return undefined;
           const timeDetail: TimeDetailData | undefined = p.timeDetail != null
             ? {
               moveTime: p.timeDetail.moveTime,
@@ -223,8 +223,8 @@ export class Exporter {
       });
 
       supplements = {
-        qualifierScore: null,
-        qualifierResult: null,
+        qualifierScore: undefined,
+        qualifierResult: undefined,
         supplementComparisons,
       };
     }

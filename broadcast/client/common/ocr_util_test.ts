@@ -27,9 +27,9 @@ Deno.test("ocrResultToStageScoreEntries() works", () => {
     bestTime: 0,
     startOrder: 0,
     startTime: 0,
-    level: null,
-    grade: null,
-    time: null,
+    level: undefined,
+    grade: undefined,
+    time: undefined,
     timeDetail: {
       moveTime: 0,
       burnTime: 1,
@@ -53,8 +53,8 @@ Deno.test("ocrResultToStageScoreEntries() works", () => {
         dummyData(0, grades["9"], 0),
       ],
     }, [
-      null,
-      null,
+      undefined,
+      undefined,
       {
         ...dummyPlayer,
         name: "b",
@@ -63,17 +63,17 @@ Deno.test("ocrResultToStageScoreEntries() works", () => {
         ...dummyPlayer,
         name: "a",
       },
-      null,
-      null,
-      null,
-      null,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
     ]),
     [
       {
         name: "b",
         level: 750,
-        grade: null,
-        time: null,
+        grade: undefined,
+        time: undefined,
       },
       {
         name: "a",
@@ -103,8 +103,8 @@ Deno.test("convertOcrPlayerStatusToStageScoreValue() works", () => {
     }),
     {
       level: 100,
-      grade: null,
-      time: null,
+      grade: undefined,
+      time: undefined,
       timeDetail: {
         moveTime: 0,
         burnTime: 1,

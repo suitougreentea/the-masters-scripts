@@ -64,19 +64,19 @@ export class MastersScoreEditorDialogElement extends LitElement {
   }
 
   @state()
-  _data: (DataEntry | null)[] = [];
+  _data: (DataEntry | undefined)[] = [];
 
   @state()
   _visible: boolean = false;
 
   open(
     stageIndex: number,
-    players: (StagePlayerEntry | null)[],
+    players: (StagePlayerEntry | undefined)[],
     scoreHistory: ScoreHistory,
   ) {
     this._stageIndex = stageIndex;
     this._data = players.map((entry, playerIndex) => {
-      if (entry == null) return null;
+      if (entry == null) return undefined;
       const history = scoreHistory.players[playerIndex];
 
       const scoreChoices: ScoreChoice[] = [];
@@ -145,9 +145,9 @@ export class MastersScoreEditorDialogElement extends LitElement {
       if (e == null) return;
       score.push({
         name: e.name,
-        level: e.score?.level ?? null,
-        grade: e.score?.grade ?? null,
-        time: e.score?.time ?? null,
+        level: e.score?.level,
+        grade: e.score?.grade,
+        time: e.score?.time,
         timeDetail: e.score?.timeDetail,
       });
     });
@@ -163,9 +163,9 @@ export class MastersScoreEditorDialogElement extends LitElement {
         ...newScore[playerIndex]!,
         score: {
           ...newScore[playerIndex]!.score,
-          level: null,
-          grade: null,
-          time: null,
+          level: undefined,
+          grade: undefined,
+          time: undefined,
         },
       };
     } else {
@@ -195,9 +195,9 @@ export class MastersScoreEditorDialogElement extends LitElement {
       newScore[playerIndex] = {
         ...newScore[playerIndex]!,
         score: {
-          level: null,
-          grade: null,
-          time: null,
+          level: undefined,
+          grade: undefined,
+          time: undefined,
         },
         scoreChoiceIndex: choiceIndex,
       };
@@ -261,7 +261,7 @@ export class MastersScoreEditorDialogElement extends LitElement {
                   <td>
                     <fluent-select
                       ?disabled=${disabled}
-                      .value=${e?.scoreChoiceIndex != null ? String(e?.scoreChoiceIndex) : null}
+                      .value=${e?.scoreChoiceIndex != null ? String(e.scoreChoiceIndex) : ""}
                       @change=${(ev: Event) => this._changeScoreChoice(i, (ev.target as Select).value)}>
                       <fluent-option value="-1">-</fluent-option>
                       ${map(e?.scoreChoices ?? [], (choice, choiceIndex) => {
@@ -274,7 +274,7 @@ export class MastersScoreEditorDialogElement extends LitElement {
                   <td>
                     <fluent-text-field
                       ?disabled=${disabled}
-                      .value=${live(e?.score != null ? formatScoreEditorScore(e.score) : null)}
+                      .value=${live(e?.score != null ? formatScoreEditorScore(e.score) : "")}
                       @change=${(ev: Event) => this._changeScore(i, (ev.target as TextField).value)}
                       @keydown=${(ev: KeyboardEvent) => this._checkEnterKey(ev, i)}>
                     </fluent-text-field>
@@ -297,7 +297,7 @@ export class MastersScoreEditorDialogElement extends LitElement {
             <fluent-button @click=${() => this._close(false)}>キャンセル</fluent-button>
           </div>
         </div>
-      ` : null}
+      ` : undefined}
     </fluent-dialog>
     `;
   }

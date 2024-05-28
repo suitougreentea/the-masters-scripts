@@ -63,7 +63,7 @@ export class PlayersStore {
     this.#serialize();
   }
 
-  getPlayer(name: string): RegisteredPlayerEntry | null {
-    return this.#registeredPlayers.find((e) => e.name == name) ?? null;
+  getPlayer(name: string): RegisteredPlayerEntry | undefined {
+    return this.#registeredPlayers.find((e) => e.name == name);
   }
 }

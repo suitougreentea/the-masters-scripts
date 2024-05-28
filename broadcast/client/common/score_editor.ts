@@ -8,10 +8,10 @@ import { timeToString } from "../../../common/time.ts";
 
 export const parseScoreEditorScore = (
   value: string,
-): StageScoreValue | null => {
+): StageScoreValue | undefined => {
   const levelMatch = value.match(/^\d{1,3}$/);
   if (levelMatch) {
-    return { level: Number(levelMatch[0]), grade: null, time: null };
+    return { level: Number(levelMatch[0]), grade: undefined, time: undefined };
   }
   const gradeAndTimeMatch = value.match(
     /^(([1-9]|S[1-9]|GM) +)?(((\d{1,2}):(\d{1,2})[:\.](\d{1,2}))|((\d{1,2})(\d\d)(\d\d)))$/,
@@ -32,7 +32,7 @@ export const parseScoreEditorScore = (
     }
     return { level: 999, grade, time };
   }
-  return null;
+  return undefined;
 };
 
 export const formatScoreEditorScore = (

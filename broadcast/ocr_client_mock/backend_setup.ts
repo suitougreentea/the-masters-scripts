@@ -71,10 +71,13 @@ if (import.meta.main) {
   }
 
   // add to participants
-  const participants: { name: string; firstRoundGroupIndex: null }[] = [];
+  const participants: { name: string; firstRoundGroupIndex: undefined }[] = [];
   input.players.forEach((player, i) => {
     if (player == null) return;
-    participants.push({ name: playerNames[i], firstRoundGroupIndex: null });
+    participants.push({
+      name: playerNames[i],
+      firstRoundGroupIndex: undefined,
+    });
   });
 
   await runCommand("mastersSetParticipants", [participants]);
@@ -96,9 +99,10 @@ if (import.meta.main) {
   };
   await runCommand("mastersResetStage", [0, 0, stageSetupResult]);
 
-  const reorderedNames: (string | null)[] = input.players.map((player, i) =>
-    player != null ? playerNames[i] : null
-  );
+  const reorderedNames: (string | undefined)[] = input.players.map((
+    player,
+    i,
+  ) => player != null ? playerNames[i] : undefined);
   await runCommand("mastersReorderStagePlayers", [0, 0, reorderedNames]);
 
   console.log("Success");

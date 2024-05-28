@@ -24,7 +24,7 @@ export function runServerScript(name: string, args: unknown): unknown {
           reject();
         }
       })
-      .withFailureHandler((error) => reject(error))[name].apply(null, [
+      .withFailureHandler((error) => reject(error))[name].apply(undefined, [
         JSON.stringify(args),
       ]);
   });
@@ -118,12 +118,12 @@ const updateRender = () => {
       const time = Math.max(0, initialTime - elapsedTime);
       setPlayerTime(i, time);
     } else {
-      setPlayerTime(i, null);
+      setPlayerTime(i, undefined);
     }
   }
 };
 
-const setPlayerTime = (index: number, time: number | null) => {
+const setPlayerTime = (index: number, time: number | undefined) => {
   const player = timerPlayers[index];
   if (time != null) {
     player.time.innerText = formatTime(time);

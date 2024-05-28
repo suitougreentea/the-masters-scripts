@@ -12,7 +12,7 @@ import { OcrPlayerStatus, OcrResult } from "../../common/type_definition.ts";
  */
 export const ocrResultToStageScoreEntries = (
   result: OcrResult,
-  players: (StagePlayerEntry | null)[],
+  players: (StagePlayerEntry | undefined)[],
 ): StageScoreEntry[] => {
   const entries: StageScoreEntry[] = [];
 
@@ -20,14 +20,14 @@ export const ocrResultToStageScoreEntries = (
     if (player == null) return;
     const status = result.status[i];
     if (status.level == 0) return;
-    let grade: Grade | null;
-    let level: number | null;
-    let time: number | null;
+    let grade: Grade | undefined;
+    let level: number | undefined;
+    let time: number | undefined;
     if (status.level < 999) {
       // not finished
-      grade = null;
+      grade = undefined;
       level = status.level;
-      time = null;
+      time = undefined;
     } else {
       // finished
       grade = status.grade;
@@ -49,14 +49,14 @@ export const convertOcrPlayerStatusToStageScoreValue = (
   status: OcrPlayerStatus,
 ): StageScoreValue | undefined => {
   if (status.level == 0) return undefined;
-  let grade: Grade | null;
-  let level: number | null;
-  let time: number | null;
+  let grade: Grade | undefined;
+  let level: number | undefined;
+  let time: number | undefined;
   if (status.level < 999) {
     // not finished
-    grade = null;
+    grade = undefined;
     level = status.level;
-    time = null;
+    time = undefined;
   } else {
     // finished
     grade = status.grade;

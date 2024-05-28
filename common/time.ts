@@ -23,18 +23,18 @@ export const createTime = (
  * @param time 0:00.00 または 0:00:00 形式の文字列
  * @returns
  */
-export const stringToTime = (str: string): number | null => {
+export const stringToTime = (str: string): number | undefined => {
   const match = str.match(/^(\d?\d):([0-5]\d)[:.](\d\d?)$/);
-  if (!match) return null;
+  if (!match) return undefined;
   return Number(match[1]) * 60000 + Number(match[2]) * 1000 +
     Number(match[3].padEnd(3, "0"));
 };
 
-export function stringToTimeFuzzy(time: string): number | null {
+export function stringToTimeFuzzy(time: string): number | undefined {
   const match = time.match(
     /^(((\d{1,2}):(\d{1,2})[:\.](\d{1,2}))|((\d{1,2})(\d\d)(\d\d)))$/,
   );
-  if (!match) return null;
+  if (!match) return undefined;
   const longTime = match.slice(3, 6);
   const shortTime = match.slice(7, 10);
   if (longTime[0] != null) {
@@ -63,8 +63,8 @@ export const timeToString = (time: number) => {
     "." + String(cent).padStart(2, "0");
 };
 
-export function timeToStringNullable(ms: number | null): string | null {
-  if (ms == null) return null;
+export function timeToStringNullable(ms: number | undefined): string | undefined {
+  if (ms == null) return undefined;
   return timeToString(ms);
 }
 

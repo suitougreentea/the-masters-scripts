@@ -1564,7 +1564,9 @@ export function getAllPresetNames(): string[] {
   return presets.map((e) => e.name);
 }
 
-export function getAppropriatePresetName(numPlayers: number): string | null {
+export function getAppropriatePresetName(
+  numPlayers: number,
+): string | undefined {
   if (numPlayers == 8) return "8_4p";
   if (numPlayers == 9) return "9_4p";
   if (numPlayers == 10) return "10_4p";
@@ -1577,7 +1579,7 @@ export function getAppropriatePresetName(numPlayers: number): string | null {
   if (29 <= numPlayers && numPlayers <= 32) return "32";
   if (33 <= numPlayers && numPlayers <= 40) return "40";
   if (41 <= numPlayers && numPlayers <= 48) return "48";
-  return null;
+  return undefined;
 }
 
 export const manualPresetName = "manual";

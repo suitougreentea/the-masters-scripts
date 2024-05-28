@@ -96,7 +96,7 @@ export class MastersPlayerInfoElement extends LitElement {
   @state()
   private _name: string = "";
   @state()
-  private _bestTime: number | null = null;
+  private _bestTime?: number = undefined;
   @state()
   private _comment: string = "";
   @state()
@@ -106,10 +106,10 @@ export class MastersPlayerInfoElement extends LitElement {
   @state()
   private _showLoader: boolean = false;
   @state()
-  private _currentMessage: { type: number; message: string } | null = null;
+  private _currentMessage?: { type: number; message: string } = undefined;
 
-  private _oldName: string | null = null;
-  private _currentMessageTimeout: number | null = null;
+  private _oldName?: string = undefined;
+  private _currentMessageTimeout?: number = undefined;
 
   private async _withLoaderAndMessage(body: () => Promise<string>) {
     try {
@@ -127,14 +127,14 @@ export class MastersPlayerInfoElement extends LitElement {
   private _showMessage(type: number, message: string) {
     if (this._currentMessageTimeout != null) {
       clearTimeout(this._currentMessageTimeout);
-      this._currentMessageTimeout = null;
+      this._currentMessageTimeout = undefined;
     }
     this._currentMessage = { type, message };
     // TODO: currently editing control is reset when timeout because of live directive
     /*
     this._currentMessageTimeout = setTimeout(() => {
-      this._currentMessage = null;
-      this._currentMessageTimeout = null;
+      this._currentMessage = undefined;
+      this._currentMessageTimeout = undefined;
     }, 3000);
     */
   }
@@ -157,15 +157,15 @@ export class MastersPlayerInfoElement extends LitElement {
         this._bestTime = json.registeredPlayerEntry.bestTime;
         this._comment = json.registeredPlayerEntry.comment;
       } else {
-        this._oldName = null;
-        this._bestTime = null;
+        this._oldName = undefined;
+        this._bestTime = undefined;
         this._comment = "";
       }
       this._queryCompleted = true;
       this._participating = json.participating;
     } catch (e) {
-      this._oldName = null;
-      this._bestTime = null;
+      this._oldName = undefined;
+      this._bestTime = undefined;
       this._comment = "";
       this._queryCompleted = false;
       this._participating = false;

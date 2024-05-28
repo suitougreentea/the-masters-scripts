@@ -25,6 +25,6 @@ Deno.test("tryStringToGrade() works for all grades", () => {
     assertEquals(tryStringToGrade(gradeStr), grade);
   });
 });
-Deno.test("tryStringToGrade() returns null for invalid grade string", () => {
-  assertEquals(tryStringToGrade("Foo"), null);
+Deno.test("tryStringToGrade() returns undefined for invalid grade string", () => {
+  assertEquals(tryStringToGrade("Foo"), undefined);
 });

@@ -111,15 +111,15 @@ export class MastersStagePlayersElement extends LitElement {
   `;
 
   @property()
-  data: (StagePlayerEntry | null)[] = [
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
+  data: (StagePlayerEntry | undefined)[] = [
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
   ];
 
   render() {
@@ -130,7 +130,7 @@ export class MastersStagePlayersElement extends LitElement {
       if (handicap > 0) {
         return html`<span class="handicap">+${handicap}</span>`;
       }
-      return null;
+      return undefined;
     };
     // deno-fmt-ignore
     return html`
@@ -161,15 +161,15 @@ export class MastersStagePlayersElement extends LitElement {
       <tbody>
         ${map(this.data, (e, i) => {
           const d = e ?? {
-            name: null,
-            bestTime: null,
+            name: undefined,
+            bestTime: undefined,
             handicap: 0,
-            rawBestTime: null,
-            startOrder: null,
-            startTime: null,
-            level: null,
-            grade: null,
-            time: null,
+            rawBestTime: undefined,
+            startOrder: undefined,
+            startTime: undefined,
+            level: undefined,
+            grade: undefined,
+            time: undefined,
           };
           const sideClass = classMap({
             p1: d.startOrder != null && 1 <= d.startOrder && d.startOrder <= 4,

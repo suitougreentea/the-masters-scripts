@@ -34,7 +34,7 @@ export type CompetitionSceneStageData = {
 export type ResultSceneData = {
   roundData: RoundData;
   currentStageIndex: number;
-  nextStageName: string | null;
+  nextStageName?: string;
 };
 
 export type OcrPlayerStatus = {
@@ -83,17 +83,17 @@ type EmptyObject = Record<keyof unknown, never>;
 
 export type TypeDefinition = {
   replicants: {
-    currentRegisteredPlayers: RegisteredPlayerEntry[] | null;
-    currentParticipants: Participant[] | null;
-    currentCompetitionMetadata: CompetitionMetadata | null;
-    currentRoundData: RoundData | null;
-    currentCompetitionSceneStageData: CompetitionSceneStageData | null;
-    currentResultSceneData: ResultSceneData | null;
+    currentRegisteredPlayers?: RegisteredPlayerEntry[];
+    currentParticipants?: Participant[];
+    currentCompetitionMetadata?: CompetitionMetadata;
+    currentRoundData?: RoundData;
+    currentCompetitionSceneStageData?: CompetitionSceneStageData;
+    currentResultSceneData?: ResultSceneData;
     resultSceneActive: boolean;
-    latestOcrResult: OcrResult | null;
+    latestOcrResult?: OcrResult;
     ocrConnected: boolean;
-    playingPlayerData: PlayingPlayerData[] | null;
-    registrationUrl: string | null;
+    playingPlayerData?: PlayingPlayerData[];
+    registrationUrl?: string;
   };
 
   messages: {
@@ -118,7 +118,7 @@ export type TypeDefinition = {
     refreshStage: { params: { stageIndex: number } };
     resetStage: { params: { stageIndex: number; setup: StageSetupResult } };
     reorderStagePlayers: {
-      params: { stageIndex: number; names: (string | null)[] };
+      params: { stageIndex: number; names: (string | undefined)[] };
     };
     setStageScore: { params: { stageIndex: number; score: StageScoreData } };
     finishCompetitionWithExport: { result: { exportedUrl: string } };

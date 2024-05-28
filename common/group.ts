@@ -4,8 +4,8 @@ export const groupIndexToString = (index: number): string => {
   return groupNames[index];
 };
 
-export const stringToGroupIndex = (string: string): number | null => {
+export const stringToGroupIndex = (string: string): number | undefined => {
   const index = groupNames.indexOf(string);
-  if (index == -1) return null;
+  if (index == -1) return undefined;
   return index;
 };

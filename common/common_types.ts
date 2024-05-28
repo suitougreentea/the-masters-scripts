@@ -86,7 +86,7 @@ export type RegisteredPlayerEntry = {
 
 export type Participant = {
   name: string;
-  firstRoundGroupIndex: number | null;
+  firstRoundGroupIndex?: number;
 };
 
 export type StageSetupResult = {
@@ -122,9 +122,9 @@ export type StagePlayerEntry = {
   bestTime: number;
   startOrder: number;
   startTime: number;
-  level: number | null;
-  grade: Grade | null;
-  time: number | null;
+  level?: number;
+  grade?: Grade;
+  time?: number;
   timeDetail?: TimeDetail;
 };
 
@@ -132,15 +132,15 @@ export type StageResultEntry = {
   rank: number;
   name: string;
   level: number;
-  grade: Grade | null;
-  time: number | null;
-  timeDiffBest: number | null;
-  timeDiffTop: number | null;
-  timeDiffPrev: number | null;
+  grade?: Grade;
+  time?: number;
+  timeDiffBest?: number;
+  timeDiffTop?: number;
+  timeDiffPrev?: number;
 };
 
 export type StageData = {
-  players: (StagePlayerEntry | null)[];
+  players: (StagePlayerEntry | undefined)[];
   result: StageResultEntry[];
 };
 
@@ -148,10 +148,10 @@ export type SupplementComparisonEntry = {
   rank: number;
   name: string;
   level: number;
-  grade: Grade | null;
-  time: number | null;
-  timeDiffBest: number | null;
-  timeDiffPrev: number | null;
+  grade?: Grade;
+  time?: number;
+  timeDiffBest?: number;
+  timeDiffPrev?: number;
 };
 
 export type SupplementComparisonData = {
@@ -176,8 +176,8 @@ export type QualifierResultEntry = {
   points: number;
   numPlaces: number[];
   bestGameLevel: number;
-  bestGameGrade: Grade | null;
-  bestGameTimeDiffBest: number | null;
+  bestGameGrade?: Grade;
+  bestGameTimeDiffBest?: number;
 };
 
 export type QualifierResult = {
@@ -185,17 +185,17 @@ export type QualifierResult = {
 };
 
 export type StageScoreValue = {
-  level: number | null;
-  grade: Grade | null;
-  time: number | null;
+  level?: number;
+  grade?: Grade;
+  time?: number;
   timeDetail?: TimeDetail;
 };
 
 export type StageScoreEntry = {
   name: string;
-  level: number | null;
-  grade: Grade | null;
-  time: number | null;
+  level?: number;
+  grade?: Grade;
+  time?: number;
   timeDetail?: TimeDetail;
 };
 
@@ -211,7 +211,7 @@ export type ApiFunctions = {
   mastersSetParticipants: (participants: Participant[]) => void;
   mastersSetupCompetition: (options: CompetitionSetupOptions) => void;
   mastersExportCompetition: () => { url: string };
-  mastersGetCurrentCompetitionMetadata: () => CompetitionMetadata | null;
+  mastersGetCurrentCompetitionMetadata: () => CompetitionMetadata | undefined;
   mastersResetStage: (
     roundIndex: number,
     stageIndex: number,
@@ -229,7 +229,7 @@ export type ApiFunctions = {
   mastersReorderStagePlayers: (
     roundIndex: number,
     stageIndex: number,
-    names: (string | null)[],
+    names: (string | undefined)[],
   ) => void;
   mastersSetStageScore: (
     roundIndex: number,

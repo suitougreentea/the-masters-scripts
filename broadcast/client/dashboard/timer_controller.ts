@@ -178,7 +178,7 @@ export class MastersTimerControllerElement extends LitElement {
 
   render() {
     const timerContainerStyle = styleMap({
-      display: this._timerVisible ? null : "none",
+      display: this._timerVisible ? undefined : "none",
     });
 
     // deno-fmt-ignore
@@ -204,11 +204,11 @@ export class MastersTimerControllerElement extends LitElement {
             <span>[リザルト画面表示中]</span>
             <!--<fluent-button @click=${this._hideResult} ?disabled=${!this._showingResult}>戻る</fluent-button>-->
             `
-            : null
+            : undefined
           }
           ${!this._ocrConnected
             ? html`<span>[OCR未接続]</span>`
-            : null
+            : undefined
           }
         </div>
       </div>

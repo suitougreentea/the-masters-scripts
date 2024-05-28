@@ -31,11 +31,11 @@ export class MastersPlayerRegistrationDialogElement extends LitElement {
     `;
 
   @state()
-  private _oldName: string | null = null;
+  private _oldName?: string = undefined;
   @state()
   private _name = "";
   @state()
-  private _bestTime: number | null = null;
+  private _bestTime?: number = undefined;
   @state()
   private _comment = "";
 
@@ -44,9 +44,9 @@ export class MastersPlayerRegistrationDialogElement extends LitElement {
   private _dialog!: Dialog;
 
   openRegister() {
-    this._oldName = null;
+    this._oldName = undefined;
     this._name = "";
-    this._bestTime = null;
+    this._bestTime = undefined;
     this._comment = "";
     this._dialog.hidden = false;
   }
@@ -66,7 +66,7 @@ export class MastersPlayerRegistrationDialogElement extends LitElement {
     }
   }
 
-  getOldName(): string | null {
+  getOldName(): string | undefined {
     return this._oldName;
   }
 

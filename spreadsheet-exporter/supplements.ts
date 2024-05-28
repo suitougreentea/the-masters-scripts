@@ -16,7 +16,7 @@ export const createSupplementsSheet = (
   ss: GoogleAppsScript.Spreadsheet.Spreadsheet,
   input: SupplementsData,
   templatesSheet: GoogleAppsScript.Spreadsheet.Sheet,
-): GoogleAppsScript.Spreadsheet.Sheet | null => {
+): GoogleAppsScript.Spreadsheet.Sheet | undefined => {
   const { supplementComparisons, qualifierScore, qualifierResult } = input;
 
   if (qualifierScore != null && qualifierResult != null) {
@@ -149,6 +149,6 @@ export const createSupplementsSheet = (
 
     return sh;
   } else {
-    return null;
+    return undefined;
   }
 };

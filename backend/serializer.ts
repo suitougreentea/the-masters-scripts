@@ -10,7 +10,7 @@ export interface SerializerManager {
 
 export interface Serializer<T> {
   serialize(value: T): void;
-  deserialize(): T | null;
+  deserialize(): T | undefined;
 }
 
 export class FileSerializerManager {
@@ -38,13 +38,13 @@ export class FileSerializer<T> implements Serializer<T> {
     Deno.writeTextFileSync(this.#path, JSON.stringify(value));
   }
 
-  deserialize(): T | null {
+  deserialize(): T | undefined {
     try {
       const text = Deno.readTextFileSync(this.#path);
       return JSON.parse(text);
     } catch (e) {
       console.warn(e);
-      return null;
+      return undefined;
     }
   }
 }
