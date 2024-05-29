@@ -20,10 +20,17 @@ if (import.meta.main) {
 
   // WebSocketクライアントを作成
   const ws = new WebSocket(serverAddress);
+  let connectionPromiseResolve;
+  let connectionPromiseReject;
+  const connectionPromise = new Promise((resolve, reject) => {
+    connectionPromiseResolve = resolve;
+    connectionPromiseReject = reject;
+  });
 
   // WebSocket接続が確立されたときの処理
   ws.onopen = () => {
     console.log("Connected to server");
+    connectionPromiseResolve!();
   };
 
   // サーバーからメッセージを受信したときの処理
@@ -35,6 +42,11 @@ if (import.meta.main) {
     } else {
       console.log("Received unknown message from server:", ev.data);
     }
+  };
+
+  // WebSocket接続がエラーになったときの処理
+  ws.onerror = () => {
+    connectionPromiseReject!();
   };
 
   // WebSocket接続が閉じられたときの処理
@@ -56,6 +68,9 @@ if (import.meta.main) {
       data.push(line);
     }
   }
+  console.log(`Input of ${data.length} lines loaded`);
+
+  await connectionPromise;
 
   // 全部読み終わったので送信を開始
   setInterval(() => {
