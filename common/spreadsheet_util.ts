@@ -63,7 +63,9 @@ export const pasteTemplate = (
   templateRange.copyTo(destRange, type, false);
 };
 
-export const timeToSpreadsheetValue = (time: number | undefined): number | undefined => {
+export const timeToSpreadsheetValue = (
+  time: number | undefined,
+): number | undefined => {
   if (time == null) return undefined;
   return time / (24 * 60 * 60 * 1000);
 };

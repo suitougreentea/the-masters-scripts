@@ -63,7 +63,9 @@ export const timeToString = (time: number) => {
     "." + String(cent).padStart(2, "0");
 };
 
-export function timeToStringNullable(ms: number | undefined): string | undefined {
+export function timeToStringNullable(
+  ms: number | undefined,
+): string | undefined {
   if (ms == null) return undefined;
   return timeToString(ms);
 }
