@@ -20,7 +20,7 @@
     "obs-websocket-js": "npm:obs-websocket-js@^5.0.5",
     "p_queue": "https://deno.land/x/p_queue@1.0.1/mod.ts",
     "qrcode": "https://deno.land/x/qrcode@v2.0.0/mod.ts",
-    "tinycolor2": "https://esm.sh/tinycolor2@1.6.0"
+    "tinycolor2": "https://esm.sh/v135/tinycolor2@1.6.0"
   },
   "tasks": {
     "build": "deno run --allow-env --allow-net --allow-read --allow-run --allow-write build.ts build",

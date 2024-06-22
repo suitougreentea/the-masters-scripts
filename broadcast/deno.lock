@@ -456,6 +456,7 @@
     "https://esm.sh/fast-deep-equal@3.1.3": "b1b2e7632701c8c27d2dbe83660f3128eec55027555184ff40aa6e890945318a",
     "https://esm.sh/tinycolor2@1.6.0": "ca809b90a5e15091552dd0bf979d64e789dac59210df7c851c5a28ee7f55ea7f",
     "https://esm.sh/v135/fast-deep-equal@3.1.3/denonext/fast-deep-equal.mjs": "6313b3e05436550e1c0aeb2a282206b9b8d9213b4c6f247964dd7bb4835fb9e5",
+    "https://esm.sh/v135/tinycolor2@1.6.0": "ca809b90a5e15091552dd0bf979d64e789dac59210df7c851c5a28ee7f55ea7f",
     "https://esm.sh/v135/tinycolor2@1.6.0/denonext/tinycolor2.mjs": "0d8e1e1f49e751bd9a205aec766a10ca86e2fe00b6e1409a996c5d5eaaf4a5eb"
   },
   "workspace": {
