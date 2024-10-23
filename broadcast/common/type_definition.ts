@@ -43,13 +43,15 @@ export type OcrPlayerStatus = {
   level: number;
   grade: Grade;
   gameTime: number;
-  // TODO: experimental
-  health?: string;
   moveTime: number;
   burnTime: number;
   levelStopTime: number;
   minoCount: number;
   clearCount: [number, number, number, number];
+  health?: string; // 2024-03-21, statdump_2
+  levelStop?: boolean; // 2024-04-15, statdump_3
+  reliable?: boolean; // 2024-04-15, statdump_3
+  idleTime?: number; // 2024-10-16, statdump_4
   sections: {
     lap: number;
     split: number;
@@ -58,6 +60,7 @@ export type OcrPlayerStatus = {
     levelStopTime: number;
     minoCount: number;
     clearCount: [number, number, number, number];
+    idleTime?: number; // 2024-10-16, statdump_4
   }[];
 };
 

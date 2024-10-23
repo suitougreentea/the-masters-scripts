@@ -81,12 +81,15 @@ export function upgradeOcrResult(data: unknown): OcrResult {
         level: s.level ?? 0,
         grade: s.grade ?? 0,
         gameTime: s.gameTime ?? 0,
-        health: s.health ?? "HEALTHY",
         moveTime: s.moveTime ?? 0,
         burnTime: s.burnTime ?? 0,
         levelStopTime: s.levelStopTime ?? 0,
         minoCount: s.minoCount ?? 0,
         clearCount: s.clearCount ?? [0, 0, 0, 0],
+        health: s.health,
+        levelStop: s.levelStop,
+        reliable: s.reliable,
+        idleTime: s.idleTime,
         // deno-lint-ignore no-explicit-any
         sections: s.sections?.map((e: any) =>
           ({
@@ -97,6 +100,7 @@ export function upgradeOcrResult(data: unknown): OcrResult {
             levelStopTime: e.levelStopTime ?? 0,
             minoCount: e.minoCount ?? 0,
             clearCount: e.clearCount ?? [0, 0, 0, 0],
+            idleTime: s.idleTime,
           }) satisfies OcrPlayerStatus["sections"][number]
         ) ?? [],
       }) satisfies OcrPlayerStatus
