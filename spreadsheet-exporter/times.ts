@@ -101,7 +101,9 @@ export const createTimesSheet = (
         entry.timeDetail.clearCount[3],
         entry.timeDetail.moveTime / 1000,
         entry.timeDetail.moveTime / entry.timeDetail.minoCount * 60 / 1000,
-        entry.timeDetail.idleTime != null ? entry.timeDetail.idleTime / 1000 : undefined,
+        entry.timeDetail.idleTime != null
+          ? entry.timeDetail.idleTime / 1000
+          : undefined,
         entry.timeDetail.burnTime / 1000,
         entry.timeDetail.levelStopTime / 1000,
       ]];
