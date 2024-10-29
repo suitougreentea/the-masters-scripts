@@ -95,6 +95,7 @@ export class Exporter {
               levelStopTime: p.timeDetail.levelStopTime,
               minoCount: p.timeDetail.minoCount,
               clearCount: [...p.timeDetail.clearCount],
+              idleTime: p.timeDetail.idleTime,
               sections: p.timeDetail.sections.map((s) => ({
                 lap: s.lap,
                 split: s.split,
@@ -103,6 +104,7 @@ export class Exporter {
                 levelStopTime: s.levelStopTime,
                 minoCount: s.minoCount,
                 clearCount: [...s.clearCount],
+                idleTime: s.idleTime,
               })),
             }
             : undefined;

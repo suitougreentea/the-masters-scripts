@@ -67,5 +67,5 @@ export const getTimeDetailTemplate = (): TemplateInfo => ({
   row: 124,
   column: 1,
   numRows: 13,
-  numColumns: 12,
+  numColumns: 13,
 });

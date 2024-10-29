@@ -104,6 +104,7 @@ export type TimeDetail = {
   levelStopTime: number;
   minoCount: number;
   clearCount: [number, number, number, number];
+  idleTime?: number;
   sections: {
     lap: number;
     split: number;
@@ -112,6 +113,7 @@ export type TimeDetail = {
     levelStopTime: number;
     minoCount: number;
     clearCount: [number, number, number, number];
+    idleTime?: number;
   }[];
 };
 

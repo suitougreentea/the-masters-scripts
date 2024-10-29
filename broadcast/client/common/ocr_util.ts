@@ -69,6 +69,7 @@ export const convertOcrPlayerStatusToStageScoreValue = (
     levelStopTime: status.levelStopTime,
     minoCount: status.minoCount,
     clearCount: status.clearCount,
+    idleTime: status.idleTime,
     sections: status.sections.map((e) => {
       return {
         lap: e.lap,
@@ -78,6 +79,7 @@ export const convertOcrPlayerStatusToStageScoreValue = (
         levelStopTime: e.levelStopTime,
         minoCount: e.minoCount,
         clearCount: e.clearCount,
+        idleTime: e.idleTime,
       };
     }),
   };

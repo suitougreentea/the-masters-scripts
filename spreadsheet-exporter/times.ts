@@ -16,10 +16,10 @@ export const createTimesSheet = (
 
   const sh = ss.insertSheet("Times");
 
-  resizeSheet(sh, 15 * list.length - 1, 13 * 8 - 1);
+  resizeSheet(sh, 15 * list.length - 1, 14 * 8 - 1);
   const columnWidths: number[] = [];
   [...new Array(8)].forEach((_, i) => {
-    columnWidths.push(56, 60, 60, 30, 24, 24, 24, 24, 48, 48, 48, 48);
+    columnWidths.push(56, 60, 60, 30, 24, 24, 24, 24, 48, 48, 48, 48, 48);
     if (i != 7) columnWidths.push(24);
   });
   setColumnWidths(sh, columnWidths);
@@ -40,7 +40,7 @@ export const createTimesSheet = (
       );
 
       if (entry == null) {
-        baseColumn += 13;
+        baseColumn += 14;
         return;
       }
 
@@ -51,7 +51,7 @@ export const createTimesSheet = (
         sh.getRange(baseRow + 13, baseColumn + 1).setValue(
           timeToSpreadsheetValue(entry.time),
         );
-        baseColumn += 13;
+        baseColumn += 14;
         return;
       }
 
@@ -67,6 +67,7 @@ export const createTimesSheet = (
             section.clearCount[3],
             section.moveTime / 1000,
             section.moveTime / section.minoCount * 60 / 1000,
+            section.idleTime != null ? section.idleTime / 1000 : undefined,
             section.burnTime / 1000,
             section.levelStopTime / 1000,
           ];
@@ -83,10 +84,11 @@ export const createTimesSheet = (
             undefined,
             undefined,
             undefined,
+            undefined,
           ];
         }
       });
-      sh.getRange(baseRow + 3, baseColumn + 1, 10, 11).setValues(sectionValues);
+      sh.getRange(baseRow + 3, baseColumn + 1, 10, 12).setValues(sectionValues);
 
       const totalValues = [[
         entry.level,
@@ -99,12 +101,13 @@ export const createTimesSheet = (
         entry.timeDetail.clearCount[3],
         entry.timeDetail.moveTime / 1000,
         entry.timeDetail.moveTime / entry.timeDetail.minoCount * 60 / 1000,
+        entry.timeDetail.idleTime != null ? entry.timeDetail.idleTime / 1000 : undefined,
         entry.timeDetail.burnTime / 1000,
         entry.timeDetail.levelStopTime / 1000,
       ]];
-      sh.getRange(baseRow + 13, baseColumn, 1, 12).setValues(totalValues);
+      sh.getRange(baseRow + 13, baseColumn, 1, 13).setValues(totalValues);
 
-      baseColumn += 13;
+      baseColumn += 14;
     });
 
     baseRow += 15;
