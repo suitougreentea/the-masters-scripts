@@ -100,7 +100,7 @@ export function upgradeOcrResult(data: unknown): OcrResult {
             levelStopTime: e.levelStopTime ?? 0,
             minoCount: e.minoCount ?? 0,
             clearCount: e.clearCount ?? [0, 0, 0, 0],
-            idleTime: s.idleTime,
+            idleTime: e.idleTime,
           }) satisfies OcrPlayerStatus["sections"][number]
         ) ?? [],
       }) satisfies OcrPlayerStatus
