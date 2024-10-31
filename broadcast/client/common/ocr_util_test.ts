@@ -112,6 +112,7 @@ Deno.test("convertOcrPlayerStatusToStageScoreValue() works", () => {
         minoCount: 3,
         clearCount: [0, 1, 2, 3],
         sections: [],
+        idleTime: undefined,
       },
     },
   );
@@ -141,6 +142,7 @@ Deno.test("convertOcrPlayerStatusToStageScoreValue() works", () => {
         minoCount: 3,
         clearCount: [0, 1, 2, 3],
         sections: [],
+        idleTime: undefined,
       },
     },
   );
@@ -158,6 +160,7 @@ Deno.test("convertOcrPlayerStatusToStageScoreValue() works", () => {
       minoCount: 0,
       clearCount: [0, 0, 0, 0],
       sections: [],
+      idleTime: undefined,
     }),
     undefined,
   );
