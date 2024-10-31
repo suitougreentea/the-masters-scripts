@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: denoland/setup-deno@v1
         with:
-          deno-version: "1.41.3"
+          deno-version: "2.0.3"
 
       - name: Check backend
         run: cd backend; deno task check
