@@ -23,6 +23,11 @@ export class MastersTimerElement extends LitElement {
     overflow: hidden;
   }
 
+  .container-inner-opaque {
+    overflow: hidden;
+    background-color: ${commonColors.background};
+  }
+
   .player {
     display: grid;
     align-items: center;
@@ -154,6 +159,7 @@ export class MastersTimerElement extends LitElement {
   #initializedPromise: PromiseSet<void> = createPromiseSet();
   #elements: {
     id: HTMLDivElement;
+    player: HTMLDivElement;
     backgroundTime: HTMLDivElement;
     health: HTMLDivElement; // TODO: Experimental
     name: HTMLDivElement;
@@ -164,6 +170,7 @@ export class MastersTimerElement extends LitElement {
     offset: HTMLDivElement;
     standing: HTMLDivElement; // TODO: Experimental
   }[] = [];
+  #innerContainer: HTMLDivElement;
   #data: (StagePlayerEntry | undefined)[];
   #intervalId?: number = undefined;
   #startTime = -1;
@@ -171,12 +178,18 @@ export class MastersTimerElement extends LitElement {
   #currentOcrResult?: OcrResult = undefined;
   #currentPlayingPlayerData?: PlayingPlayerData[] = undefined;
 
+  #displayOrder: number[] = []; // 何番目に表示するか
+  #displayOrderMoving = false;
+
   constructor() {
     super();
     this.#data = this.#createEmptyData();
   }
 
   firstUpdated() {
+    this.#innerContainer = this.renderRoot.querySelector<HTMLDivElement>(
+      ".container-inner",
+    );
     const players = this.renderRoot.querySelectorAll<HTMLDivElement>(".player");
     for (let i = 0; i < 8; i++) {
       const player = players[i];
@@ -193,6 +206,7 @@ export class MastersTimerElement extends LitElement {
       const offset = player.querySelector<HTMLDivElement>(".offset")!;
       const standing = player.querySelector<HTMLDivElement>(".standing")!; // TODO: Experimental
       this.#elements.push({
+        player,
         id,
         backgroundTime,
         health, // TODO: Experimental
@@ -204,6 +218,7 @@ export class MastersTimerElement extends LitElement {
         offset,
         standing, // TODO: Experimental
       });
+      this.#displayOrder.push(i);
     }
 
     this.#initializedPromise.resolve();
@@ -256,6 +271,7 @@ export class MastersTimerElement extends LitElement {
 
     this.#startTime = -1;
     this.#elapsedTime = 0;
+    this.#resetDisplayOrder();
     this.#updateRender();
   }
 
@@ -289,7 +305,6 @@ export class MastersTimerElement extends LitElement {
         element.offset.innerText = "";
       }
     }
-
     this.#reset();
   }
 
@@ -311,14 +326,26 @@ export class MastersTimerElement extends LitElement {
   }
 
   #updateRender() {
+    let allStarted = true;
     for (let i = 0; i < 8; i++) {
       const startTime = this.#data[i]?.startTime;
       if (startTime != null) {
         const time = Math.max(0, startTime - this.#elapsedTime);
         this.#setPlayerTime(i, time);
+        if (time > 0) {
+          allStarted = false;
+        }
       } else {
         this.#setPlayerTime(i, undefined);
       }
+    }
+    // OCRと接続できている場合、アニメーション中背景が見えないように不透明にする
+    this.#innerContainer.className = (this.#currentOcrResult != null)
+      ? "container-inner-opaque"
+      : "container-inner";
+    const order = this.#calculateDisplayOrder();
+    if (this.isStarted() && allStarted) {
+      this.#setDisplayOrder(order, undefined);
     }
   }
 
@@ -391,6 +418,82 @@ export class MastersTimerElement extends LitElement {
       player.gauge.style.width = "0px";
       player.standing.innerText = ""; // TODO: Experimental
     }
+  }
+
+  #resetDisplayOrder() {
+    const order: number[] = [];
+    for (let i = 0; i < 8; i++) {
+      order.push(i);
+    }
+    this.#setDisplayOrder(order, true);
+  }
+
+  #calculateDisplayOrder() {
+    const order = [...this.#displayOrder];
+    if (
+      this.#currentPlayingPlayerData != null && this.#currentOcrResult != null
+    ) {
+      const ov: { o: number; i: number }[] = [];
+      // 並び変え用のスコアを計算してそれをもとにソート
+      // 順位(0-7, データがない場合8とみなす)*8 + 枠順
+      for (let i = 0; i < 8; i++) {
+        let o = 8 * 8 + i; // 順位がデータにない行は後ろにまとめる
+        const data = this.#currentPlayingPlayerData[i];
+        if (data.standingRankIndex != null && data.standingFinal != null) { // QUESTION: 2つめの条件式は必要だろうか?
+          o = data.standingRankIndex * 8 + i;
+        }
+        ov.push({ o, i });
+      }
+      ov.sort((a, b) => (a.o - b.o));
+      // それぞれの行に対して、おさまるべきHTMLDivElementのインデックスがわかるので、
+      // 結果を転置してそれぞれのHTMLDivElementがおさまる行番号をルックアップできるようにする
+      // FIXME: O(n^2)でも64回のループだしfindIndexでいいのでは
+      for (let i = 0; i < 8; i++) {
+        order[ov[i].i] = i;
+      }
+    } else {
+      // データがない場合は枠順で並べる
+      for (let i = 0; i < 8; i++) {
+        if (order[i] !== i) {
+          order[i] = i;
+        }
+      }
+    }
+    return order;
+  }
+
+  #setDisplayOrder(order: number[], force: boolean | undefined) {
+    // アニメーション中は新しいアニメーションを発生させない
+    if (this.#displayOrderMoving && !force) return;
+    // 差分がない場合アニメーションを発生させない
+    if (order.every((e, i) => (e === this.#displayOrder[i]))) return;
+    const duration = 500;
+    // 位置をずらす
+    for (let i = 0; i < 8; i++) {
+      if (this.#displayOrder[i] !== order[i]) {
+        const anim = this.#elements[i].player.animate([
+          { transform: `translateY(${(this.#displayOrder[i] - i) * 32}px)` },
+          {
+            transform: `translateY(${(order[i] - i) * 32}px)`,
+          },
+        ], {
+          duration,
+          easing: "ease-in-out",
+          fill: "forwards",
+        });
+        anim.finished.then(() => {
+          // アニメーションが残っているとstyleの変更ができないので、移動が終わったらスタイルに反映して削除する
+          anim.commitStyles();
+          anim.cancel();
+        });
+      }
+    }
+    this.#displayOrder = [...order];
+    // アニメーション中は別のアニメーション発生をブロックする
+    this.#displayOrderMoving = true;
+    setTimeout(() => {
+      this.#displayOrderMoving = false;
+    }, duration);
   }
 
   render() {
