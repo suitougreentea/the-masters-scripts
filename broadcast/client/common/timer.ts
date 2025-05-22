@@ -178,8 +178,9 @@ export class MastersTimerElement extends LitElement {
   #currentOcrResult?: OcrResult = undefined;
   #currentPlayingPlayerData?: PlayingPlayerData[] = undefined;
 
-  #displayOrder: number[] = []; // 何番目に表示するか
-  #displayOrderMoving = false;
+  #displayIndices: number[] = [];
+  #actualDisplayIndices: number[] = [];
+  #displayIndicesMoving = false;
 
   constructor() {
     super();
@@ -218,8 +219,9 @@ export class MastersTimerElement extends LitElement {
         offset,
         standing, // TODO: Experimental
       });
-      this.#displayOrder.push(i);
+      this.#displayIndices.push(i);
     }
+    this.#actualDisplayIndices = [...this.#displayIndices];
 
     this.#initializedPromise.resolve();
   }
@@ -271,7 +273,7 @@ export class MastersTimerElement extends LitElement {
 
     this.#startTime = -1;
     this.#elapsedTime = 0;
-    this.#resetDisplayOrder();
+    this.#resetDisplayIndices();
     this.#updateRender();
   }
 
@@ -339,14 +341,14 @@ export class MastersTimerElement extends LitElement {
         this.#setPlayerTime(i, undefined);
       }
     }
-    // OCRと接続できている場合、アニメーション中背景が見えないように不透明にする
+    // Set the background opaque if OCR is available
     this.#innerContainer.className = (this.#currentOcrResult != null)
       ? "container-inner-opaque"
       : "container-inner";
-    const order = this.#calculateDisplayOrder();
     if (this.isStarted() && allStarted) {
-      this.#setDisplayOrder(order, undefined);
+      this.#displayIndices = this.#calculateDisplayIndicesByRank();
     }
+    this.#updateDisplayIndices(undefined);
   }
 
   #setPlayerTime(index: number, time: number | undefined) {
@@ -420,61 +422,64 @@ export class MastersTimerElement extends LitElement {
     }
   }
 
-  #resetDisplayOrder() {
-    const order: number[] = [];
+  #resetDisplayIndices() {
     for (let i = 0; i < 8; i++) {
-      order.push(i);
+      this.#displayIndices[i] = i;
     }
-    this.#setDisplayOrder(order, true);
+    this.#updateDisplayIndices(true);
   }
 
-  #calculateDisplayOrder() {
-    const order = [...this.#displayOrder];
+  #calculateDisplayIndicesByRank() {
+    const indices = [...this.#displayIndices];
     if (
       this.#currentPlayingPlayerData != null && this.#currentOcrResult != null
     ) {
       const ov: { o: number; i: number }[] = [];
-      // 並び変え用のスコアを計算してそれをもとにソート
-      // 順位(0-7, データがない場合8とみなす)*8 + 枠順
+      // ordering score = rank(0-7, 8 for empty row) + row index
       for (let i = 0; i < 8; i++) {
-        let o = 8 * 8 + i; // 順位がデータにない行は後ろにまとめる
+        let o = 8 * 8 + i;
         const data = this.#currentPlayingPlayerData[i];
-        if (data.standingRankIndex != null && data.standingFinal != null) { // QUESTION: 2つめの条件式は必要だろうか?
+        if (data.standingRankIndex != null && data.standingFinal != null) { // QUESTION: 2nd condition required?
           o = data.standingRankIndex * 8 + i;
         }
         ov.push({ o, i });
       }
       ov.sort((a, b) => (a.o - b.o));
-      // それぞれの行に対して、おさまるべきHTMLDivElementのインデックスがわかるので、
-      // 結果を転置してそれぞれのHTMLDivElementがおさまる行番号をルックアップできるようにする
-      // FIXME: O(n^2)でも64回のループだしfindIndexでいいのでは
-      for (let i = 0; i < 8; i++) {
-        order[ov[i].i] = i;
-      }
+      // Store indices
+      ov.forEach((item, index) => {
+        indices[item.i] = index;
+      });
     } else {
-      // データがない場合は枠順で並べる
+      // fallback: Order by original indices
       for (let i = 0; i < 8; i++) {
-        if (order[i] !== i) {
-          order[i] = i;
+        if (indices[i] !== i) {
+          indices[i] = i;
         }
       }
     }
-    return order;
+    return indices;
   }
 
-  #setDisplayOrder(order: number[], force: boolean | undefined) {
-    // アニメーション中は新しいアニメーションを発生させない
-    if (this.#displayOrderMoving && !force) return;
-    // 差分がない場合アニメーションを発生させない
-    if (order.every((e, i) => (e === this.#displayOrder[i]))) return;
+  #updateDisplayIndices(force: boolean | undefined) {
+    if (this.#displayIndicesMoving && !force) return;
+    if (
+      this.#displayIndices.every((
+        e,
+        i,
+      ) => (e === this.#actualDisplayIndices[i]))
+    ) return;
     const duration = 500;
-    // 位置をずらす
+    const block = 2000;
     for (let i = 0; i < 8; i++) {
-      if (this.#displayOrder[i] !== order[i]) {
+      if (this.#actualDisplayIndices[i] !== this.#displayIndices[i]) {
         const anim = this.#elements[i].player.animate([
-          { transform: `translateY(${(this.#displayOrder[i] - i) * 32}px)` },
           {
-            transform: `translateY(${(order[i] - i) * 32}px)`,
+            transform: `translateY(${
+              (this.#actualDisplayIndices[i] - i) * 32
+            }px)`,
+          },
+          {
+            transform: `translateY(${(this.#displayIndices[i] - i) * 32}px)`,
           },
         ], {
           duration,
@@ -482,18 +487,17 @@ export class MastersTimerElement extends LitElement {
           fill: "forwards",
         });
         anim.finished.then(() => {
-          // アニメーションが残っているとstyleの変更ができないので、移動が終わったらスタイルに反映して削除する
           anim.commitStyles();
           anim.cancel();
         });
       }
     }
-    this.#displayOrder = [...order];
-    // アニメーション中は別のアニメーション発生をブロックする
-    this.#displayOrderMoving = true;
+    this.#actualDisplayIndices = [...this.#displayIndices];
+    // Throttle
+    this.#displayIndicesMoving = true;
     setTimeout(() => {
-      this.#displayOrderMoving = false;
-    }, duration);
+      this.#displayIndicesMoving = false;
+    }, block);
   }
 
   render() {
