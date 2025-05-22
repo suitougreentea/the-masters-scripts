@@ -170,7 +170,7 @@ export class MastersTimerElement extends LitElement {
     offset: HTMLDivElement;
     standing: HTMLDivElement; // TODO: Experimental
   }[] = [];
-  #innerContainer: HTMLDivElement;
+  #innerContainer?: HTMLDivElement = undefined;
   #data: (StagePlayerEntry | undefined)[];
   #intervalId?: number = undefined;
   #startTime = -1;
@@ -342,9 +342,11 @@ export class MastersTimerElement extends LitElement {
       }
     }
     // Set the background opaque if OCR is available
-    this.#innerContainer.className = (this.#currentOcrResult != null)
-      ? "container-inner-opaque"
-      : "container-inner";
+    if (this.#innerContainer) {
+      this.#innerContainer.className = (this.#currentOcrResult != null)
+        ? "container-inner-opaque"
+        : "container-inner";
+    }
     if (this.isStarted() && allStarted) {
       this.#displayIndices = this.#calculateDisplayIndicesByRank();
     }
