@@ -170,7 +170,7 @@ export class MastersTimerElement extends LitElement {
     offset: HTMLDivElement;
     standing: HTMLDivElement; // TODO: Experimental
   }[] = [];
-  #innerContainer?: HTMLDivElement = undefined;
+  #innerContainer: HTMLDivElement | null = null;
   #data: (StagePlayerEntry | undefined)[];
   #intervalId?: number = undefined;
   #startTime = -1;
