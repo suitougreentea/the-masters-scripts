@@ -23,6 +23,11 @@ export class MastersTimerElement extends LitElement {
     overflow: hidden;
   }
 
+  .container-inner-opaque {
+    overflow: hidden;
+    background-color: ${commonColors.background};
+  }
+
   .player {
     display: grid;
     align-items: center;
@@ -154,6 +159,7 @@ export class MastersTimerElement extends LitElement {
   #initializedPromise: PromiseSet<void> = createPromiseSet();
   #elements: {
     id: HTMLDivElement;
+    player: HTMLDivElement;
     backgroundTime: HTMLDivElement;
     health: HTMLDivElement; // TODO: Experimental
     name: HTMLDivElement;
@@ -164,6 +170,7 @@ export class MastersTimerElement extends LitElement {
     offset: HTMLDivElement;
     standing: HTMLDivElement; // TODO: Experimental
   }[] = [];
+  #innerContainer: HTMLDivElement | null = null;
   #data: (StagePlayerEntry | undefined)[];
   #intervalId?: number = undefined;
   #startTime = -1;
@@ -171,12 +178,19 @@ export class MastersTimerElement extends LitElement {
   #currentOcrResult?: OcrResult = undefined;
   #currentPlayingPlayerData?: PlayingPlayerData[] = undefined;
 
+  #displayIndices: number[] = [];
+  #actualDisplayIndices: number[] = [];
+  #displayIndicesMoving = false;
+
   constructor() {
     super();
     this.#data = this.#createEmptyData();
   }
 
   firstUpdated() {
+    this.#innerContainer = this.renderRoot.querySelector<HTMLDivElement>(
+      ".container-inner",
+    );
     const players = this.renderRoot.querySelectorAll<HTMLDivElement>(".player");
     for (let i = 0; i < 8; i++) {
       const player = players[i];
@@ -193,6 +207,7 @@ export class MastersTimerElement extends LitElement {
       const offset = player.querySelector<HTMLDivElement>(".offset")!;
       const standing = player.querySelector<HTMLDivElement>(".standing")!; // TODO: Experimental
       this.#elements.push({
+        player,
         id,
         backgroundTime,
         health, // TODO: Experimental
@@ -204,7 +219,9 @@ export class MastersTimerElement extends LitElement {
         offset,
         standing, // TODO: Experimental
       });
+      this.#displayIndices.push(i);
     }
+    this.#actualDisplayIndices = [...this.#displayIndices];
 
     this.#initializedPromise.resolve();
   }
@@ -256,6 +273,7 @@ export class MastersTimerElement extends LitElement {
 
     this.#startTime = -1;
     this.#elapsedTime = 0;
+    this.#resetDisplayIndices();
     this.#updateRender();
   }
 
@@ -289,7 +307,6 @@ export class MastersTimerElement extends LitElement {
         element.offset.innerText = "";
       }
     }
-
     this.#reset();
   }
 
@@ -311,15 +328,29 @@ export class MastersTimerElement extends LitElement {
   }
 
   #updateRender() {
+    let allStarted = true;
     for (let i = 0; i < 8; i++) {
       const startTime = this.#data[i]?.startTime;
       if (startTime != null) {
         const time = Math.max(0, startTime - this.#elapsedTime);
         this.#setPlayerTime(i, time);
+        if (time > 0) {
+          allStarted = false;
+        }
       } else {
         this.#setPlayerTime(i, undefined);
       }
     }
+    // Set the background opaque if OCR is available
+    if (this.#innerContainer) {
+      this.#innerContainer.className = (this.#currentOcrResult != null)
+        ? "container-inner-opaque"
+        : "container-inner";
+    }
+    if (this.isStarted() && allStarted) {
+      this.#displayIndices = this.#calculateDisplayIndicesByRank();
+    }
+    this.#updateDisplayIndices(undefined);
   }
 
   #setPlayerTime(index: number, time: number | undefined) {
@@ -391,6 +422,84 @@ export class MastersTimerElement extends LitElement {
       player.gauge.style.width = "0px";
       player.standing.innerText = ""; // TODO: Experimental
     }
+  }
+
+  #resetDisplayIndices() {
+    for (let i = 0; i < 8; i++) {
+      this.#displayIndices[i] = i;
+    }
+    this.#updateDisplayIndices(true);
+  }
+
+  #calculateDisplayIndicesByRank() {
+    const indices = [...this.#displayIndices];
+    if (
+      this.#currentPlayingPlayerData != null && this.#currentOcrResult != null
+    ) {
+      const ov: { o: number; i: number }[] = [];
+      // ordering score = rank(0-7, 8 for empty row) + row index
+      for (let i = 0; i < 8; i++) {
+        let o = 8 * 8 + i;
+        const data = this.#currentPlayingPlayerData[i];
+        if (data.standingRankIndex != null && data.standingFinal != null) { // QUESTION: 2nd condition required?
+          o = data.standingRankIndex * 8 + i;
+        }
+        ov.push({ o, i });
+      }
+      ov.sort((a, b) => (a.o - b.o));
+      // Store indices
+      ov.forEach((item, index) => {
+        indices[item.i] = index;
+      });
+    } else {
+      // fallback: Order by original indices
+      for (let i = 0; i < 8; i++) {
+        if (indices[i] !== i) {
+          indices[i] = i;
+        }
+      }
+    }
+    return indices;
+  }
+
+  #updateDisplayIndices(force: boolean | undefined) {
+    if (this.#displayIndicesMoving && !force) return;
+    if (
+      this.#displayIndices.every((
+        e,
+        i,
+      ) => (e === this.#actualDisplayIndices[i]))
+    ) return;
+    const duration = 500;
+    const block = 2000;
+    for (let i = 0; i < 8; i++) {
+      if (this.#actualDisplayIndices[i] !== this.#displayIndices[i]) {
+        const anim = this.#elements[i].player.animate([
+          {
+            transform: `translateY(${
+              (this.#actualDisplayIndices[i] - i) * 32
+            }px)`,
+          },
+          {
+            transform: `translateY(${(this.#displayIndices[i] - i) * 32}px)`,
+          },
+        ], {
+          duration,
+          easing: "ease-in-out",
+          fill: "forwards",
+        });
+        anim.finished.then(() => {
+          anim.commitStyles();
+          anim.cancel();
+        });
+      }
+    }
+    this.#actualDisplayIndices = [...this.#displayIndices];
+    // Throttle
+    this.#displayIndicesMoving = true;
+    setTimeout(() => {
+      this.#displayIndicesMoving = false;
+    }, block);
   }
 
   render() {
