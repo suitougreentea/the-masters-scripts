@@ -2,13 +2,19 @@
 <html>
   <head>
     <base target="_top">
-    <style>@import url("./page.css");</style>
+    <style>
+      @import url("./page.css");
+    </style>
   </head>
   <body>
     <div id="toolbar">
       <div>
         <span>スプレッドシートのURL: </span>
-        <input type="text" id="spreadsheet" placeholder="https://docs.google.com/spreadsheets/d/...">
+        <input
+          type="text"
+          id="spreadsheet"
+          placeholder="https://docs.google.com/spreadsheets/d/..."
+        >
         <span class="spacer"></span>
         <span>ゲーム番号: </span>
         <input type="number" id="game" value="1" min="1" max="20">
@@ -33,6 +39,8 @@
     <div id="loader" style="display: none">
       <div class="loader"></div>
     </div>
-    <script type="module">import "./page.ts";</script>
+    <script type="module">
+      import "./page.ts";
+    </script>
   </body>
 </html>

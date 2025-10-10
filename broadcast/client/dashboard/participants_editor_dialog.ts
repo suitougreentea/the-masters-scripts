@@ -44,7 +44,7 @@ export class MastersParticipantsEditorDialogElement extends LitElement {
       margin-top: 8px;
       text-align: right;
     }
-    `;
+  `;
 
   private _registeredNames: string[] = [];
 
@@ -155,48 +155,71 @@ export class MastersParticipantsEditorDialogElement extends LitElement {
           participant.firstRoundGroupIndex == null),
     }));
 
-    // deno-fmt-ignore
     return html`
-    <fluent-dialog id="dialog-player-registration" hidden trap-focus modal style="--dialog-width: 400px; --dialog-height: 460px;">
-      <div class="dialog-container">
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>名前</th>
-                <th>1回戦組</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${map(participantsForRender, (participant, i) =>
-                html`
-                <tr class=${classMap({ error: participant.error })}>
-                  <td>
-                    <fluent-text-field
-                      .value=${live(participant.name)}
-                      @change=${(ev: Event) => this._changeName(i, (ev.target as TextField).value)}
-                      @keydown=${this._checkEnterKey}>
-                    </fluent-text-field>
-                  </td>
-                  <td>
-                    <fluent-text-field
-                      .value=${live(participant.firstRoundGroupIndex != null ? formatGroup(participant.firstRoundGroupIndex) : "")}
-                      @change=${(ev: Event) => { this._changeFirstRoundGroup(i, (ev.target as TextField).value); this.requestUpdate(); }}
-                      @keydown=${this._checkEnterKey}></fluent-text-field>
-                  </td>
+      <fluent-dialog
+        id="dialog-player-registration"
+        hidden
+        trap-focus
+        modal
+        style="--dialog-width: 400px; --dialog-height: 460px;"
+      >
+        <div class="dialog-container">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>名前</th>
+                  <th>1回戦組</th>
                 </tr>
-                `
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                ${map(participantsForRender, (participant, i) =>
+                  html`
+                    <tr class="${classMap({ error: participant.error })}">
+                      <td>
+                        <fluent-text-field
+                          .value="${live(participant.name)}"
+                          @change="${(ev: Event) =>
+                            this._changeName(
+                              i,
+                              (ev.target as TextField).value,
+                            )}"
+                          @keydown="${this._checkEnterKey}"
+                        >
+                        </fluent-text-field>
+                      </td>
+                      <td>
+                        <fluent-text-field
+                          .value="${live(
+                            participant.firstRoundGroupIndex != null
+                              ? formatGroup(participant.firstRoundGroupIndex)
+                              : "",
+                          )}"
+                          @change="${(ev: Event) => {
+                            this._changeFirstRoundGroup(
+                              i,
+                              (ev.target as TextField).value,
+                            );
+                            this.requestUpdate();
+                          }}"
+                          @keydown="${this._checkEnterKey}"
+                        ></fluent-text-field>
+                      </td>
+                    </tr>
+                  `)}
+              </tbody>
+            </table>
+          </div>
+          <div class="dialog-buttons">
+            <fluent-button appearance="accent" @click="${() =>
+              this._close(true)}">OK</fluent-button>
+            <fluent-button @click="${() =>
+              this._close(false)}">キャンセル</fluent-button>
+            <fluent-button @click="${() =>
+              this._clear()}">全削除</fluent-button>
+          </div>
         </div>
-        <div class="dialog-buttons">
-          <fluent-button appearance="accent" @click=${() => this._close(true)}>OK</fluent-button>
-          <fluent-button @click=${() => this._close(false)}>キャンセル</fluent-button>
-          <fluent-button @click=${() => this._clear()}>全削除</fluent-button>
-        </div>
-      </div>
-    </fluent-dialog>
+      </fluent-dialog>
     `;
   }
 }

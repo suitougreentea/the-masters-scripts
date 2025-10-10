@@ -15,143 +15,143 @@ import { timeToString } from "../../../common/time.ts";
 @customElement("masters-timer")
 export class MastersTimerElement extends LitElement {
   static styles = css`
-  .container {
-    color: ${commonColors.textDark};
-  }
-
-  .container-inner {
-    overflow: hidden;
-  }
-
-  .container-inner-opaque {
-    overflow: hidden;
-    background-color: ${commonColors.background};
-  }
-
-  .player {
-    display: grid;
-    align-items: center;
-    grid-template-columns: 20px 120px 85px 40px 80px auto;
-    height: 32px;
-  }
-
-  .background-left {
-    grid-area: 1 / 1 / auto / span 2;
-    height: 100%;
-    background-color: ${commonColors.background};
-  }
-
-  .background-time {
-    grid-area: 1 / 3 / auto / auto;
-    height: 100%;
-    background-color: ${commonColors.background};
-    transition-property: background-color;
-    transition-duration: 0.5s;
-  }
-
-  .background-time-hidden {
-    background-color: transparent;
-  }
-
-  .background-right {
-    grid-area: 1 / 4 / auto / span 3;
-    height: 100%;
-    background-color: ${commonColors.background};
-  }
-
-  .border {
-    grid-area: 1 / 1 / auto / span 6;
-    height: 1px;
-    background-color: #444;
-    transform: translateY(10px);
-  }
-
-  .id {
-    grid-area: 1 / 1 / auto / auto;
-    font-size: 16px;
-    transform: translateY(1px);
-  }
-
-  .id-inactive {
-    opacity: 0.3;
-  }
-
-  /* TODO: Experimental */
-  @keyframes health-animation {
-    from {
-      opacity: 1;
+    .container {
+      color: ${commonColors.textDark};
     }
-    to {
-      opacity: 0;
+
+    .container-inner {
+      overflow: hidden;
     }
-  }
-  .health {
-    grid-area: 1 / 2 / auto / auto;
-    height: 20px;
-    background: linear-gradient(0deg, var(--health-color), transparent);
-    animation: health-animation 1s linear 0s infinite alternate;
-  }
 
-  .name {
-    grid-area: 1 / 2 / auto / auto;
-    font-size: 20px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    margin-right: 4px;
-  }
+    .container-inner-opaque {
+      overflow: hidden;
+      background-color: ${commonColors.background};
+    }
 
-  .time {
-    grid-area: 1 / 3 / auto / auto;
-    font-size: 20px;
-    transition-property: color;
-    transition-duration: 0.5s;
-  }
+    .player {
+      display: grid;
+      align-items: center;
+      grid-template-columns: 20px 120px 85px 40px 80px auto;
+      height: 32px;
+    }
 
-  .time-hidden {
-    color: transparent;
-  }
+    .background-left {
+      grid-area: 1 / 1 / auto / span 2;
+      height: 100%;
+      background-color: ${commonColors.background};
+    }
 
-  .time-level {
-    text-align: center;
-  }
+    .background-time {
+      grid-area: 1 / 3 / auto / auto;
+      height: 100%;
+      background-color: ${commonColors.background};
+      transition-property: background-color;
+      transition-duration: 0.5s;
+    }
 
-  .gauge {
-    grid-area: 1 / 4 / auto / span 3;
-    height: 18px;
-    transform: translateY(1px);
-  }
+    .background-time-hidden {
+      background-color: transparent;
+    }
 
-  .start-order {
-    grid-area: 1 / 4 / auto / auto;
-    font-size: 16px;
-    text-shadow: 0 0 5px black;
-    margin-left: 2px;
-    transform: translateY(1px);
-  }
+    .background-right {
+      grid-area: 1 / 4 / auto / span 3;
+      height: 100%;
+      background-color: ${commonColors.background};
+    }
 
-  .diff-time {
-    grid-area: 1 / 5 / auto / auto;
-    font-size: 16px;
-    text-shadow: 0 0 5px black;
-    transform: translateY(1px);
-  }
+    .border {
+      grid-area: 1 / 1 / auto / span 6;
+      height: 1px;
+      background-color: #444;
+      transform: translateY(10px);
+    }
 
-  .offset {
-    grid-area: 1 / 6 / auto / auto;
-    font-size: 16px;
-    text-shadow: 0 0 5px black;
-    transform: translateY(1px);
-  }
+    .id {
+      grid-area: 1 / 1 / auto / auto;
+      font-size: 16px;
+      transform: translateY(1px);
+    }
 
-  /* TODO: Experimental */
-  .standing {
-    grid-area: 1 / 4 / auto / span 2;
-    font-size: 16px;
-    text-shadow: 0 0 5px black;
-    margin-left: 2px;
-    transform: translateY(1px);
-  }
+    .id-inactive {
+      opacity: 0.3;
+    }
+
+    /* TODO: Experimental */
+    @keyframes health-animation {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
+    }
+    .health {
+      grid-area: 1 / 2 / auto / auto;
+      height: 20px;
+      background: linear-gradient(0deg, var(--health-color), transparent);
+      animation: health-animation 1s linear 0s infinite alternate;
+    }
+
+    .name {
+      grid-area: 1 / 2 / auto / auto;
+      font-size: 20px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      margin-right: 4px;
+    }
+
+    .time {
+      grid-area: 1 / 3 / auto / auto;
+      font-size: 20px;
+      transition-property: color;
+      transition-duration: 0.5s;
+    }
+
+    .time-hidden {
+      color: transparent;
+    }
+
+    .time-level {
+      text-align: center;
+    }
+
+    .gauge {
+      grid-area: 1 / 4 / auto / span 3;
+      height: 18px;
+      transform: translateY(1px);
+    }
+
+    .start-order {
+      grid-area: 1 / 4 / auto / auto;
+      font-size: 16px;
+      text-shadow: 0 0 5px black;
+      margin-left: 2px;
+      transform: translateY(1px);
+    }
+
+    .diff-time {
+      grid-area: 1 / 5 / auto / auto;
+      font-size: 16px;
+      text-shadow: 0 0 5px black;
+      transform: translateY(1px);
+    }
+
+    .offset {
+      grid-area: 1 / 6 / auto / auto;
+      font-size: 16px;
+      text-shadow: 0 0 5px black;
+      transform: translateY(1px);
+    }
+
+    /* TODO: Experimental */
+    .standing {
+      grid-area: 1 / 4 / auto / span 2;
+      font-size: 16px;
+      text-shadow: 0 0 5px black;
+      margin-left: 2px;
+      transform: translateY(1px);
+    }
   `;
 
   @property({ attribute: "sort-by-starting-order", type: Boolean })
@@ -530,33 +530,31 @@ export class MastersTimerElement extends LitElement {
   }
 
   render() {
-    // deno-fmt-ignore
     return html`
-    <div class="container">
-      <div class="container-inner">
-      ${map(this.#data, (_, i) =>
-        html`
-        <div class="player">
-          <div class="background-left"></div>
-          <div class="background-time"></div>
-          <div class="background-right"></div>
-          <div class="border"></div>
-          <div class="id">${i + 1}:</div>
-          <!-- TODO: Experimental -->
-          <div class="health"></div>
-          <div class="name"></div>
-          <div class="time"></div>
-          <div class="gauge"></div>
-          <div class="start-order"></div>
-          <div class="diff-time"></div>
-          <div class="offset"></div>
-          <!-- TODO: Experimental -->
-          <div class="standing"></div>
+      <div class="container">
+        <div class="container-inner">
+          ${map(this.#data, (_, i) =>
+            html`
+              <div class="player">
+                <div class="background-left"></div>
+                <div class="background-time"></div>
+                <div class="background-right"></div>
+                <div class="border"></div>
+                <div class="id">${i + 1}:</div>
+                <!-- TODO: Experimental -->
+                <div class="health"></div>
+                <div class="name"></div>
+                <div class="time"></div>
+                <div class="gauge"></div>
+                <div class="start-order"></div>
+                <div class="diff-time"></div>
+                <div class="offset"></div>
+                <!-- TODO: Experimental -->
+                <div class="standing"></div>
+              </div>
+            `)}
         </div>
-        `
-      )}
       </div>
-    </div>
     `;
   }
 }

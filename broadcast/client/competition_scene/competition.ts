@@ -20,41 +20,41 @@ import { OcrResult, PlayingPlayerData } from "../../common/type_definition.ts";
 @customElement("masters-competition")
 export class MastersCompetitionElement extends LitElement {
   static styles = css`
-  .container {
-    width: 1920px;
-    height: 1080px;
-    background-image: url("/images/background-competition.png");
-  }
+    .container {
+      width: 1920px;
+      height: 1080px;
+      background-image: url("/images/background-competition.png");
+    }
 
-  #title {
-    position: absolute;
-    top: 1000px;
-    left: 245px;
-  }
+    #title {
+      position: absolute;
+      top: 1000px;
+      left: 245px;
+    }
 
-  #round-name {
-    position: absolute;
-    top: 65px;
-    left: 1320px;
-    width: 540px;
-  }
+    #round-name {
+      position: absolute;
+      top: 65px;
+      left: 1320px;
+      width: 540px;
+    }
 
-  #timer {
-    position: absolute;
-    top: 150px;
-    left: 1310px;
-    width: 550px;
-    height: 256px;
-  }
+    #timer {
+      position: absolute;
+      top: 150px;
+      left: 1310px;
+      width: 550px;
+      height: 256px;
+    }
 
-  #timer-placeholder {
-    position: absolute;
-    top: 150px;
-    left: 1310px;
-    width: 550px;
-    height: 256px;
-    background-color: ${commonColors.background};
-  }
+    #timer-placeholder {
+      position: absolute;
+      top: 150px;
+      left: 1310px;
+      width: 550px;
+      height: 256px;
+      background-color: ${commonColors.background};
+    }
   `;
 
   #initializedPromise: PromiseSet<void> = createPromiseSet();
@@ -134,15 +134,14 @@ export class MastersCompetitionElement extends LitElement {
   }
 
   render() {
-    // deno-fmt-ignore
     return html`
-    <div class="container">
-      <masters-title id="title"></masters-title>
-      <masters-player-info id="player-info"></masters-player-info>
-      <masters-round-name id="round-name"></masters-round-name>
-      <masters-timer id="timer"></masters-timer>
-      <div id="timer-placeholder"></div>
-    </div>
+      <div class="container">
+        <masters-title id="title"></masters-title>
+        <masters-player-info id="player-info"></masters-player-info>
+        <masters-round-name id="round-name"></masters-round-name>
+        <masters-timer id="timer"></masters-timer>
+        <div id="timer-placeholder"></div>
+      </div>
     `;
   }
 }

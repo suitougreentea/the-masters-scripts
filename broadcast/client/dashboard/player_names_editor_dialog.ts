@@ -44,16 +44,14 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
       margin-bottom: 12px;
     }
 
-    .left-side {
-    }
+    .left-side {}
 
     .middle-side {
       display: flex;
       align-items: center;
     }
 
-    .right-side {
-    }
+    .right-side {}
 
     .player {
       width: 150px;
@@ -68,7 +66,7 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
       cursor: pointer;
     }
 
-    .right-side>div {
+    .right-side > div {
       display: flex;
       align-items: center;
     }
@@ -90,7 +88,7 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
     fluent-text-field {
       width: 185px;
     }
-    `;
+  `;
 
   private _stageIndex = -1;
   get stageIndex() {
@@ -303,125 +301,158 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
 
     let isDirty = false;
     let isInvalid = false;
-    // deno-fmt-ignore
     return html`
-    <fluent-dialog id="dialog-edit-player-names" hidden trap-focus modal style="--dialog-width: 400px; --dialog-height: 440px;">
-      <div class="dialog-container">
-        <fluent-radio-group
-          class="type"
-          .value=${live(this._mode)}
-          @change=${(e: Event) => this._mode = (e.target as RadioGroup).value as Mode}>
-          <fluent-radio value="reorder">並べ替え</fluent-radio>
-          <fluent-radio value="reset">再設定</fluent-radio>
-        </fluent-radio-group>
-        ${(() => {
-          if (this._mode == "reorder") {
-            const leftSide = this._reorderPlayers.map((e) => ({
-              ...e,
-              moved: false,
-            }));
-            const rightSide: ReorderPlayerEntry[] = [];
-            this._reorderPositions.forEach((name) => {
-              if (name == null) {
-                rightSide.push({ name: undefined, startOrder: -1 });
-              } else {
-                const index = leftSide.findIndex((e) => e.name == name);
-                leftSide[index].moved = true;
-                rightSide.push({ ...leftSide[index] });
-              }
-            });
-            isDirty = rightSide.some(e => e.name != null);
-            isInvalid = leftSide.some((e) => !e.moved);
+      <fluent-dialog
+        id="dialog-edit-player-names"
+        hidden
+        trap-focus
+        modal
+        style="--dialog-width: 400px; --dialog-height: 440px;"
+      >
+        <div class="dialog-container">
+          <fluent-radio-group
+            class="type"
+            .value="${live(this._mode)}"
+            @change="${(e: Event) =>
+              this._mode = (e.target as RadioGroup).value as Mode}"
+          >
+            <fluent-radio value="reorder">並べ替え</fluent-radio>
+            <fluent-radio value="reset">再設定</fluent-radio>
+          </fluent-radio-group>
+          ${(() => {
+            if (this._mode == "reorder") {
+              const leftSide = this._reorderPlayers.map((e) => ({
+                ...e,
+                moved: false,
+              }));
+              const rightSide: ReorderPlayerEntry[] = [];
+              this._reorderPositions.forEach((name) => {
+                if (name == null) {
+                  rightSide.push({ name: undefined, startOrder: -1 });
+                } else {
+                  const index = leftSide.findIndex((e) => e.name == name);
+                  leftSide[index].moved = true;
+                  rightSide.push({ ...leftSide[index] });
+                }
+              });
+              isDirty = rightSide.some((e) => e.name != null);
+              isInvalid = leftSide.some((e) => !e.moved);
 
-            return html`
-            <div class="reorder-container">
-              <div class="left-side"
-                @dragenter=${this._enterDragLeft}
-                @dragover=${this._overDragLeft}>
-                ${map(leftSide, (e, i) => {
-                  return html`
-                  <div
-                    class=${playerSideClass(e.startOrder, e.moved)}
-                    draggable=${!e.moved ? "true" : "false"}
-                    @dragstart=${(ev: DragEvent) => this._startDragLeft(ev, i)}
-                    @dragend=${(ev: DragEvent) => this._endDragLeft(ev, i)}
-                  >${e.name}</div>`;
-                })}
-              </div>
-              <div class="middle-side">→</div>
-              <div class="right-side">
-                ${map(rightSide, (e, i) => {
-                  return html`
-                  <div>
-                    <div class="position">${i + 1}</div>
-                    <div
-                      class=${playerSideClass(e.startOrder, false)}
-                      draggable=${e.name != null ? "true" : "false"}
-                      @dragstart=${(ev: DragEvent) => this._startDragRight(ev, i)}
-                      @dragend=${(ev: DragEvent) => this._endDragRight(ev, i)}
-                      @dragenter=${(ev: DragEvent) => this._enterDragRight(ev, i)}
-                      @dragover=${(ev: DragEvent) => this._overDragRight(ev, i)}
-                    >${e.name}</div>
+              return html`
+                <div class="reorder-container">
+                  <div class="left-side" @dragenter="${this
+                    ._enterDragLeft}" @dragover="${this._overDragLeft}">
+                    ${map(leftSide, (e, i) => {
+                      return html`
+                        <div
+                          class="${playerSideClass(e.startOrder, e.moved)}"
+                          draggable="${!e.moved ? "true" : "false"}"
+                          @dragstart="${(ev: DragEvent) =>
+                            this._startDragLeft(ev, i)}"
+                          @dragend="${(ev: DragEvent) =>
+                            this._endDragLeft(ev, i)}"
+                        >
+                          ${e.name}
+                        </div>
+                      `;
+                    })}
                   </div>
-                  `;
-                })}
-              </div>
-            </div>
-            `;
-          } else if (this._mode == "reset") {
-            isDirty = true;
-            return html`
-            <table>
-              <thead>
-                <tr>
-                  <th>名前</th>
-                  <th>Hdcp</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${map(this._resetData, (e, i) => {
-                  return html`
-                  <tr>
-                    <td>
-                      <fluent-text-field
-                        .value=${live(e.name ?? "")}
-                        @change=${(e: Event) => this._changeResetEntry(i, "name", (e.target as TextField).value)}>
-                      </fluent-text-field>
-                    </td>
-                    <td>
-                      <fluent-text-field
-                        .value=${live(formatHandicap(e.handicap))}
-                        @change=${(e: Event) => this._changeResetEntry(i, "handicap", (e.target as TextField).value)}>
-                      </fluent-text-field>
-                    </td>
-                  </tr>`;
-                })}
-              </tbody>
-            <table>
-            `;
-          }
-          return undefined;
-        })()}
-        <div class="dialog-buttons">
-          <fluent-button
-            @click=${() => this._closeWithoutReorder()}
-            ?disabled=${isDirty}>
-            このまま登録
-          </fluent-button>
-          <div class="spacer"></div>
-          <fluent-button
-            appearance="accent"
-            @click=${() => this._close(true)}
-            ?disabled=${isInvalid}>
-            OK
-          </fluent-button>
-          <fluent-button
-            @click=${() => this._close(false)}>
-            キャンセル
-          </fluent-button>
+                  <div class="middle-side">→</div>
+                  <div class="right-side">
+                    ${map(rightSide, (e, i) => {
+                      return html`
+                        <div>
+                          <div class="position">${i + 1}</div>
+                          <div
+                            class="${playerSideClass(e.startOrder, false)}"
+                            draggable="${e.name != null ? "true" : "false"}"
+                            @dragstart="${(ev: DragEvent) =>
+                              this._startDragRight(ev, i)}"
+                            @dragend="${(ev: DragEvent) =>
+                              this._endDragRight(ev, i)}"
+                            @dragenter="${(ev: DragEvent) =>
+                              this._enterDragRight(ev, i)}"
+                            @dragover="${(ev: DragEvent) =>
+                              this._overDragRight(ev, i)}"
+                          >
+                            ${e.name}
+                          </div>
+                        </div>
+                      `;
+                    })}
+                  </div>
+                </div>
+              `;
+            } else if (this._mode == "reset") {
+              isDirty = true;
+              return html`
+                <table>
+                  <thead>
+                    <tr>
+                      <th>名前</th>
+                      <th>Hdcp</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${map(this._resetData, (e, i) => {
+                      return html`
+                        <tr>
+                          <td>
+                            <fluent-text-field
+                              .value="${live(e.name ?? "")}"
+                              @change="${(e: Event) =>
+                                this._changeResetEntry(
+                                  i,
+                                  "name",
+                                  (e.target as TextField).value,
+                                )}"
+                            >
+                            </fluent-text-field>
+                          </td>
+                          <td>
+                            <fluent-text-field
+                              .value="${live(formatHandicap(e.handicap))}"
+                              @change="${(e: Event) =>
+                                this._changeResetEntry(
+                                  i,
+                                  "handicap",
+                                  (e.target as TextField).value,
+                                )}"
+                            >
+                            </fluent-text-field>
+                          </td>
+                        </tr>
+                      `;
+                    })}
+                  </tbody>
+                </table>
+              `;
+            }
+            return undefined;
+          })()}
+          <div class="dialog-buttons">
+            <fluent-button
+              @click="${() => this._closeWithoutReorder()}"
+              ?disabled="${isDirty}"
+            >
+              このまま登録
+            </fluent-button>
+            <div class="spacer"></div>
+            <fluent-button
+              appearance="accent"
+              @click="${() => this._close(true)}"
+              ?disabled="${isInvalid}"
+            >
+              OK
+            </fluent-button>
+            <fluent-button
+              @click="${() => this._close(false)}"
+            >
+              キャンセル
+            </fluent-button>
+          </div>
         </div>
-      </div>
-    </fluent-dialog>
+      </fluent-dialog>
     `;
   }
 }

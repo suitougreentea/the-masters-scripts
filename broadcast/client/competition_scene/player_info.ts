@@ -125,7 +125,7 @@ export class MastersPlayerInfoElement extends LitElement {
     .player:nth-child(even) .name {
       right: 60px;
     }
-    
+
     .detail {
       position: absolute;
       top: 77px;
@@ -182,7 +182,7 @@ export class MastersPlayerInfoElement extends LitElement {
       overflow: hidden;
       text-align: left;
     }
-    `;
+  `;
 
   @property()
   data?: (StagePlayerEntry | undefined)[] = this._createEmptyData();
@@ -244,56 +244,75 @@ export class MastersPlayerInfoElement extends LitElement {
     const data = this.data ?? this._createEmptyData();
     const isDataEmpty = data.every((e) => e == null);
 
-    // deno-fmt-ignore
     return html`
-    <div class="container">
-      ${map(data, (e, i) =>
-        html`
-        <div class="player">
-          <div class=${classMap({ "id": true, "id-inactive": !isDataEmpty && e == null })}>${i + 1}</div>
-          <!-- TODO: Experimental --><div class="health"></div>
-          <!-- TODO: Experimental --><div class="standing"></div>
-          <div class="name">${e?.name}</div>
-          ${this.showDetail && e != null
-            ? html`
-            <div class="detail">
-              <div class="detail-name">${e?.name}</div>
-              <hr>
-              <dl class="best-time">
-                <dt>自己ベスト</dt>
-                <dd>${e != null ? timeToString(e.rawBestTime) : undefined}</dd>
-                <dt>スタート</dt>
-                <dd>
-                  ${e != null ? timeToString(e.startTime) : undefined}
-                  <br>
-                  ${(() => {
-                    const handicap = e?.handicap ?? 0;
-                    if (handicap > 0) {
-                      return html`<div class="offset-handicap">[Hdcp. +${handicap}]</div>`;
-                    } else if (handicap < 0) {
-                      return html`<div class="offset-advantage">[Adv. ${handicap}]</div>`;
-                    } else {
-                      return html`<div class="offset-neutral">[±0]</div>`;
-                    }
-                  })()}
-                </dd>
-                <dt>スタート順</dt>
-                <dd>${e != null ? ordinals[e.startOrder - 1] : undefined}</dd>
-                <dt>前の人から</dt>
-                <dd>${e != null ? `+${timeToString(getDiffTime(data, i))}` : undefined}</dd>
-              </dl>
-              <hr>
-              <div class="free">
-                ${(this.registeredPlayers.find((p) => p.name == e.name)?.comment ?? "").split("\n").map((line) => html`${line}<br>`)}
-              </div>
+      <div class="container">
+        ${map(data, (e, i) =>
+          html`
+            <div class="player">
+              <div class="${classMap({
+                "id": true,
+                "id-inactive": !isDataEmpty && e == null,
+              })}">${i + 1}</div>
+              <!-- TODO: Experimental -->
+              <div class="health"></div>
+              <!-- TODO: Experimental -->
+              <div class="standing"></div>
+              <div class="name">${e?.name}</div>
+              ${this.showDetail && e != null
+                ? html`
+                  <div class="detail">
+                    <div class="detail-name">${e?.name}</div>
+                    <hr>
+                    <dl class="best-time">
+                      <dt>自己ベスト</dt>
+                      <dd>${e != null
+                        ? timeToString(e.rawBestTime)
+                        : undefined}</dd>
+                      <dt>スタート</dt>
+                      <dd>
+                        ${e != null ? timeToString(e.startTime) : undefined}
+                        <br>
+                        ${(() => {
+                          const handicap = e?.handicap ?? 0;
+                          if (handicap > 0) {
+                            return html`
+                              <div class="offset-handicap">[Hdcp. +${handicap}]</div>
+                            `;
+                          } else if (handicap < 0) {
+                            return html`
+                              <div class="offset-advantage">[Adv. ${handicap}]</div>
+                            `;
+                          } else {
+                            return html`
+                              <div class="offset-neutral">[±0]</div>
+                            `;
+                          }
+                        })()}
+                      </dd>
+                      <dt>スタート順</dt>
+                      <dd>${e != null
+                        ? ordinals[e.startOrder - 1]
+                        : undefined}</dd>
+                      <dt>前の人から</dt>
+                      <dd>${e != null
+                        ? `+${timeToString(getDiffTime(data, i))}`
+                        : undefined}</dd>
+                    </dl>
+                    <hr>
+                    <div class="free">
+                      ${(this.registeredPlayers.find((p) => p.name == e.name)
+                        ?.comment ?? "").split("\n").map((line) =>
+                          html`
+                            ${line}<br>
+                          `
+                        )}
+                    </div>
+                  </div>
+                `
+                : undefined}
             </div>
-            `
-            : undefined
-          }
-        </div>
-        `
-      )}
-    </div>
+          `)}
+      </div>
     `;
   }
 }

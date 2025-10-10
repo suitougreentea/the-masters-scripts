@@ -57,8 +57,7 @@ export class MastersDashboardElement extends LitElement {
       border-left: 1px solid gray;
     }
 
-    #timer-controller {
-    }
+    #timer-controller {}
 
     #menu {
       padding: 8px;
@@ -89,7 +88,7 @@ export class MastersDashboardElement extends LitElement {
     #content-loader {
       grid-area: 1 / 1 / auto / auto;
     }
-    `;
+  `;
   private _initializedPromise = createPromiseSet();
 
   // @ts-ignore: ?
@@ -212,29 +211,39 @@ export class MastersDashboardElement extends LitElement {
     const roundStyle = styleMap({
       display: roundPageActive ? undefined : "none",
     });
-    // deno-fmt-ignore
     return html`
-    <div class="container">
-      <div id="timer">
-        <masters-timer-controller id="timer-controller" style=${/*timerStyle*/ undefined}></masters-timer-controller>
-      </div>
-      <div id="content">
-        <masters-setup id="setup" style=${setupStyle} @setup-completed=${this._onSetupCompleted}></masters-setup>
-        <masters-round id="round" style=${roundStyle}></masters-round>
-        <div class="loader" id="content-loader" style=${loaderStyle}>
-          <fluent-progress-ring></fluent-progress-ring>
+      <div class="container">
+        <div id="timer">
+          <masters-timer-controller
+            id="timer-controller"
+            style="${/*timerStyle*/ undefined}"
+          ></masters-timer-controller>
         </div>
-      </div>
-      <div id="sidebar">
-        <div id="tabs-container">
-          <masters-tabs id="tabs" @change-active-tab=${this._onChangeActiveTab} @finish-competition=${this._onFinishCompetition}></masters-tabs>
-          <div class="loader" id="tabs-loader" style=${loaderStyle}>
+        <div id="content">
+          <masters-setup
+            id="setup"
+            style="${setupStyle}"
+            @setup-completed="${this._onSetupCompleted}"
+          ></masters-setup>
+          <masters-round id="round" style="${roundStyle}"></masters-round>
+          <div class="loader" id="content-loader" style="${loaderStyle}">
             <fluent-progress-ring></fluent-progress-ring>
           </div>
         </div>
-        <masters-chat id="chat"></masters-chat>
+        <div id="sidebar">
+          <div id="tabs-container">
+            <masters-tabs
+              id="tabs"
+              @change-active-tab="${this._onChangeActiveTab}"
+              @finish-competition="${this._onFinishCompetition}"
+            ></masters-tabs>
+            <div class="loader" id="tabs-loader" style="${loaderStyle}">
+              <fluent-progress-ring></fluent-progress-ring>
+            </div>
+          </div>
+          <masters-chat id="chat"></masters-chat>
+        </div>
       </div>
-    </div>
     `;
   }
 }

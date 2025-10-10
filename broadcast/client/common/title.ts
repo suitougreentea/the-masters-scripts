@@ -23,7 +23,7 @@ export class MastersTitleElement extends LitElement {
     .location {
       font-size: 24px;
     }
-    `;
+  `;
 
   @property()
   value?: string;
@@ -55,22 +55,22 @@ export class MastersTitleElement extends LitElement {
     const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
     const hours = date.getHours();
     const minutes = date.getMinutes();
-    // deno-fmt-ignore
-    this._dateString = `${year}/${month}/${day} (${weekday}) ${hours}:${String(minutes).padStart(2, "0")}`;
+    const minutesString = String(minutes).padStart(2, "0");
+    this._dateString =
+      `${year}/${month}/${day} (${weekday}) ${hours}:${minutesString}`;
   }
 
   render() {
-    // deno-fmt-ignore
     return html`
-    <div class="container">
-      <div>
-        <span class="title">${this.value ?? ""}</span>
-        <span class="date">${this._dateString}</span>
+      <div class="container">
+        <div>
+          <span class="title">${this.value ?? ""}</span>
+          <span class="date">${this._dateString}</span>
+        </div>
+        <div>
+          <span class="location">@Retropia22</span>
+        </div>
       </div>
-      <div>
-        <span class="location">@Retropia22</span>
-      </div>
-    </div>
     `;
   }
 }

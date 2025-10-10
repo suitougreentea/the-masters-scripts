@@ -56,7 +56,7 @@ export class MastersScoreEditorDialogElement extends LitElement {
     .dialog-buttons {
       text-align: right;
     }
-    `;
+  `;
 
   private _stageIndex = -1;
   get stageIndex() {
@@ -235,70 +235,100 @@ export class MastersScoreEditorDialogElement extends LitElement {
   }
 
   render() {
-    // deno-fmt-ignore
     return html`
-    <fluent-dialog 
-      id="dialog-edit-stage-score"
-      ?hidden=${!this._visible} trap-focus modal
-      style="--dialog-width: 460px; --dialog-height: 460px;">
-      ${this._visible
-        ? html`
-        <div class="dialog-container">
-          <table>
-            <thead>
-              <tr>
-                <th>名前</th>
-                <th>OCR</th>
-                <th>スコア</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${map(this._data, (e, i) => {
-                const disabled = e == null;
-                return html`
-                <tr>
-                  <td class="name">${e?.name}</td>
-                  <td>
-                    <fluent-select
-                      ?disabled=${disabled}
-                      .value=${e?.scoreChoiceIndex != null ? String(e.scoreChoiceIndex) : ""}
-                      @change=${(ev: Event) => this._changeScoreChoice(i, (ev.target as Select).value)}>
-                      <fluent-option value="-1">-</fluent-option>
-                      ${map(e?.scoreChoices ?? [], (choice, choiceIndex) => {
-                        return html`
-                        <fluent-option value="${choiceIndex}">[${formatChoiceType(choice.type)}] ${formatScoreEditorScore(choice.score)}</fluent-option>
-                        `
-                      })}
-                    </fluent-select>
-                  </td>
-                  <td>
-                    <fluent-text-field
-                      ?disabled=${disabled}
-                      .value=${live(e?.score != null ? formatScoreEditorScore(e.score) : "")}
-                      @change=${(ev: Event) => this._changeScore(i, (ev.target as TextField).value)}
-                      @keydown=${(ev: KeyboardEvent) => this._checkEnterKey(ev, i)}>
-                    </fluent-text-field>
-                  </td>
-                </tr>`;
-              })}
-            </tbody>
-          <table>
-          <div>
-            <div><b>入力例:</b></div>
-            <div>
-              <span class="example-entry">443</span>
-              <span class="example-entry">9:32.10</span>
-              <span class="example-entry">S9 9:32:10</span>
-              <span class="example-entry">S9 93210</span>
+      <fluent-dialog
+        id="dialog-edit-stage-score"
+        ?hidden="${!this._visible}"
+        trap-focus
+        modal
+        style="--dialog-width: 460px; --dialog-height: 460px;"
+      >
+        ${this._visible
+          ? html`
+            <div class="dialog-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>名前</th>
+                    <th>OCR</th>
+                    <th>スコア</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${map(this._data, (e, i) => {
+                    const disabled = e == null;
+                    return html`
+                      <tr>
+                        <td class="name">${e?.name}</td>
+                        <td>
+                          <fluent-select
+                            ?disabled="${disabled}"
+                            .value="${e?.scoreChoiceIndex != null
+                              ? String(e.scoreChoiceIndex)
+                              : ""}"
+                            @change="${(ev: Event) =>
+                              this._changeScoreChoice(
+                                i,
+                                (ev.target as Select).value,
+                              )}"
+                          >
+                            <fluent-option value="-1">-</fluent-option>
+                            ${map(
+                              e?.scoreChoices ?? [],
+                              (choice, choiceIndex) => {
+                                return html`
+                                  <fluent-option value="${choiceIndex}">[${formatChoiceType(
+                                    choice.type,
+                                  )}] ${formatScoreEditorScore(
+                                    choice.score,
+                                  )}</fluent-option>
+                                `;
+                              },
+                            )}
+                          </fluent-select>
+                        </td>
+                        <td>
+                          <fluent-text-field
+                            ?disabled="${disabled}"
+                            .value="${live(
+                              e?.score != null
+                                ? formatScoreEditorScore(e.score)
+                                : "",
+                            )}"
+                            @change="${(ev: Event) =>
+                              this._changeScore(
+                                i,
+                                (ev.target as TextField).value,
+                              )}"
+                            @keydown="${(ev: KeyboardEvent) =>
+                              this._checkEnterKey(ev, i)}"
+                          >
+                          </fluent-text-field>
+                        </td>
+                      </tr>
+                    `;
+                  })}
+                </tbody>
+              </table>
+              <div>
+                <div><b>入力例:</b></div>
+                <div>
+                  <span class="example-entry">443</span>
+                  <span class="example-entry">9:32.10</span>
+                  <span class="example-entry">S9 9:32:10</span>
+                  <span class="example-entry">S9 93210</span>
+                </div>
+              </div>
+              <div class="dialog-buttons">
+                <fluent-button appearance="accent" @click="${() =>
+                  this._close(true)}">OK</fluent-button>
+                <fluent-button @click="${() =>
+                  this._close(false)}">キャンセル</fluent-button>
+              </div>
             </div>
-          </div>
-          <div class="dialog-buttons">
-            <fluent-button appearance="accent" @click=${() => this._close(true)}>OK</fluent-button>
-            <fluent-button @click=${() => this._close(false)}>キャンセル</fluent-button>
-          </div>
-        </div>
-      ` : undefined}
-    </fluent-dialog>
+          `
+          : undefined}
+      </fluent-dialog>
     `;
   }
 }

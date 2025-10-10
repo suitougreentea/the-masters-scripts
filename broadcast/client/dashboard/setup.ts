@@ -276,118 +276,148 @@ export class MastersSetupElement extends LitElement {
           null || participant.firstRoundGroupIndex == null),
     }));
 
-    // deno-fmt-ignore
-    const registrationUrlQr =
-      this._registrationUrlQr != null
-      ? html`<div>
-        <a target="_blank" href=${this._registrationUrl}>
-          <img class="qr" src=${this._registrationUrlQr}>
-        </a>
-      </div>`
+    const registrationUrlQr = this._registrationUrlQr != null
+      ? html`
+        <div>
+          <a target="_blank" href="${this._registrationUrl}">
+            <img class="qr" src="${this._registrationUrlQr}">
+          </a>
+        </div>
+      `
       : undefined;
 
-    // deno-fmt-ignore
     return html`
-    <fluent-card class="container">
-      <div>
-        <h2>登録プレイヤー一覧</h2>
-        <fluent-button appearance="accent" @click=${this._openPlayerRegistrationDialog}>新規登録</fluent-button>
-        <fluent-button @click=${this._refreshRegisteredPlayers}>再読み込み</fluent-button>
-        <table id="registered-players">
-          <colgroup>
-            <col>
-            <col>
-            <col>
-            <col>
-          </colgroup>
-          <thead>
-            <tr>
-              <th>名前</th>
-              <th>自己ベスト</th>
-              <th>コメント</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            ${map(sortedRegisteredPlayers, (player) =>
-              html`
+      <fluent-card class="container">
+        <div>
+          <h2>登録プレイヤー一覧</h2>
+          <fluent-button appearance="accent" @click="${this
+            ._openPlayerRegistrationDialog}"
+          >新規登録</fluent-button>
+          <fluent-button @click="${this
+            ._refreshRegisteredPlayers}">再読み込み</fluent-button>
+          <table id="registered-players">
+            <colgroup>
+              <col>
+              <col>
+              <col>
+              <col>
+            </colgroup>
+            <thead>
               <tr>
-                <td>${player.name}</td>
-                <td>${timeToString(player.bestTime)}</td>
-                <td>${player.comment.split("\n").map((line) => html`${line}<br>`)}</td>
-                <td><fluent-button @click=${() => this._openPlayerUpdateDialog(player.originalIndex)}>編集</fluent-button></td>
+                <th>名前</th>
+                <th>自己ベスト</th>
+                <th>コメント</th>
+                <th></th>
               </tr>
-              `
-            )}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              ${map(sortedRegisteredPlayers, (player) =>
+                html`
+                  <tr>
+                    <td>${player.name}</td>
+                    <td>${timeToString(player.bestTime)}</td>
+                    <td>${player.comment.split("\n").map((line) =>
+                      html`
+                        ${line}<br>
+                      `
+                    )}</td>
+                    <td><fluent-button @click="${() =>
+                      this._openPlayerUpdateDialog(
+                        player.originalIndex,
+                      )}">編集</fluent-button></td>
+                  </tr>
+                `)}
+            </tbody>
+          </table>
+        </div>
 
-      <div>
-        <h2>大会設定</h2>
         <div>
-          <fluent-text-field id="competition-name" value="The Masters xxx">大会名:</fluent-text-field>
-        </div>
-        <div>
-          <fluent-checkbox
-            @change=${(e: Event) => this._manual = (e.target as HTMLInputElement).checked}
-            ?checked=${this._manual}>
-            マニュアルモード
-          </fluent-checkbox>
-        </div>
-        <div style=${styleMap({ display: this._manual ? undefined : "none" })}>
-          <fluent-number-field id="manual-num-games"  value="10">試合数:</fluent-number-field>
-        </div>
-        <div style=${styleMap({ display: this._manual ? "none" : undefined })}>
-          <fluent-checkbox
-            @change=${(e: Event) => this._overridePreset = (e.target as HTMLInputElement).checked}
-            ?checked=${this._overridePreset}>
-            プリセット名を手動で指定
-          </fluent-checkbox>
-        </div>
-        <div style=${styleMap({ display: this._manual || !this._overridePreset ? "none" : undefined })}>
-          <fluent-text-field id="preset-name" value="">プリセット名:</fluent-text-field>
-        </div>
-        <h3>参加者</h3>
-        ${registrationUrlQr}
-        <fluent-button appearance="accent" @click=${this._openParticipantsEditorDialog}>編集</fluent-button>
-        <fluent-button @click=${this._refreshParticipants}>再読み込み</fluent-button>
-        <table id="participants">
-          <colgroup>
-            <col>
-            <col>
-            <col>
-            <col>
-          </colgroup>
-          <thead>
-            <tr>
-              <th>名前</th>
-              <th>1回戦組</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${map(participants, (participant) =>
-              html`
-              <tr class=${classMap({ error: participant.error })}>
-                <td>${participant.name}</td>
-                <td>${participant.firstRoundGroupIndex != null ? formatGroup(participant.firstRoundGroupIndex) : "-"}</td>
+          <h2>大会設定</h2>
+          <div>
+            <fluent-text-field id="competition-name" value="The Masters xxx"
+            >大会名:</fluent-text-field>
+          </div>
+          <div>
+            <fluent-checkbox
+              @change="${(e: Event) =>
+                this._manual = (e.target as HTMLInputElement).checked}"
+              ?checked="${this._manual}"
+            >
+              マニュアルモード
+            </fluent-checkbox>
+          </div>
+          <div style="${styleMap({
+            display: this._manual ? undefined : "none",
+          })}">
+            <fluent-number-field id="manual-num-games" value="10"
+            >試合数:</fluent-number-field>
+          </div>
+          <div style="${styleMap({
+            display: this._manual ? "none" : undefined,
+          })}">
+            <fluent-checkbox
+              @change="${(e: Event) =>
+                this._overridePreset = (e.target as HTMLInputElement).checked}"
+              ?checked="${this._overridePreset}"
+            >
+              プリセット名を手動で指定
+            </fluent-checkbox>
+          </div>
+          <div style="${styleMap({
+            display: this._manual || !this._overridePreset ? "none" : undefined,
+          })}">
+            <fluent-text-field id="preset-name" value=""
+            >プリセット名:</fluent-text-field>
+          </div>
+          <h3>参加者</h3>
+          ${registrationUrlQr}
+          <fluent-button appearance="accent" @click="${this
+            ._openParticipantsEditorDialog}">編集</fluent-button>
+          <fluent-button @click="${this
+            ._refreshParticipants}">再読み込み</fluent-button>
+          <table id="participants">
+            <colgroup>
+              <col>
+              <col>
+              <col>
+              <col>
+            </colgroup>
+            <thead>
+              <tr>
+                <th>名前</th>
+                <th>1回戦組</th>
               </tr>
-              `
-            )}
-          </tbody>
-        </table>
-        <fluent-button appearance="accent" @click=${this._confirmStartCompetition}>大会開始</fluent-button>
-      </div>
-    </fluent-card>
+            </thead>
+            <tbody>
+              ${map(participants, (participant) =>
+                html`
+                  <tr class="${classMap({ error: participant.error })}">
+                    <td>${participant.name}</td>
+                    <td>${participant.firstRoundGroupIndex != null
+                      ? formatGroup(participant.firstRoundGroupIndex)
+                      : "-"}</td>
+                  </tr>
+                `)}
+            </tbody>
+          </table>
+          <fluent-button appearance="accent" @click="${this
+            ._confirmStartCompetition}"
+          >大会開始</fluent-button>
+        </div>
+      </fluent-card>
 
-    <masters-player-registration-dialog @update-data=${(e: Event) => {
-      const editor = e.target as MastersPlayerRegistrationDialogElement;
-      this._registerOrUpdatePlayer(editor.getOldName(), editor.getData());
-    }}></masters-player-registration-dialog>
-    <masters-participants-editor-dialog @update-data=${(e: Event) => {
-      const editor = e.target as MastersParticipantsEditorDialogElement;
-      this._setParticipants(editor.getData());
-    }}></masters-participants-editor-dialog>
+      <masters-player-registration-dialog
+        @update-data="${(e: Event) => {
+          const editor = e.target as MastersPlayerRegistrationDialogElement;
+          this._registerOrUpdatePlayer(editor.getOldName(), editor.getData());
+        }}"
+      ></masters-player-registration-dialog>
+      <masters-participants-editor-dialog
+        @update-data="${(e: Event) => {
+          const editor = e.target as MastersParticipantsEditorDialogElement;
+          this._setParticipants(editor.getData());
+        }}"
+      ></masters-participants-editor-dialog>
     `;
   }
 }

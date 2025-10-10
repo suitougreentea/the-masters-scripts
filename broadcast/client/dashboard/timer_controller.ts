@@ -13,49 +13,49 @@ import { commonColors } from "../common/common_values.ts";
 @customElement("masters-timer-controller")
 export class MastersTimerControllerElement extends LitElement {
   static styles = css`
-  .toolbar-container {
-    display: flex;
-    justify-content: space-between;
-    background-color: ${commonColors.background};
-    color: ${commonColors.textDark};
-  }
+    .toolbar-container {
+      display: flex;
+      justify-content: space-between;
+      background-color: ${commonColors.background};
+      color: ${commonColors.textDark};
+    }
 
-  .toolbar-left {
-    width: 480px;
-    height: 36px;
-    padding: 8px 8px 4px;
-  }
+    .toolbar-left {
+      width: 480px;
+      height: 36px;
+      padding: 8px 8px 4px;
+    }
 
-  .toolbar-right {
-    width: 200px;
-    height: 36px;
-    padding: 8px 8px 4px;
-    text-align: right;
-  }
+    .toolbar-right {
+      width: 200px;
+      height: 36px;
+      padding: 8px 8px 4px;
+      text-align: right;
+    }
 
-  .toolbar-left span,
-  .toolbar-right span {
-    display: inline-block;
-    transform: translateY(6px); /* TODO */
-  }
+    .toolbar-left span,
+    .toolbar-right span {
+      display: inline-block;
+      transform: translateY(6px); /* TODO */
+    }
 
-  .open-button {
-    cursor: pointer;
-  }
+    .open-button {
+      cursor: pointer;
+    }
 
-  .close-button {
-    cursor: pointer;
-    margin-right: 8px;
-  }
+    .close-button {
+      cursor: pointer;
+      margin-right: 8px;
+    }
 
-  #name {
-    margin-left: 8px;
-  }
+    #name {
+      margin-left: 8px;
+    }
 
-  .timer-container {
-    padding: 2px 6px;
-    background-color: ${commonColors.background};
-  }
+    .timer-container {
+      padding: 2px 6px;
+      background-color: ${commonColors.background};
+    }
   `;
 
   private _initializedPromise = createPromiseSet();
@@ -181,41 +181,42 @@ export class MastersTimerControllerElement extends LitElement {
       display: this._timerVisible ? undefined : "none",
     });
 
-    // deno-fmt-ignore
     return html`
-    <div class="container">
-      <div class="toolbar-container">
-        <div class="toolbar-left">
-          ${this._timerVisible
-            ? html`
-            <span class="close-button" @click=${this._closeTimer}>✖</span>
-            <fluent-button appearance="accent" @click=${this._start}>Start</fluent-button>
-            <fluent-button @click=${this._confirmReset}>Reset</fluent-button>
-            <span id="name">${this._name}</span>
-            `
-            : html`
-            <span class="open-button" @click=${this._openTimer}>▶ タイマーを表示</span>
-            `
-          }
+      <div class="container">
+        <div class="toolbar-container">
+          <div class="toolbar-left">
+            ${this._timerVisible
+              ? html`
+                <span class="close-button" @click="${this._closeTimer}">✖</span>
+                <fluent-button appearance="accent" @click="${this
+                  ._start}">Start</fluent-button>
+                <fluent-button @click="${this
+                  ._confirmReset}">Reset</fluent-button>
+                <span id="name">${this._name}</span>
+              `
+              : html`
+                <span class="open-button" @click="${this
+                  ._openTimer}">▶ タイマーを表示</span>
+              `}
+          </div>
+          <div class="toolbar-right">
+            ${this._showingResult
+              ? html`
+                <span>[リザルト画面表示中]</span>
+                <!--<fluent-button @click=${this._hideResult} ?disabled=${!this
+                  ._showingResult}>戻る</fluent-button>-->
+              `
+              : undefined} ${!this._ocrConnected
+              ? html`
+                <span>[OCR未接続]</span>
+              `
+              : undefined}
+          </div>
         </div>
-        <div class="toolbar-right">
-          ${this._showingResult
-            ? html`
-            <span>[リザルト画面表示中]</span>
-            <!--<fluent-button @click=${this._hideResult} ?disabled=${!this._showingResult}>戻る</fluent-button>-->
-            `
-            : undefined
-          }
-          ${!this._ocrConnected
-            ? html`<span>[OCR未接続]</span>`
-            : undefined
-          }
+        <div class="timer-container" style="${timerContainerStyle}">
+          <masters-timer id="timer" sort-by-starting-order></masters-timer>
         </div>
       </div>
-      <div class="timer-container" style=${timerContainerStyle}>
-        <masters-timer id="timer" sort-by-starting-order></masters-timer>
-      </div>
-    </div>
     `;
   }
 }

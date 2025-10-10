@@ -46,51 +46,51 @@ const sendRequest = async (uri: string, args: unknown): Promise<unknown> => {
 @customElement("masters-register")
 export class MastersPlayerInfoElement extends LitElement {
   static styles = css`
-  #root {
-    margin: 1.5em;
-  }
-
-  .row {
-    width: 100%;
-    margin: 10px 0;
-    display: flex;
-    > * {
-      flex-grow: 1;
+    #root {
+      margin: 1.5em;
     }
-  }
 
-  .message {
-    padding: 0.5em;
-    border-width: 1px;
-    border-style: solid;
-    border-radius: 0.2em;
-  }
+    .row {
+      width: 100%;
+      margin: 10px 0;
+      display: flex;
+      > * {
+        flex-grow: 1;
+      }
+    }
 
-  .message-hidden {
-    display: none;
-  }
+    .message {
+      padding: 0.5em;
+      border-width: 1px;
+      border-style: solid;
+      border-radius: 0.2em;
+    }
 
-  .message-info {
-    background-color: #ecf6fd;
-    border-color: #44aaee;
-  }
+    .message-hidden {
+      display: none;
+    }
 
-  .message-error {
-    background-color: #ffeaef;
-    border-color: #ff3366;
-  }
+    .message-info {
+      background-color: #ecf6fd;
+      border-color: #44aaee;
+    }
 
-  .loader {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(255, 255, 255, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+    .message-error {
+      background-color: #ffeaef;
+      border-color: #ff3366;
+    }
+
+    .loader {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   `;
 
   @state()
@@ -215,72 +215,83 @@ export class MastersPlayerInfoElement extends LitElement {
   }
 
   render() {
-    let loader = html``;
+    let loader = html`
+
+    `;
     if (this._showLoader) {
-      // deno-fmt-ignore
       loader = html`
-      <div class="loader">
-        <fluent-progress-ring class="spinner"></fluent-progress-ring>
-      </div>
+        <div class="loader">
+          <fluent-progress-ring class="spinner"></fluent-progress-ring>
+        </div>
       `;
     }
 
-    // deno-fmt-ignore
     return html`
-    <div id="root">
-      <div class="row">
-        <fluent-text-field
-          .value=${live(this._name)}
-          @change=${(ev: Event) => this._name = (ev.target as TextField).value.trim()}>
-          ${this._oldName == null
-            ? "プレイヤー名"
-            : `プレイヤー名 (これまで: ${this._oldName})`
-          }
-        </fluent-text-field>
+      <div id="root">
+        <div class="row">
+          <fluent-text-field
+            .value="${live(this._name)}"
+            @change="${(ev: Event) =>
+              this._name = (ev.target as TextField).value.trim()}"
+          >
+            ${this._oldName == null
+              ? "プレイヤー名"
+              : `プレイヤー名 (これまで: ${this._oldName})`}
+          </fluent-text-field>
+        </div>
+        <div class="row">
+          <fluent-button appearance="accent" @click="${this._findPlayer}">
+            ${this._queryCompleted ? "再検索" : "検索"}
+          </fluent-button>
+        </div>
+        <hr>
+        <div class="row">
+          <fluent-text-field
+            ?disabled="${!this._queryCompleted}"
+            .value="${live(
+              this._bestTime != null ? timeToString(this._bestTime) : "",
+            )}"
+            @change="${(ev: Event) => {
+              this._bestTime = stringToTimeFuzzy(
+                (ev.target as TextField).value,
+              );
+              this.requestUpdate();
+            }}"
+          >
+            自己ベスト
+          </fluent-text-field>
+        </div>
+        <div class="row">
+          <fluent-text-area
+            ?disabled="${!this._queryCompleted}"
+            .value="${live(this._comment)}"
+            @change="${(ev: Event) =>
+              this._comment = (ev.target as TextArea).value}"
+          >
+            コメント
+          </fluent-text-area>
+        </div>
+        <div class="row">
+          <fluent-button
+            appearance="accent"
+            ?disabled="${!this._queryCompleted}"
+            @click="${this._register}"
+          >
+            登録
+          </fluent-button>
+        </div>
+        <div
+          class="${classMap({
+            "message": true,
+            "message-hidden": this._currentMessage == null,
+            "message-info": this._currentMessage?.type == 0,
+            "message-error": this._currentMessage?.type == 1,
+          })}"
+        >
+          ${this._currentMessage?.message}
+        </div>
+        ${loader}
       </div>
-      <div class="row">
-        <fluent-button appearance="accent" @click=${this._findPlayer}>
-          ${this._queryCompleted ? "再検索" : "検索"}
-        </fluent-button>
-      </div>
-      <hr>
-      <div class="row">
-        <fluent-text-field
-          ?disabled=${!this._queryCompleted}
-          .value=${live(this._bestTime != null ? timeToString(this._bestTime) : "")}
-          @change=${(ev: Event) => {
-            this._bestTime = stringToTimeFuzzy((ev.target as TextField).value);
-            this.requestUpdate();
-          }}>
-          自己ベスト
-        </fluent-text-field>
-      </div>
-      <div class="row">
-        <fluent-text-area
-          ?disabled=${!this._queryCompleted}
-          .value=${live(this._comment)}
-          @change=${(ev: Event) => this._comment = (ev.target as TextArea).value}>
-          コメント
-        </fluent-text-area>
-      </div>
-      <div class="row">
-        <fluent-button appearance="accent"
-          ?disabled=${!this._queryCompleted}
-          @click=${this._register}>
-          登録
-        </fluent-button>
-      </div>
-      <div
-        class=${classMap({
-          "message": true,
-          "message-hidden": this._currentMessage == null,
-          "message-info": this._currentMessage?.type == 0,
-          "message-error": this._currentMessage?.type == 1,
-        })}>
-        ${this._currentMessage?.message}
-      </div>
-      ${loader}
-    </div>
     `;
   }
 }

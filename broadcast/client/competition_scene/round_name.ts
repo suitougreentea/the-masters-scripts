@@ -18,7 +18,7 @@ export class MastersRoundNameElement extends LitElement {
       font-size: 24px;
       line-height: 24px;
     }
-    `;
+  `;
 
   @property()
   name?: string;
@@ -62,12 +62,11 @@ export class MastersRoundNameElement extends LitElement {
     const japaneseName = this.name ?? "";
     const englishName = this.#translateName(japaneseName);
 
-    // deno-fmt-ignore
     return html`
-    <div class="container">
-      <div class="ja">${japaneseName}</span>
-      <div class="en">${englishName}</span>
-    </div>
+      <div class="container">
+        <div class="ja">${japaneseName}</div>
+        <div class="en">${englishName}</div>
+      </div>
     `;
   }
 }
