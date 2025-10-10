@@ -213,7 +213,7 @@ export class MastersTimerControllerElement extends LitElement {
         </div>
       </div>
       <div class="timer-container" style=${timerContainerStyle}>
-        <masters-timer id="timer"></masters-timer>
+        <masters-timer id="timer" sort-by-starting-order></masters-timer>
       </div>
     </div>
     `;

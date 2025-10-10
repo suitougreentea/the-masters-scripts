@@ -7,7 +7,7 @@ import {
 } from "../../common/util.ts";
 import { OcrResult, PlayingPlayerData } from "../../common/type_definition.ts";
 import { css, html, LitElement } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import tinycolor from "tinycolor2";
 import { timeToString } from "../../../common/time.ts";
@@ -153,6 +153,9 @@ export class MastersTimerElement extends LitElement {
     transform: translateY(1px);
   }
   `;
+
+  @property({ attribute: "sort-by-starting-order", type: Boolean })
+  sortByStartingOrder: boolean = false;
 
   #ordinals = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"];
 
@@ -425,8 +428,12 @@ export class MastersTimerElement extends LitElement {
   }
 
   #resetDisplayIndices() {
-    for (let i = 0; i < 8; i++) {
-      this.#displayIndices[i] = i;
+    if (this.sortByStartingOrder) {
+      this.#displayIndices = this.#calculateDisplayIndicesByStartOrder();
+    } else {
+      for (let i = 0; i < 8; i++) {
+        this.#displayIndices[i] = i;
+      }
     }
     this.#updateDisplayIndices(true);
   }
@@ -459,6 +466,26 @@ export class MastersTimerElement extends LitElement {
         }
       }
     }
+    return indices;
+  }
+
+  #calculateDisplayIndicesByStartOrder() {
+    const indices = [...this.#displayIndices];
+    const ov: { o: number; i: number }[] = [];
+    // ordering score = start order(0-7, 8 for empty row) + row index
+    for (let i = 0; i < 8; i++) {
+      let o = 8 * 8 + i;
+      const player = this.#data[i];
+      if (player != null) {
+        o = player.startOrder * 8 + i;
+      }
+      ov.push({ o, i });
+    }
+    ov.sort((a, b) => (a.o - b.o));
+    // Store indices
+    ov.forEach((item, index) => {
+      indices[item.i] = index;
+    });
     return indices;
   }
 
