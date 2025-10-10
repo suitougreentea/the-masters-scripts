@@ -28,7 +28,7 @@ import {
 
 @customElement("masters-round")
 export class MastersRoundElement extends LitElement {
-  static styles = css`
+  static override styles = css`
     .container {
       overflow-y: scroll;
       padding: 8px;
@@ -136,7 +136,7 @@ export class MastersRoundElement extends LitElement {
   @query("masters-score-editor-dialog", true)
   private _scoreEditorDialog!: MastersScoreEditorDialogElement;
 
-  async firstUpdated() {
+  override async firstUpdated() {
     const client = await this._dashboardContext.getClient();
     const currentCompetitionMetadataReplicant = await client.getReplicant(
       "currentCompetitionMetadata",
@@ -238,7 +238,7 @@ export class MastersRoundElement extends LitElement {
     await this._dashboardContext.sendRequest("finalizeCurrentRound");
   }
 
-  render() {
+  override render() {
     return html`
       <fluent-card class="container">
         ${map(this._currentRoundData?.stageData ?? [], (e, i) => {

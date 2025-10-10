@@ -16,7 +16,7 @@ import { MastersTabsElement } from "./tabs.ts";
 
 @customElement("masters-dashboard")
 export class MastersDashboardElement extends LitElement {
-  static styles = css`
+  static override styles = css`
     .container {
       width: calc(100vw - 16px);
       height: calc(100vh - 16px);
@@ -130,7 +130,7 @@ export class MastersDashboardElement extends LitElement {
     this._clientPromiseResolve = resolve;
   }
 
-  async firstUpdated() {
+  override async firstUpdated() {
     await this._timerController.waitForInitialization();
     this._initializedPromise.resolve();
   }
@@ -198,7 +198,7 @@ export class MastersDashboardElement extends LitElement {
     await this._changeTabPage("round0", false);
   }
 
-  render() {
+  override render() {
     const setupPageActive = this._currentActivePage == "setup";
     const roundPageActive = this._currentActivePage.startsWith("round");
 

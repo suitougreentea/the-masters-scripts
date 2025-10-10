@@ -9,7 +9,7 @@ import { commonColors } from "./common_values.ts";
 
 @customElement("masters-qualifier-result")
 export class MastersQualifierResultElement extends LitElement {
-  static styles = css`
+  static override styles = css`
     table {
       width: 380px;
       table-layout: fixed;
@@ -100,7 +100,7 @@ export class MastersQualifierResultElement extends LitElement {
   @property()
   data: QualifierResultEntry[] = [];
 
-  render() {
+  override render() {
     return html`
       <table>
         <colgroup>

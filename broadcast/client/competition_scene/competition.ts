@@ -19,7 +19,7 @@ import { OcrResult, PlayingPlayerData } from "../../common/type_definition.ts";
 
 @customElement("masters-competition")
 export class MastersCompetitionElement extends LitElement {
-  static styles = css`
+  static override styles = css`
     .container {
       width: 1920px;
       height: 1080px;
@@ -69,7 +69,7 @@ export class MastersCompetitionElement extends LitElement {
     super();
   }
 
-  async firstUpdated() {
+  override async firstUpdated() {
     this.#title = this.renderRoot.querySelector<MastersTitleElement>("#title")!;
     this.#playerInfo = this.renderRoot.querySelector<MastersPlayerInfoElement>(
       "#player-info",
@@ -133,7 +133,7 @@ export class MastersCompetitionElement extends LitElement {
     this.#playerInfo.setPlayingPlayerData(data);
   }
 
-  render() {
+  override render() {
     return html`
       <div class="container">
         <masters-title id="title"></masters-title>

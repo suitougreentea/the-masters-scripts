@@ -8,7 +8,7 @@ import { commonColors } from "./common_values.ts";
 
 @customElement("masters-supplement-comparison")
 export class MastersSupplementComparisonElement extends LitElement {
-  static styles = css`
+  static override styles = css`
     table {
       width: 380px;
       table-layout: fixed;
@@ -80,7 +80,7 @@ export class MastersSupplementComparisonElement extends LitElement {
   @property()
   data: SupplementComparisonEntry[] = [];
 
-  render() {
+  override render() {
     return html`
       <table>
         <colgroup>

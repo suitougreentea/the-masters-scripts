@@ -45,7 +45,7 @@ const sendRequest = async (uri: string, args: unknown): Promise<unknown> => {
 
 @customElement("masters-register")
 export class MastersPlayerInfoElement extends LitElement {
-  static styles = css`
+  static override styles = css`
     #root {
       margin: 1.5em;
     }
@@ -214,7 +214,7 @@ export class MastersPlayerInfoElement extends LitElement {
     this._participating = true;
   }
 
-  render() {
+  override render() {
     let loader = html`
 
     `;

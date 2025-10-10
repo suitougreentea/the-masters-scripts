@@ -16,7 +16,7 @@ const height = 880;
 
 @customElement("masters-result")
 export class MastersResultElement extends LitElement {
-  static styles = css`
+  static override styles = css`
     .container {
       width: 1920px;
       height: 1080px;
@@ -109,7 +109,7 @@ export class MastersResultElement extends LitElement {
   #initializedPromise: PromiseSet<void> = createPromiseSet();
 
   @property()
-  title = "";
+  titleContent = "";
 
   @property()
   data?: ResultSceneData = undefined;
@@ -124,7 +124,7 @@ export class MastersResultElement extends LitElement {
     super();
   }
 
-  firstUpdated() {
+  override firstUpdated() {
     this.#initializedPromise.resolve();
   }
 
@@ -132,7 +132,7 @@ export class MastersResultElement extends LitElement {
     await this.#initializedPromise.promise;
   }
 
-  async updated() {
+  override async updated() {
     this._scrollHandle?.stop();
     this._scrollHandle = undefined;
     const roundResultContainer = this._roundResultContainer;
@@ -184,7 +184,7 @@ export class MastersResultElement extends LitElement {
     return { stop };
   }
 
-  render() {
+  override render() {
     let hasRoundColumn = false;
     if (this.data != null) {
       const roundData = this.data.roundData;
@@ -200,7 +200,7 @@ export class MastersResultElement extends LitElement {
 
     return html`
       <div class="container">
-        <masters-title id="title" .value="${this.title}"></masters-title>
+        <masters-title id="title" .value="${this.titleContent}"></masters-title>
         <div class="${classMap({
           "result-container": true,
           "single": !hasRoundColumn,

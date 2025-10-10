@@ -14,7 +14,7 @@ import { timeToString } from "../../../common/time.ts";
 
 @customElement("masters-timer")
 export class MastersTimerElement extends LitElement {
-  static styles = css`
+  static override styles = css`
     .container {
       color: ${commonColors.textDark};
     }
@@ -190,7 +190,7 @@ export class MastersTimerElement extends LitElement {
     this.#data = this.#createEmptyData();
   }
 
-  firstUpdated() {
+  override firstUpdated() {
     this.#innerContainer = this.renderRoot.querySelector<HTMLDivElement>(
       ".container-inner",
     );
@@ -529,7 +529,7 @@ export class MastersTimerElement extends LitElement {
     }, block);
   }
 
-  render() {
+  override render() {
     return html`
       <div class="container">
         <div class="container-inner">

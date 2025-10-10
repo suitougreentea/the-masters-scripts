@@ -22,7 +22,7 @@ import { timeToString } from "../../../common/time.ts";
 
 @customElement("masters-setup")
 export class MastersSetupElement extends LitElement {
-  static styles = css`
+  static override styles = css`
     .container {
       overflow-y: scroll;
       padding: 8px;
@@ -172,7 +172,7 @@ export class MastersSetupElement extends LitElement {
   @query("masters-participants-editor-dialog", true)
   private _participantsEditorDialog!: MastersParticipantsEditorDialogElement;
 
-  async firstUpdated() {
+  override async firstUpdated() {
     const client = await this._dashboardContext.getClient();
     const currentRegisteredPlayersReplicant = await client.getReplicant(
       "currentRegisteredPlayers",
@@ -263,7 +263,7 @@ export class MastersSetupElement extends LitElement {
     }
   }
 
-  render() {
+  override render() {
     const sortedRegisteredPlayers = this._registeredPlayers.map((
       player,
       i,

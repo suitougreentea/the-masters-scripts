@@ -10,7 +10,7 @@ import { commonColors } from "./common_values.ts";
 
 @customElement("masters-qualifier-score")
 export class MastersQualifierScoreElement extends LitElement {
-  static styles = css`
+  static override styles = css`
     table {
       width: 380px;
       table-layout: fixed;
@@ -75,7 +75,7 @@ export class MastersQualifierScoreElement extends LitElement {
   @property()
   stageMetadata: StageMetadata[] = [];
 
-  render() {
+  override render() {
     return html`
       <table>
         <colgroup>

@@ -7,7 +7,7 @@ import { DashboardContext, dashboardContext } from "./dashboard_context.ts";
 
 @customElement("masters-tabs")
 export class MastersTabsElement extends LitElement {
-  static styles = css`
+  static override styles = css`
     .container {}
 
     fluent-tabs {
@@ -60,7 +60,7 @@ export class MastersTabsElement extends LitElement {
   @query("#advanced-menu", true)
   private _advancedMenu!: Menu;
 
-  async firstUpdated() {
+  override async firstUpdated() {
     const client = await this._dashboardContext.getClient();
     const currentCompetitionMetadataReplicant = await client.getReplicant(
       "currentCompetitionMetadata",
@@ -160,7 +160,7 @@ export class MastersTabsElement extends LitElement {
     addEventListener("click", clickListener); // TODO: clicking in iframe does not fire event
   }
 
-  render() {
+  override render() {
     return html`
       <span class="start">
         <span id="competition-name">${this._competitionName}</span>

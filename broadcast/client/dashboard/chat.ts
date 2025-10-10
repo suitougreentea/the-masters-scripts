@@ -3,7 +3,7 @@ import { customElement } from "lit/decorators.js";
 
 @customElement("masters-chat")
 export class MastersChatElement extends LitElement {
-  static styles = css`
+  static override styles = css`
     .container {
       height: 100%;
     }
@@ -15,7 +15,7 @@ export class MastersChatElement extends LitElement {
     }
   `;
 
-  render() {
+  override render() {
     return html`
       <div class="container">
         <iframe src="https://www.twitch.tv/embed/piertgm/chat?parent=localhost">

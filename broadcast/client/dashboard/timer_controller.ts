@@ -12,7 +12,7 @@ import { commonColors } from "../common/common_values.ts";
 
 @customElement("masters-timer-controller")
 export class MastersTimerControllerElement extends LitElement {
-  static styles = css`
+  static override styles = css`
     .toolbar-container {
       display: flex;
       justify-content: space-between;
@@ -82,7 +82,7 @@ export class MastersTimerControllerElement extends LitElement {
     super();
   }
 
-  async firstUpdated() {
+  override async firstUpdated() {
     await this._timer.waitForInitialization();
     this._timerWrapper = new TimerWrapper(this._timer);
 
@@ -176,7 +176,7 @@ export class MastersTimerControllerElement extends LitElement {
     });
   }
 
-  render() {
+  override render() {
     const timerContainerStyle = styleMap({
       display: this._timerVisible ? undefined : "none",
     });

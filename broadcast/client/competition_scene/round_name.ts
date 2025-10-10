@@ -4,7 +4,7 @@ import { customElement, property } from "lit/decorators.js";
 
 @customElement("masters-round-name")
 export class MastersRoundNameElement extends LitElement {
-  static styles = css`
+  static override styles = css`
     .container {
       color: ${commonColors.textDark};
       text-align: center;
@@ -58,7 +58,7 @@ export class MastersRoundNameElement extends LitElement {
     return "";
   }
 
-  render() {
+  override render() {
     const japaneseName = this.name ?? "";
     const englishName = this.#translateName(japaneseName);
 

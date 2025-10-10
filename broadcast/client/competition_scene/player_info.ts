@@ -15,7 +15,7 @@ const ordinals = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"];
 
 @customElement("masters-player-info")
 export class MastersPlayerInfoElement extends LitElement {
-  static styles = css`
+  static override styles = css`
     .container {
       color: ${commonColors.textDark};
     }
@@ -201,7 +201,7 @@ export class MastersPlayerInfoElement extends LitElement {
     return [...new Array(8)].map((_) => undefined);
   }
 
-  firstUpdated() {
+  override firstUpdated() {
     // TODO: Experimental
     this._healthDivs = [];
     this.renderRoot.querySelectorAll(".health").forEach((e) =>
@@ -240,7 +240,7 @@ export class MastersPlayerInfoElement extends LitElement {
     });
   }
 
-  render() {
+  override render() {
     const data = this.data ?? this._createEmptyData();
     const isDataEmpty = data.every((e) => e == null);
 

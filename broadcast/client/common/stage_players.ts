@@ -9,7 +9,7 @@ import { commonColors } from "./common_values.ts";
 
 @customElement("masters-stage-players")
 export class MastersStagePlayersElement extends LitElement {
-  static styles = css`
+  static override styles = css`
     table {
       width: 490px;
       table-layout: fixed;
@@ -122,7 +122,7 @@ export class MastersStagePlayersElement extends LitElement {
     undefined,
   ];
 
-  render() {
+  override render() {
     const renderHandicap = (handicap: number) => {
       if (handicap < 0) {
         return html`

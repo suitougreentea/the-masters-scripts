@@ -10,7 +10,7 @@ import { Dialog, TextField } from "@fluentui/web-components";
 
 @customElement("masters-participants-editor-dialog")
 export class MastersParticipantsEditorDialogElement extends LitElement {
-  static styles = css`
+  static override styles = css`
     .dialog-container {
       padding: 8px;
       user-select: none;
@@ -143,7 +143,7 @@ export class MastersParticipantsEditorDialogElement extends LitElement {
     */
   }
 
-  render() {
+  override render() {
     // one empty slot for new entry
     const participantsForRender = [...this._participants, {
       name: "",

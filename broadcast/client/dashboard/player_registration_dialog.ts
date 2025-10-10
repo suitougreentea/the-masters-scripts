@@ -8,7 +8,7 @@ import { Dialog, TextField } from "@fluentui/web-components";
 
 @customElement("masters-player-registration-dialog")
 export class MastersPlayerRegistrationDialogElement extends LitElement {
-  static styles = css`
+  static override styles = css`
     .dialog-container {
       padding: 8px;
       user-select: none;
@@ -78,7 +78,7 @@ export class MastersPlayerRegistrationDialogElement extends LitElement {
     };
   }
 
-  render() {
+  override render() {
     const isInvalid = this._bestTime == null;
 
     return html`

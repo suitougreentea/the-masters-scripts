@@ -9,7 +9,7 @@ import { commonColors } from "./common_values.ts";
 
 @customElement("masters-stage-result")
 export class MastersStageResultElement extends LitElement {
-  static styles = css`
+  static override styles = css`
     table {
       width: 440px;
       table-layout: fixed;
@@ -95,7 +95,7 @@ export class MastersStageResultElement extends LitElement {
   @property()
   hasWildcard = false;
 
-  render() {
+  override render() {
     return html`
       <table>
         <colgroup>

@@ -4,7 +4,7 @@ import { customElement, property, state } from "lit/decorators.js";
 
 @customElement("masters-title")
 export class MastersTitleElement extends LitElement {
-  static styles = css`
+  static override styles = css`
     .container {
       width: 1620px;
       color: ${commonColors.textDark};
@@ -32,13 +32,13 @@ export class MastersTitleElement extends LitElement {
   private _dateString?: string;
   private _dateUpdateInterval?: number;
 
-  connectedCallback() {
+  override connectedCallback() {
     super.connectedCallback();
     this._updateDate();
     this._dateUpdateInterval = setInterval(() => this._updateDate(), 1000);
   }
 
-  disconnectedCallback() {
+  override disconnectedCallback() {
     super.disconnectedCallback();
     if (this._dateUpdateInterval != null) {
       clearInterval(this._dateUpdateInterval);
@@ -60,7 +60,7 @@ export class MastersTitleElement extends LitElement {
       `${year}/${month}/${day} (${weekday}) ${hours}:${minutesString}`;
   }
 
-  render() {
+  override render() {
     return html`
       <div class="container">
         <div>

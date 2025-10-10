@@ -36,7 +36,7 @@ const formatChoiceType = (type: ScoreChoice["type"]) => {
 
 @customElement("masters-score-editor-dialog")
 export class MastersScoreEditorDialogElement extends LitElement {
-  static styles = css`
+  static override styles = css`
     .dialog-container {
       padding: 8px;
     }
@@ -234,7 +234,7 @@ export class MastersScoreEditorDialogElement extends LitElement {
     }
   }
 
-  render() {
+  override render() {
     return html`
       <fluent-dialog
         id="dialog-edit-stage-score"

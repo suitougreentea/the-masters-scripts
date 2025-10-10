@@ -20,7 +20,7 @@ export type PlayerNamesEditorData = {
 
 @customElement("masters-player-names-editor-dialog")
 export class MastersPlayerNamesEditorDialogElement extends LitElement {
-  static styles = css`
+  static override styles = css`
     .dialog-container {
       padding: 8px;
       user-select: none;
@@ -284,7 +284,7 @@ export class MastersPlayerNamesEditorDialogElement extends LitElement {
     e.preventDefault();
   }
 
-  render() {
+  override render() {
     const formatHandicap = (handicap: number) => {
       if (handicap > 0) return `+${handicap}`;
       if (handicap < 0) return `${handicap}`;
