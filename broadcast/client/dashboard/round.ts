@@ -335,10 +335,10 @@ export class MastersRoundElement extends LitElement {
       </fluent-card>
 
       <masters-player-names-editor-dialog
-        @update-data="${(e: Event) => {
+        @update-data="${async (e: Event) => {
           const editor = e.target as MastersPlayerNamesEditorDialogElement;
-          this._updateStagePlayerNames(editor.stageIndex, editor.getData());
-          this._sendToTimer(editor.stageIndex);
+          await this._updateStagePlayerNames(editor.stageIndex, editor.getData());
+          await this._sendToTimer(editor.stageIndex);
         }}"
         @send-to-timer="${(e: Event) => {
           const editor = e.target as MastersPlayerNamesEditorDialogElement;
