@@ -34,9 +34,17 @@ export class DashboardContext extends EventTarget {
       const result = await client.requestToServer(name as any, params as any);
       return result;
     } catch (e) {
-      const error = e instanceof Error ? e : new Error(String(e));
-      await this.alert(error.message);
-      throw error;
+      if (typeof e == "string") {
+        await this.alert(e);
+      } else if (
+        typeof e == "object" && e != null && "message" in e &&
+        typeof e.message == "string"
+      ) {
+        await this.alert(e.message);
+      } else {
+        await this.alert(JSON.stringify(e));
+      }
+      throw e;
     } finally {
       this.#requestInProgress = false;
       this.dispatchEvent(new Event("request-ended"));
