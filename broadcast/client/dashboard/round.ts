@@ -337,7 +337,10 @@ export class MastersRoundElement extends LitElement {
       <masters-player-names-editor-dialog
         @update-data="${async (e: Event) => {
           const editor = e.target as MastersPlayerNamesEditorDialogElement;
-          await this._updateStagePlayerNames(editor.stageIndex, editor.getData());
+          await this._updateStagePlayerNames(
+            editor.stageIndex,
+            editor.getData(),
+          );
           await this._sendToTimer(editor.stageIndex);
         }}"
         @send-to-timer="${(e: Event) => {
