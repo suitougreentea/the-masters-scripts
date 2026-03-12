@@ -1,2 +1,4 @@
 * eol=lf
 *.bat eol=crlf
+
+*.png binary
