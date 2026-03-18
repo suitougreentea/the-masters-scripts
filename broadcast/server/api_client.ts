@@ -1,4 +1,5 @@
 import { ApiFunctions } from "../../common/common_types.ts";
+import { BACKEND_API_PORT } from "../../common/ports.ts";
 
 export class ApiClient {
   async runCommand<TName extends keyof ApiFunctions>(
@@ -9,7 +10,7 @@ export class ApiClient {
       functionName,
       args,
     };
-    const response = await fetch("http://localhost:8518", {
+    const response = await fetch(`http://localhost:${BACKEND_API_PORT}`, {
       method: "POST",
       body: JSON.stringify(body),
     });

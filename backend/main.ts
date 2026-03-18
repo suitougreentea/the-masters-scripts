@@ -1,5 +1,6 @@
 import * as Api from "./api.ts";
 import { ApiFunctions } from "../common/common_types.ts";
+import { BACKEND_API_PORT } from "../common/ports.ts";
 import { configureInject, modifyInjectLocal } from "./inject_config.ts";
 
 configureInject();
@@ -16,7 +17,7 @@ type MapMaybePromise<T extends { [key: string]: (...args: any[]) => any }> = {
 };
 const apiFunctions = Api as MapMaybePromise<ApiFunctions>;
 
-Deno.serve({ port: 8518 }, async (req) => {
+Deno.serve({ port: BACKEND_API_PORT }, async (req) => {
   try {
     const message = await req.json();
     const functionName = message.functionName as keyof ApiFunctions;

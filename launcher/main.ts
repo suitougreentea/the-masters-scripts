@@ -1,4 +1,10 @@
 import { TextLineStream } from "@std/streams";
+import {
+  BACKEND_API_PORT,
+  BROADCAST_HTTP_PORT,
+  BROADCAST_USER_CONTROLLER_PORT,
+  USER_CONTROLLER_PORT,
+} from "../common/ports.ts";
 
 const stdoutWriter = Deno.stdout.writable.getWriter();
 const stderrWriter = Deno.stderr.writable.getWriter();
@@ -121,7 +127,7 @@ console.log("Checking connection to Backend");
 const backendConnectionCheck = await checkLoop(
   async () => {
     try {
-      const response = await fetch("http://localhost:8518/", {
+      const response = await fetch(`http://localhost:${BACKEND_API_PORT}/`, {
         method: "POST",
         body: JSON.stringify({
           functionName: "mastersGetRegisteredPlayers",
@@ -155,7 +161,7 @@ console.log("Checking connection to Broadcast");
 const broadcastConnectionCheck = await checkLoop(
   async () => {
     try {
-      const response = await fetch("http://localhost:8514/", {
+      const response = await fetch(`http://localhost:${BROADCAST_HTTP_PORT}/`, {
         signal: createTimeoutAbortSignal(2000),
       });
       return response.status == 404;
@@ -176,7 +182,7 @@ console.log("Checking connection to Broadcast User Controller Server");
 const broadcastUserControllerServerConnectionCheck = await checkLoop(
   async () => {
     try {
-      const response = await fetch("http://localhost:8519/", {
+      const response = await fetch(`http://localhost:${BROADCAST_USER_CONTROLLER_PORT}/`, {
         signal: createTimeoutAbortSignal(2000),
       });
       return response.status == 405;
@@ -205,7 +211,7 @@ if (!skipUserController) {
   const userControllerConnectionCheck = await checkLoop(
     async () => {
       try {
-        const response = await fetch("http://localhost:8520/", {
+        const response = await fetch(`http://localhost:${USER_CONTROLLER_PORT}/`, {
           signal: createTimeoutAbortSignal(2000),
         });
         return response.status == 401 || response.status == 404;
@@ -229,5 +235,5 @@ console.log("Opening Broadcast dashboard");
 spawn("Dashboard launcher", "cmd", [
   "/c",
   "start",
-  "http://localhost:8514/dashboard.html",
+  `http://localhost:${BROADCAST_HTTP_PORT}/dashboard.html`,
 ], import.meta.dirname!.toString());

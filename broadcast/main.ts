@@ -26,10 +26,16 @@ import { calculateStandings, StandingInput } from "./server/standings.ts";
 import { createPerPlayerStreams } from "./server/ocr_processor.ts";
 import { createResultCollector } from "./server/ocr_processor.ts";
 import { convertOcrPlayerStatusToStageScoreValue } from "./client/common/ocr_util.ts";
+import {
+  BROADCAST_HTTP_PORT,
+  BROADCAST_USER_CONTROLLER_PORT,
+  BROADCAST_WS_PORT,
+  OCR_WS_PORT,
+} from "../common/ports.ts";
 
 export const config: ServerConfig<TypeDefinition> = {
-  socketPort: 8515,
-  assetsPort: 8514,
+  socketPort: BROADCAST_WS_PORT,
+  assetsPort: BROADCAST_HTTP_PORT,
   assetsRoot: "./client",
 };
 
@@ -482,7 +488,7 @@ resultSceneActiveReplicant.subscribe(async (value) => {
 // OCR Server / Data
 //
 
-const ocrServer = new OcrServer(8517);
+const ocrServer = new OcrServer(OCR_WS_PORT);
 
 const ocrConnectedReplicant = server.getReplicant("ocrConnected");
 ocrConnectedReplicant.setValue(false);
@@ -597,7 +603,7 @@ const userControllerServerHandler: UserControllerServerActionHandler = {
   },
 };
 const _userControllerServer = new UserControllerServer(
-  8519,
+  BROADCAST_USER_CONTROLLER_PORT,
   userControllerServerHandler,
 );
 

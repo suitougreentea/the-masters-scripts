@@ -1,10 +1,14 @@
 import { getCookies, serveFile, setCookie } from "@std/http";
 import ngrok from "@ngrok/ngrok";
+import {
+  BROADCAST_USER_CONTROLLER_PORT,
+  USER_CONTROLLER_PORT,
+} from "../common/ports.ts";
 
 if (import.meta.main) {
   const devMode = Deno.args.indexOf("--dev") >= 0;
 
-  const broadcastAppAddress = "http://localhost:8519";
+  const broadcastAppAddress = `http://localhost:${BROADCAST_USER_CONTROLLER_PORT}`;
 
   const passthrough = async (request: Request): Promise<Response> => {
     const url = new URL(request.url);
@@ -19,7 +23,7 @@ if (import.meta.main) {
   crypto.getRandomValues(tokenArray);
   const correctToken = [...tokenArray].map((e) => e.toString(16)).join("");
 
-  Deno.serve({ port: 8520 }, async (req) => {
+  Deno.serve({ port: USER_CONTROLLER_PORT }, async (req) => {
     const url = new URL(req.url);
 
     const urlToken = url.searchParams.get("token");
@@ -55,12 +59,12 @@ if (import.meta.main) {
   // create tunnel
   let url: string;
   if (devMode) {
-    url = `http://localhost:8520/register?token=${correctToken}`;
+    url = `http://localhost:${USER_CONTROLLER_PORT}/register?token=${correctToken}`;
   } else {
     await ngrok.authtoken(
       Deno.readTextFileSync(import.meta.dirname + "/.ngrok-authtoken"),
     );
-    const listener = await ngrok.forward({ addr: 8520 });
+    const listener = await ngrok.forward({ addr: USER_CONTROLLER_PORT });
     const nullableUrl = listener.url();
     if (nullableUrl == null) {
       throw new Error("ngrok returned null url");
