@@ -37,6 +37,8 @@ export class MastersPlayerRegistrationDialogElement extends LitElement {
   @state()
   private _bestTime?: number = undefined;
   @state()
+  private _tournamentBestTime?: number = undefined;
+  @state()
   private _comment = "";
 
   // @ts-ignore: ?
@@ -47,6 +49,7 @@ export class MastersPlayerRegistrationDialogElement extends LitElement {
     this._oldName = undefined;
     this._name = "";
     this._bestTime = undefined;
+    this._tournamentBestTime = undefined;
     this._comment = "";
     this._dialog.hidden = false;
   }
@@ -55,6 +58,7 @@ export class MastersPlayerRegistrationDialogElement extends LitElement {
     this._oldName = player.name;
     this._name = player.name;
     this._bestTime = player.bestTime;
+    this._tournamentBestTime = player.tournamentBestTime;
     this._comment = player.comment;
     this._dialog.hidden = false;
   }
@@ -74,6 +78,7 @@ export class MastersPlayerRegistrationDialogElement extends LitElement {
     return {
       name: this._name,
       bestTime: this._bestTime!,
+      tournamentBestTime: this._tournamentBestTime,
       comment: this._comment,
     };
   }
@@ -87,7 +92,7 @@ export class MastersPlayerRegistrationDialogElement extends LitElement {
         hidden
         trap-focus
         modal
-        style="--dialog-width: 400px; --dialog-height: 325px;"
+        style="--dialog-width: 400px; --dialog-height: 390px;"
       >
         <div class="dialog-container">
           <div>
@@ -112,6 +117,22 @@ export class MastersPlayerRegistrationDialogElement extends LitElement {
               }}"
             >
               自己ベスト
+            </fluent-text-field>
+          </div>
+          <div>
+            <fluent-text-field
+              .value="${live(
+                this._tournamentBestTime != null
+                  ? timeToString(this._tournamentBestTime)
+                  : "",
+              )}"
+              @change="${(ev: Event) => {
+                this._tournamentBestTime = stringToTimeFuzzy(
+                  (ev.target as TextField).value,
+                );
+              }}"
+            >
+              大会ベスト
             </fluent-text-field>
           </div>
           <div>

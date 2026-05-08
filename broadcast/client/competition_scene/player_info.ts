@@ -268,6 +268,16 @@ export class MastersPlayerInfoElement extends LitElement {
                       <dd>${e != null
                         ? timeToString(e.rawBestTime)
                         : undefined}</dd>
+                      <dt>大会ベスト</dt>
+                      <dd>${(() => {
+                        if (e == null) return undefined;
+                        const tournamentBestTime = this.registeredPlayers.find((p) =>
+                          p.name == e.name
+                        )?.tournamentBestTime;
+                        return tournamentBestTime != null
+                          ? timeToString(tournamentBestTime)
+                          : "-";
+                      })()}</dd>
                       <dt>スタート</dt>
                       <dd>
                         ${e != null ? timeToString(e.startTime) : undefined}

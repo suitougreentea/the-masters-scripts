@@ -51,6 +51,11 @@ export class PlayersStore {
   updatePlayer(oldName: string, player: RegisteredPlayerEntry) {
     const index = this.#registeredPlayers.findIndex((e) => e.name == oldName);
     if (index < 0) throw new Error("No matching player found");
+    const oldPlayer = this.#registeredPlayers[index];
+    const hasTournamentBestTime = Object.prototype.hasOwnProperty.call(
+      player,
+      "tournamentBestTime",
+    );
     if (oldName != player.name) {
       const dupeCheck = this.#registeredPlayers.findIndex((e) =>
         e.name == player.name
@@ -59,7 +64,12 @@ export class PlayersStore {
         throw new Error("A player with the same name already exists");
       }
     }
-    this.#registeredPlayers[index] = player;
+    this.#registeredPlayers[index] = {
+      ...player,
+      tournamentBestTime: hasTournamentBestTime
+        ? player.tournamentBestTime
+        : oldPlayer.tournamentBestTime,
+    };
     this.#serialize();
   }
 

@@ -368,6 +368,7 @@ server.registerRequestHandler(
       stageData: [stageIndex],
       qualifierScore: shouldUpdateQualifierScore,
     });
+    await getCurrentRegisteredPlayers();
   },
 );
 

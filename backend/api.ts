@@ -13,6 +13,7 @@ import {
   SupplementComparisonData,
   SupplementComparisonEntry,
 } from "../common/common_types.ts";
+import { grades } from "../common/grade.ts";
 import {
   constructQualifierResultEntryStubs,
   constructStageResultEntryStub,
@@ -80,6 +81,21 @@ const stageSetupResultToStagePlayers = (setupResult: StageSetupResult) => {
     players: stagePlayers,
     result: [],
   };
+};
+
+const updateTournamentBestTime = (players: (StagePlayerEntry | undefined)[]) => {
+  players.forEach((entry) => {
+    if (entry == null || entry.time == null) return;
+    if (entry.grade !== grades.GM) return;
+    const player = playersStore.value.getPlayer(entry.name);
+    if (player == null) return;
+    const currentBest = player.tournamentBestTime;
+    if (currentBest != null && currentBest <= entry.time) return;
+    playersStore.value.updatePlayer(player.name, {
+      ...player,
+      tournamentBestTime: entry.time,
+    });
+  });
 };
 
 export function mastersGetRegisteredPlayers(): RegisteredPlayerEntry[] {
@@ -280,6 +296,7 @@ export function mastersSetStageScore(
     result: result,
   };
   competitionStore.value.setStageData(roundIndex, stageIndex, newStageData);
+  updateTournamentBestTime(newPlayers);
 
   if (isQualifierRound(metadata, roundIndex)) {
     const oldQualifierScore = competitionStore.value.getQualifierScore();

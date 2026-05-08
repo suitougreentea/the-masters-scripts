@@ -81,6 +81,7 @@ export type SupplementComparisonMetadata = {
 export type RegisteredPlayerEntry = {
   name: string;
   bestTime: number;
+  tournamentBestTime?: number;
   comment: string;
 };
 
